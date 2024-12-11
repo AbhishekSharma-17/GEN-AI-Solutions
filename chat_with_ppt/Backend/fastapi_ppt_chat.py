@@ -49,8 +49,8 @@ async def generate_document_queries(
     """
 
     prompt = system_prompt
-    # llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
-    llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
+    llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
+    # llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
     
 
 
@@ -120,8 +120,8 @@ async def embed_file(data: Dict[str, str]):
         split_data = text_splitter.split_documents(data)
         logging.info(f"Documents split. Number of chunks: {len(split_data)}")
 
-        # embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
-        embeddings = GoogleGenerativeAIEmbeddings(google_api_key=os.getenv("GOOGLE_API_KEY"), model="text-embedding-004")
+        embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
+        # embeddings = GoogleGenerativeAIEmbeddings(google_api_key=os.getenv("GOOGLE_API_KEY"), model="models/text-embedding-004")
         vectorstore = FAISS.from_documents(split_data, embeddings)
         
         # Save the vectorstore
@@ -130,8 +130,8 @@ async def embed_file(data: Dict[str, str]):
         vectorstore.save_local(vectorstore_path)
         logging.info("FAISS vector store created and saved successfully")
 
-        # llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
-        llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
+        llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
+        # llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
         queries = await generate_document_queries(llm, data)
         
         return JSONResponse(
@@ -159,8 +159,8 @@ async def chat(data: Dict[str, Any]):
 
     async def generate_response():
         try:
-            # llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini", streaming=True)
-            llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
+            llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini", streaming=True)
+            # llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
             
             embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
             
