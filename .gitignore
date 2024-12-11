@@ -1,6 +1,7 @@
+#Backend
 .env
 /venv/
-
+/uploads/
 
 
 # Frontend Records 

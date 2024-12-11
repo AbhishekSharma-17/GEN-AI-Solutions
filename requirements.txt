@@ -9,3 +9,4 @@ python-multipart
 unstructured
 langchain-unstructured
 faiss-cpu
+langchain-google-genai

@@ -3,6 +3,7 @@ import logging
 from typing import Dict, Any, List
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse, JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from langchain_community.document_loaders import UnstructuredAPIFileLoader
@@ -11,6 +12,7 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.prompts import ChatPromptTemplate
+from langchain_google_genai import ChatGoogleGenerativeAI,GoogleGenerativeAIEmbeddings
 import uvicorn
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -19,6 +21,14 @@ load_dotenv()
 
 app = FastAPI()
 
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:5173"],  # Adjust this to match your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 async def generate_document_queries(
     llm, document_content: str, num_queries: int = 4
@@ -39,7 +49,9 @@ async def generate_document_queries(
     """
 
     prompt = system_prompt
-    llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
+    # llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
+    llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
+    
 
 
     response = llm.invoke(prompt)
@@ -108,7 +120,8 @@ async def embed_file(data: Dict[str, str]):
         split_data = text_splitter.split_documents(data)
         logging.info(f"Documents split. Number of chunks: {len(split_data)}")
 
-        embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
+        # embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
+        embeddings = GoogleGenerativeAIEmbeddings(google_api_key=os.getenv("GOOGLE_API_KEY"), model="text-embedding-004")
         vectorstore = FAISS.from_documents(split_data, embeddings)
         
         # Save the vectorstore
@@ -117,7 +130,8 @@ async def embed_file(data: Dict[str, str]):
         vectorstore.save_local(vectorstore_path)
         logging.info("FAISS vector store created and saved successfully")
 
-        llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
+        # llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
+        llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
         queries = await generate_document_queries(llm, data)
         
         return JSONResponse(
@@ -145,8 +159,11 @@ async def chat(data: Dict[str, Any]):
 
     async def generate_response():
         try:
-            llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini", streaming=True)
+            # llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini", streaming=True)
+            llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
+            
             embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
+            
             try:
                 vectorstore = FAISS.load_local(vectorstore_path, embeddings, allow_dangerous_deserialization=True)
             except Exception as e:

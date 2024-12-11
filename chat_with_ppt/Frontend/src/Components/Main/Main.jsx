@@ -39,7 +39,7 @@ const Main = () => {
 
     try {
       // Replace with your API endpoint
-      const response = await fetch("YOUR_API_ENDPOINT", {
+      const response = await fetch("http://localhost:8000/upload", {
         method: "POST",
         body: formData,
       });
@@ -50,7 +50,8 @@ const Main = () => {
 
       const data = await response.json();
       // Handle the response data as needed
-      console.log(data);
+      console.log(data.message);
+      console.log(data.file_path);
       // Optionally, you can update the context or state with the result
     } catch (error) {
       console.error("Error uploading file:", error);
@@ -76,7 +77,7 @@ const Main = () => {
               <input
                 type="file"
                 onChange={handleFileChange}
-                accept=".txt,.pdf,.docx" // Specify accepted file types
+                accept=".ppt, .pptx" // Specify accepted file types
                 ref={fileInputRef}
                 hidden // Hide the input
               />
