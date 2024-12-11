@@ -1,0 +1,11 @@
+python-dotenv
+langchain
+langchain-openai
+langchain-groq
+langchain-community
+fastapi
+uvicorn
+python-multipart
+unstructured
+langchain-unstructured
+faiss-cpu
