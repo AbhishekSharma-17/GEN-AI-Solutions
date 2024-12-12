@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { assets } from "../../assets/assets";
 
+
 const Sidebar = () => {
   const handleExtension = () => {
     setExtended((prevExtended) => {
@@ -22,7 +23,7 @@ const Sidebar = () => {
         />
         <div className="new-chat">
           <img src={assets.plus_icon} alt="plus_icon" className="plus-icon" />
-          {extended ? <p>New Chat</p> : null}
+          {extended ? <p style={{marginTop:"15px",margin:"0px"}}>New Chat</p> : null}
         </div>
         {extended ? (
           <div className="recent">
