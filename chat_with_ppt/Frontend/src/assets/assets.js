@@ -16,6 +16,8 @@ import gemini_icon from './gemini_icon.png'
 import icon from './icon.png'
 import genAILogo from './logo.png'
 
+
+
 export const assets = {
     history_icon,
     genAILogo,
@@ -31,7 +33,8 @@ export const assets = {
     message_icon,
     code_icon,
     send_icon,
-    gemini_icon
+    gemini_icon,
+    
 }
 
 export default assets
