@@ -50,7 +50,7 @@ async def generate_document_queries(
 
     prompt = system_prompt
     # llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
-    llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
+    llm = ChatGoogleGenerativeAI(api_key='AIzaSyDz1DiLAj8zYh7TLnVEDre64XuXtWsCvJU',model="gemini-1.5-flash")
     
 
 
@@ -121,7 +121,7 @@ async def embed_file(data: Dict[str, str]):
         logging.info(f"Documents split. Number of chunks: {len(split_data)}")
 
         # embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
-        embeddings = GoogleGenerativeAIEmbeddings(google_api_key=os.getenv("GOOGLE_API_KEY"), model="models/text-embedding-004")
+        embeddings = GoogleGenerativeAIEmbeddings(GEMINI_API_KEY=os.getenv("GEMINI_API_KEY"), model="models/text-embedding-004")
         vectorstore = FAISS.from_documents(split_data, embeddings)
         
         # Save the vectorstore
@@ -131,7 +131,7 @@ async def embed_file(data: Dict[str, str]):
         logging.info("FAISS vector store created and saved successfully")
 
         # llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
-        llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
+        llm = ChatGoogleGenerativeAI(api_key=os.getenv("GEMINI_API_KEY"),model="gemini-1.5-flash")
         queries = await generate_document_queries(llm, data)
         
         return JSONResponse(
@@ -160,10 +160,10 @@ async def chat(data: Dict[str, Any]):
     async def generate_response():
         try:
             # llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini", streaming=True)
-            llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
+            llm = ChatGoogleGenerativeAI(api_key=os.getenv("GEMINI_API_KEY"),model="gemini-1.5-flash")
             
             # embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
-            embeddings = GoogleGenerativeAIEmbeddings(google_api_key=os.getenv("GOOGLE_API_KEY"), model="models/text-embedding-004")    
+            embeddings = GoogleGenerativeAIEmbeddings(GEMINI_API_KEY=os.getenv("GEMINI_API_KEY"), model="models/text-embedding-004")    
             try:
                 vectorstore = FAISS.load_local(vectorstore_path, embeddings, allow_dangerous_deserialization=True)
             except Exception as e:

@@ -2,6 +2,7 @@
 .env
 /venv/
 /uploads/
+/_pycache_/
 
 
 # Frontend Records 
