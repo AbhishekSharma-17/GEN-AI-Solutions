@@ -12,8 +12,9 @@ from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.prompts import ChatPromptTemplate
-from langchain_google_genai import ChatGoogleGenerativeAI,GoogleGenerativeAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 import uvicorn
+from langchain_groq import ChatGroq
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -52,8 +53,6 @@ async def generate_document_queries(
     llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
     # llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
     
-
-
     response = llm.invoke(prompt)
 
     queries = response.content.split("\n")
@@ -145,6 +144,19 @@ async def embed_file(data: Dict[str, str]):
         logging.error(f"Error processing file: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
+def get_llm(provider: str, model: str):
+    """
+    Returns the appropriate LLM based on the provider and model.
+    """
+    if provider.lower() == "openai":
+        return ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model=model, streaming=True)
+    elif provider.lower() == "google":
+        return ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"), model=model)
+    elif provider.lower() == "groq":
+        return ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model=model,streaming=True)
+    else:
+        raise ValueError(f"Unsupported provider: {provider} or {model}")
+
 @app.post("/chat")
 async def chat(data: Dict[str, Any]):
     """
@@ -152,6 +164,8 @@ async def chat(data: Dict[str, Any]):
     Uses a persistent FAISS vector store for retrieval.
     """
     question = data.get("question", "")
+    provider = data.get("provider", "openai")
+    model = data.get("model", "gpt-4o-mini")
     
     vectorstore_path = "vectorstore"
     if not os.path.exists(vectorstore_path):
@@ -159,8 +173,7 @@ async def chat(data: Dict[str, Any]):
 
     async def generate_response():
         try:
-            llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini", streaming=True)
-            # llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
+            llm = get_llm(provider, model)
             
             embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
             
