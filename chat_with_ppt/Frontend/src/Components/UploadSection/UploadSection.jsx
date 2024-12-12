@@ -17,6 +17,7 @@ const UploadSection = ({
   fileInputRef,
   setFileResponse,
   setIsEmbedComplete, // New prop
+  setQueries, // Add setQueries prop
 }) => {
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -78,6 +79,12 @@ const UploadSection = ({
       const data = await response.json();
       setFileResponse && setFileResponse(data);
 
+      // Pass the queries to the parent component
+      setQueries((prevQueries) => [
+        ...prevQueries,
+        ...data.queries, // Assuming 'queries' is the response data
+      ]);
+
       // Mark the embedding process as complete
       setIsEmbedComplete(true);
     } catch (error) {
@@ -113,7 +120,9 @@ const UploadSection = ({
               style={{ cursor: "pointer", fontSize: "5rem" }}
               className="file-upload-icon-style"
             />
-            <p className="file-icon-upload-text">Drag and drop your .PPT, .PPTX here - or click to select.</p>
+            <p className="file-icon-upload-text">
+              Drag and drop your .PPT, .PPTX here - or click to select.
+            </p>
           </>
         ) : !embedReady ? (
           <button onClick={handleFileUpload} className="btn btn-dark">

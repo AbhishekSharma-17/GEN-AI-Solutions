@@ -13,8 +13,8 @@ import message_icon from './message_icon.png'
 import code_icon from './code_icon.png'
 import send_icon from './send_icon.png'
 import gemini_icon from './gemini_icon.png'
-import icon from './icon.png'
 import genAILogo from './logo.png'
+import icon from './icon.png'
 
 export const assets = {
     history_icon,
@@ -22,12 +22,9 @@ export const assets = {
     icon,
     menu_icon,
     plus_icon,
-    
     bulb_icon,
     compass_icon,
-    
     mic_icon,
-
     message_icon,
     code_icon,
     send_icon,
