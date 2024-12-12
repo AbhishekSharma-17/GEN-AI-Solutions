@@ -5,7 +5,6 @@ import { Context } from "../../context/Context";
 
 const Main = () => {
   const {
-    fileResponse,
     setFileResponse,
     recentPrompt,
     showResult,
@@ -13,32 +12,34 @@ const Main = () => {
     resultData,
     input,
     setInput,
-    fileUploaded,
-    setFileUploaded,
   } = useContext(Context);
 
-  const [file, setFile] = useState(null); // State to hold the selected file
-  const fileInputRef = useRef(); // Reference for the file input
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [embedReady, setEmbedReady] = useState(false);
+  const [embedding, setEmbedding] = useState(false); // Embedding state
+  const [filePath, setFilePath] = useState("");
+  const fileInputRef = useRef();
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
-    setFile(selectedFile); // Set the selected file
+    setFile(selectedFile);
+    setEmbedReady(false);
+    setFilePath("");
   };
 
   const handleFileUpload = async (event) => {
-    event.preventDefault(); // Prevent default form submission
-
+    event.preventDefault();
     if (!file) {
       alert("Please select a file to upload.");
       return;
     }
 
-    // Create a FormData object to send the file
     const formData = new FormData();
     formData.append("file", file);
 
     try {
-      // Replace with your API endpoint
+      setUploading(true);
       const response = await fetch("http://localhost:8000/upload", {
         method: "POST",
         body: formData,
@@ -49,12 +50,50 @@ const Main = () => {
       }
 
       const data = await response.json();
-      // Handle the response data as needed
-      console.log(data.message);
-      console.log(data.file_path);
-      // Optionally, you can update the context or state with the result
+      console.log("Upload Response:", data);
+
+      setFilePath(data.file_path);
+      setEmbedReady(true);
     } catch (error) {
       console.error("Error uploading file:", error);
+      alert("File upload failed. Please try again.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleEmbedDoc = async () => {
+    if (!filePath) {
+      alert("No file path found. Please upload a file first.");
+      return;
+    }
+
+    try {
+      setEmbedding(true);
+      const response = await fetch("http://localhost:8000/embed", {
+        method: "POST",
+        body: JSON.stringify({ file_path: filePath }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error("Embedding document failed.");
+      }
+      const data = await response.json();
+      console.log("Embed Response:", data.queries);
+
+      if (setFileResponse) {
+        setFileResponse(data);
+      } else {
+        console.error("setFileResponse is not defined in the Context.");
+      }
+    } catch (error) {
+      console.error("Error embedding document:", error);
+      alert("Embedding failed. Please try again.");
+    } finally {
+      setEmbedding(false);
     }
   };
 
@@ -62,36 +101,48 @@ const Main = () => {
     <div className="main">
       <div className="nav">
         <p>GenAI Protos</p>
-        <img src={assets.icon}  alt="" />
+        <img src={assets.icon} alt="" />
       </div>
       <div className="main-container">
         {!showResult ? (
           <>
             <div className="greet">
               <span>Welcome To, GenAI Protos..</span>
-
-              <p className="greetPara2">One Solutions for Innovative Idea's</p>
+              <p className="greetPara2">One Solution for Innovative Ideas</p>
             </div>
-            {/* Input field for uploading file */}
             <div className="file-upload">
               <input
                 type="file"
                 onChange={handleFileChange}
-                accept=".ppt, .pptx" // Specify accepted file types
+                accept=".ppt, .pptx"
                 ref={fileInputRef}
-                hidden // Hide the input
+                hidden
               />
-              {file ? ( // Check if a file is selected
-                <>
-                  <p className="file-name">{file.name}</p>{" "}
-                  {/* Display the file name */}
-                  <button onClick={handleFileUpload} className="btn btn-dark">
+              {uploading || embedding ? (
+                <div className="loader">
+                  <hr />
+                  <hr />
+                  <hr />
+                </div>
+              ) : file ? (
+                !embedReady ? (
+                  <button
+                    onClick={handleFileUpload}
+                    className="btn btn-dark"
+                  >
                     Upload File
                   </button>
-                </>
+                ) : (
+                  <button
+                    onClick={handleEmbedDoc}
+                    className="btn btn-success"
+                  >
+                    Embed Doc
+                  </button>
+                )
               ) : (
                 <FaFileUpload
-                  onClick={() => fileInputRef.current.click()} // Open file dialog
+                  onClick={() => fileInputRef.current.click()}
                   style={{
                     cursor: "pointer",
                     fontSize: "5rem",
@@ -100,6 +151,11 @@ const Main = () => {
                 />
               )}
             </div>
+            {embedReady && (
+              <div className="embed-info">
+                <p>File ready for embedding. Click "Embed Doc".</p>
+              </div>
+            )}
           </>
         ) : (
           <div className="result">
@@ -121,10 +177,9 @@ const Main = () => {
             </div>
           </div>
         )}
-
-        <div className="main-bottom">
-          {fileResponse ? (
-            <form className="search-box">
+        {embedReady && !embedding && (
+          <div className="main-bottom">
+            <form className="search-box" onSubmit={handleEmbedDoc}>
               <input
                 type="text"
                 placeholder="Ask GenAI Protos anything..."
@@ -137,12 +192,12 @@ const Main = () => {
                 {input ? <img src={assets.send_icon} alt="" /> : null}
               </div>
             </form>
-          ) : null}
-          <p className="bottom-info">
-            GenAI Protos may display inaccurate information, such as the number
-            of bytes and also including about the people.
-          </p>
-        </div>
+            <p className="bottom-info">
+              GenAI Protos may display inaccurate information, such as the
+              number of bytes and also including about the people.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
