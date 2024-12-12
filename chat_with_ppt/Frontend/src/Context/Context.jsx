@@ -10,9 +10,9 @@ const ContextProvider = (props) => {
   const [loadings, setLoadings] = useState(false); // if this is true then it will display loading animation
   const [resultData, setResultData] = useState(""); // used to display result on we page
 
-  const [fileUploaded, setFileUploaded] = useState(false)
+  const [fileUploaded, setFileUploaded] = useState(false);
 
-  const [fileResponse, setFileResponse] = useState(false)
+  const [fileResponse, setFileResponse] = useState(false);
 
   const contextValue = {
     previousPrompt,
@@ -27,6 +27,8 @@ const ContextProvider = (props) => {
     setLoadings,
     resultData,
     setResultData,
+    fileResponse,
+    setFileResponse,
   };
   return (
     <Context.Provider value={contextValue}>{props.children}</Context.Provider>
