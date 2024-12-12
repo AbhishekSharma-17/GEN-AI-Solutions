@@ -74,6 +74,18 @@
     text-decoration: none;
     font-size: 1.4vw;
   }
+  .sidebar-bottom-para-text
+  {
+    background: -webkit-linear-gradient(15deg, #032B44, #4682B4);
+    background-clip: text;
+    /* border: 1px solid red; */
+    margin: 0;
+    -webkit-text-fill-color: transparent;
+  }
+  .sidebar-bottom-para-text a{
+    font-size: 20px!important;
+    /* border: 1px solid red; */
+  }
   
   @media (max-width:600px){
       .sidebar{
@@ -97,6 +109,13 @@
     font-size: 22px;
     padding: 20px;
     color: #585858;
+}
+.main-nav-para-text{
+  background: -webkit-linear-gradient(15deg, #032B44, #4682B4);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-weight: 700;
+  cursor: pointer;
 }
 .main .nav img {
     width: 30px;
@@ -139,7 +158,8 @@
     padding: 10px;
     border-radius: 5px;
     gap: 20px;
-    box-shadow: 0px 0px 6px rgb(212, 212, 212);
+    background-color: rgb(248, 248, 248);
+    box-shadow: 0px 0px 8px rgb(182, 181, 181);
   }
 
   .upload-section{
@@ -155,6 +175,26 @@
     width: 30px;
     margin-bottom: 4px;
     font-size: 30px;
+  }
+  .file-upload-icon-style{
+    border-radius: 50%;
+    padding: 10px;
+    border: 1px solid rgb(192, 190, 190);
+    background-color: rgb(238, 237, 237);
+    color: #b1b0b0;
+
+  }
+  .file-upload-icon-style:hover{
+    color: rgb(95, 93, 93);
+    transition: 0.6s ease-in ;
+  }
+  .file-icon-upload-text
+  {
+    color: rgb(184, 184, 184);
+    font-weight: 500;
+    word-spacing: 1px;
+    margin: 0;
+    margin-top: 4px;
   }
   .file-name{
     border: 1px solid rgb(188, 188, 188);

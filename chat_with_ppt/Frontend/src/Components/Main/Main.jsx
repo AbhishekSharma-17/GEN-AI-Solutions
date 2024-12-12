@@ -28,7 +28,7 @@ const Main = () => {
   return (
     <div className="main">
       <div className="nav">
-        <p>GenAI Protos</p>
+        <p className="main-nav-para-text"><a href="https://www.genaiprotos.com/">GenAI Protos</a></p>
         <img src={assets.icon} alt="" />
       </div>
       <div className="main-container">

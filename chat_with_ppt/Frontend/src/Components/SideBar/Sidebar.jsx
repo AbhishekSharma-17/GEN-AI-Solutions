@@ -40,8 +40,8 @@ const Sidebar = () => {
       </div>
       <div className="bottom">
         {extended ? (
-          <p>
-            <a href="">GenAI Protos</a>
+          <p className="sidebar-bottom-para-text">
+            <a href="https://www.genaiprotos.com/">GenAI Protos</a>
           </p>
         ) : null}
       </div>
