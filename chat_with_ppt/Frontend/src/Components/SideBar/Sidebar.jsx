@@ -20,9 +20,9 @@ const Sidebar = () => {
           src={assets.menu_icon}
           alt="menu_icon"
         />
-        <div className="new-chat">
+        <div className="new-chat" style={{border:"1px solid grey"}}>
           <img src={assets.plus_icon} alt="plus_icon" className="plus-icon" />
-          {extended ? <p>New Chat</p> : null}
+          {extended ? <p style={{marginTop:"15px", margin:"0"}}>New Chat</p> : null}
         </div>
         {extended ? (
           <div className="recent">

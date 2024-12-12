@@ -176,7 +176,7 @@ async def chat(data: Dict[str, Any]):
             llm = get_llm(provider, model)
             
             embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
-            
+            # embeddings = GoogleGenerativeAIEmbeddings(GEMINI_API_KEY=os.getenv("GEMINI_API_KEY"), model="models/text-embedding-004")    
             try:
                 vectorstore = FAISS.load_local(vectorstore_path, embeddings, allow_dangerous_deserialization=True)
             except Exception as e:
