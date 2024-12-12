@@ -5,7 +5,7 @@
 /__pycache__/
 /vectorstore/
 *.pyc
-
+test.py
 # Frontend Records 
 # Logs
 logs

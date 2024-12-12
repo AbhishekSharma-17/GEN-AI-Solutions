@@ -31,9 +31,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Global variables to store initialized LLM and embeddings
+initialized_llm = None
+initialized_embeddings = None
+unstructured_api_key = None
+
 async def generate_document_queries(
-    llm, document_content: str, num_queries: int = 4
+    document_content: str, num_queries: int = 4
 ) -> List[str]:
+    global initialized_llm
+    
+    if not initialized_llm:
+        raise ValueError("LLM not initialized. Please call /initialize first.")
+    
     system_prompt = f"""
     Generate {num_queries} different questions that could be asked about the following document content:
     Analyze the document content properly before generating questions.
@@ -50,10 +60,7 @@ async def generate_document_queries(
     """
 
     prompt = system_prompt
-    llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
-    # llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
-    
-    response = llm.invoke(prompt)
+    response = initialized_llm.invoke(prompt)
 
     queries = response.content.split("\n")
 
@@ -65,6 +72,46 @@ async def root():
     return JSONResponse(
         content={"message": "Proto AI"}, status_code=200
     )
+
+@app.post("/initialize")
+async def initialize_llm(data: Dict[str, str]):
+    """
+    Endpoint for initializing the LLM and embeddings with provided API keys.
+    """
+    global initialized_llm, initialized_embeddings, unstructured_api_key
+    
+    provider = data.get("provider", "openai").lower()
+    model = data.get("model", "gpt-4o-mini")
+    api_key = data.get("api_key")
+    unstructured_api_key = data.get("unstructured_api_key")
+    
+    if not api_key:
+        raise HTTPException(status_code=400, detail="API key is required")
+    
+    if not unstructured_api_key:
+        raise HTTPException(status_code=400, detail="Unstructured API key is required")
+    
+    try:
+        if provider == "openai":
+            initialized_llm = ChatOpenAI(api_key=api_key, model=model, streaming=True)
+            initialized_embeddings = OpenAIEmbeddings(api_key=api_key, model="text-embedding-3-small")
+        elif provider == "google":
+            initialized_llm = ChatGoogleGenerativeAI(api_key=api_key, model=model)
+            initialized_embeddings = GoogleGenerativeAIEmbeddings(google_api_key=api_key, model="models/text-embedding-004")
+        elif provider == "groq":
+            initialized_llm = ChatGroq(api_key=api_key, model=model, streaming=True)
+            # Note: Groq doesn't have its own embeddings, so we'll use OpenAI's embeddings here
+            initialized_embeddings = OpenAIEmbeddings(api_key=api_key)
+        else:
+            raise ValueError(f"Unsupported provider: {provider}")
+        
+        return JSONResponse(
+            content={"message": f"LLM and embeddings initialized successfully with {provider} provider"},
+            status_code=200
+        )
+    except Exception as e:
+        logging.error(f"Error initializing LLM and embeddings: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error initializing LLM and embeddings: {str(e)}")
 
 @app.post("/upload")
 async def upload_file(file: UploadFile = File(...)):
@@ -97,7 +144,13 @@ async def embed_file(data: Dict[str, str]):
     Endpoint for embedding the content of a PowerPoint file.
     Creates and saves a FAISS vector store.
     """
+    global initialized_llm, initialized_embeddings, unstructured_api_key
+    
+    if not initialized_llm or not initialized_embeddings:
+        raise HTTPException(status_code=400, detail="LLM and embeddings not initialized. Please call /initialize first.")
+    
     file_path = data.get("file_path")
+    
     if not file_path or not os.path.exists(file_path):
         raise HTTPException(status_code=400, detail="Invalid file path")
     
@@ -106,7 +159,7 @@ async def embed_file(data: Dict[str, str]):
     
     try:
         loader = UnstructuredAPIFileLoader(
-            api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+            api_key=unstructured_api_key,
             file_path=file_path,
             mode="elements",
             strategy="fast",
@@ -119,9 +172,7 @@ async def embed_file(data: Dict[str, str]):
         split_data = text_splitter.split_documents(data)
         logging.info(f"Documents split. Number of chunks: {len(split_data)}")
 
-        embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
-        # embeddings = GoogleGenerativeAIEmbeddings(google_api_key=os.getenv("GOOGLE_API_KEY"), model="models/text-embedding-004")
-        vectorstore = FAISS.from_documents(split_data, embeddings)
+        vectorstore = FAISS.from_documents(split_data, initialized_embeddings)
         
         # Save the vectorstore
         vectorstore_path = "vectorstore"
@@ -129,9 +180,7 @@ async def embed_file(data: Dict[str, str]):
         vectorstore.save_local(vectorstore_path)
         logging.info("FAISS vector store created and saved successfully")
 
-        llm = ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model="gpt-4o-mini")
-        # llm = ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"),model="gemini-1.5-flash")
-        queries = await generate_document_queries(llm, data)
+        queries = await generate_document_queries(data)
         
         return JSONResponse(
             content={
@@ -144,28 +193,18 @@ async def embed_file(data: Dict[str, str]):
         logging.error(f"Error processing file: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
-def get_llm(provider: str, model: str):
-    """
-    Returns the appropriate LLM based on the provider and model.
-    """
-    if provider.lower() == "openai":
-        return ChatOpenAI(api_key=os.getenv("OPENAI_API_KEY"), model=model, streaming=True)
-    elif provider.lower() == "google":
-        return ChatGoogleGenerativeAI(api_key=os.getenv("GOOGLE_API_KEY"), model=model)
-    elif provider.lower() == "groq":
-        return ChatGroq(api_key=os.getenv("GROQ_API_KEY"), model=model,streaming=True)
-    else:
-        raise ValueError(f"Unsupported provider: {provider} or {model}")
-
 @app.post("/chat")
 async def chat(data: Dict[str, Any]):
     """
     Endpoint for chatting with the AI about the embedded PowerPoint content.
     Uses a persistent FAISS vector store for retrieval.
     """
+    global initialized_llm, initialized_embeddings
+    
+    if not initialized_llm or not initialized_embeddings:
+        raise HTTPException(status_code=400, detail="LLM and embeddings not initialized. Please call /initialize first.")
+    
     question = data.get("question", "")
-    provider = data.get("provider", "openai")
-    model = data.get("model", "gpt-4o-mini")
     
     vectorstore_path = "vectorstore"
     if not os.path.exists(vectorstore_path):
@@ -173,12 +212,8 @@ async def chat(data: Dict[str, Any]):
 
     async def generate_response():
         try:
-            llm = get_llm(provider, model)
-            
-            embeddings = OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY"))
-            # embeddings = GoogleGenerativeAIEmbeddings(GEMINI_API_KEY=os.getenv("GEMINI_API_KEY"), model="models/text-embedding-004")    
             try:
-                vectorstore = FAISS.load_local(vectorstore_path, embeddings, allow_dangerous_deserialization=True)
+                vectorstore = FAISS.load_local(vectorstore_path, initialized_embeddings, allow_dangerous_deserialization=True)
             except Exception as e:
                 logging.error(f"Error loading vector store: {str(e)}")
                 yield f"Error: Unable to load the vector store. Please try embedding the document again."
@@ -201,7 +236,7 @@ User's Question: {input}
 Response: """
             )
 
-            document_chain = create_stuff_documents_chain(llm, prompt)
+            document_chain = create_stuff_documents_chain(initialized_llm, prompt)
             retrieval_chain = create_retrieval_chain(retriever, document_chain)
             logging.info("Retrieval chain created")
 
