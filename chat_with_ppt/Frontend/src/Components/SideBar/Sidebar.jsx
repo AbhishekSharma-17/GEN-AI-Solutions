@@ -33,8 +33,8 @@ const Sidebar = () => {
             {previousPrompt.map((item, index) => {
               return (
                 <div className="recent-entry">
-                  <img src={assets.message_icon} alt="" />
-                  <p className="">{item.slice(0, 15)}...</p>
+                  <img style={{marginTop:"15px"}} src={assets.message_icon} alt="" />
+                  <p style={{marginTop:"12px"}}>{item.slice(0, 15)}...</p>
                 </div>
               );
             })}
@@ -43,7 +43,7 @@ const Sidebar = () => {
       </div>
       <div className="bottom">
         {extended ? (
-          <p className="sidebar-bottom-para-text">
+          <p className="sidebar-bottom-para-text" style={{marginTop:"12px"}}>
             <a href="https://www.genaiprotos.com/">GenAI Protos</a>
           </p>
         ) : null}

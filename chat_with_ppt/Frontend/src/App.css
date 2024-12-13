@@ -13,6 +13,7 @@
 }
 .sidebar img {
   width: 20px;
+  
 }
 .menu {
   display: block;
@@ -50,7 +51,7 @@
 .sidebar .recent-entry {
   display: flex;
   align-items: start;
-  padding: 10px;
+  padding: 12px;
   padding-right: 40px;
   border-radius: 50px;
   gap: 10px;

@@ -1,39 +1,69 @@
+import React, { useState } from "react";
 import assets from "../../assets/assets";
-
+import './MultiModel.css';
 
 const MultiModel = () => {
+  const [isHovered, setIsHovered] = useState(false);
+  const [selectedModel, setSelectedModel] = useState(null);
+
   const model_object = [
     {
-      icon: assets.message_icon, // Assuming assets.message_icon is a valid path to an icon
-      name: "Gemini",
+      icon: assets.gemini_icon,
+      name: "Gemini 1.5 Flash",
     },
     {
-      icon: assets.message_icon, // You can replace this with different icons if available
-      name: "Aries",
+      icon: assets.meta_icon,
+      name: "Llama 3.1",
     },
     {
-      icon: assets.message_icon,
-      name: "Taurus",
+      icon: assets.GPT_icon,
+      name: "GPT-4O",
     },
     {
-      icon: assets.message_icon,
-      name: "Leo",
+      icon: assets.GPT_icon,
+      name: "GPT-4O Mini",
     },
     {
-      icon: assets.message_icon,
-      name: "Virgo",
+      icon: assets.Groq_icon,
+      name: "Groq",
     },
   ];
+
+  const handleMouseEnter = () => setIsHovered(true);
+  const handleMouseLeave = () => setIsHovered(false);
+
+  const handleModelSelect = (model) => {
+    setSelectedModel(model);
+    setIsHovered(false);
+  };
+
   return (
     <div className="model-display">
-      {model_object.map((model, index) => {
-        return (
-          <div key={index} className="model-card">
-            <img src={model.icon} alt={model.name} />
-            <p>{model.name}</p>
-          </div>
-        );
-      })}
+      <button
+        className="select-model-button"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        {selectedModel ? `Selected: ${selectedModel.name}` : "Select Model"}
+      </button>
+      {isHovered && (
+        <div
+          className="drop-up-list"
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+        >
+          {model_object.map((model, index) => (
+            <div
+              key={index}
+              className="model-card"
+              onClick={() => handleModelSelect(model)}
+            >
+              <img src={model.icon} alt={model.name} className="model-icon" />
+              <p>{model.name}</p>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

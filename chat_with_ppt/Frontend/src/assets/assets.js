@@ -15,6 +15,10 @@ import send_icon from './send_icon.png'
 import gemini_icon from './gemini_icon.png'
 import genAILogo from './logo.png'
 import icon from './icon.png'
+import Anthropic_icon from './Anthropic.png'
+import Groq_icon from './groq.png'
+import meta_icon from './Meta.png'
+import GPT_icon from './GPT.png'
 
 
 
@@ -31,6 +35,10 @@ export const assets = {
     code_icon,
     send_icon,
     gemini_icon,
+    Anthropic_icon,
+    Groq_icon,
+    meta_icon,
+    GPT_icon
     
 }
 
