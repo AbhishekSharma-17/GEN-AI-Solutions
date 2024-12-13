@@ -3,8 +3,10 @@
 /venv/
 /uploads/
 /__pycache__/
-
-
+/vectorstore/
+*.pyc
+*.pkl
+*.faiss
 # Frontend Records 
 # Logs
 logs
