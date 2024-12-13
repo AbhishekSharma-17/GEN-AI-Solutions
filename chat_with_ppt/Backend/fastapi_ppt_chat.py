@@ -1,5 +1,6 @@
 import os
 import logging
+import re
 from typing import Dict, Any, List
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse, JSONResponse
@@ -72,8 +73,8 @@ async def upload_file(file: UploadFile = File(...)):
     Endpoint for uploading a PowerPoint file.
     Returns the file path of the uploaded file.
     """
-    if not file.filename.endswith('.pptx'):
-        raise HTTPException(status_code=400, detail="Only .pptx files are allowed")
+    if not re.match(r'.*\.(ppt|pptx)$', file.filename, re.IGNORECASE):
+        raise HTTPException(status_code=400, detail="Only .ppt and .pptx files are allowed")
     
     # Save the uploaded file
     file_path = f"uploads/{file.filename}"
@@ -101,8 +102,8 @@ async def embed_file(data: Dict[str, str]):
     if not file_path or not os.path.exists(file_path):
         raise HTTPException(status_code=400, detail="Invalid file path")
     
-    if not file_path.endswith('.pptx'):
-        raise HTTPException(status_code=400, detail="Only .pptx files are allowed")
+    if not re.match(r'.*\.(ppt|pptx)$', file_path, re.IGNORECASE):
+        raise HTTPException(status_code=400, detail="Only .ppt and .pptx files are allowed")
     
     try:
         loader = UnstructuredAPIFileLoader(
