@@ -48,10 +48,18 @@
   gap: 10px;
   height: 100%;
   animation: fadeIn 2s;
+  overflow-y: scroll;
 }
 
-.sidebar .top .recent .recent-title {
+/* scrollbar styling starts */
+.sidebar .top .recent::-webkit-scrollbar {
+ display: none; /* Width of the scrollbar */
+}
+/* scrollbar styling ends */
+
+.sidebar .top .recent-title {
   font-weight: 500;
+  margin: 0;
 }
 
 .sidebar .top .recent .recent-entry {
