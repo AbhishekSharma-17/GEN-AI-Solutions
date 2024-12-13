@@ -34,13 +34,12 @@ const Sidebar = () => {
             {previousPrompt.map((item, index) => {
               return (
                 <div className="recent-entry">
-<<<<<<< HEAD
-                  <img style={{marginTop:"15px"}} src={assets.message_icon} alt="" />
-                  <p style={{marginTop:"12px"}}>{item.slice(0, 15)}...</p>
-=======
+
+                  
+
                   <img src={assets.message_icon} alt="" />
                   <p className="">{item.slice(0, 22)}...</p>
->>>>>>> 2dc70d96d887db9f727486e80c9a5a08754baf77
+
                 </div>
               );
             })}
