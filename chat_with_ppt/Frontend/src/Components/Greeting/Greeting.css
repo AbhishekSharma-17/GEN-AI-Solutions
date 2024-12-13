@@ -1,0 +1,12 @@
+.greet {
+    margin: 50px 0px;
+    font-size: 55px;
+    color: #c4c7c5;
+    font-weight: 500;
+    padding: 20px;
+  }
+  .greet span {
+    background: -webkit-linear-gradient(15deg, #4b90ff, #ff5546);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }

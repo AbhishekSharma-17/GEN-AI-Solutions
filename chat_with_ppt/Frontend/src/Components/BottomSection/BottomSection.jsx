@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
+import './BottomSection.css'
 
 const BottomSection = ({ chatHistory, setChatHistory }) => {
   const {
@@ -32,7 +33,7 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
       ]);
 
       setInput("");
-      
+
       const res = await fetch("http://localhost:8000/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

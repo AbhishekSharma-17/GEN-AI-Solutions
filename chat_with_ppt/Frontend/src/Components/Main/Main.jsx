@@ -7,6 +7,7 @@ import QueryCard from "../QueryCard/QueryCard";
 import BottomSection from "../BottomSection/BottomSection";
 import { FaUserCircle } from "react-icons/fa";
 import ResponseLoader from "../Response Loader/ResponseLoader";
+import './Main.css'
 
 const Main = () => {
   const {

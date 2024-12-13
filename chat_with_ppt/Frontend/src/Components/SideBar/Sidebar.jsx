@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { assets } from "../../assets/assets";
 import { Context } from "../../context/Context";
+import './Sidebar.css'
 
 const Sidebar = () => {
   const handleExtension = () => {
@@ -33,7 +34,7 @@ const Sidebar = () => {
               return (
                 <div className="recent-entry">
                   <img src={assets.message_icon} alt="" />
-                  <p className="">{item.slice(0, 15)}...</p>
+                  <p className="">{item.slice(0, 22)}...</p>
                 </div>
               );
             })}
