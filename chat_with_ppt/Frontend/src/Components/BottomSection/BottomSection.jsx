@@ -28,30 +28,45 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
       setChatHistory((prev) => [
         ...prev,
         { type: "user", text: input },
-        { type: "bot", text: null, loading: true },
+        { type: "bot", text: "", loading: true },
       ]);
 
       const res = await fetch("http://localhost:8000/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: input }), // Send input as JSON payload
+        body: JSON.stringify({
+          question: input,
+          provider: "openai", // You can make this dynamic if needed
+          model: "gpt-4o-mini", // You can make this dynamic if needed
+        }),
       });
 
       if (!res.ok) {
         throw new Error("Failed to fetch response from the server.");
       }
 
-      const data = await res.text();
-      setResponse(data);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedResponse = "";
 
-      // Replace loader with the actual response
-      setChatHistory((prev) =>
-        prev.map((chat, index) =>
-          index === loaderIndex + 1
-            ? { ...chat, text: data, loading: false }
-            : chat
-        )
-      );
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        accumulatedResponse += chunk;
+
+        // Update chat history with the accumulated response
+        setChatHistory((prev) =>
+          prev.map((chat, index) =>
+            index === loaderIndex + 1
+              ? { ...chat, text: accumulatedResponse, loading: false }
+              : chat
+          )
+        );
+      }
+
+      setResponse(accumulatedResponse);
       setPreviousPrompt((prev) => [...prev, input]);
     } catch (error) {
       console.error("Error:", error);
