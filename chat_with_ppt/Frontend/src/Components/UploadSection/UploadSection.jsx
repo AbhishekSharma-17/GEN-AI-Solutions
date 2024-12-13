@@ -1,6 +1,7 @@
 import React from "react";
-import { FaFileUpload, FaFilePowerpoint } from "react-icons/fa";
+import { FaFilePowerpoint } from "react-icons/fa";
 import Loader from "../Loader/Loader";
+import { MdOutlineFileUpload } from "react-icons/md";
 
 const UploadSection = ({
   file,
@@ -16,6 +17,7 @@ const UploadSection = ({
   fileInputRef,
   setFileResponse,
   setIsEmbedComplete, // New prop
+  setQueries, // Add setQueries prop
 }) => {
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -77,6 +79,12 @@ const UploadSection = ({
       const data = await response.json();
       setFileResponse && setFileResponse(data);
 
+      // Pass the queries to the parent component
+      setQueries((prevQueries) => [
+        ...prevQueries,
+        ...data.queries, // Assuming 'queries' is the response data
+      ]);
+
       // Mark the embedding process as complete
       setIsEmbedComplete(true);
     } catch (error) {
@@ -106,10 +114,16 @@ const UploadSection = ({
         {uploading || embedding ? (
           <Loader />
         ) : !file ? (
-          <FaFileUpload
-            onClick={() => fileInputRef.current.click()}
-            style={{ cursor: "pointer", fontSize: "5rem", color: "grey" }}
-          />
+          <>
+            <MdOutlineFileUpload
+              onClick={() => fileInputRef.current.click()}
+              style={{ cursor: "pointer", fontSize: "5rem" }}
+              className="file-upload-icon-style"
+            />
+            <p className="file-icon-upload-text">
+              Drag and drop your .PPT, .PPTX here - or click to select.
+            </p>
+          </>
         ) : !embedReady ? (
           <button onClick={handleFileUpload} className="btn btn-dark">
             Upload File
