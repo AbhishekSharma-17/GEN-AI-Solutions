@@ -20,6 +20,9 @@ const Main = () => {
     loadings,
     setLoadings,
     fileResponse,
+    setShowResult,
+    setRecentPrompt,
+    setPreviousPrompt,
   } = useContext(Context);
 
   const [file, setFile] = useState(null);
@@ -31,6 +34,62 @@ const Main = () => {
   const [queries, setQueries] = useState([]); // State to store all queries and responses
   const [chatHistory, setChatHistory] = useState([]); // State to store chat history
   const fileInputRef = useRef();
+
+  // Function to handle query card clicks
+  const handleQueryClick = async (query) => {
+    try {
+      setShowResult(true);
+      setLoadings(true);
+      setRecentPrompt(query);
+
+      // Add user query to chat history
+      const loaderIndex = chatHistory.length; // Track loader index
+      setChatHistory((prev) => [
+        ...prev,
+        { type: "user", text: query },
+        { type: "bot", text: null, loading: true },
+      ]);
+
+      const res = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: query }), // Send query as JSON payload
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch response from the server.");
+      }
+
+      const data = await res.text();
+      setResponse(data);
+
+      // Replace loader with the actual response
+      setChatHistory((prev) =>
+        prev.map((chat, index) =>
+          index === loaderIndex + 1
+            ? { ...chat, text: data, loading: false }
+            : chat
+        )
+      );
+      setPreviousPrompt((prev) => [...prev, query]);
+    } catch (error) {
+      console.error("Error:", error);
+
+      const errorMessage = "An error occurred. Please try again.";
+      setResponse(errorMessage);
+
+      // Replace loader with error message
+      setChatHistory((prev) =>
+        prev.map((chat, index) =>
+          index === loaderIndex + 1
+            ? { ...chat, text: errorMessage, loading: false }
+            : chat
+        )
+      );
+    } finally {
+      setLoadings(false);
+    }
+  };
 
   return (
     <div className="main">
@@ -67,14 +126,14 @@ const Main = () => {
         ) : (
           <>
             {!showResult ? (
-              <QueryCard queries={queries} />
+              <QueryCard queries={queries} handleQueryClick={handleQueryClick} />
             ) : (
               <div className="result">
                 {chatHistory.map((chat, index) => (
                   <div key={index} className={`chat-message ${chat.type} chat`}>
                     {chat.type === "user" ? (
                       <div className="result-title">
-                        <FaUserCircle style={{ fontSize: "30px" }} className="result-title-user-icon"/>
+                        <FaUserCircle style={{ fontSize: "30px" }} className="result-title-user-icon" />
                         <p>{chat.text}</p>
                       </div>
                     ) : (
@@ -91,7 +150,10 @@ const Main = () => {
                 ))}
               </div>
             )}
-            <BottomSection chatHistory={chatHistory} setChatHistory={setChatHistory} />
+            <BottomSection
+              chatHistory={chatHistory}
+              setChatHistory={setChatHistory}
+            />
           </>
         )}
       </div>

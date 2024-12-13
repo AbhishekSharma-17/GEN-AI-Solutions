@@ -31,6 +31,8 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
         { type: "bot", text: "", loading: true },
       ]);
 
+      setInput("");
+      
       const res = await fetch("http://localhost:8000/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -84,7 +86,7 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
       );
     } finally {
       setLoadings(false);
-      setInput(""); // Clear the input field after submission
+      // setInput(""); // Clear the input field after submission
     }
   };
 
