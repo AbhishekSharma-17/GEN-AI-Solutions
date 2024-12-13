@@ -1,26 +1,67 @@
-import React from "react";
+import React, { useContext } from "react";
 import assets from "../../assets/assets";
+import { Context } from "../../context/Context";
 
-const BottomSection = ({ input, setInput }) => (
-  <div className="main-bottom">
-    <form className="search-box">
-      <input
-        type="text"
-        placeholder="Ask GenAI Protos anything..."
-        onChange={(event) => setInput(event.target.value)}
-        value={input}
-      />
-      <div>
-        <img src={assets.gallery_icon} alt="" />
-        <img src={assets.mic_icon} alt="" />
-        {input ? <img src={assets.send_icon} alt="" /> : null}
-      </div>
-    </form>
-    <p className="bottom-info">
-      GenAI Protos may display inaccurate information, such as the number of
-      bytes and also including about the people.
-    </p>
-  </div>
-);
+const BottomSection = () => {
+  const { response, setResponse, setShowResult, setPreviousPrompt, input, setInput, setRecentPrompt, setLoadings } = useContext(Context);
+
+  const handleSend = async (event) => {
+    event.preventDefault();
+    if (!input) return;
+
+    try {
+      setShowResult(true);
+      setLoadings(true);
+      setRecentPrompt(input);
+
+      const res = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question: input }), // Send input as JSON payload
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch response from the server.");
+      }
+
+      const data = await res.text(); 
+      setResponse(data); 
+      setPreviousPrompt((prev) => [...prev, input]);
+    } catch (error) {
+      console.error("Error:", error);
+      setResponse("An error occurred. Please try again.");
+    } finally {
+      setLoadings(false);
+      setInput(""); // Clear the input field after submission
+    }
+  };
+
+  return (
+    <div className="main-bottom">
+      <form className="search-box" onSubmit={handleSend}>
+        <input
+          type="text"
+          placeholder="Ask GenAI Protos anything..."
+          onChange={(event) => setInput(event.target.value)}
+          value={input}
+        />
+        <div>
+          <img src={assets.mic_icon} alt="Mic" />
+          {input ? (
+            <button type="submit" style={{ border: "none", background: "none" }}>
+              <img src={assets.send_icon} alt="Send" />
+            </button>
+          ) : null}
+        </div>
+      </form>
+      {/* Display the response safely */}
+      {/* {response && <p className="server-response">{response}</p>} */}
+      <p className="bottom-info">
+        GenAI Protos may display inaccurate information, such as the number of
+        bytes and also including about the people.
+      </p>
+    </div>
+  );
+};
 
 export default BottomSection;
