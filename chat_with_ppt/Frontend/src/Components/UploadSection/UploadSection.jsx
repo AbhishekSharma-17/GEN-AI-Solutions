@@ -2,6 +2,7 @@ import React from "react";
 import { FaFilePowerpoint } from "react-icons/fa";
 import Loader from "../Loader/Loader";
 import { MdOutlineFileUpload } from "react-icons/md";
+import './UploadSection.css'
 
 const UploadSection = ({
   file,
