@@ -13,16 +13,11 @@ const Main = () => {
     input,
     setInput,
     setFileResponse,
-    response,
-    setResponse,
-    recentPrompt,
     showResult,
-    loadings,
-    setLoadings,
-    fileResponse,
     setShowResult,
     setRecentPrompt,
     setPreviousPrompt,
+    setLoadings,
   } = useContext(Context);
 
   const [file, setFile] = useState(null);
@@ -31,8 +26,8 @@ const Main = () => {
   const [embedding, setEmbedding] = useState(false);
   const [filePath, setFilePath] = useState("");
   const [isEmbedComplete, setIsEmbedComplete] = useState(false);
-  const [queries, setQueries] = useState([]); // State to store all queries and responses
-  const [chatHistory, setChatHistory] = useState([]); // State to store chat history
+  const [queries, setQueries] = useState([]);
+  const [chatHistory, setChatHistory] = useState([]);
   const fileInputRef = useRef();
 
   // Function to handle query card clicks
@@ -43,40 +38,53 @@ const Main = () => {
       setRecentPrompt(query);
 
       // Add user query to chat history
-      const loaderIndex = chatHistory.length; // Track loader index
+      const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [
         ...prev,
         { type: "user", text: query },
-        { type: "bot", text: null, loading: true },
+        { type: "bot", text: "", loading: true },
       ]);
 
       const res = await fetch("http://localhost:8000/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question: query }), // Send query as JSON payload
+        body: JSON.stringify({
+          question: query,
+          provider: "openai",
+          model: "gpt-4o-mini",
+        }),
       });
 
       if (!res.ok) {
         throw new Error("Failed to fetch response from the server.");
       }
 
-      const data = await res.text();
-      setResponse(data);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let accumulatedResponse = "";
 
-      // Replace loader with the actual response
-      setChatHistory((prev) =>
-        prev.map((chat, index) =>
-          index === loaderIndex + 1
-            ? { ...chat, text: data, loading: false }
-            : chat
-        )
-      );
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        accumulatedResponse += chunk;
+
+        // Update chat history with the accumulated response
+        setChatHistory((prev) =>
+          prev.map((chat, index) =>
+            index === loaderIndex + 1
+              ? { ...chat, text: accumulatedResponse, loading: false }
+              : chat
+          )
+        );
+      }
+
       setPreviousPrompt((prev) => [...prev, query]);
     } catch (error) {
       console.error("Error:", error);
 
       const errorMessage = "An error occurred. Please try again.";
-      setResponse(errorMessage);
 
       // Replace loader with error message
       setChatHistory((prev) =>
@@ -120,7 +128,7 @@ const Main = () => {
               fileInputRef={fileInputRef}
               setFileResponse={setFileResponse}
               setIsEmbedComplete={setIsEmbedComplete}
-              setQueries={setQueries} // Pass setQueries to handle query updates
+              setQueries={setQueries}
             />
           </>
         ) : (
