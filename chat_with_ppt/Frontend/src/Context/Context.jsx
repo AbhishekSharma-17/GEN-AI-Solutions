@@ -12,7 +12,7 @@ const ContextProvider = (props) => {
 
   const [fileUploaded, setFileUploaded] = useState(false);
   const [fileResponse, setFileResponse] = useState(false);
-  const [response, setResponse] = useState(""); // user query response
+  const [response, setResponse] = useState(''); // user query response
   const [queries, setQueries] = useState([{}]);
 
   const contextValue = {
