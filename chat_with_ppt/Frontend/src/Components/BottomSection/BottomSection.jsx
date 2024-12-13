@@ -2,8 +2,17 @@ import React, { useContext } from "react";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
 
-const BottomSection = () => {
-  const { response, setResponse, setShowResult, setPreviousPrompt, input, setInput, setRecentPrompt, setLoadings } = useContext(Context);
+const BottomSection = ({ chatHistory, setChatHistory }) => {
+  const {
+    response,
+    setResponse,
+    setShowResult,
+    setPreviousPrompt,
+    input,
+    setInput,
+    setRecentPrompt,
+    setLoadings,
+  } = useContext(Context);
 
   const handleSend = async (event) => {
     event.preventDefault();
@@ -13,6 +22,14 @@ const BottomSection = () => {
       setShowResult(true);
       setLoadings(true);
       setRecentPrompt(input);
+
+      // Add user query to chat history
+      const loaderIndex = chatHistory.length; // Track loader index
+      setChatHistory((prev) => [
+        ...prev,
+        { type: "user", text: input },
+        { type: "bot", text: null, loading: true },
+      ]);
 
       const res = await fetch("http://localhost:8000/chat", {
         method: "POST",
@@ -24,12 +41,32 @@ const BottomSection = () => {
         throw new Error("Failed to fetch response from the server.");
       }
 
-      const data = await res.text(); 
-      setResponse(data); 
+      const data = await res.text();
+      setResponse(data);
+
+      // Replace loader with the actual response
+      setChatHistory((prev) =>
+        prev.map((chat, index) =>
+          index === loaderIndex + 1
+            ? { ...chat, text: data, loading: false }
+            : chat
+        )
+      );
       setPreviousPrompt((prev) => [...prev, input]);
     } catch (error) {
       console.error("Error:", error);
-      setResponse("An error occurred. Please try again.");
+
+      const errorMessage = "An error occurred. Please try again.";
+      setResponse(errorMessage);
+
+      // Replace loader with error message
+      setChatHistory((prev) =>
+        prev.map((chat, index) =>
+          index === loaderIndex + 1
+            ? { ...chat, text: errorMessage, loading: false }
+            : chat
+        )
+      );
     } finally {
       setLoadings(false);
       setInput(""); // Clear the input field after submission
@@ -54,8 +91,6 @@ const BottomSection = () => {
           ) : null}
         </div>
       </form>
-      {/* Display the response safely */}
-      {/* {response && <p className="server-response">{response}</p>} */}
       <p className="bottom-info">
         GenAI Protos may display inaccurate information, such as the number of
         bytes and also including about the people.

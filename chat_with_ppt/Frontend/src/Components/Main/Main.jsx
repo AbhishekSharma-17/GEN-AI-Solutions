@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useRef } from "react";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
 import UploadSection from "../UploadSection/UploadSection";
@@ -6,9 +6,7 @@ import Greeting from "../Greeting/Greeting";
 import QueryCard from "../QueryCard/QueryCard";
 import BottomSection from "../BottomSection/BottomSection";
 import { FaUserCircle } from "react-icons/fa";
-import Loader from "../Loader/Loader";
 import ResponseLoader from "../Response Loader/ResponseLoader";
-import MultiModel from "../MultiModel/MultiModel";
 
 const Main = () => {
   const {
@@ -21,8 +19,6 @@ const Main = () => {
     showResult,
     loadings,
     setLoadings,
-    resultData,
-    setResultData,
     fileResponse,
   } = useContext(Context);
 
@@ -33,40 +29,20 @@ const Main = () => {
   const [filePath, setFilePath] = useState("");
   const [isEmbedComplete, setIsEmbedComplete] = useState(false);
   const [queries, setQueries] = useState([]); // State to store all queries and responses
-  const [displayedResponse, setDisplayedResponse] = useState(""); // State to hold the displayed response
+  const [chatHistory, setChatHistory] = useState([]); // State to store chat history
   const fileInputRef = useRef();
-
-  // Function to type out the response character by character
-  const typeResponse = (fullResponse) => {
-    setDisplayedResponse(""); // Reset displayed response
-    let index = 0;
-
-    const interval = setInterval(() => {
-      if (index < fullResponse.length) {
-        setDisplayedResponse((prev) => prev + fullResponse[index]);
-        index++;
-      } else {
-        clearInterval(interval); // Clear the interval when done
-      }
-    }, 50); // Adjust the delay (in milliseconds) as needed
-  };
-
-  // Effect to type out the response when it changes
-  useEffect(() => {
-    if (response) {
-      typeResponse(response);
-    }
-  }, [response]);
 
   return (
     <div className="main">
+      {/* Navigation Bar */}
       <div className="nav">
         <p className="main-nav-para-text">
           <a href="https://www.genaiprotos.com/">GenAI Protos</a>
         </p>
         <img src={assets.icon} alt="" />
       </div>
-      {/* <MultiModel/> */}
+
+      {/* Main Container */}
       <div className="main-container">
         {!isEmbedComplete ? (
           <>
@@ -94,22 +70,28 @@ const Main = () => {
               <QueryCard queries={queries} />
             ) : (
               <div className="result">
-                <div className="result-title">
-                  <FaUserCircle style={{ fontSize: "30px" }} />
-                  <p>{recentPrompt}</p>
-                </div>
-                <div className="result-data">
-                  <img src={assets.icon} alt="" />
-                  {loadings ? (
-                  <ResponseLoader/>
-                  ) : (
-                    <p dangerouslySetInnerHTML={{ __html: displayedResponse }}></p> // Display the typed response
-                  )}
-                </div>
+                {chatHistory.map((chat, index) => (
+                  <div key={index} className={`chat-message ${chat.type} chat`}>
+                    {chat.type === "user" ? (
+                      <div className="result-title">
+                        <FaUserCircle style={{ fontSize: "30px" }} className="result-title-user-icon"/>
+                        <p>{chat.text}</p>
+                      </div>
+                    ) : (
+                      <div className="result-data">
+                        <img src={assets.icon} alt="" />
+                        {chat.loading ? (
+                          <ResponseLoader />
+                        ) : (
+                          <p dangerouslySetInnerHTML={{ __html: chat.text }} />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
               </div>
             )}
-
-            <BottomSection />
+            <BottomSection chatHistory={chatHistory} setChatHistory={setChatHistory} />
           </>
         )}
       </div>
