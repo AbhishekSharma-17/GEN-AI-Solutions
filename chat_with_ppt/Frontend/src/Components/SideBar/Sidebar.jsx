@@ -32,7 +32,7 @@ const Sidebar = () => {
           <div className="recent">
             {previousPrompt.map((item, index) => {
               return (
-                <div className="recent-entry">
+                <div className="recent-entry" key={index}>
                   <img src={assets.message_icon} alt="" />
                   <p className="">{item.slice(0, 22)}...</p>
                 </div>
