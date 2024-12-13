@@ -72,7 +72,7 @@ async def upload_file(file: UploadFile = File(...)):
     Endpoint for uploading a PowerPoint file.
     Returns the file path of the uploaded file.
     """
-    if not file.filename.endswith('.pptx','.ppt'):
+    if not file.filename.endswith('.pptx'):
         raise HTTPException(status_code=400, detail="Only .pptx files are allowed")
     
     # Save the uploaded file
