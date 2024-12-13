@@ -42,6 +42,14 @@
   flex-direction: column;
   margin-top: 20px;
   animation: fadeIn 2s;
+  max-height: 300px; /* Set the maximum height for the scrollable container */
+  overflow-y: auto; /* Enable vertical scrolling if content exceeds max height */
+  scrollbar-width: none; /* For Firefox */
+}
+
+/* Hide scrollbar for WebKit browsers */
+.sidebar .recent::-webkit-scrollbar {
+  display: none;
 }
 
 .sidebar .recenet-title {
@@ -93,6 +101,8 @@
     display: none;
   }
 }
+
+
 
 /* main.jsx styling starts here */
 .main {
