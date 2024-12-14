@@ -5,12 +5,11 @@
 /__pycache__/
 /vectorstore/
 *.pyc
-<<<<<<< HEAD
 *.pkl
 *.faiss
-=======
 test.py
->>>>>>> 27745a051e11ab01a1c7e3d076f5761e11555651
+
+
 # Frontend Records 
 # Logs
 logs
