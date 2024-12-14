@@ -1,0 +1,307 @@
+[33mcommit e863758edde61ec3e19307c910bb3b3c4c9cb146[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mViplove[m[33m)[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Sun Dec 15 02:08:31 2024 +0530
+
+    Provider Functionality Half added.
+
+[33mcommit c4afb9982d4ab9933d1dc89d9a8c1374e931f8a3[m[33m ([m[1;31morigin/Viplove[m[33m)[m
+Merge: ab93870 33304ad
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Sun Dec 15 01:27:49 2024 +0530
+
+    Merge branch 'abhishek' into Viplove
+
+[33mcommit ab93870a042c24fd346eab5051836c27935e64b2[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Sun Dec 15 01:25:47 2024 +0530
+
+    Home Page desing Completed.
+
+[33mcommit 33304ad21032ba22a94aeb9f1700a0b0c4e2d9db[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Sun Dec 15 01:10:56 2024 +0530
+
+    vallidation for openai and gemini
+
+[33mcommit 3e87ff72741e38bb05a79d6f7a60382a37bedb30[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Sun Dec 15 00:47:26 2024 +0530
+
+    updated the initialize endpoint with gemini integration
+
+[33mcommit b332963325af0935d275bba5f290720d8a40f126[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Sun Dec 15 00:01:03 2024 +0530
+
+    fb
+
+[33mcommit 699be4f8f001b110c85fc040fef7ea688b2b194e[m
+Merge: cd3154d 27745a0
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Sun Dec 15 00:00:27 2024 +0530
+
+    Merge branch 'keys_frontend' of https://github.com/AbhishekSharma-17/GEN-AI-Solutions into abhishek
+
+[33mcommit cd3154d8e2ba05ded1437477ea440b5252b8a8cb[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Sat Dec 14 23:57:47 2024 +0530
+
+    prompt  modified
+
+[33mcommit b605eae70c68378f66fe437065e8545a3f243acc[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Sat Dec 14 20:27:16 2024 +0530
+
+    Unnecesary state' removed.
+
+[33mcommit e801fef907329d8570ff732a2c19c24e5ada67dc[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Sat Dec 14 00:34:01 2024 +0530
+
+    Sidebar.jsx key problem resolve.
+
+[33mcommit 6cdb6ebba910d1441ae18c8ddf3b035b9836f9f2[m
+Merge: 0e92162 2dc70d9
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 23:52:58 2024 +0530
+
+    Merge branch 'Viplove' of https://github.com/AbhishekSharma-17/GEN-AI-Solutions into abhishek
+
+[33mcommit 0e921627bba631580177bd8ed08d90b292abb9cb[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 23:52:11 2024 +0530
+
+    dv
+
+[33mcommit 2dc70d96d887db9f727486e80c9a5a08754baf77[m
+Merge: c7743ee 378999c
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Fri Dec 13 23:47:19 2024 +0530
+
+    Merge branch 'abhishek' of https://github.com/AbhishekSharma-17/GEN-AI-Solutions into Viplove
+
+[33mcommit 378999cb2d41f3ee9564c377b5d788ce205d8085[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 23:45:56 2024 +0530
+
+    fix
+
+[33mcommit c7743eec1fe5501cd75c8cf65778f1f45aa35069[m
+Merge: 5bde497 1990aa1
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Fri Dec 13 23:39:20 2024 +0530
+
+    Checking merge
+
+[33mcommit 1990aa1f72ba7e5af00dd93a660c37409bbbfd29[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 22:44:43 2024 +0530
+
+    support .ppt
+
+[33mcommit 5bde49705564d6a6bb8c11b3115fd6028f092dda[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Fri Dec 13 21:54:59 2024 +0530
+
+    Sidebar recent entry section scrollbar functionality added.
+
+[33mcommit 0f01b5270926e8843049cdcdcad6e8a29620a0e8[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Fri Dec 13 21:48:17 2024 +0530
+
+    Individual Css Made for each components
+
+[33mcommit 613b5087f0bad071cdda42ad76cc8630977b29a4[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 20:20:40 2024 +0530
+
+    jb
+
+[33mcommit e6f1a91036b3e66df06cf4de06c66c96cb6b9563[m
+Merge: 3435cc7 560dfde
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 20:07:40 2024 +0530
+
+    Merge branch 'Viplove' of https://github.com/AbhishekSharma-17/GEN-AI-Solutions into abhishek
+
+[33mcommit 3435cc7bf902479d8b5fa381eabb3d6ac1de7dfc[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 20:07:04 2024 +0530
+
+    streaming fixed
+
+[33mcommit 560dfde593b3966b25f6f4954ff8adf5fc52491c[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Fri Dec 13 20:05:08 2024 +0530
+
+    OnClick Query Card Functionality.
+
+[33mcommit 4ad4cf1490022506a75ac6814d15ee2002223a73[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 19:39:54 2024 +0530
+
+    h
+
+[33mcommit fb4ac403eaef43ed2fae2e2896ef3195ff19a72d[m
+Merge: 147f42e ba4bbcc
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 19:23:04 2024 +0530
+
+    Merge branch 'Viplove' of https://github.com/AbhishekSharma-17/GEN-AI-Solutions into abhishek
+
+[33mcommit 147f42e5ae2a6183d258d4b938c1e02ad92323e1[m
+Merge: bd0c26c fb03226
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 19:18:05 2024 +0530
+
+    Merge branch 'Viplove' of https://github.com/AbhishekSharma-17/GEN-AI-Solutions into abhishek
+
+[33mcommit ba4bbcc6a63d4b248026f4087a93f00def6165e3[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Fri Dec 13 19:17:05 2024 +0530
+
+    Sample File Added
+
+[33mcommit 68ed4f44ecd9fa99701cd9b2f4fddc8240d76633[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Fri Dec 13 19:16:42 2024 +0530
+
+    Chat Functionality Completed
+
+[33mcommit fb03226a577b8f5556e1e07edcbb4d1c3313ee61[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Fri Dec 13 03:13:34 2024 +0530
+
+    Functionality Updated..
+
+[33mcommit 27745a051e11ab01a1c7e3d076f5761e11555651[m[33m ([m[1;31morigin/keys_frontend[m[33m)[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 02:13:49 2024 +0530
+
+    test
+
+[33mcommit 8e49c4b4435950f0b8796bcb7dc2d4e774fa6c00[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 01:58:48 2024 +0530
+
+    df
+
+[33mcommit 19e15e6094481d01bf40f09856a03194bd1d7940[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 00:53:37 2024 +0530
+
+    sd
+
+[33mcommit bd0c26cc9d4bd705ad1eeb7e86ae13fb8ff92199[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Fri Dec 13 00:22:29 2024 +0530
+
+    dv
+
+[33mcommit 434a8966687532d44583604fd2e9a7f85f05047d[m
+Merge: c41077f 2660caf
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Thu Dec 12 18:12:31 2024 +0530
+
+    Merge branch 'abhishek'  into Viplove
+
+[33mcommit c41077fc3487b2834444976ea3b1e766465fefd1[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Thu Dec 12 18:10:53 2024 +0530
+
+    Sidebar and Upload functionality Updated
+
+[33mcommit 2660cafedaf63e9bb851af0ffb837bd5f83a25a6[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Thu Dec 12 17:41:08 2024 +0530
+
+    sac
+
+[33mcommit ec378b65ecd290bf2b7fb98b0346f1e4bf0a6c86[m
+Merge: ba449b1 b393818
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Thu Dec 12 17:38:28 2024 +0530
+
+    Merge branch 'Viplove' of https://github.com/AbhishekSharma-17/GEN-AI-Solutions into abhishek
+
+[33mcommit b393818c03820415d0c773068150696844c8ec4b[m
+Merge: 0d516c6 3e122a3
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Thu Dec 12 17:26:27 2024 +0530
+
+    Divided Main.jsx in Components
+
+[33mcommit ba449b1a6972bd1e12d4862df9b087fcf8a5aff0[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Thu Dec 12 17:23:49 2024 +0530
+
+    groq
+
+[33mcommit 0d516c612501373db0d883fe0ed54dec054965d0[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Thu Dec 12 15:27:01 2024 +0530
+
+    Embded and Uploading Functionality Done
+
+[33mcommit 3e122a3f63c0799e8dca6192893ae7016561a4e9[m
+Author: ONLY1gb <gautam.bhawsar8269@gmail.com>
+Date:   Thu Dec 12 14:17:08 2024 +0530
+
+    Loader
+
+[33mcommit a0092369a5101b89c7add5e7b5399b9483a55845[m
+Author: ONLY1gb <gautam.bhawsar8269@gmail.com>
+Date:   Thu Dec 12 03:24:51 2024 +0530
+
+    setup and dependency
+
+[33mcommit b16b29abd87f7da94717a4345c5f2402cf7967f1[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Thu Dec 12 03:23:59 2024 +0530
+
+    Model Updated
+
+[33mcommit f246fea389f6e684098c02fe26e50869adea543e[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Thu Dec 12 03:01:57 2024 +0530
+
+    caca
+
+[33mcommit 21bcfea6117dfc1c12ea5811eeb602a17c3a16ff[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Thu Dec 12 02:44:48 2024 +0530
+
+    sc
+
+[33mcommit 60b1a13f10edbec7f2e218b0837d0dc506219924[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Thu Dec 12 02:43:09 2024 +0530
+
+    ....
+
+[33mcommit 2159863329a947ce423dbeda9ac48e76118c232a[m
+Author: Viplove Parsai <viploveparsai1@gmail.com>
+Date:   Thu Dec 12 01:39:44 2024 +0530
+
+    Basic UI Created
+
+[33mcommit a374f6d37b2732004be9911cbb6ce9b68eadd2ab[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m, [m[1;32mmain[m[33m)[m
+Merge: f75c0c7 53492a9
+Author: Abhishek Sharma <140809134+AbhishekSharma-17@users.noreply.github.com>
+Date:   Thu Dec 12 01:14:38 2024 +0530
+
+    Merge pull request #1 from AbhishekSharma-17/abhishek
+    
+    Added req , gitignore and the fasapi backend code
+
+[33mcommit 53492a927fe23edf86427e417afade3231f4cde3[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Thu Dec 12 01:13:09 2024 +0530
+
+    Added req , gitignore and the fasapi backend code
+
+[33mcommit f75c0c7d1f256863b155a0bab2a9b7864fdec9d9[m
+Author: Abhishek Sharma <abhishek.sharma@kroolo.com>
+Date:   Thu Dec 12 00:55:51 2024 +0530
+
+    first commit

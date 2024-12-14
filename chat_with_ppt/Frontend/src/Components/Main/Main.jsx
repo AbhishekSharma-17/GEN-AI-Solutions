@@ -11,8 +11,6 @@ import './Main.css'
 
 const Main = () => {
   const {
-    input,
-    setInput,
     setFileResponse,
     showResult,
     setShowResult,
