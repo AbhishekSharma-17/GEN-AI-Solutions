@@ -17,6 +17,7 @@ const Main = () => {
     setRecentPrompt,
     setPreviousPrompt,
     setLoadings,
+    userId,
   } = useContext(Context);
 
   const [file, setFile] = useState(null);
@@ -44,7 +45,7 @@ const Main = () => {
         { type: "bot", text: "", loading: true },
       ]);
 
-      const res = await fetch("http://localhost:8000/chat", {
+      const res = await fetch(`http://localhost:8000/chat?user_id=${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({

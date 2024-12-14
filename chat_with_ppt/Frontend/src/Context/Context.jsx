@@ -1,4 +1,5 @@
-import { createContext, useState } from "react";
+import { createContext, useState, useEffect } from "react";
+import { v4 as uuidv4 } from 'uuid';
 
 export const Context = createContext();
 
@@ -15,7 +16,6 @@ const ContextProvider = (props) => {
   const [queries, setQueries] = useState([{}]);
 
   // taking APIprovider, ProviderKey, and unstructured key
-
   const [apiProvider, setAPIProvider] = useState();
   const [providerKey, setProviderKey] = useState();
   const [unstructuredKey, setUnstructuredKey] = useState();
@@ -23,10 +23,23 @@ const ContextProvider = (props) => {
   // JAB RESponse aayega to konse provider ka multi model chalana hai 
   const [reponseProvider, setResponseProvider] = useState(); // isko multi model ko choose krne k liye use krna hai
 
-
   // state for initialisation status
   const [initialisationStatus, setInitialisationStatus] = useState(false); // if this is true then it will display loading animation
   
+  // New state for unique user ID
+  const [userId, setUserId] = useState(null);
+
+  // Generate unique user ID on component mount
+  useEffect(() => {
+    const storedUserId = localStorage.getItem('userId');
+    if (storedUserId) {
+      setUserId(storedUserId);
+    } else {
+      const newUserId = uuidv4();
+      setUserId(newUserId);
+      localStorage.setItem('userId', newUserId);
+    }
+  }, []);
 
   const contextValue = {
     initialisationStatus, setInitialisationStatus,
@@ -57,6 +70,7 @@ const ContextProvider = (props) => {
     setQueries,
     fileUploaded,
     setFileUploaded,
+    userId, // Add userId to context
   };
 
   return (

@@ -6,6 +6,8 @@ import Main from "./Components/Main/Main";
 import Sidebar from "./Components/SideBar/Sidebar";
 import HomePage from "./Components/HomePage/HomePage";
 import { Context } from "./context/Context";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
   const { initialisationStatus } = useContext(Context);
@@ -18,6 +20,7 @@ const App = () => {
           <Main />
         </>
       )}
+      <ToastContainer />
     </>
   );
 };

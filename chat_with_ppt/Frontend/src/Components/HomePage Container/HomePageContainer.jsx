@@ -1,10 +1,13 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useRef, useState } from "react";
 import "./HomePageContainer.css";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
+import { toast } from 'react-toastify';
+import FancyLoader from "../Loader/FancyLoader";
 
 const HomePageContainer = () => {
   const { setAPIProvider, setProviderKey, setUnstructuredKey, setResponseProvider, setInitialisationStatus } = useContext(Context);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Create refs for the input fields
   const providerRef = useRef(null);
@@ -14,6 +17,8 @@ const HomePageContainer = () => {
   // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
+    setIsLoading(true); // Start loading
+
     // Get values from refs
     const Form_provider = providerRef.current.value;
     const Form_providerKey = providerKeyRef.current.value;
@@ -55,13 +60,19 @@ const HomePageContainer = () => {
       setResponseProvider(responseData.provider);
       setInitialisationStatus(true);
 
+      // Show success toast
+      toast.success('Configuration saved successfully!');
+
       // Optionally, you can reset the form fields after submission
       providerRef.current.value = "";
       providerKeyRef.current.value = "";
       unstructuredKeyRef.current.value = "";
     } catch (error) {
       console.error("Error sending data:", error);
-      alert("There was an error sending your data. Please try again.");
+      // Show error toast
+      toast.error('Failed to save configuration. Please try again.');
+    } finally {
+      setIsLoading(false); // Stop loading
     }
   };
 
@@ -120,8 +131,15 @@ const HomePageContainer = () => {
               />
             </div>
             <div className="mb-4">
-              <button type="submit" className="btn btn-dark">
-                Save Configuration
+              <button type="submit" className="btn btn-dark" disabled={isLoading}>
+                {isLoading ? (
+                  <>
+                    <span className="me-2">Saving</span>
+                    <FancyLoader />
+                  </>
+                ) : (
+                  'Save Configuration'
+                )}
               </button>
             </div>
           </form>
@@ -135,7 +153,7 @@ const HomePageContainer = () => {
               <p className="serial">1</p>
               <div className="item-description">
                 <p className="item-title">Generate API Keys</p>
-                < p className="item-def">
+                <p className="item-def">
                   Visit your AI provider dashboard to generate the required API
                   keys.
                 </p>
