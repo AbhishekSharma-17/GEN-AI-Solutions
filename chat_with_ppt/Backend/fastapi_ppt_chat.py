@@ -195,11 +195,19 @@ Given the following presentation content, please provide a clear and concise res
 Context from the presentation:
 {context}
 
-answer only from provided context and do not fabricate information
-
 User's Question: {input}
 
-Response: """
+Instructions:
+1. If the user asks for a summary, provide a concise overview of the main points from the context.
+2. If the user asks for an elaboration or detailed explanation, provide a comprehensive answer with specific examples and details from the context.
+3. Always refer to the context when answering. Use phrases like "According to the presentation," or "The slides mention that" to ground your responses in the given information.
+4. If asked about specific slides or sections, focus your answer on that particular part of the presentation.
+5. If the user's question is not directly addressed in the context, state that the information is not available in the given presentation content.
+
+Remember to answer only from the provided context and do not fabricate information.
+
+Response:
+"""
             )
 
             document_chain = create_stuff_documents_chain(llm, prompt)
