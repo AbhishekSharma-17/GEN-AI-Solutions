@@ -12,26 +12,53 @@ const HomePageContainer = () => {
   const unstructuredKeyRef = useRef(null);
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Prevent the default form submission behavior
     // Get values from refs
     const Form_provider = providerRef.current.value;
     const Form_providerKey = providerKeyRef.current.value;
     const Form_unstructuredKey = unstructuredKeyRef.current.value;
 
-    console.log('Form Provider is : ', Form_provider)
-    console.log('Form Provider Key is : ', Form_providerKey)
-    console.log('Form Unstructured Key is : ', Form_unstructuredKey)
+    console.log('Form Provider is : ', Form_provider);
+    console.log('Form Provider Key is : ', Form_providerKey);
+    console.log('Form Unstructured Key is : ', Form_unstructuredKey);
 
     // Set values in context
     setAPIProvider(Form_provider);
     setProviderKey(Form_providerKey);
     setUnstructuredKey(Form_unstructuredKey);
 
-    // Optionally, you can reset the form fields after submission
-    providerRef.current.value = "";
-    providerKeyRef.current.value = "";
-    unstructuredKeyRef.current.value = "";
+    // Prepare data to send to the endpoint
+    const data = {
+      provider: Form_provider,
+      api_key: Form_providerKey,
+      unstructured_api_key: Form_unstructuredKey,
+    };
+
+    try {
+      const response = await fetch("http://localhost:8000/initialize", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to initialize configuration.");
+      }
+
+      const responseData = await response.json();
+      console.log("Response from server:", responseData);
+
+      // Optionally, you can reset the form fields after submission
+      providerRef.current.value = "";
+      providerKeyRef.current.value = "";
+      unstructuredKeyRef.current.value = "";
+    } catch (error) {
+      console.error("Error sending data:", error);
+      alert("There was an error sending your data. Please try again.");
+    }
   };
 
   return (
@@ -124,7 +151,7 @@ const HomePageContainer = () => {
               <div className="item-description">
                 <p className="item-title">Verify Connection</p>
                 <p className="item-def">
- Check the connection status and start using the integration.
+                  Check the connection status and start using the integration.
                 </p>
               </div>
             </div>
