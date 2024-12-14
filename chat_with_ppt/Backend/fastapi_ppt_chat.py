@@ -16,6 +16,8 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain.prompts import ChatPromptTemplate
 import uvicorn
+from openai import AuthenticationError
+from google.api_core import exceptions as google_exceptions
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -94,10 +96,24 @@ async def initialize_llm(data: Dict[str, str]):
     
     try:
         if provider == "openai":
+            # Check if the OpenAI API key is valid
+            try:
+                test_llm = ChatOpenAI(api_key=api_key, model="gpt-3.5-turbo")
+                test_llm.invoke("Test")
+            except AuthenticationError:
+                raise HTTPException(status_code=401, detail="Invalid OpenAI API key")
+            
             initialized_llm = ChatOpenAI(api_key=api_key, model="gpt-4o-mini", streaming=True)
             initialized_embeddings = OpenAIEmbeddings(api_key=api_key, model="text-embedding-3-small")
         elif provider == "gemini":
-            initialized_llm = ChatGoogleGenerativeAI(api_key=api_key, model="gemini-1.5-flash", streaming=True)
+            # Check if the Google API key is valid
+            try:
+                test_llm = ChatGoogleGenerativeAI(api_key=api_key, model="gemini-1.5-flash")
+                test_llm.invoke("Test")
+            except google_exceptions.PermissionDenied:
+                raise HTTPException(status_code=401, detail="Invalid Google API key")
+            
+            initialized_llm = ChatGoogleGenerativeAI(api_key=api_key, model="gemini-1.5-pro", streaming=True)
             initialized_embeddings = GoogleGenerativeAIEmbeddings(api_key=api_key, model="models/text-embedding-004")
         else:
             raise HTTPException(status_code=400, detail="Invalid provider. Choose either 'openai' or 'gemini'")
@@ -106,6 +122,8 @@ async def initialize_llm(data: Dict[str, str]):
             content={"message": f"LLM and embeddings initialized successfully with {provider.capitalize()}"},
             status_code=200
         )
+    except HTTPException as he:
+        raise he
     except Exception as e:
         logging.error(f"Error initializing LLM and embeddings: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Error initializing LLM and embeddings: {str(e)}")
