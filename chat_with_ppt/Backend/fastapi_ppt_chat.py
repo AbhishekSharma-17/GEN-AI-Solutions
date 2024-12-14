@@ -8,6 +8,7 @@ from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_community.document_loaders import UnstructuredAPIFileLoader
 from langchain_community.vectorstores import FAISS
 from langchain.text_splitter import RecursiveCharacterTextSplitter
@@ -31,10 +32,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global variables to store initialized LLM and embeddings
+# Global variables to store initialized LLM, embeddings, and provider
 initialized_llm = None
 initialized_embeddings = None
 unstructured_api_key = None
+provider = None
 
 async def generate_document_queries(
     document_content: str, num_queries: int = 4
@@ -76,11 +78,11 @@ async def root():
 @app.post("/initialize")
 async def initialize_llm(data: Dict[str, str]):
     """
-    Endpoint for initializing the LLM and embeddings with provided API keys.
+    Endpoint for initializing the LLM and embeddings with provided API keys and provider.
     """
-    global initialized_llm, initialized_embeddings, unstructured_api_key
+    global initialized_llm, initialized_embeddings, unstructured_api_key, provider
     
-    model = data.get("model", "gpt-4o-mini")
+    provider = data.get("provider", "openai").lower()
     api_key = data.get("api_key")
     unstructured_api_key = data.get("unstructured_api_key")
     
@@ -91,11 +93,17 @@ async def initialize_llm(data: Dict[str, str]):
         raise HTTPException(status_code=400, detail="Unstructured API key is required")
     
     try:
-        initialized_llm = ChatOpenAI(api_key=api_key, model=model, streaming=True)
-        initialized_embeddings = OpenAIEmbeddings(api_key=api_key, model="text-embedding-3-small")
+        if provider == "openai":
+            initialized_llm = ChatOpenAI(api_key=api_key, model="gpt-4o-mini", streaming=True)
+            initialized_embeddings = OpenAIEmbeddings(api_key=api_key, model="text-embedding-3-small")
+        elif provider == "gemini":
+            initialized_llm = ChatGoogleGenerativeAI(api_key=api_key, model="gemini-1.5-flash", streaming=True)
+            initialized_embeddings = GoogleGenerativeAIEmbeddings(api_key=api_key, model="models/text-embedding-004")
+        else:
+            raise HTTPException(status_code=400, detail="Invalid provider. Choose either 'openai' or 'gemini'")
         
         return JSONResponse(
-            content={"message": "LLM and embeddings initialized successfully with OpenAI"},
+            content={"message": f"LLM and embeddings initialized successfully with {provider.capitalize()}"},
             status_code=200
         )
     except Exception as e:
