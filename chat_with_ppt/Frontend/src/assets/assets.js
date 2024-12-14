@@ -15,9 +15,11 @@ import send_icon from './send_icon.png'
 import gemini_icon from './gemini_icon.png'
 import genAILogo from './logo.png'
 import icon from './icon.png'
+import ai_final from './AI-final.png'
 
 export const assets = {
     history_icon,
+    ai_final,
     genAILogo,
     icon,
     menu_icon,

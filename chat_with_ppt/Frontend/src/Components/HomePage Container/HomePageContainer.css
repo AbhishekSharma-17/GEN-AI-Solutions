@@ -1,0 +1,121 @@
+.homePage-container{
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    padding: 100px 50px;
+}
+
+.homepage-textual-content, .homepage-setup-content{
+    width: 50%;
+    padding: 20px;
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 700px;
+}
+.homepage-text-content{
+    /* border: 1px solid black; */
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+.homepage-text-content p{
+    margin: 0;
+    font-size: 2vw;
+    font-weight: 500;
+    font-family: Roboto;
+    width: 100%;
+    /* border: 1px solid red; */
+}
+.homepage-text-content span{
+    margin-top: 20px!important;
+    /* border: 1px solid red; */
+    font-family: Roboto;
+    font-size: 20px;
+    color: rgb(155, 154, 154);
+    font-weight: 500;
+}
+.homepage-form-content{
+    /* border: 1px solid green; */
+    padding: 10px;
+    margin-top: 20px;
+    width: 100%;
+}
+.homepage-form-content form{
+    background-color: white;
+    width: 100%;
+    padding: 50px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 7px rgb(228, 228, 228);
+    border-radius: 5px;
+}
+.homepage-form-content form button{
+    width: 100%;
+    font-weight: 500;
+}
+
+.homepage-setup-content .quick-setup-guide{
+    box-shadow: 0px 0px 7px rgb(228, 228, 228);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.homepage-setup-content .quick-setup-guide p{
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: Roboto;
+}
+.quick-setup-guide .homepage-guide-list{
+    /* border: 1px solid green; */
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.homepage-guide-list .item{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+}
+.homepage-guide-list .item .serial {
+    margin: 0;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px; /* Set a fixed width */
+    height: 40px; /* Set a fixed height to match the width */
+    background-color: rgb(230, 229, 229);
+    display: flex; /* Use flexbox to center the text */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    text-align: center; /* Center text */
+}
+.item-title{
+    font-size: 15px!important;
+}
+.item-def{
+    color: grey;
+    font-weight: 400 !important;
+}
+.homepage-setup-image{
+    box-shadow: 0px 0px 7px rgb(228, 228, 228);
+    padding: 20px;
+    border-radius: 5px;
+}
+.homepage-setup-image img{
+    width: 100%;
+    height: 300px;
+    border-radius: 5px;
+}

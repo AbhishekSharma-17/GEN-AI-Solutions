@@ -11,10 +11,23 @@ const ContextProvider = (props) => {
   const [resultData, setResultData] = useState(""); // used to display result on web page
   const [fileUploaded, setFileUploaded] = useState(false);
   const [fileResponse, setFileResponse] = useState(false);
-  const [response, setResponse] = useState(''); // user query response
+  const [response, setResponse] = useState(""); // user query response
   const [queries, setQueries] = useState([{}]);
 
+  // taking APIprovider, ProviderKey, and unstructured key
+
+  const [apiProvider, setAPIProvider] = useState();
+  const [providerKey, setProviderKey] = useState();
+  const [unstructuredKey, setUnstructuredKey] = useState();
+  
+
   const contextValue = {
+    apiProvider,
+    setAPIProvider,
+    providerKey,
+    setProviderKey,
+    unstructuredKey,
+    setUnstructuredKey,
     previousPrompt,
     setPreviousPrompt,
     setRecentPrompt,
