@@ -74,8 +74,8 @@ const UploadSection = ({
       setEmbedding(true);
       const response = await fetch(`http://localhost:8000/embed?user_id=${userId}`, {
         method: "POST",
-        body: JSON.stringify({ file_path: filePath }),
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file_path: filePath, user_id: userId }),
       });
 
       if (!response.ok) {
