@@ -217,7 +217,7 @@ async def embed_file(data: Dict[str, str]):
         raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
 @app.post("/chat")
-async def chat(data: Dict[str, Any]):
+async def chat(user_id: str ,data: Dict[str, Any]):
     """
     Endpoint for chatting with the AI about the embedded PowerPoint content.
     Uses a persistent FAISS vector store for retrieval specific to a user.
@@ -228,7 +228,7 @@ async def chat(data: Dict[str, Any]):
         raise HTTPException(status_code=400, detail="LLM and embeddings not initialized. Please call /initialize first.")
     
     question = data.get("question", "")
-    user_id = data.get("user_id")
+    # user_id = data.get("user_id")
     model = data.get("model")
     
     if not user_id:
