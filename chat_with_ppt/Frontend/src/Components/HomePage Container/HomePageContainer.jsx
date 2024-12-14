@@ -4,7 +4,7 @@ import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
 
 const HomePageContainer = () => {
-  const { setAPIProvider, setProviderKey, setUnstructuredKey } = useContext(Context);
+  const { setAPIProvider, setProviderKey, setUnstructuredKey, setResponseProvider, setInitialisationStatus } = useContext(Context);
 
   // Create refs for the input fields
   const providerRef = useRef(null);
@@ -50,6 +50,10 @@ const HomePageContainer = () => {
 
       const responseData = await response.json();
       console.log("Response from server:", responseData);
+
+      console.log(responseData.provider);
+      setResponseProvider(responseData.provider);
+      setInitialisationStatus(true);
 
       // Optionally, you can reset the form fields after submission
       providerRef.current.value = "";
@@ -131,7 +135,7 @@ const HomePageContainer = () => {
               <p className="serial">1</p>
               <div className="item-description">
                 <p className="item-title">Generate API Keys</p>
-                <p className="item-def">
+                < p className="item-def">
                   Visit your AI provider dashboard to generate the required API
                   keys.
                 </p>
