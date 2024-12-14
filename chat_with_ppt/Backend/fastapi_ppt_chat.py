@@ -39,6 +39,7 @@ initialized_llm = None
 initialized_embeddings = None
 unstructured_api_key = None
 provider = None
+current_model = None
 
 async def generate_document_queries(
     document_content: str, num_queries: int = 4
@@ -80,9 +81,9 @@ async def root():
 @app.post("/initialize")
 async def initialize_llm(data: Dict[str, str]):
     """
-    Endpoint for initializing the LLM and embeddings with provided API keys and provider.
+    Endpoint for initializing the LLM and embeddings with provided API keys, provider.
     """
-    global initialized_llm, initialized_embeddings, unstructured_api_key, provider
+    global initialized_llm, initialized_embeddings, unstructured_api_key, provider, current_model
     
     provider = data.get("provider", "openai").lower()
     api_key = data.get("api_key")
@@ -103,7 +104,8 @@ async def initialize_llm(data: Dict[str, str]):
             except AuthenticationError:
                 raise HTTPException(status_code=401, detail="Invalid OpenAI API key")
             
-            initialized_llm = ChatOpenAI(api_key=api_key, model="gpt-4o-mini", streaming=True)
+            current_model = "gpt-4o-mini"
+            initialized_llm = ChatOpenAI(api_key=api_key, model=current_model, streaming=True)
             initialized_embeddings = OpenAIEmbeddings(api_key=api_key, model="text-embedding-3-small")
         elif provider == "gemini":
             # Check if the Google API key is valid
@@ -113,13 +115,14 @@ async def initialize_llm(data: Dict[str, str]):
             except google_exceptions.PermissionDenied:
                 raise HTTPException(status_code=401, detail="Invalid Google API key")
             
-            initialized_llm = ChatGoogleGenerativeAI(api_key=api_key, model="gemini-1.5-pro", streaming=True)
+            current_model = "gemini-1.5-flash"
+            initialized_llm = ChatGoogleGenerativeAI(api_key=api_key, model=current_model, streaming=True)
             initialized_embeddings = GoogleGenerativeAIEmbeddings(api_key=api_key, model="models/text-embedding-004")
         else:
             raise HTTPException(status_code=400, detail="Invalid provider. Choose either 'openai' or 'gemini'")
         
         return JSONResponse(
-            content={"message": f"LLM and embeddings initialized successfully with {provider.capitalize()}"},
+            content={"message": f"LLM and embeddings initialized successfully with {provider.capitalize()} using model {current_model}", "provider":f"{provider}"},
             status_code=200
         )
     except HTTPException as he:
@@ -219,13 +222,14 @@ async def chat(data: Dict[str, Any]):
     Endpoint for chatting with the AI about the embedded PowerPoint content.
     Uses a persistent FAISS vector store for retrieval specific to a user.
     """
-    global initialized_llm, initialized_embeddings
+    global initialized_llm, initialized_embeddings, provider, current_model
     
     if not initialized_llm or not initialized_embeddings:
         raise HTTPException(status_code=400, detail="LLM and embeddings not initialized. Please call /initialize first.")
     
     question = data.get("question", "")
     user_id = data.get("user_id")
+    model = data.get("model")
     
     if not user_id:
         raise HTTPException(status_code=400, detail="User ID is required")
@@ -268,7 +272,26 @@ Response:
 """
             )
 
-            document_chain = create_stuff_documents_chain(initialized_llm, prompt)
+            # Use the model parameter if provided, otherwise use the initialized LLM
+            if model:
+                try:
+                    if provider == "openai":
+                        llm_to_use = ChatOpenAI(model=model, streaming=True)
+                    elif provider == "gemini":
+                        llm_to_use = ChatGoogleGenerativeAI(model=model, streaming=True)
+                    else:
+                        raise ValueError(f"Invalid provider: {provider}")
+                    logging.info(f"Using specified model: {model}")
+                except Exception as e:
+                    logging.error(f"Error initializing LLM with model {model}: {str(e)}")
+                    yield f"Error: Unable to use the specified model {model}. Using the default model instead."
+                    llm_to_use = initialized_llm
+                    logging.info(f"Using default model: {current_model}")
+            else:
+                llm_to_use = initialized_llm
+                logging.info(f"Using default model: {current_model}")
+
+            document_chain = create_stuff_documents_chain(llm_to_use, prompt)
             retrieval_chain = create_retrieval_chain(retriever, document_chain)
             logging.info(f"Retrieval chain created for user {user_id}")
 
