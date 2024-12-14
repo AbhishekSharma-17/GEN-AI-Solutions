@@ -5,7 +5,6 @@ import './BottomSection.css'
 
 const BottomSection = ({ chatHistory, setChatHistory }) => {
   const {
-    response,
     setResponse,
     setShowResult,
     setPreviousPrompt,

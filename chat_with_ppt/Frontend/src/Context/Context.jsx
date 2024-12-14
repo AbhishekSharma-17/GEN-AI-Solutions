@@ -9,7 +9,6 @@ const ContextProvider = (props) => {
   const [showResult, setShowResult] = useState(false); // to show results if it is true, then it will hide greet on the basis of it
   const [loadings, setLoadings] = useState(false); // if this is true then it will display loading animation
   const [resultData, setResultData] = useState(""); // used to display result on web page
-
   const [fileUploaded, setFileUploaded] = useState(false);
   const [fileResponse, setFileResponse] = useState(false);
   const [response, setResponse] = useState(''); // user query response
@@ -17,7 +16,7 @@ const ContextProvider = (props) => {
 
   const contextValue = {
     previousPrompt,
-    setPreviousPrompt, // Corrected here
+    setPreviousPrompt,
     setRecentPrompt,
     recentPrompt,
     input,
