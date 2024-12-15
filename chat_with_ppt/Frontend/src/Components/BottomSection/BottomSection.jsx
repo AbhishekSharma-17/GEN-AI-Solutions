@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
 import "./BottomSection.css";
@@ -30,13 +30,6 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
         { value: "gemini-2.0-flash-exp", label: "Gemini-2.0-Flash", img: assets.gemini_icon },
       ]
     : []; // Default to an empty array if no valid provider
-
-  // Set a default selected model when options change
-  useEffect(() => {
-    if (options.length > 0) {
-      setSelectedModel(options[0]); // Set the first option as the default selected model
-    }
-  }, [options]);
 
   const handleSend = async (event) => {
     event.preventDefault();

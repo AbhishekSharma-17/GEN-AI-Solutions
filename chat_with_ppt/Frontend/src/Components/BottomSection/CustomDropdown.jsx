@@ -4,6 +4,8 @@ import './CustomDropdown.css';
 const CustomDropdown = ({ options, selectedOption, setSelectedOption }) => {
   const [isOpen, setIsOpen] = useState(false);
 
+  
+
   const handleSelect = (option) => {
     setSelectedOption(option); // Update the selected option
     setIsOpen(false); // Close the dropdown after selection
