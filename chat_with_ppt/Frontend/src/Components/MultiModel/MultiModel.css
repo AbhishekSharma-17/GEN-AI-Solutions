@@ -20,7 +20,7 @@
 .drop-up-list {
     position: absolute;
     top: -150px; /* Position the list above the button */
-    left: 81%;
+    left: 12%;
     transform: translateX(-50%);
     background-color: white;
     border: 1px solid #ddd;

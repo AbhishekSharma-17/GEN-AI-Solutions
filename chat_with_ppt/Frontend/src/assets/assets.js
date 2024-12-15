@@ -19,6 +19,7 @@ import Anthropic_icon from './Anthropic.png'
 import Groq_icon from './groq.png'
 import meta_icon from './Meta.png'
 import GPT_icon from './GPT.png'
+import Rocket_icon from './Rocket.png'
 
 
 
@@ -38,7 +39,8 @@ export const assets = {
     Anthropic_icon,
     Groq_icon,
     meta_icon,
-    GPT_icon
+    GPT_icon,
+    Rocket_icon
     
 }
 

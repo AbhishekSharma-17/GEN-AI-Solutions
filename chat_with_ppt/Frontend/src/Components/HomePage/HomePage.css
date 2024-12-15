@@ -1,0 +1,163 @@
+/* General Reset and Styling */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #555;
+    overflow: hidden; /* Prevent scroll during animation */
+}
+
+/* Main Box Styling */
+.box {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    background-color: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Rocket Animation Container */
+.rocket {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: animate 0.2s ease infinite;
+}
+
+/* Rocket Image */
+.rocket img {
+    width: 150px;
+    max-width: 100%;
+}
+
+/* Rocket Movement Animation */
+@keyframes animate {
+    0%, 100% {
+        transform: translateY(-2px);
+    }
+    50% {
+        transform: translateY(2px);
+    }
+}
+
+/* Rocket Trail (Smoke) */
+.rocket::before {
+    position: absolute;
+    content: "";
+    bottom: -200px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(#fac001, transparent);
+    width: 10px;
+    height: 200px;
+    border-radius: 5px;
+    animation: rocket-smoke 1s infinite;
+}
+
+/* Smoke Animation */
+@keyframes rocket-smoke {
+    0% {
+        opacity: 0.6;
+        transform: translateY(0) scale(1);
+    }
+    50% {
+        opacity: 0.8;
+        transform: translateY(10px) scale(1.1);
+    }
+    100% {
+        opacity: 0.6;
+        transform: translateY(20px) scale(1);
+    }
+}
+
+/* Stars Effect */
+.star {
+    position: absolute;
+    background-color: white;
+    opacity: 0.6;
+    animation: star-flicker linear infinite;
+}
+
+@keyframes star-flicker {
+    0% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+    50% {
+        opacity: 0.9;
+        transform: scale(1.2);
+    }
+    100% {
+        opacity: 0.6;
+        transform: scale(1);
+    }
+}
+
+/* Form Container Styling */
+.form-container {
+    margin-top: 150px;
+    width: 300px; /* Adjusted for better responsiveness */
+    text-align: center;
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.form-group {
+    margin: 15px 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+/* Button Styling */
+.submit-button {
+    background: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s;
+}
+
+.submit-button:hover {
+    background: #0056b3;
+}
+
+.app-container {
+    margin-right: 130px;
+}
+
+/* Responsiveness */
+@media (max-width: 768px) {
+    .form-container {
+        width: 90%;
+    }
+
+    .rocket img {
+        width: 100px;
+    }
+}

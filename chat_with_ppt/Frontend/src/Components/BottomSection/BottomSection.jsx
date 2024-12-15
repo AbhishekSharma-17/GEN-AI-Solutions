@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
 import './BottomSection.css'
+import MultiModel from "../MultiModel/MultiModel";
 
 const BottomSection = ({ chatHistory, setChatHistory }) => {
   const {
@@ -94,6 +95,7 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
   return (
     <div className="main-bottom">
       <form className="search-box" onSubmit={handleSend}>
+        
         <input
           type="text"
           placeholder="Ask GenAI Protos anything..."
@@ -101,6 +103,7 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
           value={input}
         />
         <div>
+        <MultiModel></MultiModel>
           <img src={assets.mic_icon} alt="Mic" />
           {input ? (
             <button type="submit" style={{ border: "none", background: "none" }}>
