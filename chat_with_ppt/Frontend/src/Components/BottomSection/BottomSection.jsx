@@ -16,8 +16,6 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
     responseProvider, // Accessing responseProvider from context
   } = useContext(Context);
 
-  console.log("Response provider in Bottom.jsx" ,responseProvider)
-
   const [selectedModel, setSelectedModel] = useState(null); // State for selected model
 
   // Define options based on responseProvider

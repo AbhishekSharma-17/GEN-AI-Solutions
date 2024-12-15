@@ -21,7 +21,7 @@ const ContextProvider = (props) => {
   const [unstructuredKey, setUnstructuredKey] = useState();
 
   // JAB RESponse aayega to konse provider ka multi model chalana hai 
-  const [reponseProvider, setResponseProvider] = useState(); // isko multi model ko choose krne k liye use krna hai
+  const [responseProvider, setResponseProvider] = useState(); // isko multi model ko choose krne k liye use krna hai
 
   // state for initialisation status
   const [initialisationStatus, setInitialisationStatus] = useState(false); // if this is true then it will display loading animation
@@ -43,7 +43,7 @@ const ContextProvider = (props) => {
 
   const contextValue = {
     initialisationStatus, setInitialisationStatus,
-    reponseProvider, setResponseProvider,
+    responseProvider, setResponseProvider,
     apiProvider,
     setAPIProvider,
     providerKey,
