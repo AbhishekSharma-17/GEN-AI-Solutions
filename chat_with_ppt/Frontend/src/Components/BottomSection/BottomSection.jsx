@@ -14,6 +14,7 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
     setRecentPrompt,
     setLoadings,
     responseProvider,
+    userId,
   } = useContext(Context);
 
   const [selectedModel, setSelectedModel] = useState(null);
@@ -52,13 +53,13 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
 
       setInput("");
 
-      const res = await fetch("http://localhost:8000/chat", {
+      const res = await fetch(`http://localhost:8000/chat?user_id=${encodeURIComponent(userId)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: input,
           provider: responseProvider,
-          model: selectedModel ? selectedModel.value : (responseProvider === 'openai' ? '4o-mini' : '1.5 flash'),
+          model: selectedModel ? selectedModel.value : (responseProvider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash'),
         }),
       });
 
