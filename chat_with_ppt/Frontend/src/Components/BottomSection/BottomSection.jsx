@@ -50,12 +50,13 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
 
       setInput("");
 
+
       const res = await fetch("http://localhost:8000/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: input,
-          provider: responseProvider, // Use the responseProvider from context
+          // provider: responseProvider, // Use the responseProvider from context
           model: selectedModel ? selectedModel.value : "gpt-4o-mini", // Use selected model or default
         }),
       });
