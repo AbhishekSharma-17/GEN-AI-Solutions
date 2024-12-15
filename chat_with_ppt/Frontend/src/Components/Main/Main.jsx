@@ -18,6 +18,7 @@ const Main = () => {
     setPreviousPrompt,
     setLoadings,
     userId,
+    responseProvider, // Added responseProvider from Context
   } = useContext(Context);
 
   const [file, setFile] = useState(null);
@@ -28,6 +29,7 @@ const Main = () => {
   const [isEmbedComplete, setIsEmbedComplete] = useState(false);
   const [queries, setQueries] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
+  const [selectedModel, setSelectedModel] = useState(null); // Added selectedModel state
   const fileInputRef = useRef();
 
   // Function to handle query card clicks
@@ -45,13 +47,16 @@ const Main = () => {
         { type: "bot", text: "", loading: true },
       ]);
 
+      // Use dynamic provider and model, with fallbacks
+      const modelToUse = selectedModel ? selectedModel.value : (responseProvider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash');
+
       const res = await fetch(`http://localhost:8000/chat?user_id=${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: query,
-          provider: "openai",
-          model: "gpt-4o-mini",
+          provider: responseProvider,
+          model: modelToUse,
         }),
       });
 
@@ -161,6 +166,8 @@ const Main = () => {
             <BottomSection
               chatHistory={chatHistory}
               setChatHistory={setChatHistory}
+              selectedModel={selectedModel}
+              setSelectedModel={setSelectedModel}
             />
           </>
         )}

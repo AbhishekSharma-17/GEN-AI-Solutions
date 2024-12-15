@@ -4,7 +4,7 @@ import { Context } from "../../context/Context";
 import "./BottomSection.css";
 import CustomDropdown from "./CustomDropdown";
 
-const BottomSection = ({ chatHistory, setChatHistory }) => {
+const BottomSection = ({ chatHistory, setChatHistory, selectedModel, setSelectedModel }) => {
   const {
     setResponse,
     setShowResult,
@@ -17,8 +17,6 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
     userId,
   } = useContext(Context);
 
-  const [selectedModel, setSelectedModel] = useState(null);
-
   const options = [
     { value: "gpt-4o", label: "GPT-4o", img: assets.chatGPTIcon, provider: "openai" },
     { value: "gpt-4o-mini", label: "GPT-4o-Mini", img: assets.chatGPTIcon, provider: "openai" },
@@ -27,13 +25,15 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
   ];
 
   useEffect(() => {
-    // Set default model based on provider
-    if (responseProvider === 'openai') {
-      setSelectedModel(options.find(option => option.value === 'gpt-4o-mini'));
-    } else if (responseProvider === 'gemini') {
-      setSelectedModel(options.find(option => option.value === 'gemini-1.5-flash'));
+    // Set default model based on provider if no model is selected
+    if (!selectedModel) {
+      if (responseProvider === 'openai') {
+        setSelectedModel(options.find(option => option.value === 'gpt-4o-mini'));
+      } else if (responseProvider === 'gemini') {
+        setSelectedModel(options.find(option => option.value === 'gemini-1.5-flash'));
+      }
     }
-  }, [responseProvider]);
+  }, [responseProvider, selectedModel, setSelectedModel, options]);
 
   const handleSend = async (event) => {
     event.preventDefault();
