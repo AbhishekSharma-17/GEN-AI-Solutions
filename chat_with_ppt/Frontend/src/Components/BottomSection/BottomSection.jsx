@@ -1,8 +1,8 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
 import "./BottomSection.css";
-import CustomDropdown from "./CustomDropdown"; // Import the custom dropdown
+import CustomDropdown from "./CustomDropdown";
 
 const BottomSection = ({ chatHistory, setChatHistory }) => {
   const {
@@ -13,23 +13,26 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
     setInput,
     setRecentPrompt,
     setLoadings,
-    responseProvider, // Accessing responseProvider from context
+    responseProvider,
   } = useContext(Context);
 
-  const [selectedModel, setSelectedModel] = useState(null); // State for selected model
+  const [selectedModel, setSelectedModel] = useState(null);
 
-  // Define options based on responseProvider
-  const options = responseProvider === "openai"
-    ? [
-        { value: "gpt-4o", label: "GPT-4o", img: assets.chatGPTIcon },
-        { value: "gpt-4o-mini", label: "GPT-4o-Mini", img: assets.chatGPTIcon },
-      ]
-    : responseProvider === "gemini"
-    ? [
-        { value: "gemini-1.5-flash", label: "Gemini-1.5-Flash", img: assets.gemini_icon },
-        { value: "gemini-2.0-flash-exp", label: "Gemini-2.0-Flash", img: assets.gemini_icon },
-      ]
-    : []; // Default to an empty array if no valid provider
+  const options = [
+    { value: "gpt-4o", label: "GPT-4o", img: assets.chatGPTIcon, provider: "openai" },
+    { value: "gpt-4o-mini", label: "GPT-4o-Mini", img: assets.chatGPTIcon, provider: "openai" },
+    { value: "gemini-1.5-flash", label: "Gemini-1.5-Flash", img: assets.gemini_icon, provider: "gemini" },
+    { value: "gemini-2.0-flash-exp", label: "Gemini-2.0-Flash", img: assets.gemini_icon, provider: "gemini" },
+  ];
+
+  useEffect(() => {
+    // Set default model based on provider
+    if (responseProvider === 'openai') {
+      setSelectedModel(options.find(option => option.value === 'gpt-4o-mini'));
+    } else if (responseProvider === 'gemini') {
+      setSelectedModel(options.find(option => option.value === 'gemini-1.5-flash'));
+    }
+  }, [responseProvider]);
 
   const handleSend = async (event) => {
     event.preventDefault();
@@ -40,8 +43,7 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
       setLoadings(true);
       setRecentPrompt(input);
 
-      // Add user query to chat history
-      const loaderIndex = chatHistory.length; // Track loader index
+      const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [
         ...prev,
         { type: "user", text: input },
@@ -55,8 +57,8 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: input,
-          provider: responseProvider, // Use the responseProvider from context
-          model: selectedModel ? selectedModel.value : "gpt-4o-mini", // Use selected model or default
+          provider: responseProvider,
+          model: selectedModel ? selectedModel.value : (responseProvider === 'openai' ? '4o-mini' : '1.5 flash'),
         }),
       });
 
@@ -75,7 +77,6 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
         const chunk = decoder.decode(value, { stream: true });
         accumulatedResponse += chunk;
 
-        // Update chat history with the accumulated response
         setChatHistory((prev) =>
           prev.map((chat, index) =>
             index === loaderIndex + 1
@@ -93,7 +94,6 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
       const errorMessage = "An error occurred. Please try again.";
       setResponse(errorMessage);
 
-      // Replace loader with error message
       setChatHistory((prev) =>
         prev.map((chat, index) =>
           index === loaderIndex + 1
@@ -103,7 +103,6 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
       );
     } finally {
       setLoadings(false);
-      // setInput(""); // Clear the input field after submission
     }
   };
 
@@ -122,7 +121,8 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
             <CustomDropdown
               options={options}
               selectedOption={selectedModel}
-              setSelectedOption={setSelectedModel} // Set the selected model
+              setSelectedOption={setSelectedModel}
+              provider={responseProvider}
             />
           </div>
           {input ? (
