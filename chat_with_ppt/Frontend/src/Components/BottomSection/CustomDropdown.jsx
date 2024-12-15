@@ -11,18 +11,26 @@ const CustomDropdown = ({ options, selectedOption, setSelectedOption, provider }
     setFilteredOptions(filtered);
 
     // Always set default model based on provider
+    let defaultModel;
     if (provider === 'openai') {
-      const defaultOpenAI = filtered.find(option => option.value === 'gpt-4o-mini') || filtered[0];
-      setSelectedOption(defaultOpenAI);
+      defaultModel = filtered.find(option => option.value === 'gpt-4o-mini') || filtered[0];
     } else if (provider === 'gemini') {
-      const defaultGemini = filtered.find(option => option.value === 'gemini-1.5-flash') || filtered[0];
-      setSelectedOption(defaultGemini);
+      defaultModel = filtered.find(option => option.value === 'gemini-1.5-flash') || filtered[0];
     }
-  }, [provider, options, setSelectedOption]);
+
+    // Only update if the selected model doesn't match the current provider
+    if (!selectedOption || selectedOption.provider !== provider) {
+      setSelectedOption(defaultModel);
+    }
+
+    console.log("Provider changed:", provider);
+    console.log("Selected model:", defaultModel);
+  }, [provider, options, setSelectedOption, selectedOption]);
 
   const handleSelect = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
+    console.log("Model selected:", option);
   };
 
   const handleToggle = () => {

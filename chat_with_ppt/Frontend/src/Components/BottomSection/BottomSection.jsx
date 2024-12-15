@@ -35,10 +35,6 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
     }
   }, [responseProvider]);
 
-  const getDefaultModel = (provider) => {
-    return provider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash';
-  };
-
   const handleSend = async (event) => {
     event.preventDefault();
     if (!input) return;
@@ -57,9 +53,12 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
 
       setInput("");
 
-      const modelToUse = selectedModel && selectedModel.provider === responseProvider
-        ? selectedModel.value
-        : getDefaultModel(responseProvider);
+      // Always use the selected model, falling back to a default if not set
+      const modelToUse = selectedModel ? selectedModel.value : (responseProvider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash');
+
+      console.log("Selected model:", selectedModel);
+      console.log("Model to use:", modelToUse);
+      console.log("Response provider:", responseProvider);
 
       const res = await fetch(`http://localhost:8000/chat?user_id=${encodeURIComponent(userId)}`, {
         method: "POST",
