@@ -3,6 +3,7 @@
   flex: 1;
   padding-bottom: 15vh;
   position: relative;
+  /* border: 1px solid green; */
 }
 .main .nav {
   display: flex;
@@ -37,11 +38,14 @@
 .result {
   padding: 0px 5%;
   font-size: 18px;
-  height:100%;
+  /* changes */
+  height: 65vh;
+  /* height:100%; */
   gap: 5px;
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  /* border: 1px solid green; */
 }
 .result::-webkit-scrollbar {
   display: none;
