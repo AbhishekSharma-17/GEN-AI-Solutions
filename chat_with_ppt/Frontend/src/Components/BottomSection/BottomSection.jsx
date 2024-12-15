@@ -59,7 +59,7 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
         body: JSON.stringify({
           question: input,
           provider: responseProvider,
-          model: selectedModel ? selectedModel.value : (responseProvider === 'openai' ? '4o-mini' : '1.5 flash'),
+          model: selectedModel ? selectedModel.value : (responseProvider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5 flash'),
         }),
       });
 

@@ -1,0 +1,267 @@
+/* Hero section */
+.hero {
+    text-align: center;
+    padding: 6rem 0;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/main.jpg');
+    background-size: cover;
+    background-position: center;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+.hero h1 {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+    color: #fff;
+    font-weight: 700;
+}
+
+.hero p {
+    font-size: 1.3rem;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 1rem 2rem;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cta-button:hover {
+    background-color: #c0392b;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Features section */
+.features {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4rem;
+    gap: 2rem;
+}
+
+.feature {
+    flex-basis: 30%;
+    text-align: center;
+    padding: 2rem;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.feature:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.feature img {
+    width: 100%;
+    max-width: 120px;
+    height: auto;
+    margin-bottom: 1.5rem;
+}
+
+.feature h2 {
+    color: #1a237e;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.feature p {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Classes page */
+.class-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.class-item {
+    background-color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.class-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.class-item img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+}
+
+.class-item h2 {
+    color: #1a237e;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+.class-item p {
+    color: #666;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* Membership page */
+.membership-plans {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.plan {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    flex: 1;
+    min-width: 250px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+}
+
+.plan:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.plan h2 {
+    color: #1a237e;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+}
+
+.plan .price {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 1rem 0;
+    color: #27ae60;
+}
+
+.plan ul {
+    list-style-type: none;
+    margin-bottom: 1.5rem;
+}
+
+.plan ul li {
+    margin-bottom: 0.8rem;
+    color: #666;
+}
+
+.plan.featured {
+    background-color: #1a237e;
+    color: #fff;
+}
+
+.plan.featured h2,
+.plan.featured .price,
+.plan.featured ul li {
+    color: #fff;
+}
+
+/* Enquiry form */
+.enquiry-section {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #1a237e;
+    font-weight: 500;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 0.8rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+    outline: none;
+    border-color: #1a237e;
+    box-shadow: 0 0 0 2px rgba(26, 35, 126, 0.2);
+}
+
+textarea {
+    height: 150px;
+    resize: vertical;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .features {
+        flex-direction: column;
+    }
+
+    .feature {
+        margin-bottom: 2rem;
+    }
+
+    .membership-plans {
+        flex-direction: column;
+    }
+
+    .plan {
+        width: 100%;
+        margin-bottom: 2rem;
+    }
+
+    .hero h1 {
+        font-size: 2.5rem;
+    }
+
+    .hero p {
+        font-size: 1.1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero h1 {
+        font-size: 2rem;
+    }
+
+    .hero p {
+        font-size: 1rem;
+    }
+
+    .cta-button {
+        padding: 0.8rem 1.5rem;
+        font-size: 0.9rem;
+    }
+}
