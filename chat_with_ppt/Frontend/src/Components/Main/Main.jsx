@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef } from "react";
+import React, { useContext, useState, useRef, useEffect } from "react";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
 import UploadSection from "../UploadSection/UploadSection";
@@ -7,7 +7,7 @@ import QueryCard from "../QueryCard/QueryCard";
 import BottomSection from "../BottomSection/BottomSection";
 import { FaUserCircle } from "react-icons/fa";
 import ResponseLoader from "../Response Loader/ResponseLoader";
-import './Main.css'
+import './Main.css';
 
 const Main = () => {
   const {
@@ -18,7 +18,7 @@ const Main = () => {
     setPreviousPrompt,
     setLoadings,
     userId,
-    responseProvider, // Added responseProvider from Context
+    responseProvider,
   } = useContext(Context);
 
   const [file, setFile] = useState(null);
@@ -29,8 +29,9 @@ const Main = () => {
   const [isEmbedComplete, setIsEmbedComplete] = useState(false);
   const [queries, setQueries] = useState([]);
   const [chatHistory, setChatHistory] = useState([]);
-  const [selectedModel, setSelectedModel] = useState(null); // Added selectedModel state
+  const [selectedModel, setSelectedModel] = useState(null);
   const fileInputRef = useRef();
+  const resultRef = useRef(); // Create a reference for the result div
 
   // Function to handle query card clicks
   const handleQueryClick = async (query) => {
@@ -39,7 +40,6 @@ const Main = () => {
       setLoadings(true);
       setRecentPrompt(query);
 
-      // Add user query to chat history
       const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [
         ...prev,
@@ -47,7 +47,6 @@ const Main = () => {
         { type: "bot", text: "", loading: true },
       ]);
 
-      // Use dynamic provider and model, with fallbacks
       const modelToUse = selectedModel ? selectedModel.value : (responseProvider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash');
 
       const res = await fetch(`http://localhost:8000/chat?user_id=${userId}`, {
@@ -75,7 +74,6 @@ const Main = () => {
         const chunk = decoder.decode(value, { stream: true });
         accumulatedResponse += chunk;
 
-        // Update chat history with the accumulated response
         setChatHistory((prev) =>
           prev.map((chat, index) =>
             index === loaderIndex + 1
@@ -88,10 +86,7 @@ const Main = () => {
       setPreviousPrompt((prev) => [...prev, query]);
     } catch (error) {
       console.error("Error:", error);
-
       const errorMessage = "An error occurred. Please try again.";
-
-      // Replace loader with error message
       setChatHistory((prev) =>
         prev.map((chat, index) =>
           index === loaderIndex + 1
@@ -103,6 +98,13 @@ const Main = () => {
       setLoadings(false);
     }
   };
+
+  // Scroll to the bottom of the result div whenever chatHistory changes
+  useEffect(() => {
+    if (resultRef.current) {
+      resultRef.current.scrollTop = resultRef.current.scrollHeight;
+    }
+  }, [chatHistory]);
 
   return (
     <div className="main">
@@ -118,7 +120,7 @@ const Main = () => {
       <div className="main-container">
         {!isEmbedComplete ? (
           <>
-            <Greeting />
+ <Greeting />
             <UploadSection
               file={file}
               setFile={setFile}
@@ -141,7 +143,7 @@ const Main = () => {
             {!showResult ? (
               <QueryCard queries={queries} handleQueryClick={handleQueryClick} />
             ) : (
-              <div className="result">
+              <div className="result" ref={resultRef} style={{ overflowY: 'auto'}}>
                 {chatHistory.map((chat, index) => (
                   <div key={index} className={`chat-message ${chat.type} chat`}>
                     {chat.type === "user" ? (
