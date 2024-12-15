@@ -1,0 +1,185 @@
+/* Trainers page styles */
+.trainers-main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 4rem 2rem;
+}
+
+.trainers-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.trainers-header h1 {
+    color: #1a237e;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.trainers-header p {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.trainers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.trainer {
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.trainer:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.trainer img {
+    width: 100%;
+    height: 300px;
+    object-fit: cover;
+    border-bottom: 3px solid #1a237e;
+}
+
+.trainer-content {
+    padding: 1.5rem;
+}
+
+.trainer h2 {
+    color: #1a237e;
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.trainer .specialty {
+    color: #3949ab;
+    font-weight: 500;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+}
+
+.trainer p {
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.trainer-social {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.trainer-social a {
+    color: #1a237e;
+    font-size: 1.2rem;
+    transition: color 0.3s ease;
+}
+
+.trainer-social a:hover {
+    color: #3949ab;
+}
+
+.trainer-classes {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e0e0e0;
+}
+
+.trainer-classes h3 {
+    color: #1a237e;
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.trainer-classes ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.trainer-classes li {
+    margin-bottom: 0.5rem;
+    color: #666;
+}
+
+.cta-section {
+    margin-top: 4rem;
+    text-align: center;
+    background-color: #f8f9fa;
+    padding: 3rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.cta-section h2 {
+    color: #1a237e;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.cta-section p {
+    color: #666;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-button {
+    display: inline-block;
+    background-color: #1a237e;
+    color: #fff;
+    padding: 1rem 2rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.cta-button:hover {
+    background-color: #3949ab;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+
+/* Responsive design */
+@media (max-width: 992px) {
+    .trainers-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .trainers-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .trainers-header h1 {
+        font-size: 2rem;
+    }
+
+    .trainers-header p {
+        font-size: 1rem;
+    }
+
+    .cta-section h2 {
+        font-size: 1.8rem;
+    }
+
+    .cta-section p {
+        font-size: 1rem;
+    }
+}

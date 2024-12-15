@@ -1,18 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import './CustomDropdown.css';
 
-const CustomDropdown = ({ options, selectedOption, setSelectedOption }) => {
+const CustomDropdown = ({ options, selectedOption, setSelectedOption, provider }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [filteredOptions, setFilteredOptions] = useState(options);
 
-  
+  useEffect(() => {
+    // Filter options based on provider
+    const filtered = options.filter(option => option.provider === provider);
+    setFilteredOptions(filtered);
+
+    // Set default model based on provider
+    if (provider === 'openai' && (!selectedOption || selectedOption.provider !== 'openai')) {
+      const defaultOpenAI = filtered.find(option => option.value === 'gpt-4o-mini') || filtered[0];
+      setSelectedOption(defaultOpenAI);
+    } else if (provider === 'gemini' && (!selectedOption || selectedOption.provider !== 'gemini')) {
+      const defaultGemini = filtered.find(option => option.value === 'gemini-1.5-flash') || filtered[0];
+      setSelectedOption(defaultGemini);
+    }
+  }, [provider, options, selectedOption, setSelectedOption]);
 
   const handleSelect = (option) => {
-    setSelectedOption(option); // Update the selected option
-    setIsOpen(false); // Close the dropdown after selection
+    setSelectedOption(option);
+    setIsOpen(false);
   };
 
   const handleToggle = () => {
-    setIsOpen(prev => !prev); // Toggle the dropdown open/close state
+    setIsOpen(prev => !prev);
   };
 
   return (
@@ -28,7 +42,7 @@ const CustomDropdown = ({ options, selectedOption, setSelectedOption }) => {
         )}
       </div>
       <ul className={`dropdown-list ${isOpen ? 'show' : ''}`}>
-        {options.map((option) => (
+        {filteredOptions.map((option) => (
           <li key={option.value} onClick={() => handleSelect(option)}>
             <img src={option.img} alt="" style={{ width: '20px', marginRight: '8px' }} />
             {option.label}
