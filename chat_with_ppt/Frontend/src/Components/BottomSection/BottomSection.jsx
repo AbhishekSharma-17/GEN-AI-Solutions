@@ -1,7 +1,8 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
-import './BottomSection.css'
+import "./BottomSection.css";
+import CustomDropdown from "./CustomDropdown"; // Import the custom dropdown
 
 const BottomSection = ({ chatHistory, setChatHistory }) => {
   const {
@@ -12,7 +13,25 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
     setInput,
     setRecentPrompt,
     setLoadings,
+    responseProvider, // Accessing responseProvider from context
   } = useContext(Context);
+
+  console.log("Response provider in Bottom.jsx" ,responseProvider)
+
+  const [selectedModel, setSelectedModel] = useState(null); // State for selected model
+
+  // Define options based on responseProvider
+  const options = responseProvider === "openai"
+    ? [
+        { value: "gpt-4o", label: "GPT-4o", img: assets.chatGPTIcon },
+        { value: "gpt-4o-mini", label: "GPT-4o-Mini", img: assets.chatGPTIcon },
+      ]
+    : responseProvider === "gemini"
+    ? [
+        { value: "gemini-1.5-flash", label: "Gemini-1.5-Flash", img: assets.gemini_icon },
+        { value: "gemini-2.0-flash-exp", label: "Gemini-2.0-Flash", img: assets.gemini_icon },
+      ]
+    : []; // Default to an empty array if no valid provider
 
   const handleSend = async (event) => {
     event.preventDefault();
@@ -38,8 +57,8 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: input,
-          provider: "openai", // You can make this dynamic if needed
-          model: "gpt-4o-mini", // You can make this dynamic if needed
+          provider: responseProvider, // Use the responseProvider from context
+          model: selectedModel ? selectedModel.value : "gpt-4o-mini", // Use selected model or default
         }),
       });
 
@@ -97,12 +116,22 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
           type="text"
           placeholder="Ask GenAI Protos anything..."
           onChange={(event) => setInput(event.target.value)}
-          value={input}
+          value={input} 
         />
-        <div>
-          <img src={assets.mic_icon} alt="Mic" />
+        <div className="dropdown-button-div">
+          <div className="mic-model-option">
+            <img src={assets.mic_icon} alt="Mic" className="img-fluid" />
+            <CustomDropdown
+              options={options}
+              selectedOption={selectedModel}
+              setSelectedOption={setSelectedModel} // Set the selected model
+            />
+          </div>
           {input ? (
-            <button type="submit" style={{ border: "none", background: "none" }}>
+            <button
+              type="submit"
+              style={{ border: "none", background: "none" }}
+            >
               <img src={assets.send_icon} alt="Send" />
             </button>
           ) : null}
