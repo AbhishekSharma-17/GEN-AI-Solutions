@@ -1,0 +1,168 @@
+/* Membership page specific styles */
+
+.membership-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.membership-header h1 {
+    color: #1a237e;
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.membership-header p {
+    max-width: 800px;
+    margin: 0 auto;
+    font-size: 1.1rem;
+    color: #666;
+}
+
+.membership-plans {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 4rem;
+}
+
+.plan {
+    background-color: #fff;
+    padding: 2.5rem;
+    border-radius: 12px;
+    width: 300px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.plan:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+}
+
+.plan h2 {
+    color: #1a237e;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.plan .price {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 1.5rem 0;
+    color: #27ae60;
+    text-align: center;
+}
+
+.plan .price span {
+    font-size: 1rem;
+    color: #666;
+}
+
+.plan ul {
+    list-style-type: none;
+    margin-bottom: 2rem;
+    padding: 0;
+}
+
+.plan ul li {
+    margin-bottom: 0.8rem;
+    color: #666;
+    display: flex;
+    align-items: center;
+}
+
+.plan ul li::before {
+    content: '✓';
+    color: #27ae60;
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+.plan .btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+}
+
+.plan.featured {
+    background-color: #1a237e;
+    color: #fff;
+    transform: scale(1.05);
+}
+
+.plan.featured::before {
+    content: 'Most Popular';
+    position: absolute;
+    top: 1rem;
+    right: -4rem;
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 0.5rem 5rem;
+    transform: rotate(45deg);
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.plan.featured h2,
+.plan.featured .price,
+.plan.featured ul li,
+.plan.featured ul li::before {
+    color: #fff;
+}
+
+.plan.featured .btn {
+    background-color: #fff;
+    color: #1a237e;
+}
+
+.plan.featured .btn:hover {
+    background-color: #f0f0f0;
+}
+
+.membership-faq {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.membership-faq h2 {
+    color: #1a237e;
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.faq-item {
+    margin-bottom: 1.5rem;
+}
+
+.faq-question {
+    font-weight: bold;
+    color: #1a237e;
+    margin-bottom: 0.5rem;
+}
+
+.faq-answer {
+    color: #666;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .membership-plans {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .plan {
+        width: 100%;
+        max-width: 350px;
+    }
+
+    .plan.featured {
+        transform: scale(1);
+    }
+}

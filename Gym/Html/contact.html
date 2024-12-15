@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - FitLife Gym</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="../Css/common.css">
+    <link rel="stylesheet" href="../Css/styles.css">
+    <link rel="stylesheet" href="../Css/contact.css">
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About Us</a></li>
+                <li><a href="classes.html">Classes</a></li>
+                <li><a href="facilities.html">Facilities</a></li>
+                <li><a href="trainers.html">Trainers</a></li>
+                <li><a href="membership.html">Membership</a></li>
+                <li><a href="contact.html" class="active">Contact</a></li>
+                <li><a href="request-info.html">Request Info</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="contact-main">
+        <div class="contact-header">
+            <h1>Contact Us</h1>
+            <p>We're here to help! Reach out to us with any questions, concerns, or feedback.</p>
+        </div>
+
+        <section class="contact-content">
+            <div class="contact-info">
+                <h2>Get in Touch</h2>
+                <p>Feel free to contact us using any of the following methods:</p>
+                <ul>
+                    <li><i class="fas fa-phone"></i> <strong>Phone:</strong> (555) 123-4567</li>
+                    <li><i class="fas fa-envelope"></i> <strong>Email:</strong> info@fitlifegym.com</li>
+                    <li><i class="fas fa-map-marker-alt"></i> <strong>Address:</strong> 123 Fitness Street, Healthyville, HV 12345</li>
+                </ul>
+                <h3>Hours of Operation</h3>
+                <ul>
+                    <li><i class="far fa-clock"></i> <strong>Monday - Friday:</strong> 5:00 AM - 10:00 PM</li>
+                    <li><i class="far fa-clock"></i> <strong>Saturday - Sunday:</strong> 7:00 AM - 8:00 PM</li>
+                </ul>
+                <div class="social-media">
+                    <h3>Follow Us</h3>
+                    <div class="social-icons">
+                        <a href="#" class="fab fa-facebook" id="facebook" style="text-decoration: none;margin-left: 10px;"></a>
+                        <a href="#" class="fab fa-twitter" id="twitter" style="text-decoration: none;margin-left: 10px;"></a>
+                        <a href="#" class="fab fa-instagram" id="insta" style="text-decoration: none;margin-left: 10px;"></a>
+                        <a href="#" class="fab fa-youtube" id="youtube" style="text-decoration: none;margin-left: 10px;"></a>
+                    </div>
+                </div>
+                <div class="request-info-link">
+                    <h3>Need More Information?</h3>
+                    <p>If you'd like detailed information about our services, memberships, or classes, please visit our <a href="request-info.html">Request Info</a> page.</p>
+                </div>
+            </div>
+            <form id="contactForm" class="contact-form">
+                <h2>Send Us a Message</h2>
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="subject">Subject:</label>
+                    <input type="text" id="subject" name="subject" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" required></textarea>
+                </div>
+                <button type="submit" class="btn">Send Message</button>
+            </form>
+        </section>
+
+        <section class="map-container">
+            <h2>Find Us</h2>
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.2412648750455!2d73.678775!3d18.741820!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2sNew%20Location!5e0!3m2!1sen!2sus!4v1629794729599!5m2!1sen!2sus" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </section>
+    </main>
+
+    <div id="notification" class="notification">
+        <p>Thank you for your message. We will get back to you soon!</p>
+    </div>
+
+    <div class="page-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="about.html">About Us</a></li>
+                    <li><a href="classes.html">Classes</a></li>
+                    <li><a href="membership.html">Membership</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                    <li><a href="request-info.html">Request Info</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Fitness Street, Healthyville, HV 12345</p>
+                <p><i class="fas fa-phone"></i> (555) 123-4567</p>
+                <p><i class="fas fa-envelope"></i> info@fitlifegym.com</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-icons">
+                    <a href="#" class="fab fa-facebook" id="facebook"></a>
+                    <a href="#" class="fab fa-twitter" id="twitter"></a>
+                    <a href="#" class="fab fa-instagram" id="insta"></a>
+                    <a href="#" class="fab fa-youtube" id="youtube"></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2023 FitLife Gym. All rights reserved.</p>
+        </div>
+    </div>
+    <script src="../script.js"></script>
+</body>
+</html>

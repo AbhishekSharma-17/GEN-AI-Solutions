@@ -1,42 +1,94 @@
 .main-bottom {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    max-width: 900px;
-    padding: 0px 20px;
-    margin: auto;
-  }
-  
-  .search-box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    background-color: #f0f4f9;
-    padding: 10px 20px;
-    border-radius: 50px;
-  }
-  .search-box img {
-    width: 24px;
-    cursor: pointer;
-  }
-  .search-box input {
-    flex: 1;
-    background: transparent;
-    border: none;
-    outline: none;
-    padding: 8px;
-    font-size: 18px;
-  }
-  .search-box div {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-  }
-  .main .bottom-info {
-    font-size: 13px;
-    margin: 15px auto;
-    text-align: center;
-    font-weight: 300;
-    color: grey;
-  }
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  max-width: 900px;
+  padding: 0px 20px;
+  margin: auto;
+}
+
+.search-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5px;
+  background-color: #f0f4f9;
+  padding: 10px;
+  border-radius: 10px;
+  /* border: 1px solid red; */
+}
+.search-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 8px;
+  font-size: 18px;
+}
+.search-box .dropdown-button-div {
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+}
+.mic-model-option {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  /* border: 1px solid black; */
+  padding-right: 10px;
+  align-items: center;
+}
+.search-box img {
+  width: 24px;
+  cursor: pointer;
+}
+.search-box input {
+  flex: 1;
+  background: transparent;
+  /* border: none; */
+  /* border: 1px solid red; */
+  outline: none;
+  padding: 8px;
+  font-size: 18px;
+}
+
+.custom-select {
+  -webkit-appearance: none; /* Remove default arrow in Safari */
+  -moz-appearance: none; /* Remove default arrow in Firefox */
+  appearance: none; /* Remove default arrow in modern browsers */
+  background: none; /* Optional: remove background */
+  border: none; /* Optional: remove border */
+  padding: 5px; /* Adjust padding to make space for custom arrow if needed */
+  font-size: 14px;
+  color: rgb(109, 108, 108);
+  font-weight: 500;
+}
+.custom-select:hover {
+  background-color: rgb(224, 223, 223);
+  border-radius: 10px;
+  color: rgb(73, 73, 73);
+}
+.custom-select:focus {
+  outline: none; /* Optional: remove outline on focus */
+}
+
+.custom-select .option{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  align-items: center;
+}
+.custom-select .option img{
+  width: 20px;
+}
+.main .bottom-info {
+  font-size: 13px;
+  margin: 15px auto;
+  text-align: center;
+  font-weight: 300;
+  color: grey;
+}
