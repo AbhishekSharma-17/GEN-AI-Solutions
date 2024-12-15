@@ -2,11 +2,17 @@ import React, { useContext, useRef, useState } from "react";
 import "./HomePageContainer.css";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
-import { toast } from 'react-toastify';
+import { toast } from "react-toastify";
 import FancyLoader from "../Loader/FancyLoader";
 
 const HomePageContainer = () => {
-  const { setAPIProvider, setProviderKey, setUnstructuredKey, setResponseProvider, setInitialisationStatus } = useContext(Context);
+  const {
+    setAPIProvider,
+    setProviderKey,
+    setUnstructuredKey,
+    setResponseProvider,
+    setInitialisationStatus,
+  } = useContext(Context);
   const [isLoading, setIsLoading] = useState(false);
 
   // Create refs for the input fields
@@ -24,9 +30,9 @@ const HomePageContainer = () => {
     const Form_providerKey = providerKeyRef.current.value;
     const Form_unstructuredKey = unstructuredKeyRef.current.value;
 
-    console.log('Form Provider is : ', Form_provider);
-    console.log('Form Provider Key is : ', Form_providerKey);
-    console.log('Form Unstructured Key is : ', Form_unstructuredKey);
+    console.log("Form Provider is : ", Form_provider);
+    console.log("Form Provider Key is : ", Form_providerKey);
+    console.log("Form Unstructured Key is : ", Form_unstructuredKey);
 
     // Set values in context
     setAPIProvider(Form_provider);
@@ -56,12 +62,18 @@ const HomePageContainer = () => {
       const responseData = await response.json();
       console.log("Response from server:", responseData);
 
-      console.log(responseData.provider);
-      setResponseProvider(responseData.provider);
+      // Check if provider exists in responseData
+      if (responseData.provider) {
+        console.log("Setting responseProvider to:", responseData.provider);
+        setResponseProvider(responseData.provider);
+      } else {
+        console.error("Provider not found in response data.");
+      }
+
       setInitialisationStatus(true);
 
       // Show success toast
-      toast.success('Configuration saved successfully!');
+      toast.success("Configuration saved successfully!");
 
       // Optionally, you can reset the form fields after submission
       providerRef.current.value = "";
@@ -70,7 +82,7 @@ const HomePageContainer = () => {
     } catch (error) {
       console.error("Error sending data:", error);
       // Show error toast
-      toast.error('Failed to save configuration. Please try again.');
+      toast.error("Failed to save configuration. Please try again.");
     } finally {
       setIsLoading(false); // Stop loading
     }
@@ -131,14 +143,18 @@ const HomePageContainer = () => {
               />
             </div>
             <div className="mb-4">
-              <button type="submit" className="btn btn-dark" disabled={isLoading}>
+              <button
+                type="submit"
+                className="btn btn-dark"
+                disabled={isLoading}
+              >
                 {isLoading ? (
                   <>
                     <span className="me-2">Saving</span>
                     <FancyLoader />
                   </>
                 ) : (
-                  'Save Configuration'
+                  "Save Configuration"
                 )}
               </button>
             </div>

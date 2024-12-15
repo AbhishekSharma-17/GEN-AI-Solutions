@@ -12,12 +12,18 @@ import mic_icon from './mic_icon.png'
 import message_icon from './message_icon.png'
 import code_icon from './code_icon.png'
 import send_icon from './send_icon.png'
-import gemini_icon from './gemini_icon.png'
 import genAILogo from './logo.png'
 import icon from './icon.png'
 import ai_final from './AI-final.png'
+import gemini_icon from './gemini_icon.png'
+import chatGPTIcon from './chatGPTIcon.jpg'
 
 export const assets = {
+    chatGPTIcon,
+    gemini_icon,
+    genAILogo,
+    ai_final,
+    icon,
     history_icon,
     ai_final,
     genAILogo,
