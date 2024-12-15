@@ -35,6 +35,10 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
     }
   }, [responseProvider]);
 
+  const getDefaultModel = (provider) => {
+    return provider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash';
+  };
+
   const handleSend = async (event) => {
     event.preventDefault();
     if (!input) return;
@@ -53,13 +57,17 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
 
       setInput("");
 
+      const modelToUse = selectedModel && selectedModel.provider === responseProvider
+        ? selectedModel.value
+        : getDefaultModel(responseProvider);
+
       const res = await fetch(`http://localhost:8000/chat?user_id=${encodeURIComponent(userId)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: input,
           provider: responseProvider,
-          model: selectedModel ? selectedModel.value : (responseProvider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash'),
+          model: modelToUse,
         }),
       });
 

@@ -10,15 +10,15 @@ const CustomDropdown = ({ options, selectedOption, setSelectedOption, provider }
     const filtered = options.filter(option => option.provider === provider);
     setFilteredOptions(filtered);
 
-    // Set default model based on provider
-    if (provider === 'openai' && (!selectedOption || selectedOption.provider !== 'openai')) {
+    // Always set default model based on provider
+    if (provider === 'openai') {
       const defaultOpenAI = filtered.find(option => option.value === 'gpt-4o-mini') || filtered[0];
       setSelectedOption(defaultOpenAI);
-    } else if (provider === 'gemini' && (!selectedOption || selectedOption.provider !== 'gemini')) {
+    } else if (provider === 'gemini') {
       const defaultGemini = filtered.find(option => option.value === 'gemini-1.5-flash') || filtered[0];
       setSelectedOption(defaultGemini);
     }
-  }, [provider, options, selectedOption, setSelectedOption]);
+  }, [provider, options, setSelectedOption]);
 
   const handleSelect = (option) => {
     setSelectedOption(option);
