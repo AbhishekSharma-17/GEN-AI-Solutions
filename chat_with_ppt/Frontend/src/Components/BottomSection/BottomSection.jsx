@@ -1,10 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
+import "./BottomSection.css";
+import CustomDropdown from "./CustomDropdown";
 
-const BottomSection = ({ chatHistory, setChatHistory }) => {
+const BottomSection = ({ chatHistory, setChatHistory, selectedModel, setSelectedModel }) => {
   const {
-    response,
     setResponse,
     setShowResult,
     setPreviousPrompt,
@@ -12,7 +13,27 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
     setInput,
     setRecentPrompt,
     setLoadings,
+    responseProvider,
+    userId,
   } = useContext(Context);
+
+  const options = [
+    { value: "gpt-4o", label: "GPT-4o", img: assets.chatGPTIcon, provider: "openai" },
+    { value: "gpt-4o-mini", label: "GPT-4o-Mini", img: assets.chatGPTIcon, provider: "openai" },
+    { value: "gemini-1.5-flash", label: "Gemini-1.5-Flash", img: assets.gemini_icon, provider: "gemini" },
+    { value: "gemini-2.0-flash-exp", label: "Gemini-2.0-Flash", img: assets.gemini_icon, provider: "gemini" },
+  ];
+
+  useEffect(() => {
+    // Set default model based on provider if no model is selected
+    if (!selectedModel) {
+      if (responseProvider === 'openai') {
+        setSelectedModel(options.find(option => option.value === 'gpt-4o-mini'));
+      } else if (responseProvider === 'gemini') {
+        setSelectedModel(options.find(option => option.value === 'gemini-1.5-flash'));
+      }
+    }
+  }, [responseProvider, selectedModel, setSelectedModel, options]);
 
   const handleSend = async (event) => {
     event.preventDefault();
@@ -23,8 +44,7 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
       setLoadings(true);
       setRecentPrompt(input);
 
-      // Add user query to chat history
-      const loaderIndex = chatHistory.length; // Track loader index
+      const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [
         ...prev,
         { type: "user", text: input },
@@ -32,14 +52,21 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
       ]);
 
       setInput("");
-      
-      const res = await fetch("http://localhost:8000/chat", {
+
+      // Always use the selected model, falling back to a default if not set
+      const modelToUse = selectedModel ? selectedModel.value : (responseProvider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash');
+
+      console.log("Selected model:", selectedModel);
+      console.log("Model to use:", modelToUse);
+      console.log("Response provider:", responseProvider);
+
+      const res = await fetch(`http://localhost:8000/chat?user_id=${encodeURIComponent(userId)}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: input,
-          provider: "openai", // You can make this dynamic if needed
-          model: "gpt-4o-mini", // You can make this dynamic if needed
+          provider: responseProvider,
+          model: modelToUse,
         }),
       });
 
@@ -58,7 +85,6 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
         const chunk = decoder.decode(value, { stream: true });
         accumulatedResponse += chunk;
 
-        // Update chat history with the accumulated response
         setChatHistory((prev) =>
           prev.map((chat, index) =>
             index === loaderIndex + 1
@@ -76,7 +102,6 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
       const errorMessage = "An error occurred. Please try again.";
       setResponse(errorMessage);
 
-      // Replace loader with error message
       setChatHistory((prev) =>
         prev.map((chat, index) =>
           index === loaderIndex + 1
@@ -86,23 +111,33 @@ const BottomSection = ({ chatHistory, setChatHistory }) => {
       );
     } finally {
       setLoadings(false);
-      // setInput(""); // Clear the input field after submission
     }
   };
 
   return (
-    <div className="main-bottom">
+    <div className="main-bottom container">
       <form className="search-box" onSubmit={handleSend}>
         <input
           type="text"
           placeholder="Ask GenAI Protos anything..."
           onChange={(event) => setInput(event.target.value)}
-          value={input}
+          value={input} 
         />
-        <div>
-          <img src={assets.mic_icon} alt="Mic" />
+        <div className="dropdown-button-div">
+          <div className="mic-model-option">
+            <img src={assets.mic_icon} alt="Mic" className="img-fluid" />
+            <CustomDropdown
+              options={options}
+              selectedOption={selectedModel}
+              setSelectedOption={setSelectedModel}
+              provider={responseProvider}
+            />
+          </div>
           {input ? (
-            <button type="submit" style={{ border: "none", background: "none" }}>
+            <button
+              type="submit"
+              style={{ border: "none", background: "none" }}
+            >
               <img src={assets.send_icon} alt="Send" />
             </button>
           ) : null}

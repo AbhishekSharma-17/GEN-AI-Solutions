@@ -1,16 +1,3 @@
-#Backend
-.env
-/venv/
-/uploads/
-/__pycache__/
-/vectorstore/
-*.pyc
-*.pkl
-*.faiss
-test.py
-
-
-# Frontend Records 
 # Logs
 logs
 *.log
