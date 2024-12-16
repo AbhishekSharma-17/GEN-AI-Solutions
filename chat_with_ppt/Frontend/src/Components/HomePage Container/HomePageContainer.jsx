@@ -92,7 +92,7 @@ const HomePageContainer = () => {
     <div className="homePage-container">
       <div className="homepage-textual-content">
         <div className="homepage-text-content">
-          <p>Configure your AI Integration</p>
+          <p>LLM Configuration</p>
           <span>
             Set up your AI environment by providing your API keys. We ensure
             secure handling of your Credentials.

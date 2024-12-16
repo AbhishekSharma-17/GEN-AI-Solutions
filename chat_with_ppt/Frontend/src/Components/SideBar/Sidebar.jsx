@@ -36,7 +36,7 @@ const Sidebar = () => {
               return (
                 <div className="recent-entry" key={index}>
                   <img src={assets.message_icon} alt="" />
-                  <p className="">{item.slice(0, 22)}...</p>
+                  <p className="">{item.length >15 ?item.slice(0, 15)+'...':item}</p>
                 </div>
               );
             })}
@@ -46,7 +46,7 @@ const Sidebar = () => {
       <div className="bottom">
         {extended ? (
           <p className="sidebar-bottom-para-text">
-            <a href="https://www.genaiprotos.com/">GenAI Protos</a>
+            <a href="https://www.genaiprotos.com/"><img src={assets.genAILogo} alt="" width={150} /></a>
           </p>
         ) : null}
       </div>

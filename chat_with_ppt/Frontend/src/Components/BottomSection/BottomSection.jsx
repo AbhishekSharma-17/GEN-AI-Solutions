@@ -115,7 +115,7 @@ const BottomSection = ({ chatHistory, setChatHistory, selectedModel, setSelected
   };
 
   return (
-    <div className="main-bottom">
+    <div className="main-bottom container">
       <form className="search-box" onSubmit={handleSend}>
         
         <input
