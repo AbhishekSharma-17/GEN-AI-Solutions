@@ -21,6 +21,11 @@
   flex-direction: row;
   gap: 20px;
 }
+.homePage-navbar .navbar-left a img{
+  height: 20px;
+  width: 150px;
+  margin-top: 10px;
+}
 .homePage-navbar .navbar-left p{
   margin: 0;
 margin-top: 3px;

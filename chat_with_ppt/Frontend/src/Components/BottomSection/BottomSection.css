@@ -1,15 +1,15 @@
 .main-bottom {
-  position: absolute;
   bottom: 0;
-  width: 100%;
-  max-width: 900px;
+  width: 90%;
+  margin-left: 5%;
+  margin-right: 5%;
   padding: 0px 20px;
-  margin: auto;
   margin-top:30px;
-  /* border:1px solid red ; */
+  /* border:1px solid orange ; */
 }
 
 .search-box {
+  /* border:1px solid red ; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -17,6 +17,7 @@
   background-color: #f0f4f9;
   padding: 10px;
   border-radius: 10px;
+  width: 100%;
 }
 .search-box input {
   flex: 1;

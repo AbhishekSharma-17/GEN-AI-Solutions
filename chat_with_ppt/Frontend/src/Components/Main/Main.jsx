@@ -110,14 +110,14 @@ const Main = () => {
     <div className="main">
       {/* Navigation Bar */}
       <div className="nav">
-        <p className="main-nav-para-text">
-          <a href="https://www.genaiprotos.com/">GenAI Protos</a>
-        </p>
+       
+          <a href="https://www.genaiprotos.com/"><img src={assets.genAILogo} alt="" /></a>
+       
         <img src={assets.icon} alt="" />
       </div>
 
       {/* Main Container */}
-      <div className="main-container">
+      <div className="main-container container">
         {!isEmbedComplete ? (
           <>
  <Greeting />

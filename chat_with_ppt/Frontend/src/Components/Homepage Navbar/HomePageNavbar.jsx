@@ -9,7 +9,7 @@ const HomePageNavbar = () => {
     <div className='homePage-navbar'>
       <div className="navbar-left">
         <img src= {assets.icon} alt="" />
-        <p>GenAI Protos</p>
+        <a href=""><img src={assets.genAILogo} alt="" /></a>
       </div>
       <div className="navbar-right">
         <p onClick={() => setActivePara('Documentation')} className={activePara === 'Documentation' ? 'active' : ''}>Documentation</p>
