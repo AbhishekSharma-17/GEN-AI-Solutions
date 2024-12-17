@@ -7,14 +7,15 @@ import Sidebar from "./Components/SideBar/Sidebar";
 import { Context } from "./context/Context";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import HomePageContainer from "./Components/HomePage Container/HomePageContainer";
+import HomePage from "./Components/HomePage/HomePage";
+
 
 const App = () => {
   const { initialisationStatus } = useContext(Context);
 
   return (
     <>
-      {!initialisationStatus ? <HomePageContainer /> : (
+      {!initialisationStatus ? <HomePage /> : (
         <>
           <Sidebar />
           <Main />
