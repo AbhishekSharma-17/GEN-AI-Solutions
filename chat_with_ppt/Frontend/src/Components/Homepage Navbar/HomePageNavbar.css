@@ -10,6 +10,7 @@
   box-shadow: 0px 0px 5px rgb(202, 201, 201);
   background-color: white;
   z-index: 1000; /* Ensure it stays above other content */
+  /* border: 1px solid red; */
 }
 .homePage-navbar img{
   width: 40px;
@@ -52,4 +53,29 @@ font-weight: 500;
   border-radius: 5px;
   color: white;
   padding: 5px 10px;
+}
+
+@media (max-width: 768px)
+{
+  .homePage-navbar{
+    width: 100%;
+  }
+  .homePage-navbar .navbar-left img{
+    width: 50px;
+  }
+  .homePage-navbar .navbar-right p{
+    display: none;
+  }
+}
+@media (max-width: 368px)
+{
+  .homePage-navbar{
+    width: 100%;
+  }
+  .homePage-navbar .navbar-left img{
+    width: 50px;
+  }
+  .homePage-navbar .navbar-right p{
+    display: none;
+  }
 }
