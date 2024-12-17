@@ -291,7 +291,6 @@ You are an AI assistant specialized in analyzing PowerPoint presentations. Your 
 - Bold important points using double asterisks `**` around the text.
 - Italics for emphasis can be applied with single asterisk `*` around the text.
 
-**Response:**
 
 *Your response should be here based on the instructions and guidelines provided above.*
 
