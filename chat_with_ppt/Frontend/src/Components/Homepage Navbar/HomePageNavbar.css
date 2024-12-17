@@ -48,6 +48,10 @@ font-weight: 500;
   font-weight: 500;
   
 }
+.navbar-right  a{
+  color: black;
+  text-decoration: none;
+}
 .active{
   background-color: black;
   border-radius: 5px;

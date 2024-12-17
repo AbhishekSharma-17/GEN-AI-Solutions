@@ -37,23 +37,28 @@
   cursor: pointer;
   color: grey;
   font-weight: 600;
+  border: 1px solid grey;
 }
 .new-chat .plus-icon {
-  width: 15px !important;
+  width: 15px;
 }
-
+.new-chat p {
+  margin-top: 15px;
+  margin: 0;
+}
 .sidebar .top .recent {
   display: flex;
   flex-direction: column;
   gap: 10px;
-  height: 100%;
+  height: 70vh;
+  /* border: 1px solid red; */
   animation: fadeIn 2s;
   overflow-y: scroll;
 }
 
 /* scrollbar styling starts */
 .sidebar .top .recent::-webkit-scrollbar {
- display: none; /* Width of the scrollbar */
+  display: none;
 }
 /* scrollbar styling ends */
 
@@ -70,7 +75,7 @@
   padding: 8px 5px;
   border-radius: 50px;
   cursor: pointer;
-  /* background-color: rgb(241, 239, 239); */
+  min-width: max-content; /* background-color: rgb(241, 239, 239); */
 }
 .sidebar .top .recent .recent-entry img {
   width: 25px;
