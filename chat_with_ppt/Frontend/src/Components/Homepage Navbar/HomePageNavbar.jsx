@@ -13,7 +13,7 @@ const HomePageNavbar = () => {
       </div>
       <div className="navbar-right">
         <p onClick={() => setActivePara('Documentation')} className={activePara === 'Documentation' ? 'active' : ''}>Documentation</p>
-        <p onClick={() => setActivePara('Support')} className={activePara === 'Support' ? 'active' : ''}>Support</p>
+        <a href="https://www.genaiprotos.com#contact-us" target='blank'><p onClick={() => setActivePara('Support')} className={activePara === 'Support' ? 'active' : ''}>Support</p></a>
         <p onClick={() => setActivePara('Get Started')} className={activePara === 'Get Started' ? 'active' : ''}>Get started</p>
       </div>
     </div>

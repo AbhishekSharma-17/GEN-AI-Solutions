@@ -23,10 +23,10 @@ const Sidebar = () => {
           src={assets.menu_icon}
           alt="menu_icon"
         />
-        <div className="new-chat" style={{ border: "1px solid grey" }}>
+        <div className="new-chat" >
           <img src={assets.plus_icon} alt="plus_icon" className="plus-icon" />
           {extended ? (
-            <p style={{ marginTop: "15px", margin: "0" }}>New Chat</p>
+            <p>New Chat</p>
           ) : null}
         </div>
         <p className="recent-title">Recents</p>
@@ -36,7 +36,7 @@ const Sidebar = () => {
               return (
                 <div className="recent-entry" key={index}>
                   <img src={assets.message_icon} alt="" />
-                  <p className="">{item.length >15 ?item.slice(0, 15)+'...':item}</p>
+                  <p className="">{item.length >15 ?item.slice(0, 20)+'...':item}</p>
                 </div>
               );
             })}
