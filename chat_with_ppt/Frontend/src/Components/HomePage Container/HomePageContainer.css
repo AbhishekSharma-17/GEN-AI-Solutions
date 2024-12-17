@@ -130,7 +130,7 @@
 {
     .homePage-container{
         flex-direction: column;
-        padding: 100px 0px 20px 0px
+        padding: 10px 0px 20px 0px
     }
     .homepage-textual-content{
         width: 100%;
@@ -147,7 +147,7 @@
 {
     .homePage-container{
         flex-direction: column;
-        padding: 100px 0px 20px 0px
+        padding: 10px 0px 20px 0px
     }
     .homepage-textual-content{
         width: 100%;
