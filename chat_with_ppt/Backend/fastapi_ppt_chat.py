@@ -247,30 +247,61 @@ async def chat(user_id: str ,data: Dict[str, Any]):
                 yield f"Error: Unable to load the vector store. Please try embedding the document again."
                 return
 
-            retriever = vectorstore.as_retriever(search_kwargs={"k": 6})
+            retriever = vectorstore.as_retriever(search_kwargs={"k": 10})
             
             prompt = ChatPromptTemplate.from_template(
-                """You are an AI assistant specialized in analyzing PowerPoint presentations. Your role is to help users understand and extract information from their presentations in a conversational way.
+                """
 
-Given the following presentation content, please provide a clear and concise response to the user's question. If the information is not directly available in the context, say so instead of making assumptions.
+Sure, here's your refined prompt with comprehensive guidelines for generating markdown responses, including the ability to dynamically adjust based on user input:
 
-Context from the presentation:
+---
+
+You are an AI assistant specialized in analyzing PowerPoint presentations. Your role is to help users understand and extract information from their presentations in a conversational way. Given the following presentation content, please provide a clear and concise response to the user's question. If the information is not directly available in the context, say so instead of making assumptions.
+
+**Context from the presentation:**
 {context}
 
-User's Question: {input}
+**User's Question:**
+{input}
 
-Instructions:
-1. If the user asks for a summary, provide a concise overview of the main points from the context.
-2. If the user asks for an elaboration or detailed explanation, provide a comprehensive answer with specific examples and details from the context.
-3. Always refer to the context when answering. Use phrases like "According to the presentation," or "The slides mention that" to ground your responses in the given information.
-4. If asked about specific slides or sections, focus your answer on that particular part of the presentation.
-5. If the user's question is not directly addressed in the context, state that the information is not available in the given presentation content.
+**Instructions:**
 
-Remember to answer only from the provided context and do not fabricate information.
+1. **If the user asks for a summary**, provide a concise overview of the main points from the context, using bullet points or paragraphs depending on the depth and complexity of the content and the user's request.
 
-Response:
+2. **If the user asks for an elaboration or detailed explanation**, provide a comprehensive answer, incorporating specific examples and details from the context, and use subsections or directly quoted text from the slides if necessary to enhance clarity.
+
+3. **Always refer to the context when answering.** Use phrases like "According to the presentation," or "The slides mention that" to ensure the responses are rooted in the provided information.
+
+4. **For queries about specific slides or sections**, focus your answer on that part of the presentation and use quotes if applicable to maintain precision.
+
+5. **If the user's question is not directly addressed in the context**, clearly state that the information is not available without making assumptions or inferring additional details.
+
+6. **Generate the response in markdown format only.** Utilize headings, bullet points, bold text, italics, blockquotes, and tables appropriately for the type of information being presented.
+
+7. **Be consistent in markdown format.** Ensure that the markdown syntax is correctly applied to all parts of the response, while dynamically choosing the format based on the user's question.
+
+8. **Ensure clarity and structure.** The response must be clear, well-organized, and precisely address the user's request with a professional tone.
+
+9. **Guidelines for Formatting in Markdown:**
+
+   - Use headings for sections, starting with `###` for main headings and `####` for subheadings to create a clear structure.
+   - Bullet points should begin with a single asterisk `* ` followed by a space.
+   - Numbered lists use numbers followed by a period and a space (e.g., `1. `).
+   - Quotes from the slides or context should be enclosed in blockquotes using the `>` symbol.
+   - Bold important points using double asterisks `**` around the text.
+   - Italics for emphasis can be applied with single asterisk `*` around the text.
+   - To create tables, use markdown's table format with hyphens `-` and pipes `|`, defining headers and maintaining consistency across rows.
+   - For links, use `[Link Text](URL)` to provide clickable URLs.
+   - Adjust the format dynamically based on the question—if the context requires tables for comparison or links for reference, integrate them seamlessly.
+
+**Response:**
+
+*Your response should be here based on the instructions and guidelines provided above.* 
+
+This prompt ensures that responses are tailored to the user's input, utilizing a variety of markdown elements for effective communication.
 """
-            )
+)
+
 
             # Use the model parameter if provided, otherwise use the initialized LLM
             if model:

@@ -1,4 +1,6 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
 import UploadSection from "../UploadSection/UploadSection";
@@ -110,9 +112,7 @@ const Main = () => {
     <div className="main">
       {/* Navigation Bar */}
       <div className="nav">
-       
-          <a href="https://www.genaiprotos.com/"><img src={assets.genAILogo} alt="" /></a>
-       
+        <a href="https://www.genaiprotos.com/"><img src={assets.genAILogo} alt="" /></a>
         <img src={assets.icon} alt="" />
       </div>
 
@@ -120,7 +120,7 @@ const Main = () => {
       <div className="main-container container">
         {!isEmbedComplete ? (
           <>
- <Greeting />
+            <Greeting />
             <UploadSection
               file={file}
               setFile={setFile}
@@ -157,7 +157,24 @@ const Main = () => {
                         {chat.loading ? (
                           <ResponseLoader />
                         ) : (
-                          <p dangerouslySetInnerHTML={{ __html: chat.text }} />
+                          <div className="markdown-content">
+                            {console.log("Markdown content:", chat.text)}
+                            <ReactMarkdown className= 'actual-markdown-content'
+                              remarkPlugins={[remarkGfm]}
+                              components={{
+                                p: ({ node, ...props }) => <p style={{ marginBottom: '1em' }} {...props} />,
+                                li: ({ node, ...props }) => <li style={{ marginBottom: '0.5em' }} {...props} />,
+                                pre: ({ node, ...props }) => <pre style={{ backgroundColor: '#f0f0f0', padding: '1em', borderRadius: '4px', overflowX: 'auto' }} {...props} />,
+                                code: ({ node, inline, ...props }) => (
+                                  inline 
+                                    ? <code style={{ backgroundColor: '#e0e0e0', padding: '0.2em 0.4em', borderRadius: '3px' }} {...props} />
+                                    : <code style={{ display: 'block', whiteSpace: 'pre-wrap' }} {...props} />
+                                )
+                              }}
+                            >
+                              {chat.text}
+                            </ReactMarkdown>
+                          </div>
                         )}
                       </div>
                     )}
