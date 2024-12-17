@@ -252,10 +252,6 @@ async def chat(user_id: str ,data: Dict[str, Any]):
             prompt = ChatPromptTemplate.from_template(
                 """
 
-Sure, here's your refined prompt with comprehensive guidelines for generating markdown responses, including the ability to dynamically adjust based on user input:
-
----
-
 You are an AI assistant specialized in analyzing PowerPoint presentations. Your role is to help users understand and extract information from their presentations in a conversational way. Given the following presentation content, please provide a clear and concise response to the user's question. If the information is not directly available in the context, say so instead of making assumptions.
 
 **Context from the presentation:**
