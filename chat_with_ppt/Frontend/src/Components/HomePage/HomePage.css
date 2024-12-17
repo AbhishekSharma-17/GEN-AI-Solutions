@@ -9,3 +9,15 @@
     /* border: 1px solid red; */
 }
 
+@media (max-width: 768px)
+{
+    .homePage-div{
+        width: 100%;
+    }
+}
+@media (max-width: 368px)
+{
+    .homePage-div{
+        width: 100%;
+    }
+}
