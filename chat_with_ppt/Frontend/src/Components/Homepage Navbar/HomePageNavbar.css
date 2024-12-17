@@ -1,15 +1,11 @@
 .homePage-navbar {
-  position: fixed; /* Make the navbar fixed */
-  top: 0; /* Position it at the top of the viewport */
-  left: 0; /* Align it to the left */
-  right: 0; /* Align it to the right */
   padding: 10px 8px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   box-shadow: 0px 0px 5px rgb(202, 201, 201);
   background-color: white;
-  z-index: 1000; /* Ensure it stays above other content */
+ 
   /* border: 1px solid red; */
 }
 .homePage-navbar img{

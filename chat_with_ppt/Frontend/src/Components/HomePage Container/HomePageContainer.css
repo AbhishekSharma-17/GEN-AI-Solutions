@@ -6,8 +6,8 @@
     align-items: center;
     gap: 20px;
     width: 100%;
-    padding: 140px 50px;
-    height: 100vh;
+    padding: 50px 50px;
+    height: 90vh;
 }
 
 .homepage-textual-content, .homepage-setup-content{
