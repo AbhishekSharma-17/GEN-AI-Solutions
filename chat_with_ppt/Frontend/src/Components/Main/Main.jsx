@@ -159,7 +159,7 @@ const Main = () => {
                         ) : (
                           <div className="markdown-content">
                             {console.log("Markdown content:", chat.text)}
-                            <ReactMarkdown
+                            <ReactMarkdown className= 'actual-markdown-content'
                               remarkPlugins={[remarkGfm]}
                               components={{
                                 p: ({ node, ...props }) => <p style={{ marginBottom: '1em' }} {...props} />,

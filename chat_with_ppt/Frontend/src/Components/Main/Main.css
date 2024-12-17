@@ -5,10 +5,8 @@
   justify-content: flex-start;
   width: 100%;
   height: 100vh;
-  /* border: 1px solid green; */
   gap: 20px;
-
-} 
+}
 .main .nav {
   display: flex;
   align-items: center;
@@ -16,10 +14,8 @@
   font-size: 22px;
   padding: 15px;
   color: #585858;
-  /* margin-bottom: 30px; */
-  /* border: 1px solid red; */
 }
-.main .nav a img{
+.main .nav a img {
   width: 150px;
   border-radius: 0;
 }
@@ -29,15 +25,13 @@
 }
 
 .main-container {
-  /* max-width: 900px; */
-  /* margin-left: 10%; */
   padding: 0;
   width: 100%;
   height: 100%;
-  /* border: 1px solid red; */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  /* border: 1px solid red; */
 }
 /* main.jsx styling starts here */
 
@@ -45,9 +39,7 @@
 .result {
   padding: 0px 5%;
   font-size: 18px;
-  /* changes */
   height: 70vh;
-  /* height:100%; */
   gap: 5px;
   display: flex;
   flex-direction: column;
@@ -80,26 +72,28 @@
 }
 .result-data {
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   gap: 20px;
   margin: 0;
   margin-bottom: 20px;
+  /* border: 1px solid black; */
+  width: 100%;
+}
+.markdown-content {
+  width: 100% !important; /* Ensures full width */
+  max-width: none; /* Remove restriction */
+  box-sizing: border-box; /* Prevent overflow */
+  background-color: #f0f4fa; /* Blue background */
+  font-size: 17px;
+  font-weight: 300;
+  line-height: 1.8;
+  margin: 0; /* Remove any margin */
+  padding: 0 5px ;
+  border-radius: 7px;
 }
 
 .result-data img {
   width: 30px;
-}
-
-.result-data .markdown-content {
-  font-size: 17px;
-  font-weight: 300;
-  line-height: 1.8;
-  margin: 0;
-  background-color: #f0f4fa;
-  padding: 10px 15px;
-  border-radius: 7px;
-  width: 100%;
-  max-width: 800px; /* Added max-width for better readability */
 }
 
 /* Markdown content styles */
@@ -109,7 +103,7 @@
 .markdown-content h4,
 .markdown-content h5,
 .markdown-content h6 {
-  margin-top: 20px;
+  /* margin-top: 20px; */
   margin-bottom: 10px;
   line-height: 1.2;
 }
@@ -166,10 +160,14 @@
 }
 
 .markdown-content blockquote {
-  border-left: 4px solid #ccc;
+  border-left: 4px solid #a0a0a0;
   margin-left: 0;
   padding-left: 15px;
-  color: #666;
+  /* color: #666; */
+  color: black;
+  font-weight: 500;
+  background-color: white;
+  border-radius: 5px ;
 }
 
 .markdown-content table {
