@@ -13,6 +13,7 @@ const HomePageContainer = () => {
     setConnectedToDB,
     setError,
     dbSchema,
+    connectedToDB,
     setDbSchema,
   } = useContext(Context);
 
@@ -68,9 +69,9 @@ const HomePageContainer = () => {
 
       console.log('dbSchema is : ', dbSchema)
 
-      if (data.success) {
+      if (data) {
         setConnectedToDB(true); // Connection successful
-        alert("Connected successfully!"); // Temporary success feedback
+        alert("Connected successfully!", connectedToDB); // Temporary success feedback
         // You can redirect or trigger other success behavior here
       } else {
         setError("Failed to connect. Verify the details.");

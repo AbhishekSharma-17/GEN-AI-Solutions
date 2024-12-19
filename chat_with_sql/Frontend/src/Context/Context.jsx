@@ -8,7 +8,7 @@ const ContextProvider = (props) => {
   const [LLMType, setLLMType] = useState();
   const [error, setError] = useState('');
 
-  const [connectedToDB, setConnectedToDB] = useState(false);
+  const [connectedToDB, setConnectedToDB] = useState();
   const [dbSchema, setDbSchema] = useState('');
 
   const contextValue = {

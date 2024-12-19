@@ -1,0 +1,8 @@
+.Content-Area{
+    display: flex;
+    height: 100%;
+    border: 2px solid black;
+    flex-direction: column;
+    justify-content: flex-start;
+    width: 100%;
+}
