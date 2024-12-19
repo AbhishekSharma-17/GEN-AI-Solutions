@@ -1,8 +1,13 @@
 /* main.jsx styling starts here */
 .main {
-  flex: 1;
-  padding-bottom: 15vh;
-  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  width: 100%;
+  height: 100vh;
+  /* border: 1px solid green; */
+  gap: 20px;
+
 }
 .main .nav {
   display: flex;
@@ -11,24 +16,28 @@
   font-size: 22px;
   padding: 15px;
   color: #585858;
-  margin-bottom: 30px;
+  /* margin-bottom: 30px; */
+  /* border: 1px solid red; */
 }
-.main-nav-para-text {
-  background: -webkit-linear-gradient(15deg, #032b44, #4682b4);
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-weight: 700;
-  cursor: pointer;
+.main .nav a img{
+  width: 150px;
+  border-radius: 0;
 }
 .main .nav img {
   width: 30px;
   border-radius: 50%;
 }
+
 .main-container {
-  max-width: 900px;
-  margin: 0 auto;
+  /* max-width: 900px; */
+  /* margin-left: 10%; */
+  padding: 0;
   width: 100%;
-  height: auto;
+  height: 100%;
+  /* border: 1px solid red; */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 /* main.jsx styling starts here */
 
@@ -36,11 +45,14 @@
 .result {
   padding: 0px 5%;
   font-size: 18px;
-  max-height: 70vh;
+  /* changes */
+  height: 70vh;
+  /* height:100%; */
   gap: 5px;
   display: flex;
   flex-direction: column;
   overflow-y: scroll;
+  /* border: 1px solid green; */
 }
 .result::-webkit-scrollbar {
   display: none;

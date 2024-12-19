@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { assets } from "../../assets/assets";
 import { Context } from "../../context/Context";
-import './Sidebar.css'
+import "./Sidebar.css";
 
 const Sidebar = () => {
   const handleExtension = () => {
@@ -12,7 +12,7 @@ const Sidebar = () => {
   };
 
   const [extended, setExtended] = useState(true);
-  const {previousPrompt, setPreviousPrompt} = useContext(Context)
+  const { previousPrompt } = useContext(Context);
 
   return (
     <div className="sidebar">
@@ -23,18 +23,20 @@ const Sidebar = () => {
           src={assets.menu_icon}
           alt="menu_icon"
         />
-        <div className="new-chat" style={{border:"1px solid grey"}}>
+        <div className="new-chat" style={{ border: "1px solid grey" }}>
           <img src={assets.plus_icon} alt="plus_icon" className="plus-icon" />
-          {extended ? <p style={{marginTop:"15px", margin:"0"}}>New Chat</p> : null}
+          {extended ? (
+            <p style={{ marginTop: "15px", margin: "0" }}>New Chat</p>
+          ) : null}
         </div>
         <p className="recent-title">Recents</p>
         {extended ? (
           <div className="recent">
             {previousPrompt.map((item, index) => {
               return (
-                <div className="recent-entry">
+                <div className="recent-entry" key={index}>
                   <img src={assets.message_icon} alt="" />
-                  <p className="">{item.slice(0, 22)}...</p>
+                  <p className="">{item.length >15 ?item.slice(0, 15)+'...':item}</p>
                 </div>
               );
             })}
@@ -44,7 +46,7 @@ const Sidebar = () => {
       <div className="bottom">
         {extended ? (
           <p className="sidebar-bottom-para-text">
-            <a href="https://www.genaiprotos.com/">GenAI Protos</a>
+            <a href="https://www.genaiprotos.com/"><img src={assets.genAILogo} alt="" width={150} /></a>
           </p>
         ) : null}
       </div>
