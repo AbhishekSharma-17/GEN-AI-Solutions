@@ -3,8 +3,8 @@ import './Greeting.css'
 
 const Greeting = () => (
   <div className="greet" style={{fontFamily:"Inter"}}>
-    <span>Welcome To, GenAI Protos..</span>
-    <p className="greetPara2">Protoype : Chat With PowerPoint</p>
+    
+    <p className="greetPara2"><span style={{fontWeight:'bold'}}>Prototype</span> : Chat With PowerPoint</p>
   </div>
 );
 
