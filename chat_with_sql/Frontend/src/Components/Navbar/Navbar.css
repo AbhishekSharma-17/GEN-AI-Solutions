@@ -1,17 +1,15 @@
 .main-navbar{
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    /* border: 1px solid green; */
-    align-items: center;
-    padding: 10px 15px;
+    padding: 10px;
     box-shadow: 0px 0px 6px grey;
+    background-color: white;
     width: 100%;
-
+    /* border: 1px solid red; */
+    height: max-content;
 }
-.main-navbar-image-logo{
-    width: 200px;
-}
-.main-navbar-image-icon{
-    width: 50px;
+.main-navbar p{
+    margin: 0;
+    font-size: 25px;
+    font-weight: bold;
 }

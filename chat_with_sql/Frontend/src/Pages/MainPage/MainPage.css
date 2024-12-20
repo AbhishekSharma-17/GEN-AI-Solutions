@@ -1,6 +1,6 @@
 .main-page{
     height: 100vh;
-    border: 1px solid red;
+    /* border: 1px solid red; */
     box-sizing: border-box;
     display: flex;
     flex-direction: row;
