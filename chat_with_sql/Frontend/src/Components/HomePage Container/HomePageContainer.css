@@ -1,28 +1,24 @@
 .homePage-container{
-    border: 1px solid red;
+    border: 1px solid black;
     display: flex;
     flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    gap: 20px;
+    padding:  120px;
+    gap: 10px;
     width: 100%;
-    padding: 10vh;
-    height: 90vh;
+    height: auto;
 }
 
 .homepage-textual-content, .homepage-setup-content{
     width: 50%;
-    /* padding: 20px; */
+    padding: 20px;
     border: 1px solid red;
     display: flex;
-    height: 60vh !important;
     flex-direction: column;
+    /* justify-content: center; */
+    height: 100%;
     gap: 10px;
-    /* height: auto; */
 }
-.homepage-setup-content{
-    height: auto!important;
-}
+
 .homepage-text-content{
     /* border: 1px solid black; */
     /* padding: 10px; */
@@ -31,7 +27,7 @@
 }
 .homepage-text-content p{
     margin: 0;
-    font-size: 2vw;
+    font-size: 40px;
     font-weight: 500;
     font-family: Roboto;
     width: 100%;
