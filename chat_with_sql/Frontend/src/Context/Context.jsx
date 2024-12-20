@@ -11,6 +11,13 @@ const ContextProvider = (props) => {
   const [connectedToDB, setConnectedToDB] = useState();
   const [dbSchema, setDbSchema] = useState('');
 
+  // States for input, query, answer, loading, and error
+  const [userQuestion, setUserQuestion] = useState(""); // To track the user's input
+  const [query, setQuery] = useState(""); // To store the generated query
+  const [answer, setAnswer] = useState(""); // To store the generated answer
+  const [queryLoading, setQueryLoading] = useState(false);
+  const [recentQuery, setRecentQuery] = useState([])
+
   const contextValue = {
     isLoadings,
     setIsLoadings,
@@ -22,7 +29,12 @@ const ContextProvider = (props) => {
     setLLMType,
     connectedToDB, setConnectedToDB,
     error, setError,
-    dbSchema, setDbSchema
+    dbSchema, setDbSchema,
+    userQuestion, setUserQuestion,
+    query, setQuery,
+    answer, setAnswer,
+    queryLoading, setQueryLoading,
+    recentQuery, setRecentQuery
   };
 
   return (

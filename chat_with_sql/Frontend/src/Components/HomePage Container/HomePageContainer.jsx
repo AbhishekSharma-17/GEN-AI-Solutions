@@ -64,10 +64,10 @@ const HomePageContainer = () => {
 
       const data = await response.json();
       const schemaString = processSchemaString(data.schema)
-      // console.log(schemaString)
+      console.log(schemaString)
       setDbSchema(schemaString);
 
-      console.log('dbSchema is : ', dbSchema)
+      // console.log('dbSchema is : ', dbSchema)
 
       if (data) {
         setConnectedToDB(true); // Connection successful
@@ -143,7 +143,7 @@ const HomePageContainer = () => {
               />
             </div>
             <div className="mb-4">
-              <button type="submit" className="btn btn-dark">
+              <button type="submit" className="btn btn-dark" disabled={isLoadings}>
                 {isLoadings? 'Saving Configuration...':'Save Configuration'}
               </button>
             </div>
