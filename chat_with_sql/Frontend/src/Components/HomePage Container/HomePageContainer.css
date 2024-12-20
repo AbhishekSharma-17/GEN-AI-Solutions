@@ -1,5 +1,5 @@
 .homePage-container{
-    /* border: 1px solid red; */
+    border: 1px solid red;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -120,8 +120,8 @@
 .homepage-setup-image img{
     box-shadow: 0px 0px 7px rgb(228, 228, 228);
     padding: 20px;
-    width: 80%;
-    height: auto;
+    width: auto;
+    height: 400px;
     background-size: cover;
     border-radius: 5px;
 }
