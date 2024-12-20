@@ -5,8 +5,8 @@
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    gap: 10px;
-    /* border: 1px solid red; */
+    /* gap: 10px; */
+    border: 1px solid red;
 }
 
 @media (max-width: 768px)
