@@ -2,6 +2,7 @@ import React, { useContext, useState } from "react";
 import "./ContentArea.css";
 import Navbar from "../Navbar/Navbar";
 import { Context } from "../../Context/Context";
+import QueryLoader from "../QueryLoader/QueryLoader";
 
 const ContentArea = () => {
   const {
@@ -115,7 +116,7 @@ const ContentArea = () => {
 
         <div className="answers-query">
           {queryLoading ? (
-            <div className="query-loader">Query is loading</div>
+            <div className="query-loader"><QueryLoader /></div>
           ) : (
             <>
               {query ? (
