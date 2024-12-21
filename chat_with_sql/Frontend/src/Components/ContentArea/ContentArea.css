@@ -1,13 +1,14 @@
 .content-Area{
     display: flex;
-    height: 100vh;
-    /* border: 2px solid black; */
+    height: 100%;
     flex-direction: column;
     justify-content: flex-start;
+    flex: 1;
     width: 100%;
     box-sizing: border-box;
     background-color: rgb(243, 241, 241);
-}
+    /* border: 2px solid black; */
+  }
 .database-schema{
     padding: 20px;
     /* border: 1px solid red; */
