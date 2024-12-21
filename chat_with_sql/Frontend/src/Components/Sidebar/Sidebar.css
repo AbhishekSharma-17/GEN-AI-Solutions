@@ -1,5 +1,5 @@
 .main-sidebar{
-    height: 100vh;
+    height: 100%;
     padding: 20px;
     background-color: white;
     display: flex;
@@ -8,7 +8,6 @@
     box-sizing: border-box;
     flex: 0 0 20%;
     justify-content: space-between;
-    /* border: 1px solid black; */
 }
 
 .main-sidebar-top{
@@ -49,7 +48,6 @@
     justify-content:flex-start;
     align-items: center;
     gap: 5px;
-    text-transform: capitalize;
     width: 100%;
     margin-bottom: 15px;
     padding: 5px 2px;
