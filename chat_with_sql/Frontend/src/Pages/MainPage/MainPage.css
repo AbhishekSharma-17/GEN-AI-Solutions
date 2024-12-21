@@ -1,5 +1,5 @@
 .main-page {
-    height: 100vh; /* Full viewport height */
+    height: 100vh;
     display: flex;
     flex-direction: row;
     box-sizing: border-box;

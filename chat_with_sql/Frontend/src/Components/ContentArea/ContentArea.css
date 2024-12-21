@@ -7,7 +7,13 @@
     width: 100%;
     box-sizing: border-box;
     background-color: rgb(243, 241, 241);
+    overflow-y: scroll;
+    scroll-behavior: smooth;
     /* border: 2px solid black; */
+  }
+
+  .content-Area::-webkit-scrollbar{
+    display: none;
   }
 .database-schema{
     padding: 20px;
