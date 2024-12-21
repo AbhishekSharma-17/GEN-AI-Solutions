@@ -19,46 +19,43 @@ const ContentArea = () => {
     queryLoading,
     setQueryLoading,
     setError,
+    setRecentQuery,
   } = useContext(Context);
 
-  // Replace with your actual values for these variables
-  const Database_URI = dbURI; // Example placeholder
-  const LLM_Type = LLMType; // Example placeholder
-  const API_Key = API_KEY; // Example placeholder
+  const Database_URI = dbURI;
+  const LLM_Type = LLMType;
+  const API_Key = API_KEY;
 
   const handleQuery = async (e) => {
-    e.preventDefault(); // Prevent form submission
-    setQuery(""); // Clear previous query
-    setAnswer(""); // Clear previous answer
+    e.preventDefault();
+    setQuery("");
+    setAnswer("");
     setError(null);
     setQueryLoading(true);
 
-    // Prepare form_data to send to the API
     const form_data = {
       question: userQuestion,
       db_uri: Database_URI,
       llm_type: LLM_Type,
       api_key: API_Key,
-      aws_access_key_id: "", // Add actual values if needed
-      aws_secret_access_key: "", // Add actual values if needed
+      aws_access_key_id: "",
+      aws_secret_access_key: "",
     };
 
     try {
       const response = await fetch("http://localhost:8001/query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form_data), // Send the form_data as JSON
+        body: JSON.stringify(form_data),
       });
 
-      // Check if the response is valid
       if (!response.ok) {
         throw new Error("Failed to fetch the query and answer.");
       }
 
-      const data = await response.json(); // Wait for the entire response
-      setUserQuestion(""); // Clear the user input after the query is made
+      const data = await response.json();
+      setUserQuestion("");
 
-      // Set the query and answer from the response
       if (data.sql_query) {
         setQuery(data.sql_query);
       }
@@ -66,6 +63,12 @@ const ContentArea = () => {
       if (data.answer) {
         setAnswer(data.answer);
       }
+
+      // Update recent queries
+      setRecentQuery((prevRecentQueries) => [
+        { question: userQuestion, query: data.sql_query, answer: data.answer },
+        ...prevRecentQueries,
+      ]);
     } catch (error) {
       console.error("Error:", error);
       setError(
@@ -79,17 +82,13 @@ const ContentArea = () => {
   return (
     <div className="content-Area">
       <Navbar />
-      {/* Database schema starts */}
       <div className="database-schema">
         <p>Database Schema</p>
         <div className="schema">
-          {/* Use a <pre> tag to preserve formatting */}
           <pre>{dbSchema}</pre>
         </div>
       </div>
-      {/* Database schema ends */}
 
-      {/* question-answers starts here */}
       <div className="schema-question-answers">
         <div className="schema-question">
           <p>Question</p>
@@ -98,8 +97,8 @@ const ContentArea = () => {
               type="text"
               placeholder="Ask Questions about your database."
               className="form-control p-2"
-              value={userQuestion} // Controlled input
-              onChange={(e) => setUserQuestion(e.target.value)} // Update state
+              value={userQuestion}
+              onChange={(e) => setUserQuestion(e.target.value)}
               required
             />
             <button
@@ -112,34 +111,33 @@ const ContentArea = () => {
           </form>
         </div>
 
-        {/* Only display answers-query if query or answer exists */}
-
         <div className="answers-query">
           {queryLoading ? (
-            <div className="query-loader"><QueryLoader /></div>
+            <div className="query-loader">
+              <QueryLoader />
+            </div>
           ) : (
             <>
-              {query ? (
+              {query && (
                 <div className="schema-generated-query">
                   <p>Generated SQL Query</p>
                   <div className="query mt-3 mb-3">
                     {query || "Waiting for generated query..."}
                   </div>
                 </div>
-              ) : null}
-              {answer ? (
+              )}
+              {answer && (
                 <div className="schema-answers">
                   <p>Answer</p>
                   <div className="answer mt-3 mb-3">
                     {answer || "Waiting for answer..."}
                   </div>
                 </div>
-              ) : null}
+              )}
             </>
           )}
         </div>
       </div>
-      {/* question-answers ends here */}
     </div>
   );
 };

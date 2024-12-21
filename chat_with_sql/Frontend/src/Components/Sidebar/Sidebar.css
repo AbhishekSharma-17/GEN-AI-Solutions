@@ -5,15 +5,19 @@
     display: flex;
     flex-direction:column ;
     /* gap: 10px; */
+    box-sizing: border-box;
+    flex: 0 0 20%;
     justify-content: space-between;
+    /* border: 1px solid black; */
 }
 
 .main-sidebar-top{
-    height: 90%;
+    height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     gap: 20px;
+    /* border: 1px solid red; */
     /* align-items: center; */
 }
 .main-sidebar-top .sidebar-top-title{
@@ -25,12 +29,13 @@
 .queries-list
 {
     /* border: 1px solid red; */
-    padding: 10px 5px;
-    height: 100%;
+    padding: 10px 10px;
+    height: 90%;
     display: flex;
     flex-direction:column ;
     overflow-y: scroll;
     scroll-behavior: smooth;
+    box-shadow: inset 0px -2px 12px rgb(238, 237, 237);
 
 }
 .queries-list::-webkit-scrollbar{
@@ -42,7 +47,7 @@
     border-radius: 5px;
     flex-direction: row;
     justify-content:flex-start;
-    align-items: flex-start;
+    align-items: center;
     gap: 5px;
     text-transform: capitalize;
     width: 100%;

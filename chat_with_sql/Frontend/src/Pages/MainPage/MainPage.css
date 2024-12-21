@@ -1,8 +1,7 @@
-.main-page{
-    height: 100vh;
-    /* border: 1px solid red; */
-    box-sizing: border-box;
+.main-page {
+    height: 100vh; /* Full viewport height */
     display: flex;
     flex-direction: row;
-    
+    box-sizing: border-box;
+    overflow: hidden;
 }
