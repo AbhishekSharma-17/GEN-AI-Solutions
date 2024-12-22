@@ -20,6 +20,7 @@
   justify-content: space-between;
   position: relative;
   cursor: pointer;
+  animation: FadeInOut 2s;
 }
 .latency ,.tokens{
     width: 50%;

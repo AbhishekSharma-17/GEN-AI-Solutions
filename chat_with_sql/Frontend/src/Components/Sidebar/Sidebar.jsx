@@ -104,13 +104,13 @@ const Sidebar = () => {
 
       // Set cost values as floats rounded to 2 decimal places
       if (data.input_cost) {
-        setInputCost(parseFloat(data.input_cost).toFixed(2));
+        setInputCost(parseFloat(data.input_cost).toFixed(4));
       }
       if (data.output_cost) {
-        setOutputCost(parseFloat(data.output_cost).toFixed(2));
+        setOutputCost(parseFloat(data.output_cost).toFixed(4));
       }
       if (data.total_cost) {
-        setTotalCost(parseFloat(data.total_cost).toFixed(2));
+        setTotalCost(parseFloat(data.total_cost).toFixed(3));
       }
 
       // console.log('getting response time');
@@ -134,13 +134,14 @@ const Sidebar = () => {
 
   return (
     <div className="main-sidebar">
+      {responseTime?
       <div className="token-display">
         <div className="latency">
-          <span>{responseTime || 0}</span>
+          <span>{responseTime || 0} s</span>
           <p>Response Time</p>
         </div>
         <div className="tokens">
-          <span>{totalCost || 0}</span>
+          <span>$ {totalCost || 0}</span>
           <p>Response Cost</p>
         </div>
 
@@ -187,7 +188,7 @@ const Sidebar = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div>:null}
 
       <div className="main-sidebar-top">
         <p className="sidebar-top-title">Recent Queries</p>
