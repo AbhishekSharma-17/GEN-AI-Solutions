@@ -132,6 +132,7 @@
     max-height: 350px; /* Adjusts height for consistency */
     object-fit: cover; /* Maintains image proportions */
     border-radius: 5px;
+    background-size: cover;
 }
 
 /* Responsive adjustments for medium screens */

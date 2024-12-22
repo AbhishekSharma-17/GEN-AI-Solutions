@@ -22,17 +22,11 @@ const ContentArea = () => {
     setRecentQuery,
     modelName,
     setModelName,
-    inputToken,
     setInputToken,
-    outputToken,
     setOutputToken,
-    totalToken,
     setTotalToken,
-    inputCost,
     setInputCost,
-    outputCost,
     setOutputCost,
-    totalCost,
     setTotalCost,
   } = useContext(Context);
 
@@ -61,7 +55,7 @@ const ContentArea = () => {
     }
 
     const form_data = {
-      question: question,
+      question: userQuestion,
       db_uri: Database_URI,
       llm_type: LLM_Type,
       model: modelName,
