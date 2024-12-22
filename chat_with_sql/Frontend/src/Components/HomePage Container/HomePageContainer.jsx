@@ -46,8 +46,6 @@ const HomePageContainer = () => {
       db_uri: Database_URI,
       llm_type: LLM_Type,
       api_key: API_Key,
-      aws_access_key_id: "",
-      aws_secret_access_key: "",
     };
 
     try {

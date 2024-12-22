@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import "./ContentArea.css";
 import Navbar from "../Navbar/Navbar";
 import { Context } from "../../Context/Context";
@@ -20,14 +20,13 @@ const ContentArea = () => {
     setQueryLoading,
     setError,
     setRecentQuery,
-    modelName,
-    setModelName,
     setInputToken,
     setOutputToken,
     setTotalToken,
     setInputCost,
     setOutputCost,
     setTotalCost,
+    setModelName,
   } = useContext(Context);
 
   const Database_URI = dbURI;
@@ -47,10 +46,15 @@ const ContentArea = () => {
     setError(null);
     setQueryLoading(true);
 
+    // Set the model name based on LLM_Type, use a local variable to avoid async issues
+    let updatedModelName = "";
+
     if (LLM_Type === "OpenAI") {
+      updatedModelName = "gpt-4o";
       setModelName("gpt-4o");
     }
     if (LLM_Type === "Anthropic") {
+      updatedModelName = "claude-3-sonnet-20240229";
       setModelName("claude-3-sonnet-20240229");
     }
 
@@ -58,7 +62,7 @@ const ContentArea = () => {
       question: userQuestion,
       db_uri: Database_URI,
       llm_type: LLM_Type,
-      model: modelName,
+      model: updatedModelName,
       api_key: API_Key,
       aws_access_key_id: "",
       aws_secret_access_key: "",
@@ -86,27 +90,14 @@ const ContentArea = () => {
         setAnswer(data.answer);
       }
 
-      // setting input, output, total tokens to thier respective state
-      if (data.input_tokens) {
-        setInputToken(data.input_tokens);
-        if (data.output_tokens) {
-          setOutputToken(data.output_tokens);
-          if (data.total_tokens) {
-            setTotalToken(data.total_tokens);
-          }
-        }
-      }
+      // Update tokens and costs
+      setInputToken(data.input_tokens || 0);
+      setOutputToken(data.output_tokens || 0);
+      setTotalToken(data.total_tokens || 0);
 
-      // setting input, output, total cost to thier respective state
-      if (data.input_cost) {
-        setInputToken(data.input_cost);
-        if (data.output_cost) {
-          setOutputToken(data.output_cost);
-          if (data.total_cost) {
-            setTotalToken(data.total_cost);
-          }
-        }
-      }
+      setInputCost(data.input_cost || 0);
+      setOutputCost(data.output_cost || 0);
+      setTotalCost(data.total_cost || 0);
 
       // Update recent queries
       setRecentQuery((prevRecentQueries) => [
