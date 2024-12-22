@@ -13,6 +13,9 @@ import boto3
 import os
 import re
 import logging
+from token_cost_manager import TokenCostManager
+from langchain_community.callbacks.manager import get_openai_callback
+
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -37,17 +40,14 @@ class ConnectionRequest(BaseModel):
     db_uri: str
     llm_type: str
     api_key: str = None
-    aws_access_key_id: str = None
-    aws_secret_access_key: str = None
 
 # Pydantic model for query request body
 class QueryRequest(BaseModel):
     question: str
     db_uri: str
     llm_type: str
+    model:str
     api_key: str = None
-    aws_access_key_id: str = None
-    aws_secret_access_key: str = None
 
 # Function to get database connection
 def get_database_connection(db_uri):
@@ -105,7 +105,7 @@ async def process_query(request: QueryRequest):
         if not request.api_key:
             raise HTTPException(status_code=400, detail="OpenAI API key is required")
         os.environ["OPENAI_API_KEY"] = request.api_key
-        llm = ChatOpenAI(temperature=0)
+        llm = ChatOpenAI(temperature=0, model="gpt-4o")
     elif request.llm_type == "AWS Bedrock":
         if not request.aws_access_key_id or not request.aws_secret_access_key:
             raise HTTPException(status_code=400, detail="AWS credentials are required")
@@ -274,12 +274,31 @@ SQL Query:
         | prompt_response
         | llm
     )
-
-    result = full_chain.invoke({"question": request.question})
-
+    with get_openai_callback() as cb:
+        
+        result = full_chain.invoke({"question": request.question})
+        input_tokens = cb.prompt_tokens
+        output_tokens = cb.completion_tokens
+        total_tokens = cb.total_tokens
+        
+        (
+                total_cost,
+                input_cost,
+                output_cost,
+            ) = await TokenCostManager().calculate_cost(
+                input_tokens, output_tokens, model_name=request.model
+            )
+        
+        
     return {
         "sql_query": extracted_sql_query,
-        "answer": result.content
+        "answer": result.content,
+        "input_tokens":input_tokens,
+        "output_tokens":output_tokens,
+        "total_tokens":total_tokens,
+        "input_cost":input_cost,
+        "output_cost":output_cost,
+        "total_cost":total_cost
     }
 
 if __name__ == "__main__":
