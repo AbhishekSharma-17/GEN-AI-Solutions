@@ -28,6 +28,11 @@ const Sidebar = () => {
     setOutputCost,
     totalCost,
     setTotalCost,
+    responseTime,
+    setResponseTime,cumulativeTokens,
+    setCumulativeTokens,
+    cumulativeCost,
+    setCumulativeCost,
   } = useContext(Context);
 
   const Database_URI = dbURI;
@@ -45,6 +50,7 @@ const Sidebar = () => {
     setInputCost("");
     setOutputCost("");
     setTotalCost("");
+    setResponseTime("");
     setQueryLoading(true);
     setUserQuestion(question);
     setError(null);
@@ -101,13 +107,36 @@ const Sidebar = () => {
 
       // Set cost values as floats rounded to 2 decimal places
       if (data.input_cost) {
-        setInputCost(parseFloat(data.input_cost).toFixed(2));
+        setInputCost(parseFloat(data.input_cost).toFixed(4));
       }
       if (data.output_cost) {
-        setOutputCost(parseFloat(data.output_cost).toFixed(2));
+        setOutputCost(parseFloat(data.output_cost).toFixed(4));
       }
       if (data.total_cost) {
-        setTotalCost(parseFloat(data.total_cost).toFixed(2));
+        setTotalCost(parseFloat(data.total_cost).toFixed(3));
+      }
+
+      if (data.cumulative_tokens) {
+        setResponseTime(parseFloat(data.cumulative_tokens).toFixed(2));
+      }
+      if (data.cumulative_cost) {
+        setResponseTime(parseFloat(data.cumulative_cost).toFixed(2));
+      }
+     
+      if (data.cumulative_tokens) {
+        setCumulativeTokens(parseFloat(data.cumulative_tokens).toFixed(2));
+      }
+      if (data.cumulative_cost) {
+        setCumulativeCost(parseFloat(data.cumulative_cost).toFixed(2));
+      }
+
+
+      // response time
+      let response_Time = "";
+      if (data.response_time) {
+        response_Time = parseFloat(data.response_time).toFixed(2);
+        setResponseTime(response_Time);
+        console.log("Response Time:", data.response_time);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -121,58 +150,80 @@ const Sidebar = () => {
 
   return (
     <div className="main-sidebar">
-      <div className="token-display">
-        <div className="latency">
-          <span>{0.00}</span>
-          <p>Response Time</p>
-        </div>
-        <div className="tokens">
-          <span>{totalCost || 'N/A'}</span>
-          <p>Response Cost</p>
-        </div>
-
-        <div class="hover-content">
-          <div className="speed-insights">
-            <p>Insights</p>
+      {responseTime ? (
+        <div className="token-display">
+          <div className="latency">
+            <span>{responseTime || 0} s</span>
+            <p>Response Time</p>
+          </div>
+          <div className="tokens">
+            <span>$ {totalCost || 0}</span>
+            <p>Response Cost</p>
           </div>
 
-          <div style={{ padding: "10px" }}>
-            <p className="token-details-title">Tokens </p>
-            <div className="input-output-token">
-              <div className="input-token">
-                <span className="token-value">{inputToken || 'N/A'}</span>
-                <span className="token-title">Input token</span>
+          <div className="hover-content">
+            <div className="speed-insights">
+              <p>Insights</p>
+            </div>
+
+            <div style={{ padding: "10px" }}>
+              <p className="token-details-title">Tokens </p>
+              <div className="input-output-token">
+                <div className="input-token">
+                  <span className="token-value">{inputToken || "N/A"}</span>
+                  <span className="token-title">Input token</span>
+                </div>
+                <div className="output-token">
+                  <span className="token-value">{outputToken || "N/A"}</span>
+                  <span className="token-title">Output token</span>
+                </div>
+                <div className="total-token">
+                  <span className="token-value">{totalToken || "N/A"}</span>
+                  <span className="token-title">Total token</span>
+                </div>
               </div>
-              <div className="output-token">
-                <span className="token-value">{outputToken || 'N/A'}</span>
-                <span className="token-title">Output token</span>
+            </div>
+
+            <div style={{ padding: "10px" }}>
+              <p className="token-details-title">
+                Approx Cost <span style={{ fontSize: "15px" }}>(in USD)</span>
+              </p>
+              <div className="inference-time">
+                <div className="input-inference">
+                  <span className="token-value">{inputCost || "N/A"}</span>
+                  <span className="token-title">Input cost</span>
+                </div>
+                <div className="output-inference">
+                  <span className="token-value">{outputCost || "N/A"}</span>
+                  <span className="token-title">Output cost</span>
+                </div>
+                <div className="total-inference">
+                  <span className="token-value">{totalCost || "N/A"}</span>
+                  <span className="token-title">Total cost</span>
+                </div>
               </div>
-              <div className="total-token">
-                <span className="token-value">{totalToken || 'N/A'}</span>
-                <span className="token-title">Total token</span>
+            </div>
+
+            {/* token per second starts */}
+          <div
+            style={{ padding: "10px"}}
+          >
+            <p className="token-details-title">Cummulative </p>
+            <div className="cumulative-token-cost">
+              <div className="cumulative-cost">
+                <span className="token-value">{cumulativeCost}</span>
+                <span className="token-title">Cummulative Cost</span>
+              </div>
+              <div className="cumulative-token">
+                <span className="token-value">{cumulativeTokens}</span>
+                <span className="token-title">Cummulative Token</span>
               </div>
             </div>
           </div>
-
-          <div style={{ padding: "10px" }}>
-            <p className="token-details-title">Cost</p>
-            <div className="inference-time">
-              <div className="input-inference">
-                <span className="token-value">{inputCost || 'N/A'}</span>
-                <span className="token-title">Input cost</span>
-              </div>
-              <div className="output-inference">
-                <span className="token-value">{outputCost || 'N/A'}</span>
-                <span className="token-title">Output cost</span>
-              </div>
-              <div className="total-inference">
-                <span className="token-value">{totalCost || 'N/A'}</span>
-                <span className="token-title">Total cost</span>
-              </div>
-            </div>
+          {/* token per second ends */}
           </div>
         </div>
-      </div>
+      ) : null}
 
       <div className="main-sidebar-top">
         <p className="sidebar-top-title">Recent Queries</p>

@@ -29,6 +29,13 @@ const ContextProvider = (props) => {
   const [outputCost, setOutputCost] = useState("");
   const [totalCost, setTotalCost] = useState("");
 
+  // cummulative tokens and cost
+  const [cumulativeTokens, setCumulativeTokens] = useState("");
+  const [cumulativeCost, setCumulativeCost] = useState("");
+
+  // response time of query
+  const [responseTime, setResponseTime] = useState("");
+
   const contextValue = {
     isLoadings,
     setIsLoadings,
@@ -68,6 +75,12 @@ const ContextProvider = (props) => {
     setOutputCost,
     totalCost,
     setTotalCost,
+    responseTime,
+    setResponseTime,
+    cumulativeTokens,
+    setCumulativeTokens,
+    cumulativeCost,
+    setCumulativeCost,
   };
 
   return (

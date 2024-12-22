@@ -18,3 +18,12 @@ p {
   margin: 0;
   padding: 0;
 }
+
+@keyframes FadeInOut{
+  0%{
+    opacity: 0;
+  }
+  100%{
+    opacity: 1;
+  }
+}

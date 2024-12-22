@@ -20,6 +20,7 @@
   justify-content: space-between;
   position: relative;
   cursor: pointer;
+  animation: FadeInOut 2s;
 }
 .latency ,.tokens{
     width: 50%;
@@ -69,13 +70,13 @@
 }
 .speed-insights {
   text-align: center;
-  color: orangered;
+  color: #001F3F;
   font-weight: 500;
   font-size: 22px;
   font-family: Roboto Condensed !important;
 }
 .input-output-token,
-.inference-time{
+.inference-time, .cumulative-token-cost{
   /* border : 1px solid red; */
   display: flex;
   flex-direction: row;
@@ -96,6 +97,18 @@
   align-items: center;
   width: 33%;
 }
+.cumulative-cost,.cumulative-token{
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: left;
+  width: 50%!important;
+  align-items: left!important;
+  background-color: rgb(245, 245, 245) ;
+  border-radius: 5px;
+  /* border: 1px solid red ; */
+}
 .token-details-title {
   text-align: left;
   font-size: 22px;
@@ -104,7 +117,9 @@
 }
 .token-value {
   font-size: 1.5vw;
-  color: orange;
+  color: #0D92F4;
+  font-weight: 700;
+  /* color: orange; */
 }
 .token-title {
   color: grey;

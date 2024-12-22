@@ -27,6 +27,11 @@ const ContentArea = () => {
     setOutputCost,
     setTotalCost,
     setModelName,
+    cumulativeTokens,
+    setCumulativeTokens,
+    cumulativeCost,
+    setCumulativeCost,
+    setResponseTime,
   } = useContext(Context);
 
   const Database_URI = dbURI;
@@ -43,6 +48,9 @@ const ContentArea = () => {
     setInputCost("");
     setOutputCost("");
     setTotalCost("");
+    setResponseTime("");
+    setCumulativeTokens("");
+    setCumulativeCost("");
     setError(null);
     setQueryLoading(true);
 
@@ -90,14 +98,37 @@ const ContentArea = () => {
         setAnswer(data.answer);
       }
 
-      // Update tokens and costs
-      setInputToken(data.input_tokens || 0);
-      setOutputToken(data.output_tokens || 0);
-      setTotalToken(data.total_tokens || 0);
+      // Set token values as floats rounded to 2 decimal places
+      if (data.input_tokens) {
+        setInputToken(parseInt(data.input_tokens));
+      }
+      if (data.output_tokens) {
+        setOutputToken(parseInt(data.output_tokens));
+      }
+      if (data.total_tokens) {
+        setTotalToken(parseInt(data.total_tokens));
+      }
 
-      setInputCost(data.input_cost || 0);
-      setOutputCost(data.output_cost || 0);
-      setTotalCost(data.total_cost || 0);
+      // Set cost values as floats rounded to 2 decimal places
+      if (data.input_cost) {
+        setInputCost(parseFloat(data.input_cost).toFixed(4));
+      }
+      if (data.output_cost) {
+        setOutputCost(parseFloat(data.output_cost).toFixed(4));
+      }
+      if (data.total_cost) {
+        setTotalCost(parseFloat(data.total_cost).toFixed(3));
+      }
+      if (data.response_time) {
+        setResponseTime(parseFloat(data.response_time).toFixed(2));
+      }
+
+      if (data.cumulative_tokens) {
+        setCumulativeTokens(parseFloat(data.cumulative_tokens).toFixed(2));
+      }
+      if (data.cumulative_cost) {
+        setCumulativeCost(parseFloat(data.cumulative_cost).toFixed(2));
+      }
 
       // Update recent queries
       setRecentQuery((prevRecentQueries) => [
