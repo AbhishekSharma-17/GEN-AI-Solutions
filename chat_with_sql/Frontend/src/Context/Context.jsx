@@ -29,6 +29,9 @@ const ContextProvider = (props) => {
   const [outputCost, setOutputCost] = useState("");
   const [totalCost, setTotalCost] = useState("");
 
+  // response time of query
+  const [responseTime, setResponseTime] = useState("");
+
   const contextValue = {
     isLoadings,
     setIsLoadings,
@@ -68,6 +71,8 @@ const ContextProvider = (props) => {
     setOutputCost,
     totalCost,
     setTotalCost,
+    responseTime,
+    setResponseTime,
   };
 
   return (

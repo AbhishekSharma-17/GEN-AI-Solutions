@@ -28,6 +28,8 @@ const Sidebar = () => {
     setOutputCost,
     totalCost,
     setTotalCost,
+    responseTime,
+    setResponseTime,
   } = useContext(Context);
 
   const Database_URI = dbURI;
@@ -45,6 +47,7 @@ const Sidebar = () => {
     setInputCost("");
     setOutputCost("");
     setTotalCost("");
+    setResponseTime("");
     setQueryLoading(true);
     setUserQuestion(question);
     setError(null);
@@ -109,6 +112,16 @@ const Sidebar = () => {
       if (data.total_cost) {
         setTotalCost(parseFloat(data.total_cost).toFixed(2));
       }
+
+      // console.log('getting response time');
+      
+      // response time
+      let response_Time='';
+      if (data.response_time) {
+        response_Time = parseFloat(data.response_time).toFixed(2);
+        setResponseTime(response_Time);
+        console.log("Response Time:", data.response_time);
+      }
     } catch (error) {
       console.error("Error:", error);
       setError(
@@ -123,15 +136,15 @@ const Sidebar = () => {
     <div className="main-sidebar">
       <div className="token-display">
         <div className="latency">
-          <span>{0.00}</span>
+          <span>{responseTime || 0}</span>
           <p>Response Time</p>
         </div>
         <div className="tokens">
-          <span>{totalCost || 'N/A'}</span>
+          <span>{totalCost || 0}</span>
           <p>Response Cost</p>
         </div>
 
-        <div class="hover-content">
+        <div className="hover-content">
           <div className="speed-insights">
             <p>Insights</p>
           </div>
@@ -140,33 +153,35 @@ const Sidebar = () => {
             <p className="token-details-title">Tokens </p>
             <div className="input-output-token">
               <div className="input-token">
-                <span className="token-value">{inputToken || 'N/A'}</span>
+                <span className="token-value">{inputToken || "N/A"}</span>
                 <span className="token-title">Input token</span>
               </div>
               <div className="output-token">
-                <span className="token-value">{outputToken || 'N/A'}</span>
+                <span className="token-value">{outputToken || "N/A"}</span>
                 <span className="token-title">Output token</span>
               </div>
               <div className="total-token">
-                <span className="token-value">{totalToken || 'N/A'}</span>
+                <span className="token-value">{totalToken || "N/A"}</span>
                 <span className="token-title">Total token</span>
               </div>
             </div>
           </div>
 
           <div style={{ padding: "10px" }}>
-            <p className="token-details-title">Cost</p>
+            <p className="token-details-title">
+              Approx Cost <span style={{ fontSize: "15px" }}>(in USD)</span>
+            </p>
             <div className="inference-time">
               <div className="input-inference">
-                <span className="token-value">{inputCost || 'N/A'}</span>
+                <span className="token-value">{inputCost || "N/A"}</span>
                 <span className="token-title">Input cost</span>
               </div>
               <div className="output-inference">
-                <span className="token-value">{outputCost || 'N/A'}</span>
+                <span className="token-value">{outputCost || "N/A"}</span>
                 <span className="token-title">Output cost</span>
               </div>
               <div className="total-inference">
-                <span className="token-value">{totalCost || 'N/A'}</span>
+                <span className="token-value">{totalCost || "N/A"}</span>
                 <span className="token-title">Total cost</span>
               </div>
             </div>
