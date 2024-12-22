@@ -90,13 +90,13 @@ const Sidebar = () => {
 
       // Set token values as floats rounded to 2 decimal places
       if (data.input_tokens) {
-        setInputToken(parseFloat(data.input_tokens).toFixed(2));
+        setInputToken(parseInt(data.input_tokens));
       }
       if (data.output_tokens) {
-        setOutputToken(parseFloat(data.output_tokens).toFixed(2));
+        setOutputToken(parseInt(data.output_tokens));
       }
       if (data.total_tokens) {
-        setTotalToken(parseFloat(data.total_tokens).toFixed(2));
+        setTotalToken(parseInt(data.total_tokens));
       }
 
       // Set cost values as floats rounded to 2 decimal places
