@@ -10,9 +10,9 @@ const HomePageContainer = () => {
     setDBURI,
     setAPI_KEY,
     setLLMType,
+    LLMType,
     setConnectedToDB,
     setError,
-    dbSchema,
     connectedToDB,
     setDbSchema,
   } = useContext(Context);
@@ -46,8 +46,6 @@ const HomePageContainer = () => {
       db_uri: Database_URI,
       llm_type: LLM_Type,
       api_key: API_Key,
-      aws_access_key_id: "",
-      aws_secret_access_key: "",
     };
 
     try {
@@ -66,9 +64,8 @@ const HomePageContainer = () => {
       const schemaString = processSchemaString(data.schema)
       console.log(schemaString)
       setDbSchema(schemaString);
-
       // console.log('dbSchema is : ', dbSchema)
-
+      
       if (data) {
         setConnectedToDB(true); // Connection successful
         alert("Connected successfully!", connectedToDB); // Temporary success feedback
@@ -113,10 +110,10 @@ const HomePageContainer = () => {
                 </option>
                 <option value="OpenAI">OpenAI</option>
                 <option value="Anthropic">Anthropic</option>
-                <option value="AWS">AWS Bedrock</option>
+                {/* <option value="AWS">AWS Bedrock</option> */}
               </select>
             </div>
-            <div className="mb-4">
+            <div className="mb-3">
               <label htmlFor="databaseUri" className="form-label">
                 Database URI
               </label>
@@ -129,7 +126,7 @@ const HomePageContainer = () => {
                 required
               />
             </div>
-            <div className="mb-4">
+            <div className="mb-3">
               <label htmlFor="apiKey" className="form-label">
                 API Key
               </label>
@@ -142,7 +139,8 @@ const HomePageContainer = () => {
                 required
               />
             </div>
-            <div className="mb-4">
+            
+            <div className="mb-3">
               <button type="submit" className="btn btn-dark" disabled={isLoadings}>
                 {isLoadings? 'Saving Configuration...':'Save Configuration'}
               </button>

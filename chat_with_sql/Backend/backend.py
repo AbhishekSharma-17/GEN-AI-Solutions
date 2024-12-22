@@ -13,6 +13,9 @@ import boto3
 import os
 import re
 import logging
+from token_cost_manager import TokenCostManager
+from langchain_community.callbacks.manager import get_openai_callback
+import time
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -37,17 +40,14 @@ class ConnectionRequest(BaseModel):
     db_uri: str
     llm_type: str
     api_key: str = None
-    aws_access_key_id: str = None
-    aws_secret_access_key: str = None
 
 # Pydantic model for query request body
 class QueryRequest(BaseModel):
     question: str
     db_uri: str
     llm_type: str
+    model:str
     api_key: str = None
-    aws_access_key_id: str = None
-    aws_secret_access_key: str = None
 
 # Function to get database connection
 def get_database_connection(db_uri):
@@ -92,6 +92,7 @@ async def connect(request: ConnectionRequest):
 
 @app.post("/query")
 async def process_query(request: QueryRequest):
+    start_time = time.time()
     try:
         db = get_database_connection(request.db_uri)
     except Exception as e:
@@ -105,7 +106,7 @@ async def process_query(request: QueryRequest):
         if not request.api_key:
             raise HTTPException(status_code=400, detail="OpenAI API key is required")
         os.environ["OPENAI_API_KEY"] = request.api_key
-        llm = ChatOpenAI(temperature=0)
+        llm = ChatOpenAI(temperature=0, model="gpt-4o")
     elif request.llm_type == "AWS Bedrock":
         if not request.aws_access_key_id or not request.aws_secret_access_key:
             raise HTTPException(status_code=400, detail="AWS credentials are required")
@@ -227,8 +228,20 @@ SQL Query:
     )
 
     # Generate the SQL query
-    sql_query = sql_chain.invoke({"question": request.question, "schema": schema})
+    with get_openai_callback() as cb:
     
+        sql_query = sql_chain.invoke({"question": request.question, "schema": schema})
+        sql_input_tokens = cb.prompt_tokens
+        sql_output_tokens = cb.completion_tokens
+        sql_total_tokens = cb.total_tokens
+        
+        (
+                sql_total_cost,
+                sql_input_cost,
+                sql_output_cost,
+            ) = await TokenCostManager().calculate_cost(
+                sql_input_tokens, sql_output_tokens, model_name=request.model
+            )
     # Extract the actual SQL query
     extracted_sql_query = extract_sql_query(sql_query)
 
@@ -274,12 +287,42 @@ SQL Query:
         | prompt_response
         | llm
     )
-
-    result = full_chain.invoke({"question": request.question})
-
+    with get_openai_callback() as cb:
+        
+        result = full_chain.invoke({"question": request.question})
+        full_input_tokens = cb.prompt_tokens
+        full_output_tokens = cb.completion_tokens
+        full_total_tokens = cb.total_tokens
+        
+        (
+                full_total_cost,
+                full_input_cost,
+                full_output_cost,
+            ) = await TokenCostManager().calculate_cost(
+                full_input_tokens, full_output_tokens, model_name=request.model
+            )
+        
+    # Combine token and cost calculations
+    combined_input_tokens = sql_input_tokens + full_input_tokens
+    combined_output_tokens = sql_output_tokens + full_output_tokens
+    combined_total_tokens = sql_total_tokens + full_total_tokens
+    combined_input_cost = sql_input_cost + full_input_cost
+    combined_output_cost = sql_output_cost + full_output_cost
+    combined_total_cost = sql_total_cost + full_total_cost
+    
+    end_time = time.time()
+    response_time = end_time - start_time
+        
     return {
         "sql_query": extracted_sql_query,
-        "answer": result.content
+        "answer": result.content,
+        "input_tokens": combined_input_tokens,
+        "output_tokens": combined_output_tokens,
+        "total_tokens": combined_total_tokens,
+        "input_cost": combined_input_cost,
+        "output_cost": combined_output_cost,
+        "total_cost": combined_total_cost,
+        "response_time": response_time
     }
 
 if __name__ == "__main__":
