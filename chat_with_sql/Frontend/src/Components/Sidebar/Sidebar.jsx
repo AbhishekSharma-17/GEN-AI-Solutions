@@ -155,7 +155,7 @@ const Sidebar = () => {
           </div>
 
           <div style={{ padding: "10px" }}>
-            <p className="token-details-title">Cost</p>
+            <p className="token-details-title">Approx Cost <span style={{fontSize:"15px"}}>(in USD)</span></p>
             <div className="inference-time">
               <div className="input-inference">
                 <span className="token-value">{inputCost || 'N/A'}</span>
