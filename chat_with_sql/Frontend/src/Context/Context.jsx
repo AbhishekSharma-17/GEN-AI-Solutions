@@ -17,6 +17,18 @@ const ContextProvider = (props) => {
   const [answer, setAnswer] = useState(""); // To store the generated answer
   const [queryLoading, setQueryLoading] = useState(false);
   const [recentQuery, setRecentQuery] = useState([])
+  const [modelName, setModelName] = useState('');
+
+  // tokens state
+  const [inputToken, setInputToken] = useState('')
+  const [outputToken, setOutputToken] = useState('')
+  const [totalToken, setTotalToken] = useState('')
+  
+  // cost state
+  const [inputCost, setInputCost] = useState('')
+  const [outputCost, setOutputCost] = useState('')
+  const [totalCost, setTotalCost] = useState('')
+
 
   const contextValue = {
     isLoadings,
@@ -34,7 +46,8 @@ const ContextProvider = (props) => {
     query, setQuery,
     answer, setAnswer,
     queryLoading, setQueryLoading,
-    recentQuery, setRecentQuery
+    recentQuery, setRecentQuery,
+    modelName, setModelName,
   };
 
   return (

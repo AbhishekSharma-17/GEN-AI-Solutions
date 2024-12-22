@@ -14,23 +14,53 @@ const Sidebar = () => {
     setQueryLoading,
     setError,
     setUserQuestion,
+    modelName,
+    setModelName,
+    inputToken,
+    setInputToken,
+    outputToken,
+    setOutputToken,
+    totalToken,
+    setTotalToken,
+    inputCost,
+    setInputCost,
+    outputCost,
+    setOutputCost,
+    totalCost,
+    setTotalCost,
   } = useContext(Context);
 
   const Database_URI = dbURI;
   const LLM_Type = LLMType;
   const API_Key = API_KEY;
 
+  console.log("LLM-type: ", LLM_Type);
+
   const handleRecentQueryClick = async (question) => {
     setQuery("");
     setAnswer("");
+    setInputToken("");
+    setOutputToken("");
+    setTotalToken("");
+    setInputCost("");
+    setOutputCost("");
+    setTotalCost("");
     setQueryLoading(true);
     setUserQuestion(question);
     setError(null);
+
+    if (LLM_Type === "OpenAI") {
+      setModelName("gpt-4o");
+    }
+    if (LLM_Type === "Anthropic") {
+      setModelName("claude-3-sonnet-20240229");
+    }
 
     const form_data = {
       question: question,
       db_uri: Database_URI,
       llm_type: LLM_Type,
+      model: modelName,
       api_key: API_Key,
       aws_access_key_id: "",
       aws_secret_access_key: "",
@@ -57,6 +87,28 @@ const Sidebar = () => {
         setAnswer(data.answer);
       }
       setUserQuestion("");
+
+      // Set token values as floats rounded to 2 decimal places
+      if (data.input_tokens) {
+        setInputToken(parseFloat(data.input_tokens).toFixed(2));
+      }
+      if (data.output_tokens) {
+        setOutputToken(parseFloat(data.output_tokens).toFixed(2));
+      }
+      if (data.total_tokens) {
+        setTotalToken(parseFloat(data.total_tokens).toFixed(2));
+      }
+
+      // Set cost values as floats rounded to 2 decimal places
+      if (data.input_cost) {
+        setInputCost(parseFloat(data.input_cost).toFixed(2));
+      }
+      if (data.output_cost) {
+        setOutputCost(parseFloat(data.output_cost).toFixed(2));
+      }
+      if (data.total_cost) {
+        setTotalCost(parseFloat(data.total_cost).toFixed(2));
+      }
     } catch (error) {
       console.error("Error:", error);
       setError(
@@ -66,85 +118,62 @@ const Sidebar = () => {
 
     setQueryLoading(false);
   };
+
   return (
     <div className="main-sidebar">
-      {/* token display starts here */}
       <div className="token-display">
         <div className="latency">
-          <p>Latency :</p>
+          <span>{0.00}</span>
+          <p>Response Time</p>
         </div>
         <div className="tokens">
-          <p>Tokens :</p>
+          <span>{totalCost || 'N/A'}</span>
+          <p>Response Cost</p>
         </div>
 
-        {/* hover content starts here */}
         <div class="hover-content">
           <div className="speed-insights">
-            <p>Speed Insights</p>
+            <p>Insights</p>
           </div>
 
-          {/*input output token starts   */}
           <div style={{ padding: "10px" }}>
             <p className="token-details-title">Tokens </p>
             <div className="input-output-token">
               <div className="input-token">
-                <span className="token-value">51</span>
+                <span className="token-value">{inputToken || 'N/A'}</span>
                 <span className="token-title">Input token</span>
               </div>
               <div className="output-token">
-                <span className="token-value">49</span>
+                <span className="token-value">{outputToken || 'N/A'}</span>
                 <span className="token-title">Output token</span>
               </div>
               <div className="total-token">
-                <span className="token-value">100</span>
+                <span className="token-value">{totalToken || 'N/A'}</span>
                 <span className="token-title">Total token</span>
               </div>
             </div>
           </div>
-          {/*  input out token end*/}
-          {/* inference starts  */}
+
           <div style={{ padding: "10px" }}>
-            <p className="token-details-title">Inference Time </p>
+            <p className="token-details-title">Cost</p>
             <div className="inference-time">
               <div className="input-inference">
-                <span className="token-value">51</span>
-                <span className="token-title">Input seconds</span>
+                <span className="token-value">{inputCost || 'N/A'}</span>
+                <span className="token-title">Input cost</span>
               </div>
               <div className="output-inference">
-                <span className="token-value">49</span>
-                <span className="token-title">Output seconds</span>
+                <span className="token-value">{outputCost || 'N/A'}</span>
+                <span className="token-title">Output cost</span>
               </div>
               <div className="total-inference">
-                <span className="token-value">100</span>
-                <span className="token-title">Total seconds</span>
+                <span className="token-value">{totalCost || 'N/A'}</span>
+                <span className="token-title">Total cost</span>
               </div>
             </div>
           </div>
-          {/*  inference ends*/}
-          {/* token per second starts */}
-          <div
-            style={{ padding: "10px", backgroundColor: "rgb(245, 245, 245)" }}
-          >
-            <p className="token-details-title">Token / Seconds </p>
-            <div className="token-per-second">
-              <div className="input-token-per-second">
-                <span className="token-value">51</span>
-                <span className="token-title">Input seconds</span>
-              </div>
-              <div className="output-token-per-second">
-                <span className="token-value">49</span>
-                <span className="token-title">Output seconds</span>
-              </div>
-              <div className="total-token-per-second">
-                <span className="token-value">100</span>
-                <span className="token-title">Total seconds</span>
-              </div>
-            </div>
-          </div>
-          {/* token per second ends */}
         </div>
       </div>
-      {/* token display ends here */}
+
       <div className="main-sidebar-top">
         <p className="sidebar-top-title">Recent Queries</p>
         <div className="queries-list">
@@ -160,6 +189,7 @@ const Sidebar = () => {
           ))}
         </div>
       </div>
+
       <div className="main-sidebar-bottom">
         <a href="https://www.genaiprotos.com/" target="blank">
           <img src={assets.genAILogo} alt="genAI-protos-logo" />
