@@ -227,8 +227,20 @@ SQL Query:
     )
 
     # Generate the SQL query
-    sql_query = sql_chain.invoke({"question": request.question, "schema": schema})
+    with get_openai_callback() as cb:
     
+        sql_query = sql_chain.invoke({"question": request.question, "schema": schema})
+        sql_input_tokens = cb.prompt_tokens
+        sql_output_tokens = cb.completion_tokens
+        sql_total_tokens = cb.total_tokens
+        
+        (
+                sql_total_cost,
+                sql_input_cost,
+                sql_output_cost,
+            ) = await TokenCostManager().calculate_cost(
+                sql_input_tokens, sql_output_tokens, model_name=request.model
+            )
     # Extract the actual SQL query
     extracted_sql_query = extract_sql_query(sql_query)
 
@@ -277,28 +289,35 @@ SQL Query:
     with get_openai_callback() as cb:
         
         result = full_chain.invoke({"question": request.question})
-        input_tokens = cb.prompt_tokens
-        output_tokens = cb.completion_tokens
-        total_tokens = cb.total_tokens
+        full_input_tokens = cb.prompt_tokens
+        full_output_tokens = cb.completion_tokens
+        full_total_tokens = cb.total_tokens
         
         (
-                total_cost,
-                input_cost,
-                output_cost,
+                full_total_cost,
+                full_input_cost,
+                full_output_cost,
             ) = await TokenCostManager().calculate_cost(
-                input_tokens, output_tokens, model_name=request.model
+                full_input_tokens, full_output_tokens, model_name=request.model
             )
         
+    # Combine token and cost calculations
+    combined_input_tokens = sql_input_tokens + full_input_tokens
+    combined_output_tokens = sql_output_tokens + full_output_tokens
+    combined_total_tokens = sql_total_tokens + full_total_tokens
+    combined_input_cost = sql_input_cost + full_input_cost
+    combined_output_cost = sql_output_cost + full_output_cost
+    combined_total_cost = sql_total_cost + full_total_cost
         
     return {
         "sql_query": extracted_sql_query,
         "answer": result.content,
-        "input_tokens":input_tokens,
-        "output_tokens":output_tokens,
-        "total_tokens":total_tokens,
-        "input_cost":input_cost,
-        "output_cost":output_cost,
-        "total_cost":total_cost
+        "input_tokens": combined_input_tokens,
+        "output_tokens": combined_output_tokens,
+        "total_tokens": combined_total_tokens,
+        "input_cost": combined_input_cost,
+        "output_cost": combined_output_cost,
+        "total_cost": combined_total_cost
     }
 
 if __name__ == "__main__":
