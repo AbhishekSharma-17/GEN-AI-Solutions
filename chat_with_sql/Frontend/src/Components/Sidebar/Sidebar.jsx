@@ -130,7 +130,7 @@ const Sidebar = () => {
         setCumulativeCost(parseFloat(data.cumulative_cost).toFixed(2));
       }
 
-      
+
       // response time
       let response_Time = "";
       if (data.response_time) {
@@ -206,15 +206,15 @@ const Sidebar = () => {
 
             {/* token per second starts */}
           <div
-            style={{ padding: "10px", backgroundColor: "rgb(245, 245, 245)" }}
+            style={{ padding: "10px"}}
           >
             <p className="token-details-title">Cummulative </p>
-            <div className="token-per-second">
-              <div className="input-token-per-second">
+            <div className="cumulative-token-cost">
+              <div className="cumulative-cost">
                 <span className="token-value">{cumulativeCost}</span>
                 <span className="token-title">Cummulative Cost</span>
               </div>
-              <div className="output-token-per-second">
+              <div className="cumulative-token">
                 <span className="token-value">{cumulativeTokens}</span>
                 <span className="token-title">Cummulative Token</span>
               </div>
