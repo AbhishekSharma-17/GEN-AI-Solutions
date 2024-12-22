@@ -27,7 +27,10 @@ const ContentArea = () => {
     setOutputCost,
     setTotalCost,
     setModelName,
-    responseTime,
+    cumulativeTokens,
+    setCumulativeTokens,
+    cumulativeCost,
+    setCumulativeCost,
     setResponseTime,
   } = useContext(Context);
 
@@ -46,6 +49,8 @@ const ContentArea = () => {
     setOutputCost("");
     setTotalCost("");
     setResponseTime("");
+    setCumulativeTokens("");
+    setCumulativeCost("");
     setError(null);
     setQueryLoading(true);
 
@@ -116,6 +121,13 @@ const ContentArea = () => {
       }
       if (data.response_time) {
         setResponseTime(parseFloat(data.response_time).toFixed(2));
+      }
+
+      if (data.cumulative_tokens) {
+        setCumulativeTokens(parseFloat(data.cumulative_tokens).toFixed(2));
+      }
+      if (data.cumulative_cost) {
+        setCumulativeCost(parseFloat(data.cumulative_cost).toFixed(2));
       }
 
       // Update recent queries
