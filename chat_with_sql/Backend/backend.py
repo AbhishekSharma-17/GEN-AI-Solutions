@@ -16,6 +16,7 @@ import logging
 from token_cost_manager import TokenCostManager
 from langchain_community.callbacks.manager import get_openai_callback
 import time
+from decimal import Decimal
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -23,6 +24,10 @@ logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
+
+# Initialize cumulative usage
+cumulative_tokens = 0
+cumulative_cost = Decimal('0')
 
 app = FastAPI()
 
@@ -92,6 +97,7 @@ async def connect(request: ConnectionRequest):
 
 @app.post("/query")
 async def process_query(request: QueryRequest):
+    global cumulative_tokens, cumulative_cost
     start_time = time.time()
     try:
         db = get_database_connection(request.db_uri)
@@ -313,6 +319,10 @@ SQL Query:
     end_time = time.time()
     response_time = end_time - start_time
         
+    # Update cumulative usage
+    cumulative_tokens += combined_total_tokens
+    cumulative_cost += Decimal(str(combined_total_cost))
+
     return {
         "sql_query": extracted_sql_query,
         "answer": result.content,
@@ -322,7 +332,9 @@ SQL Query:
         "input_cost": combined_input_cost,
         "output_cost": combined_output_cost,
         "total_cost": combined_total_cost,
-        "response_time": response_time
+        "response_time": response_time,
+        "cumulative_tokens": cumulative_tokens,
+        "cumulative_cost": float(cumulative_cost)
     }
 
 if __name__ == "__main__":
