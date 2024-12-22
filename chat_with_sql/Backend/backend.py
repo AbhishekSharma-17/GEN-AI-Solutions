@@ -15,7 +15,7 @@ import re
 import logging
 from token_cost_manager import TokenCostManager
 from langchain_community.callbacks.manager import get_openai_callback
-
+import time
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -92,6 +92,7 @@ async def connect(request: ConnectionRequest):
 
 @app.post("/query")
 async def process_query(request: QueryRequest):
+    start_time = time.time()
     try:
         db = get_database_connection(request.db_uri)
     except Exception as e:
@@ -308,6 +309,9 @@ SQL Query:
     combined_input_cost = sql_input_cost + full_input_cost
     combined_output_cost = sql_output_cost + full_output_cost
     combined_total_cost = sql_total_cost + full_total_cost
+    
+    end_time = time.time()
+    response_time = end_time - start_time
         
     return {
         "sql_query": extracted_sql_query,
@@ -317,7 +321,8 @@ SQL Query:
         "total_tokens": combined_total_tokens,
         "input_cost": combined_input_cost,
         "output_cost": combined_output_cost,
-        "total_cost": combined_total_cost
+        "total_cost": combined_total_cost,
+        "response_time": response_time
     }
 
 if __name__ == "__main__":
