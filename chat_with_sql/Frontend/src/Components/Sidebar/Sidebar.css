@@ -17,18 +17,28 @@
   box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: space-between;
   position: relative;
   cursor: pointer;
 }
-
+.latency ,.tokens{
+    width: 50%;
+}
 .latency p,
 .tokens p {
   /* border: 1px solid red; */
   margin: 0;
   font-weight: 500;
-  font-style: italic;
-  color: rgb(85, 84, 84);
+  /* font-style: italic; */
+  font-family: Outfit;
+  font-size: 13px;
+  color: grey;
+}
+.latency span, .tokens span{
+    color: rgb(58, 57, 57);
+    font-weight: bold;
+    font-size: 25px;
+
 }
 .hover-content {
   position: absolute;
@@ -65,8 +75,7 @@
   font-family: Roboto Condensed !important;
 }
 .input-output-token,
-.inference-time,
-.token-per-second {
+.inference-time{
   /* border : 1px solid red; */
   display: flex;
   flex-direction: row;
@@ -78,10 +87,7 @@
 .total-token,
 .input-inference,
 .output-inference,
-.total-inference,
-.input-token-per-second,
-.output-token-per-second,
-.total-token-per-second {
+.total-inference{
   /* border : 1px solid black; */
   padding: 10px;
   display: flex;
@@ -108,9 +114,7 @@
   visibility: visible;
   transform: translateY(0); /* Reset movement */
 }
-.token-display:nth-last-child() {
-  background-color: rgb(245, 245, 245);
-}
+
 .main-sidebar-top {
   margin-top: 40px;
   height: 90%;

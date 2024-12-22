@@ -20,6 +20,20 @@ const ContentArea = () => {
     setQueryLoading,
     setError,
     setRecentQuery,
+    modelName,
+    setModelName,
+    inputToken,
+    setInputToken,
+    outputToken,
+    setOutputToken,
+    totalToken,
+    setTotalToken,
+    inputCost,
+    setInputCost,
+    outputCost,
+    setOutputCost,
+    totalCost,
+    setTotalCost,
   } = useContext(Context);
 
   const Database_URI = dbURI;
@@ -30,13 +44,27 @@ const ContentArea = () => {
     e.preventDefault();
     setQuery("");
     setAnswer("");
+    setInputToken("");
+    setOutputToken("");
+    setTotalToken("");
+    setInputCost("");
+    setOutputCost("");
+    setTotalCost("");
     setError(null);
     setQueryLoading(true);
 
+    if (LLM_Type === "OpenAI") {
+      setModelName("gpt-4o");
+    }
+    if (LLM_Type === "Anthropic") {
+      setModelName("claude-3-sonnet-20240229");
+    }
+
     const form_data = {
-      question: userQuestion,
+      question: question,
       db_uri: Database_URI,
       llm_type: LLM_Type,
+      model: modelName,
       api_key: API_Key,
       aws_access_key_id: "",
       aws_secret_access_key: "",
@@ -62,6 +90,28 @@ const ContentArea = () => {
 
       if (data.answer) {
         setAnswer(data.answer);
+      }
+
+      // setting input, output, total tokens to thier respective state
+      if (data.input_tokens) {
+        setInputToken(data.input_tokens);
+        if (data.output_tokens) {
+          setOutputToken(data.output_tokens);
+          if (data.total_tokens) {
+            setTotalToken(data.total_tokens);
+          }
+        }
+      }
+
+      // setting input, output, total cost to thier respective state
+      if (data.input_cost) {
+        setInputToken(data.input_cost);
+        if (data.output_cost) {
+          setOutputToken(data.output_cost);
+          if (data.total_cost) {
+            setTotalToken(data.total_cost);
+          }
+        }
       }
 
       // Update recent queries
