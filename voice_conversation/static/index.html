@@ -46,12 +46,17 @@
             const data = JSON.parse(event.data);
             const transcription = data.transcription;
             const aiResponse = data.ai_response;
+            const transcriptionTime = data.transcription_time;
+            const aiResponseTime = data.ai_response_time;
             
             document.getElementById('responseText').innerHTML = `
                 <p><strong>You said:</strong> ${transcription}</p>
+                <p><strong>Transcription time:</strong> ${transcriptionTime} seconds</p>
                 <p><strong>AI response:</strong> ${aiResponse}</p>
+                <p><strong>AI response time:</strong> ${aiResponseTime} seconds</p>
             `;
             
+            const ttsStartTime = performance.now();
             // Call the TTS endpoint for the AI response
             const response = await fetch(`/tts?text=${encodeURIComponent(aiResponse)}&voice=Castiel`);
             const audioBlob = await response.blob();
@@ -59,6 +64,12 @@
             const audioPlayer = document.getElementById('audioPlayer');
             audioPlayer.src = audioUrl;
             audioPlayer.play();
+            const ttsEndTime = performance.now();
+            const ttsTime = ((ttsEndTime - ttsStartTime) / 1000).toFixed(2);
+            
+            document.getElementById('responseText').innerHTML += `
+                <p><strong>TTS response time:</strong> ${ttsTime} seconds</p>
+            `;
         };
     </script>
 </body>

@@ -1,4 +1,5 @@
 import os
+import time
 from fastapi import FastAPI, WebSocket, HTTPException, Query
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import HTMLResponse, StreamingResponse
@@ -43,6 +44,7 @@ def text_to_speech(
 
     def generate():
         try:
+            start_time = time.time()
             with client.audio.speech.with_streaming_response.create(
                 model="tts-1",
                 voice=mapped_voice,
@@ -50,6 +52,8 @@ def text_to_speech(
             ) as response:
                 for chunk in response.iter_bytes():
                     yield chunk
+            end_time = time.time()
+            print(f"TTS response time: {end_time - start_time:.2f} seconds")
         except Exception as e:
             print(f"Error in text_to_speech: {e}")
             raise HTTPException(status_code=500, detail=str(e))
@@ -70,6 +74,7 @@ async def websocket_endpoint(websocket: WebSocket):
                 temp_audio_file_path = temp_audio_file.name
 
             try:
+                start_time = time.time()
                 # Use the temporary file for transcription
                 with open(temp_audio_file_path, "rb") as audio_file:
                     transcription = client.audio.transcriptions.create(
@@ -78,9 +83,12 @@ async def websocket_endpoint(websocket: WebSocket):
                     )
 
                 text = transcription.text
+                transcription_time = time.time() - start_time
                 print(f"Transcribed text: {text}")
+                print(f"Transcription time: {transcription_time:.2f} seconds")
 
                 # Process the transcribed text with OpenAI
+                ai_start_time = time.time()
                 response = client.chat.completions.create(
                     model="gpt-4o",
                     messages=[
@@ -89,14 +97,17 @@ async def websocket_endpoint(websocket: WebSocket):
                     ]
                 )
                 response_text = response.choices[0].message.content
+                ai_response_time = time.time() - ai_start_time
                 print(f"AI response: {response_text}")
+                print(f"AI response time: {ai_response_time:.2f} seconds")
 
                 # Send both transcription and AI response to the client
                 await websocket.send_json({
                     "transcription": text,
-                    "ai_response": response_text
+                    "ai_response": response_text,
+                    "transcription_time": round(transcription_time, 2),
+                    "ai_response_time": round(ai_response_time, 2)
                 })
-
             except Exception as e:
                 print(f"Error processing audio: {str(e)}")
                 await websocket.send_text(f"Error: {str(e)}")
