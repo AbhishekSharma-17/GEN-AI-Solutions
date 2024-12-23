@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio Streaming Demo</title>
+</head>
+<body>
+    <h1>Audio Streaming Demo</h1>
+    <button id="startRecording">Start Recording</button>
+    <button id="stopRecording" disabled>Stop Recording</button>
+    <audio id="audioPlayer" controls></audio>
+    <div id="responseText"></div>
+
+    <script>
+        let mediaRecorder;
+        let audioChunks = [];
+        const socket = new WebSocket('ws://localhost:8000/ws');
+
+        document.getElementById('startRecording').addEventListener('click', async () => {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+
+            mediaRecorder.ondataavailable = (event) => {
+                audioChunks.push(event.data);
+            };
+
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+                socket.send(audioBlob);
+                audioChunks = [];
+            };
+
+            mediaRecorder.start();
+            document.getElementById('startRecording').disabled = true;
+            document.getElementById('stopRecording').disabled = false;
+        });
+
+        document.getElementById('stopRecording').addEventListener('click', () => {
+            mediaRecorder.stop();
+            document.getElementById('startRecording').disabled = false;
+            document.getElementById('stopRecording').disabled = true;
+        });
+
+        socket.onmessage = async (event) => {
+            const data = JSON.parse(event.data);
+            const transcription = data.transcription;
+            const aiResponse = data.ai_response;
+            
+            document.getElementById('responseText').innerHTML = `
+                <p><strong>You said:</strong> ${transcription}</p>
+                <p><strong>AI response:</strong> ${aiResponse}</p>
+            `;
+            
+            // Call the TTS endpoint for the AI response
+            const response = await fetch(`/tts?text=${encodeURIComponent(aiResponse)}&voice=Castiel`);
+            const audioBlob = await response.blob();
+            const audioUrl = URL.createObjectURL(audioBlob);
+            const audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.src = audioUrl;
+            audioPlayer.play();
+        };
+    </script>
+</body>
+</html>
