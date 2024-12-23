@@ -70,8 +70,8 @@ const HomePageContainer = () => {
 
       if (data) {
         setConnectedToDB(true); // Connection successful
-        toast.success("Connected successfully!");
-        alert("Database Connected successfully!", connectedToDB); // Temporary success feedback
+        toast.success("Database Connected successfully!");
+        // alert("Database Connected successfully!", connectedToDB); // Temporary success feedback
         // You can redirect or trigger other success behavior here
       } else {
         setError("Failed to connect. Verify the details.");
