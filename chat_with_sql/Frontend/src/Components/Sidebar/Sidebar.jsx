@@ -39,7 +39,7 @@ const Sidebar = () => {
   const LLM_Type = LLMType;
   const API_Key = API_KEY;
 
-  console.log("LLM-type: ", LLM_Type);
+  // console.log("LLM-type: ", LLM_Type);
 
   const handleRecentQueryClick = async (question) => {
     setQuery("");
@@ -136,10 +136,10 @@ const Sidebar = () => {
       if (data.response_time) {
         response_Time = parseFloat(data.response_time).toFixed(2);
         setResponseTime(response_Time);
-        console.log("Response Time:", data.response_time);
+        // console.log("Response Time:", data.response_time);
       }
     } catch (error) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
       setError(
         "An error occurred while processing your request. Please try again."
       );

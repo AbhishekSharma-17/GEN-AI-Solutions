@@ -136,7 +136,7 @@ const ContentArea = () => {
         ...prevRecentQueries,
       ]);
     } catch (error) {
-      console.error("Error:", error);
+      // console.error("Error:", error);
       setError(
         "An error occurred while processing your request. Please try again."
       );

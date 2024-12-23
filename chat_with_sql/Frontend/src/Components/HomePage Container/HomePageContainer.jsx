@@ -3,8 +3,8 @@ import "./HomePageContainer.css";
 import { assets } from "../../assets/assets";
 import { Context } from "../../Context/Context";
 // react toatify inclusion
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const HomePageContainer = () => {
   const {
@@ -63,19 +63,19 @@ const HomePageContainer = () => {
       }
 
       const data = await response.json();
-      const schemaString = processSchemaString(data.schema)
-      console.log(schemaString)
+      const schemaString = processSchemaString(data.schema);
       setDbSchema(schemaString);
+      // console.log(schemaString)
       // console.log('dbSchema is : ', dbSchema)
-      
+
       if (data) {
         setConnectedToDB(true); // Connection successful
         toast.success("Connected successfully!");
-        alert("Connected successfully!", connectedToDB); // Temporary success feedback
+        alert("Database Connected successfully!", connectedToDB); // Temporary success feedback
         // You can redirect or trigger other success behavior here
       } else {
-setError("Failed to connect. Verify the details.");
-toast.error("Failed to connect. Verify the details.");
+        setError("Failed to connect. Verify the details.");
+        toast.error("Failed to connect. Verify the details.");
       }
     } catch (err) {
       setError(err.message);
@@ -143,10 +143,14 @@ toast.error("Failed to connect. Verify the details.");
                 required
               />
             </div>
-            
+
             <div className="mb-3">
-              <button type="submit" className="btn btn-dark" disabled={isLoadings}>
-                {isLoadings? 'Saving Configuration...':'Save Configuration'}
+              <button
+                type="submit"
+                className="btn btn-dark"
+                disabled={isLoadings}
+              >
+                {isLoadings ? "Saving Configuration..." : "Save Configuration"}
               </button>
             </div>
           </form>
