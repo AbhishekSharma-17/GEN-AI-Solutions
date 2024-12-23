@@ -36,6 +36,10 @@ const ContextProvider = (props) => {
   // response time of query
   const [responseTime, setResponseTime] = useState("");
 
+  // setting like dislike button color
+  const [thumbsUpActive, setThumbsUpActive] = useState("");
+  const [thumbsDownActive, setThumbsDownActive] = useState("");
+
   const contextValue = {
     isLoadings,
     setIsLoadings,
@@ -81,6 +85,10 @@ const ContextProvider = (props) => {
     setCumulativeTokens,
     cumulativeCost,
     setCumulativeCost,
+    thumbsUpActive,
+    setThumbsUpActive,
+    thumbsDownActive,
+    setThumbsDownActive,
   };
 
   return (

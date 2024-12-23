@@ -117,3 +117,25 @@
     font-size: 18px;
     font-weight: 400;
   }
+  .like-dislike{
+    /* border: 1px solid red; */
+    padding:8px 3px;
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 10px;
+  }
+  #Icon{
+    font-size: 18px;
+    width: 35px;
+    /* height: 10px;   */
+    color: grey;
+    font-weight: bold!important;
+
+  }
+  .green-class{
+    color: #5CB338!important;
+  }
+  .red-class{
+    color: #FB4141 !important;
+  }

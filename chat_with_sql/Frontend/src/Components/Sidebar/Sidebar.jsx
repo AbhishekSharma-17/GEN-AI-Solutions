@@ -164,6 +164,7 @@ const Sidebar = () => {
           <div className="hover-content">
             <div className="speed-insights">
               <p>Insights</p>
+              <p className="speed-insight-model-name">{modelName}</p>
             </div>
 
             <div style={{ padding: "10px" }}>

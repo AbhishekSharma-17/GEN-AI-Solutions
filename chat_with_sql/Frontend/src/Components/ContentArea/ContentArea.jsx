@@ -3,6 +3,7 @@ import "./ContentArea.css";
 import Navbar from "../Navbar/Navbar";
 import { Context } from "../../Context/Context";
 import QueryLoader from "../QueryLoader/QueryLoader";
+import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
 const ContentArea = () => {
   const {
@@ -32,6 +33,10 @@ const ContentArea = () => {
     cumulativeCost,
     setCumulativeCost,
     setResponseTime,
+    thumbsUpActive,
+    setThumbsUpActive,
+    thumbsDownActive,
+    setThumbsDownActive,
   } = useContext(Context);
 
   const Database_URI = dbURI;
@@ -40,6 +45,11 @@ const ContentArea = () => {
 
   const handleQuery = async (e) => {
     e.preventDefault();
+
+    // Reset thumbs-up and thumbs-down states
+    setThumbsUpActive(false);
+    setThumbsDownActive(false);
+
     setQuery("");
     setAnswer("");
     setInputToken("");
@@ -145,6 +155,20 @@ const ContentArea = () => {
     setQueryLoading(false);
   };
 
+  // handling like button click
+  const handleLikeClick = () => {
+    console.log("Liked button click");
+    setThumbsUpActive(true);
+    setThumbsDownActive(false);
+  };
+
+  // handling dislike button click
+  const handleDislikeClick = () => {
+    console.log("DisLike button click");
+    setThumbsUpActive(false);
+    setThumbsDownActive(true);
+  };
+
   return (
     <div className="content-Area">
       <Navbar />
@@ -197,6 +221,20 @@ const ContentArea = () => {
                   <p>Answer</p>
                   <div className="answer mt-3 mb-3">
                     {answer || "Waiting for answer..."}
+                  </div>
+                  <div className="like-dislike mb-3">
+                    <FaThumbsUp
+                      id="Icon"
+                      onClick={handleLikeClick}
+                      className={thumbsUpActive ? "green-class" : ""}
+                      // className="green"
+                    />
+                    <FaThumbsDown
+                      id="Icon"
+                      onClick={handleDislikeClick}
+                      className={thumbsDownActive ? "red-class" : ""}
+                      // className="redd-class"
+                    />
                   </div>
                 </div>
               )}

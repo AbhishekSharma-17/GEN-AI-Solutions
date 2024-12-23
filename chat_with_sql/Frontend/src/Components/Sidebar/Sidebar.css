@@ -75,7 +75,22 @@
   font-weight: 500;
   font-size: 22px;
   font-family: Roboto Condensed !important;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
 }
+
+.speed-insight-model-name
+{
+  font-size: 18px!important;
+  background-color: rgb(240, 239, 239);
+  margin: 0;
+  font-family: Outfit;
+  padding: 3px 10px;
+  border-radius: 5px;
+  color: rgb(43, 43, 43);
+}
+
 .input-output-token,
 .inference-time,
 .cumulative-token-cost {
