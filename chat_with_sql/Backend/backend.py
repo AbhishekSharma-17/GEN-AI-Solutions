@@ -1,4 +1,6 @@
-from fastapi import FastAPI, HTTPException
+import json
+from typing import Any, Dict
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -9,14 +11,15 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_openai import ChatOpenAI
 from langchain_aws import ChatBedrock
 from langchain_anthropic import ChatAnthropic
+from huggingface_hub import InferenceClient
+from openpyxl import Workbook, load_workbook
+import gspread
+from google.oauth2.service_account import Credentials
 import boto3
+import openai
 import os
 import re
 import logging
-from token_cost_manager import TokenCostManager
-from langchain_community.callbacks.manager import get_openai_callback
-import time
-from decimal import Decimal
 
 # Set up logging
 logging.basicConfig(level=logging.INFO)
@@ -24,10 +27,6 @@ logger = logging.getLogger(__name__)
 
 # Load environment variables
 load_dotenv()
-
-# Initialize cumulative usage
-cumulative_tokens = 0
-cumulative_cost = Decimal('0')
 
 app = FastAPI()
 
@@ -45,19 +44,33 @@ class ConnectionRequest(BaseModel):
     db_uri: str
     llm_type: str
     api_key: str = None
+    aws_access_key_id: str = None
+    aws_secret_access_key: str = None
 
 # Pydantic model for query request body
 class QueryRequest(BaseModel):
     question: str
     db_uri: str
     llm_type: str
-    model:str
     api_key: str = None
+    aws_access_key_id: str = None
+    aws_secret_access_key: str = None
+
+class Questions(BaseModel):
+    schema: str
+    num_queries: int
+
+class NoiceRequest(BaseModel):
+    noice: bool
+    output: str = None 
+    input: str = None 
+    
 
 # Function to get database connection
 def get_database_connection(db_uri):
     try:
         return SQLDatabase.from_uri(db_uri)
+    
     except Exception as e:
         logger.error(f"Error connecting to database: {str(e)}")
         raise
@@ -79,7 +92,11 @@ def extract_sql_query(response):
     # If not found, look for the first SELECT statement
     match = re.search(r'\bSELECT\b.*', response, re.DOTALL | re.IGNORECASE)
     if match:
-        return match.group(0).strip()
+        sql_query = match.group(0).strip()
+        # Remove anything after the last backticks if it exists
+        if "```" in sql_query:
+            sql_query = sql_query.split("```")[0].strip()
+        return sql_query
     # If still not found, return the original response
     return response
 
@@ -95,45 +112,62 @@ async def connect(request: ConnectionRequest):
         logger.error(f"Failed to connect to the database: {str(e)}")
         raise HTTPException(status_code=400, detail=f"Database connection failed: {str(e)}")
 
+
 @app.post("/query")
 async def process_query(request: QueryRequest):
-    global cumulative_tokens, cumulative_cost
-    start_time = time.time()
     try:
         db = get_database_connection(request.db_uri)
     except Exception as e:
         raise HTTPException(status_code=400, detail=f"Database connection failed: {str(e)}")
+    
+    groq_models = ["llama-3.3-70b-versatile", "gemma2-9b-it"]
 
     # Get the schema information
     schema = get_schema(db)
-
+    print()
     # Set up LLM based on the request
-    if request.llm_type == "OpenAI":
+    if request.llm_type == "gpt-4o":
         if not request.api_key:
             raise HTTPException(status_code=400, detail="OpenAI API key is required")
         os.environ["OPENAI_API_KEY"] = request.api_key
         llm = ChatOpenAI(temperature=0, model="gpt-4o")
-    elif request.llm_type == "AWS Bedrock":
-        if not request.aws_access_key_id or not request.aws_secret_access_key:
-            raise HTTPException(status_code=400, detail="AWS credentials are required")
-        client = boto3.client(
-            "bedrock-runtime",
-            aws_access_key_id=request.aws_access_key_id,
-            aws_secret_access_key=request.aws_secret_access_key,
-            region_name="us-east-1"
-        )
-        llm = ChatBedrock(
-            client=client,
-            model="anthropic.claude-3-sonnet-20240229-v1:0",
-            region="us-east-1"
-        )
-    elif request.llm_type == "Anthropic":
+    elif request.llm_type == "gpt-4o-mini":
+        if not request.api_key: 
+            raise HTTPException(status_code= 400, detail="OpenAI API key is required")
+        llm = ChatOpenAI(temperature=0, model="gpt-4o-mini")
+        
+    # elif request.llm_type == "AWS Bedrock":
+    #     if not request.aws_access_key_id or not request.aws_secret_access_key:
+    #         raise HTTPException(status_code=400, detail="AWS credentials are required")
+    #     client = boto3.client(
+    #         "bedrock-runtime",
+    #         aws_access_key_id=request.aws_access_key_id,
+    #         aws_secret_access_key=request.aws_secret_access_key,
+    #         region_name="us-east-1"
+    #     )
+    #     llm = ChatBedrock(
+    #         client=client,
+    #         model="anthropic.claude-3-sonnet-20240229-v1:0",
+    #         region="us-east-1"
+    #     )
+    elif request.llm_type == "claude-3-sonnet":
         if not request.api_key:
             raise HTTPException(status_code=400, detail="Anthropic API key is required")
         llm = ChatAnthropic(
             model="claude-3-sonnet-20240229",
             api_key=request.api_key
         )
+    elif request.llm_type in groq_models:
+        client = openai.OpenAI(
+            base_url="https://api.groq.com/openai/v1",
+            api_key=os.environ.get("GROQ_API_KEY"),
+        )
+    elif request.llm_type == "Phi-3.5-mini-instruct":
+        print()
+        phi3_client = InferenceClient(token=os.getenv("HUGGING_FACE_API_KEY"), timeout=5000)
+
+        # TODO: add code here
+    
     else:
         raise HTTPException(status_code=400, detail="Invalid LLM type")
 
@@ -225,40 +259,27 @@ SQL Query:
 
     prompt = ChatPromptTemplate.from_template(template)
 
-    sql_chain = (
-        RunnablePassthrough.assign(schema=lambda _: schema)
-        | prompt 
-        | llm.bind(stop="\nSQL Result:")
-        | StrOutputParser()
-        | clean_sql
-    )
-
-    # Generate the SQL query
-    with get_openai_callback() as cb:
     
-        sql_query = sql_chain.invoke({"question": request.question, "schema": schema})
-        sql_input_tokens = cb.prompt_tokens
-        sql_output_tokens = cb.completion_tokens
-        sql_total_tokens = cb.total_tokens
-        
-        (
-                sql_total_cost,
-                sql_input_cost,
-                sql_output_cost,
-            ) = await TokenCostManager().calculate_cost(
-                sql_input_tokens, sql_output_tokens, model_name=request.model
-            )
+    
     # Extract the actual SQL query
-    extracted_sql_query = extract_sql_query(sql_query)
-
+    print("SCHEMA ==========================================") 
+    print(schema) 
+    print("=================================================")
+    
+   
     template_response = """
     Based on the table schema, question and SQL response, write a concise response.
     Include relevant numbers, names, and any other specific information from the SQL response.
     If multiple queries were executed, summarize the results of all queries.
-
+    The database schema shown below contains some example rows, they are only there for your understanding. 
+    ```
     {schema}
+    ```
+
 
     Question: {question} 
+
+    The sql response below is a direct answer to the question asked by the user. Use it in your response. 
     SQL response: {response}
 
     Detailed Answer:
@@ -274,7 +295,7 @@ SQL Query:
             for query in queries:
                 if query.strip():
                     try: 
-                        results_str = "query: " + query, "response: " + str(db.run(query))
+                        results_str = " sql query: " + query, "database response: " + str(db.run(query))
                         results.append(results_str)
                     except: 
                         print("INVALID QUERY: ", query)
@@ -284,7 +305,99 @@ SQL Query:
             print("Something went wrong")
             return ""
 
-    full_chain = (
+    
+    
+
+
+    if request.llm_type in groq_models:
+
+        answer = client.chat.completions.create(
+            messages = [
+                {"role": "system",
+                  "content": template.format(schema = schema, question = request.question)
+                  }
+            ],
+            model=request.llm_type,  # Specify the model
+            temperature=0.1,  # Lower randomness for precise query generation
+            max_tokens=1000,  # Adjust max tokens for the output
+        )
+        groq_sql_query = answer.choices[0].message.content
+
+        extracted_sql_query = extract_sql_query(groq_sql_query)
+
+        print("QUERY ===========================================")
+        print(extracted_sql_query) 
+        print("==========================================")
+        response = run_query(extracted_sql_query)   
+        print("QUERY RESPONSE===========================================")
+        print(response) 
+        print("==========================================")
+        answer = client.chat.completions.create(
+            messages=[
+                {
+                    "role": "system",
+                    "content": template_response.format(schema= schema, question = request.question, response = response),
+                }
+            ],
+            model=request.llm_type,  # Specify the model
+            temperature=0.1,  # Lower randomness for precise query generation
+            max_tokens=4000,  # Adjust max tokens for the output
+            )
+    # raw_query = query.content
+        result = answer.choices[0].message.content
+
+    elif request.llm_type == "Phi-3.5-mini-instruct":
+        completion = phi3_client.chat.completions.create(
+            model="microsoft/Phi-3.5-mini-instruct", 
+            messages=[
+	                    {
+                            "role": "system",
+                            "content": template.format(schema = schema, question = request.question)
+	                    }
+                    ], 
+            max_tokens=2000
+        )
+
+        phi3_sql_query = completion.choices[0].message.content
+
+        extracted_sql_query = extract_sql_query(phi3_sql_query)
+
+        print("QUERY ===========================================")
+        print(extracted_sql_query) 
+        print("==========================================")
+        response = run_query(extracted_sql_query)   
+        print("QUERY RESPONSE===========================================")
+        print(response) 
+        print("==========================================")
+
+        completion = phi3_client.chat.completions.create(
+            model="microsoft/Phi-3.5-mini-instruct", 
+            messages=[
+	                    {
+                            "role": "system",
+                            "content": template_response.format(schema= schema, question = request.question, response = response),
+	                    }
+                    ], 
+            max_tokens=2000
+        )
+
+        result = completion.choices[0].message.content
+    
+    else: 
+        sql_chain = (
+        RunnablePassthrough.assign(schema=lambda _: schema)
+        | prompt 
+        | llm
+        | StrOutputParser()
+        | clean_sql
+        )
+
+    # Generate the SQL query
+        sql_query = sql_chain.invoke({"question": request.question, "schema": schema})
+        extracted_sql_query = extract_sql_query(sql_query)
+
+        response = run_query(extracted_sql_query) 
+        full_chain = (
         RunnablePassthrough.assign(
             # query=lambda _: extracted_sql_query,
             schema=lambda _: schema,
@@ -293,52 +406,63 @@ SQL Query:
         | prompt_response
         | llm
     )
-    with get_openai_callback() as cb:
-        
         result = full_chain.invoke({"question": request.question})
-        full_input_tokens = cb.prompt_tokens
-        full_output_tokens = cb.completion_tokens
-        full_total_tokens = cb.total_tokens
+        result = result.content
         
-        (
-                full_total_cost,
-                full_input_cost,
-                full_output_cost,
-            ) = await TokenCostManager().calculate_cost(
-                full_input_tokens, full_output_tokens, model_name=request.model
-            )
-        
-    # Combine token and cost calculations
-    combined_input_tokens = sql_input_tokens + full_input_tokens
-    combined_output_tokens = sql_output_tokens + full_output_tokens
-    combined_total_tokens = sql_total_tokens + full_total_tokens
-    combined_input_cost = sql_input_cost + full_input_cost
-    combined_output_cost = sql_output_cost + full_output_cost
-    combined_total_cost = sql_total_cost + full_total_cost
-    
-    end_time = time.time()
-    response_time = end_time - start_time
-        
-    # Update cumulative usage
-    cumulative_tokens += combined_total_tokens
-    cumulative_cost += Decimal(str(combined_total_cost))
+    instruction = '"Generate an SQL query based on the following schema and user request.If there are multiple sql queries, seperate them by a semicolon \'|\'."'
+    inputi = f'"SCHEMA: {schema}, user question: {request.question}"'
+    output = f'"{extracted_sql_query}"'
 
+    data = f'{{\n"instruction": {instruction},\n "input": {inputi},\n "output": {output}\n}}, '
+    with open("sql_training_dataset.txt", "a") as f:
+        f.write(data + "\n")
+    # f = open("sql_training_dataset.txt", "w")
+    # f.write(f"")
+    # f.close()
     return {
         "sql_query": extracted_sql_query,
-        "answer": result.content,
-        "input_tokens": combined_input_tokens,
-        "output_tokens": combined_output_tokens,
-        "total_tokens": combined_total_tokens,
-        "input_cost": combined_input_cost,
-        "output_cost": combined_output_cost,
-        "total_cost": combined_total_cost,
-        "response_time": response_time,
-        "cumulative_tokens": cumulative_tokens,
-        "cumulative_cost": float(cumulative_cost)
+        "answer": result
     }
+
+@app.post("/noice")
+async def noice(request: NoiceRequest):
+
+
+    def update_gsheets(
+        input, 
+        output,
+        sheet_name = "Sheet1",
+        instruction = "Generate an SQL query based on the following schema and user request.If there are multiple sql queries, seperate them by a semicolon '|'.",
+    ):
+        scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+
+        creds = Credentials.from_service_account_file("credentials.json", scopes=scopes)
+
+        client = gspread.authorize(creds)
+
+        sheet_id = "1jlNLEZEoJUp-6AfaP1kAQU_Lre41yGSnd9XDMszHIeA"
+
+        workbook = client.open_by_key(sheet_id)
+
+        # values_list = workbook.sheet1.row_values(1)
+        # print(values_list)
+        
+        sheet = workbook.worksheet(sheet_name)
+        new_row = [
+            instruction, 
+            input, 
+            output
+        ]
+
+        # Append the row to the sheet
+        sheet.append_row(new_row)
+    
+    if request.noice == True: 
+        update_gsheets(input = request.input, output=request.output)
+    elif request.noice == False:
+        pass
+
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run("backend:app", host="localhost", port=8001)
-    
-# uvicorn backend:app --host localhost --port 8001 --reload
+    uvicorn.run(app, host="0.0.0.0", port=8001)
