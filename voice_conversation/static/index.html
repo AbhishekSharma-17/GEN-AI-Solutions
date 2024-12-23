@@ -60,12 +60,20 @@
         strong {
             color: #1e90ff;
         }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <h1>Audio Streaming Demo</h1>
-    <button id="startRecording">Start Recording</button>
-    <button id="stopRecording" disabled>Stop Recording</button>
+    <div class="button-container">
+        <button id="startRecording">Start Recording</button>
+        <button id="stopRecording" disabled>Stop Recording</button>
+    </div>
     <audio id="audioPlayer" controls></audio>
     <div id="responseText"></div>
 
