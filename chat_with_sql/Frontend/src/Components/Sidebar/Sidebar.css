@@ -22,8 +22,9 @@
   cursor: pointer;
   animation: FadeInOut 2s;
 }
-.latency ,.tokens{
-    width: 50%;
+.latency,
+.tokens {
+  width: 50%;
 }
 .latency p,
 .tokens p {
@@ -35,11 +36,11 @@
   font-size: 13px;
   color: grey;
 }
-.latency span, .tokens span{
-    color: rgb(58, 57, 57);
-    font-weight: bold;
-    font-size: 25px;
-
+.latency span,
+.tokens span {
+  color: rgb(58, 57, 57);
+  font-weight: bold;
+  font-size: 25px;
 }
 .hover-content {
   position: absolute;
@@ -70,13 +71,14 @@
 }
 .speed-insights {
   text-align: center;
-  color: #001F3F;
+  color: #001f3f;
   font-weight: 500;
   font-size: 22px;
   font-family: Roboto Condensed !important;
 }
 .input-output-token,
-.inference-time, .cumulative-token-cost{
+.inference-time,
+.cumulative-token-cost {
   /* border : 1px solid red; */
   display: flex;
   flex-direction: row;
@@ -88,7 +90,7 @@
 .total-token,
 .input-inference,
 .output-inference,
-.total-inference{
+.total-inference {
   /* border : 1px solid black; */
   padding: 10px;
   display: flex;
@@ -97,15 +99,16 @@
   align-items: center;
   width: 33%;
 }
-.cumulative-cost,.cumulative-token{
+.cumulative-cost,
+.cumulative-token {
   padding: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: left;
-  width: 50%!important;
-  align-items: left!important;
-  background-color: rgb(245, 245, 245) ;
+  width: 50% !important;
+  align-items: left !important;
+  background-color: rgb(245, 245, 245);
   border-radius: 5px;
   /* border: 1px solid red ; */
 }
@@ -117,7 +120,7 @@
 }
 .token-value {
   font-size: 1.5vw;
-  color: #0D92F4;
+  color: #0d92f4;
   font-weight: 700;
   /* color: orange; */
 }
@@ -203,4 +206,38 @@
 }
 .main-sidebar-bottom a img {
   width: 200px;
+}
+
+@media (max-width: 768px) {
+  .main-sidebar {
+    display: none;
+  }
+}
+@media (max-width: 368px) {
+  .main-sidebar {
+    display: none;
+  }
+}
+@media (max-width: 1024px) {
+  .main-sidebar {
+    flex: 0 0 32%;
+  }
+  .latency,
+  .tokens {
+    text-align: left;
+  }
+  .latency p,
+  .tokens p {
+    margin: 0;
+    font-weight: bold;
+
+    font-size: 16px;
+    color: grey;
+  }
+  .latency span,
+  .tokens span {
+    color: rgb(58, 57, 57);
+    font-weight: bold;
+    font-size: 20px;
+  }
 }

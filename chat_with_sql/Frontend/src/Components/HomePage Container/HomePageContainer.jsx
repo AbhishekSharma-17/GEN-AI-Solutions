@@ -2,6 +2,9 @@ import React, { useContext, useRef } from "react";
 import "./HomePageContainer.css";
 import { assets } from "../../assets/assets";
 import { Context } from "../../Context/Context";
+// react toatify inclusion
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const HomePageContainer = () => {
   const {
@@ -10,7 +13,6 @@ const HomePageContainer = () => {
     setDBURI,
     setAPI_KEY,
     setLLMType,
-    LLMType,
     setConnectedToDB,
     setError,
     connectedToDB,
@@ -68,10 +70,12 @@ const HomePageContainer = () => {
       
       if (data) {
         setConnectedToDB(true); // Connection successful
+        toast.success("Connected successfully!");
         alert("Connected successfully!", connectedToDB); // Temporary success feedback
         // You can redirect or trigger other success behavior here
       } else {
-        setError("Failed to connect. Verify the details.");
+setError("Failed to connect. Verify the details.");
+toast.error("Failed to connect. Verify the details.");
       }
     } catch (err) {
       setError(err.message);
