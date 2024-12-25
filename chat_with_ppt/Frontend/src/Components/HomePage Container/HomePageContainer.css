@@ -1,19 +1,21 @@
 .homePage-container{
-    /* border: 1px solid red; */
+    margin: 0;
+    /* border: 2px solid red; */
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    width: 100%;
-    padding: 50px 50px;
-    height: 90vh;
+    width: 90%;   
+    margin-left: 5%; 
+    margin-right: 5%; 
+    height: auto;
 }
 
 .homepage-textual-content, .homepage-setup-content{
+    /* border: 1px solid red; */
     width: 50%;
     padding: 20px;
-    /* border: 1px solid red; */
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -26,16 +28,16 @@
     flex-direction: column;
 }
 .homepage-text-content p{
+    /* border: 1px solid red; */
     margin: 0;
     font-size: 2vw;
     font-weight: 500;
     font-family: Roboto;
     width: 100%;
-    /* border: 1px solid red; */
 }
 .homepage-text-content span{
-    margin-top: 20px!important;
     /* border: 1px solid red; */
+    margin-top: 20px!important;
     font-family: Roboto;
     font-size: 20px;
     color: rgb(155, 154, 154);

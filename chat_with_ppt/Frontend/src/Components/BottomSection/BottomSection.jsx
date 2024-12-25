@@ -15,6 +15,33 @@ const BottomSection = ({ chatHistory, setChatHistory, selectedModel, setSelected
     setLoadings,
     responseProvider,
     userId,
+    setModelName,
+    inputToken,
+    outputToken,
+    totalToken,
+    inputCost,
+    outputCost,
+    totalCost,
+    cumulativeTokens,
+    cumulativeCost,
+    embededToken,
+    embededCost,
+
+    setInputToken,
+    setOutputToken,
+    setTotalToken,
+    setInputCost,
+    setOutputCost,
+    setTotalCost,
+    setCumulativeTokens,
+    setCumulativeCost,
+
+    responseTime,
+    setResponseTime,
+
+    setEmbededToken,
+    setEmbededCost,
+
   } = useContext(Context);
 
   const options = [
@@ -43,6 +70,8 @@ const BottomSection = ({ chatHistory, setChatHistory, selectedModel, setSelected
       setShowResult(true);
       setLoadings(true);
       setRecentPrompt(input);
+      setEmbededCost('')
+      setEmbededToken('')
 
       const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [
@@ -55,6 +84,7 @@ const BottomSection = ({ chatHistory, setChatHistory, selectedModel, setSelected
 
       // Always use the selected model, falling back to a default if not set
       const modelToUse = selectedModel ? selectedModel.value : (responseProvider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash');
+      setModelName(modelToUse)
 
       console.log("Selected model:", selectedModel);
       console.log("Model to use:", modelToUse);

@@ -1,23 +1,7 @@
 .homePage-div{
-    height: auto;
+    height: max-content;
     width: 100%;
-    background-color: rgb(250, 250, 250);
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    gap: 10px;
     /* border: 1px solid red; */
-}
-
-@media (max-width: 768px)
-{
-    .homePage-div{
-        width: 100%;
-    }
-}
-@media (max-width: 368px)
-{
-    .homePage-div{
-        width: 100%;
-    }
 }

@@ -13,7 +13,7 @@ const App = () => {
   const { initialisationStatus } = useContext(Context);
 
   return (
-    <>
+    <div className="main-page-section">
       {!initialisationStatus ? <HomePage /> : (
         <>
           <Sidebar />
@@ -21,7 +21,7 @@ const App = () => {
         </>
       )}
       <ToastContainer />
-    </>
+    </div>
   );
 };
 
