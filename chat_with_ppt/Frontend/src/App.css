@@ -1,4 +1,9 @@
-.main-app-div {
-  display: flex;
-  flex-direction: row;
+.main-page-section{
+  height: 100vh;
+    display: flex;
+    flex-direction: row;
+    box-sizing: border-box;
+    overflow: hidden;
+    width: 100%;
+    /* border: 1px solid red; */
 }
