@@ -385,7 +385,7 @@ You are an AI assistant specialized in analyzing PowerPoint presentations. Your 
             if model:
                 try:
                     if provider == "openai":
-                        llm_to_use = ChatOpenAI(api_key=api_key, model=model, streaming=True)
+                        llm_to_use = ChatOpenAI(api_key=api_key, model=model, streaming=True, stream_usage=True)
                     elif provider == "gemini":
                         llm_to_use = ChatGoogleGenerativeAI(api_key=api_key, model=model, streaming=True)
                     else:
@@ -395,13 +395,13 @@ You are an AI assistant specialized in analyzing PowerPoint presentations. Your 
                     logging.error(f"Error initializing LLM with model {model}: {str(e)}")
                     yield f"Error: Unable to use the specified model {model}. Using the default model instead."
                     if provider == "openai":
-                        llm_to_use = ChatOpenAI(api_key=api_key, model=current_model, streaming=True)
+                        llm_to_use = ChatOpenAI(api_key=api_key, model=current_model, streaming=True, stream_usage=True)
                     elif provider == "gemini":
                         llm_to_use = ChatGoogleGenerativeAI(api_key=api_key, model=current_model, streaming=True)
                     logging.info(f"Using default model: {current_model}")
             else:
                 if provider == "openai":
-                    llm_to_use = ChatOpenAI(api_key=api_key, model=current_model, streaming=True)
+                    llm_to_use = ChatOpenAI(api_key=api_key, model=current_model, streaming=True,stream_usage=True)
                 elif provider == "gemini":
                     llm_to_use = ChatGoogleGenerativeAI(api_key=api_key, model=current_model, streaming=True)
                 logging.info(f"Using default model: {current_model}")
