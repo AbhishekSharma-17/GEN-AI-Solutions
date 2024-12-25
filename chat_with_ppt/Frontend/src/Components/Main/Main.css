@@ -6,6 +6,8 @@
   width: 100%;
   height: 100vh;
   gap: 20px;
+  border: 1px solid red;
+  /* overflow-y: scroll; */
 }
 .main .nav {
   display: flex;

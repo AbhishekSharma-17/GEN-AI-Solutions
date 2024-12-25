@@ -89,6 +89,7 @@ const HomePageContainer = () => {
   };
 
   return (
+    <div style={{backgroundColor: "rgb(250, 250, 250)", padding: "30px 0px"}}>
     <div className="homePage-container">
       <div className="homepage-textual-content">
         <div className="homepage-text-content">
@@ -199,6 +200,7 @@ const HomePageContainer = () => {
           <img src={assets.chatWithPPT} alt="" />
         </div>
       </div>
+    </div>
     </div>
   );
 };
