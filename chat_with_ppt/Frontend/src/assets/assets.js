@@ -17,10 +17,10 @@ import icon from './icon.png'
 import ai_final from './AI-final.png'
 import gemini_icon from './gemini_icon.png'
 import chatGPTIcon from './chatGPTIcon.jpg'
-import frontPage from './frontpageImage.jpg'
+import chatWithPPT from './chatWithPPT.jpg'
 
 export const assets = {
-    frontPage,
+    chatWithPPT,
     chatGPTIcon,
     gemini_icon,
     genAILogo,

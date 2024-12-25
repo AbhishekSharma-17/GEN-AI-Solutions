@@ -16,6 +16,32 @@ const BottomSection = ({ chatHistory, setChatHistory, selectedModel, setSelected
     responseProvider,
     userId,
     setModelName,
+    inputToken,
+    outputToken,
+    totalToken,
+    inputCost,
+    outputCost,
+    totalCost,
+    cumulativeTokens,
+    cumulativeCost,
+    embededToken,
+    embededCost,
+
+    setInputToken,
+    setOutputToken,
+    setTotalToken,
+    setInputCost,
+    setOutputCost,
+    setTotalCost,
+    setCumulativeTokens,
+    setCumulativeCost,
+
+    responseTime,
+    setResponseTime,
+
+    setEmbededToken,
+    setEmbededCost,
+
   } = useContext(Context);
 
   const options = [
@@ -44,6 +70,8 @@ const BottomSection = ({ chatHistory, setChatHistory, selectedModel, setSelected
       setShowResult(true);
       setLoadings(true);
       setRecentPrompt(input);
+      setEmbededCost('')
+      setEmbededToken('')
 
       const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [

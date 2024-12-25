@@ -15,24 +15,17 @@ const Sidebar = () => {
   const {
     previousPrompt,
     inputToken,
-    setInputToken,
     outputToken,
-    setOutputToken,
     totalToken,
-    setTotalToken,
     inputCost,
-    setInputCost,
     outputCost,
-    setOutputCost,
     totalCost,
-    setTotalCost,
     cumulativeTokens,
-    setCumulativeTokens,
     cumulativeCost,
-    setCumulativeCost,
     responseTime,
-    setResponseTime,
     modelName,
+    embededToken,
+    embededCost,
   } = useContext(Context);
 
   return (
@@ -103,24 +96,26 @@ const Sidebar = () => {
               </div>
 
               {/* token per second starts */}
-              <div
-                style={{
-                  padding: "10px",
-                  backgroundColor: "rgb(245, 245, 245)",
-                }}
-              >
-                <p className="token-details-title">Embeded Token / Cost </p>
-                <div className="embeded-token-per-second">
-                  <div className="embeded-token">
-                    <span className="token-value">51</span>
-                    <span className="token-title">Embeded Tokens</span>
-                  </div>
-                  <div className="embeded-cost">
-                    <span className="token-value">49</span>
-                    <span className="token-title">Embeded Cost</span>
+              {embededCost !== "" && embededToken !== "" ? (
+                <div
+                  style={{
+                    padding: "10px",
+                    backgroundColor: "rgb(245, 245, 245)",
+                  }}
+                >
+                  <p className="token-details-title">Embeded Token / Cost </p>
+                  <div className="embeded-token-per-second">
+                    <div className="embeded-token">
+                      <span className="token-value">{embededToken || 0}</span>
+                      <span className="token-title">Embeded Tokens</span>
+                    </div>
+                    <div className="embeded-cost">
+                      <span className="token-value">{embededCost || 0}</span>
+                      <span className="token-title">Embeded Cost</span>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ) : null}
               {/* token per second ends */}
 
               <div style={{ padding: "10px" }}>

@@ -21,24 +21,33 @@ const Main = () => {
     setLoadings,
     userId,
     responseProvider,
-    cuminputToken,
-    setInputToken,
+
+    inputToken,
     outputToken,
-    setOutputToken,
     totalToken,
-    setTotalToken,
     inputCost,
-    setInputCost,
     outputCost,
-    setOutputCost,
     totalCost,
-    setTotalCost,
     cumulativeTokens,
-    setCumulativeTokens,
     cumulativeCost,
+    embededToken,
+    embededCost,
+
+    setInputToken,
+    setOutputToken,
+    setTotalToken,
+    setInputCost,
+    setOutputCost,
+    setTotalCost,
+    setCumulativeTokens,
     setCumulativeCost,
+
     responseTime,
     setResponseTime,
+
+    setEmbededToken,
+    setEmbededCost,
+
     modelName,
     setModelName,
   } = useContext(Context);
@@ -62,6 +71,9 @@ const Main = () => {
       setLoadings(true);
       setRecentPrompt(query);
 
+      setEmbededToken("");
+      setEmbededCost("");
+
       const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [
         ...prev,
@@ -74,8 +86,7 @@ const Main = () => {
         : responseProvider === "openai"
         ? "gpt-4o-mini"
         : "gemini-1.5-flash";
-
-        setModelName(modelToUse)
+      setModelName(modelToUse);
 
       const res = await fetch(`http://localhost:8000/chat?user_id=${userId}`, {
         method: "POST",

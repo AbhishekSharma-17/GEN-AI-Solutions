@@ -49,6 +49,10 @@ const ContextProvider = (props) => {
   // response time of query
   const [responseTime, setResponseTime] = useState("");
 
+  // embeded tokens and cost state
+  const [embededToken, setEmbededToken] = useState("");
+  const [embededCost, setEmbededCost] = useState("");
+
   // Generate unique user ID on component mount
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -113,6 +117,10 @@ const ContextProvider = (props) => {
     setResponseTime,
     modelName,
     setModelName,
+    embededToken,
+    setEmbededToken,
+    embededCost,
+    setEmbededCost,
   };
 
   return (
