@@ -104,6 +104,21 @@ const BottomSection = ({ chatHistory, setChatHistory, selectedModel, setSelected
         throw new Error("Failed to fetch response from the server.");
       }
 
+      // Extract insights from the response header
+      const insightsHeader = res.headers.get("X-Chat-Insights");
+      if (insightsHeader) {
+        const insights = JSON.parse(insightsHeader);
+        setInputToken(insights.token_usage.input_tokens);
+        setOutputToken(insights.token_usage.output_tokens);
+        setTotalToken(insights.token_usage.total_tokens);
+        setInputCost(insights.costs.input_cost);
+        setOutputCost(insights.costs.output_cost);
+        setTotalCost(insights.costs.total_cost);
+        setCumulativeTokens(insights.cumulative_usage.total_tokens);
+        setCumulativeCost(insights.cumulative_usage.total_cost);
+        setResponseTime(insights.response_time);
+      }
+
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedResponse = "";

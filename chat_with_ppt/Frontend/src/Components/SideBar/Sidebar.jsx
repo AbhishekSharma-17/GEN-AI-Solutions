@@ -41,24 +41,24 @@ const Sidebar = () => {
         {extended ? (
           <div className="token-display">
             <div className="latency">
-              <span>{responseTime || 0} s</span>
+              <span>{responseTime ? responseTime.toFixed(2) : 0} s</span>
               <p>Response Time</p>
             </div>
             <div className="tokens">
-              <span>$ {totalCost || 0}</span>
+              <span>$ {totalCost ? totalCost.toFixed(6) : 0}</span>
               <p>Response Cost</p>
             </div>
 
             <div className="hover-content">
               <div className="speed-insights">
-                <p>Insights</p>
+                <p>Latest Chat Insights</p>
                 {modelName ? (
                   <p className="speed-insight-model-name">{modelName}</p>
                 ) : null}
               </div>
 
               <div style={{ padding: "10px" }}>
-                <p className="token-details-title">Tokens </p>
+                <p className="token-details-title">Tokens</p>
                 <div className="input-output-token">
                   <div className="input-token">
                     <span className="token-value">{inputToken || "N/A"}</span>
@@ -81,53 +81,30 @@ const Sidebar = () => {
                 </p>
                 <div className="inference-time">
                   <div className="input-inference">
-                    <span className="token-value">{inputCost || "N/A"}</span>
+                    <span className="token-value">{inputCost ? inputCost.toFixed(6) : "N/A"}</span>
                     <span className="token-title">Input cost</span>
                   </div>
                   <div className="output-inference">
-                    <span className="token-value">{outputCost || "N/A"}</span>
+                    <span className="token-value">{outputCost ? outputCost.toFixed(6) : "N/A"}</span>
                     <span className="token-title">Output cost</span>
                   </div>
                   <div className="total-inference">
-                    <span className="token-value">{totalCost || "N/A"}</span>
+                    <span className="token-value">{totalCost ? totalCost.toFixed(6) : "N/A"}</span>
                     <span className="token-title">Total cost</span>
                   </div>
                 </div>
               </div>
 
-              {/* token per second starts */}
-              {embededCost !== "" && embededToken !== "" ? (
-                <div
-                  style={{
-                    padding: "10px",
-                    backgroundColor: "rgb(245, 245, 245)",
-                  }}
-                >
-                  <p className="token-details-title">Embeded Token / Cost </p>
-                  <div className="embeded-token-per-second">
-                    <div className="embeded-token">
-                      <span className="token-value">{embededToken || 0}</span>
-                      <span className="token-title">Embeded Tokens</span>
-                    </div>
-                    <div className="embeded-cost">
-                      <span className="token-value">{embededCost || 0}</span>
-                      <span className="token-title">Embeded Cost</span>
-                    </div>
-                  </div>
-                </div>
-              ) : null}
-              {/* token per second ends */}
-
               <div style={{ padding: "10px" }}>
-                <p className="token-details-title">Cummulative </p>
+                <p className="token-details-title">Cumulative</p>
                 <div className="cumulative-token-cost">
                   <div className="cumulative-cost">
-                    <span className="token-value">{cumulativeCost}</span>
-                    <span className="token-title">Cummulative Cost</span>
+                    <span className="token-value">{cumulativeCost ? cumulativeCost.toFixed(6) : 0}</span>
+                    <span className="token-title">Cumulative Cost</span>
                   </div>
                   <div className="cumulative-token">
-                    <span className="token-value">{cumulativeTokens}</span>
-                    <span className="token-title">Cummulative Token</span>
+                    <span className="token-value">{cumulativeTokens || 0}</span>
+                    <span className="token-title">Cumulative Token</span>
                   </div>
                 </div>
               </div>
