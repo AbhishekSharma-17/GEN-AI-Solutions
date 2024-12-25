@@ -132,7 +132,7 @@
 
 .input-output-token,
 .inference-time,
-.cumulative-token-cost {
+.cumulative-token-cost, .embeded-token-per-second {
   /* border : 1px solid red; */
   display: flex;
   flex-direction: row;
@@ -152,6 +152,16 @@
   justify-content: center;
   align-items: center;
   width: 33%;
+}
+
+.embeded-token, .embeded-cost{
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50%;
+  /* text-align: left; */
 }
 .cumulative-cost,
 .cumulative-token {

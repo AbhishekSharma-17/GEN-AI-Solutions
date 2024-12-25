@@ -102,6 +102,27 @@ const Sidebar = () => {
                 </div>
               </div>
 
+              {/* token per second starts */}
+              <div
+                style={{
+                  padding: "10px",
+                  backgroundColor: "rgb(245, 245, 245)",
+                }}
+              >
+                <p className="token-details-title">Embeded Token / Cost </p>
+                <div className="embeded-token-per-second">
+                  <div className="embeded-token">
+                    <span className="token-value">51</span>
+                    <span className="token-title">Embeded Tokens</span>
+                  </div>
+                  <div className="embeded-cost">
+                    <span className="token-value">49</span>
+                    <span className="token-title">Embeded Cost</span>
+                  </div>
+                </div>
+              </div>
+              {/* token per second ends */}
+
               <div style={{ padding: "10px" }}>
                 <p className="token-details-title">Cummulative </p>
                 <div className="cumulative-token-cost">
