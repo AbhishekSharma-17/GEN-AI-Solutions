@@ -44,14 +44,18 @@ unstructured_api_key = None
 provider = None
 current_model = None
 
-# Initialize cumulative usage
-cumulative_tokens = 0
-cumulative_cost = Decimal('0')
+# Initialize state management class
+class StateManager:
+    def __init__(self):
+        self.cumulative_tokens = 0
+        self.cumulative_cost = Decimal('0')
+
+state = StateManager()
 
 async def generate_document_queries(
     document_content: str, num_queries: int = 4
 ) -> Dict[str, Any]:
-    global api_key, provider, current_model, cumulative_tokens, cumulative_cost
+    global api_key, provider, current_model
     
     if not api_key or not provider or not current_model:
         raise ValueError("API key, provider, and model not initialized. Please call /initialize first.")
@@ -92,8 +96,8 @@ async def generate_document_queries(
             input_tokens, output_tokens, model_name=current_model
         )
         
-        cumulative_tokens += total_tokens
-        cumulative_cost += Decimal(str(total_cost))
+        state.cumulative_tokens += total_tokens
+        state.cumulative_cost += Decimal(str(total_cost))
 
     # Filter out any empty strings from the split
     filtered_queries = [query.strip() for query in queries if query.strip()]
@@ -106,8 +110,8 @@ async def generate_document_queries(
         "input_cost": float(input_cost),
         "output_cost": float(output_cost),
         "total_cost": float(total_cost),
-        "cumulative_tokens": cumulative_tokens,
-        "cumulative_cost": float(cumulative_cost)
+        "cumulative_tokens": state.cumulative_tokens,
+        "cumulative_cost": float(state.cumulative_cost)
     }
 
 @app.get("/")
@@ -197,7 +201,7 @@ async def embed_file(data: Dict[str, str]):
     Endpoint for embedding the content of a PowerPoint file.
     Creates and saves a FAISS vector store for a specific user.
     """
-    global api_key, unstructured_api_key, provider, current_model, cumulative_tokens, cumulative_cost
+    global api_key, unstructured_api_key, provider, current_model
     
     if not api_key or not provider or not current_model:
         raise HTTPException(status_code=400, detail="API key, provider, and model not initialized. Please call /initialize first.")
@@ -254,14 +258,14 @@ async def embed_file(data: Dict[str, str]):
         embedding_tokens = TokenCostManager().count_string_tokens(prompt=str(data), model=embedding_model)
         embedding_cost = TokenCostManager().calculate_cost_by_tokens(num_tokens=embedding_tokens, model=embedding_model, token_type="input")
         
-        print("Embedding_tokens: ", embeddings, "embedding_cost: ",embedding_cost)
+        print(f"Embedding tokens: {embedding_tokens}, Embedding cost: ${float(embedding_cost):.6f}")
 
         # Generate questions
         query_result = await generate_document_queries(str(data))
         
         # Update cumulative usage
-        cumulative_tokens += embedding_tokens + query_result["total_tokens"]
-        cumulative_cost += Decimal(str(embedding_cost)) + Decimal(str(query_result["total_cost"]))
+        state.cumulative_tokens += embedding_tokens + query_result["total_tokens"]
+        state.cumulative_cost += Decimal(str(embedding_cost)) + Decimal(str(query_result["total_cost"]))
 
         end_time = time.time()
         response_time = end_time - start_time
@@ -280,8 +284,8 @@ async def embed_file(data: Dict[str, str]):
                 "query_total_cost": float(query_result["total_cost"]),
                 "total_tokens": embedding_tokens + query_result["total_tokens"],
                 "total_cost": float(embedding_cost + Decimal(str(query_result["total_cost"]))),
-                "cumulative_tokens": cumulative_tokens,
-                "cumulative_cost": float(cumulative_cost),
+                "cumulative_tokens": state.cumulative_tokens,
+                "cumulative_cost": float(state.cumulative_cost),
                 "response_time": response_time
             },
             status_code=200,
@@ -296,7 +300,7 @@ async def chat(user_id: str, data: Dict[str, Any]):
     Endpoint for chatting with the AI about the embedded PowerPoint content.
     Uses a persistent FAISS vector store for retrieval specific to a user.
     """
-    global api_key, provider, current_model, cumulative_tokens, cumulative_cost
+    global api_key, provider, current_model
     
     if not api_key or not provider or not current_model:
         raise HTTPException(status_code=400, detail="API key, provider, and model not initialized. Please call /initialize first.")
@@ -420,15 +424,15 @@ You are an AI assistant specialized in analyzing PowerPoint presentations. Your 
                     input_tokens, output_tokens, model_name=current_model
                 )
                 
-                cumulative_tokens += total_tokens
-                cumulative_cost += Decimal(str(total_cost))
+                state.cumulative_tokens += total_tokens
+                state.cumulative_cost += Decimal(str(total_cost))
 
             end_time = time.time()
             response_time = end_time - start_time
 
             yield f"\n\n---\nToken Usage:\nInput tokens: {input_tokens}\nOutput tokens: {output_tokens}\nTotal tokens: {total_tokens}\n"
             yield f"Costs:\nInput cost: ${input_cost:.6f}\nOutput cost: ${output_cost:.6f}\nTotal cost: ${total_cost:.6f}\n"
-            yield f"Cumulative Usage:\nTotal tokens: {cumulative_tokens}\nTotal cost: ${float(cumulative_cost):.6f}\n"
+            yield f"Cumulative Usage:\nTotal tokens: {state.cumulative_tokens}\nTotal cost: ${float(state.cumulative_cost):.6f}\n"
             yield f"Response time: {response_time:.2f} seconds"
 
         except Exception as e:
