@@ -3,6 +3,7 @@ import shutil
 import logging
 import re
 import time
+import json
 from typing import Dict, Any, List
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import StreamingResponse, JSONResponse
@@ -315,6 +316,8 @@ async def chat(user_id: str, data: Dict[str, Any]):
     if not os.path.exists(vectorstore_path):
         raise HTTPException(status_code=400, detail=f"No document has been embedded for user {user_id}")
 
+    insights = {}
+
     async def generate_response():
         try:
             start_time = time.time()
@@ -430,16 +433,34 @@ You are an AI assistant specialized in analyzing PowerPoint presentations. Your 
             end_time = time.time()
             response_time = end_time - start_time
 
-            yield f"\n\n---\nToken Usage:\nInput tokens: {input_tokens}\nOutput tokens: {output_tokens}\nTotal tokens: {total_tokens}\n"
-            yield f"Costs:\nInput cost: ${input_cost:.6f}\nOutput cost: ${output_cost:.6f}\nTotal cost: ${total_cost:.6f}\n"
-            yield f"Cumulative Usage:\nTotal tokens: {state.cumulative_tokens}\nTotal cost: ${float(state.cumulative_cost):.6f}\n"
-            yield f"Response time: {response_time:.2f} seconds"
+            nonlocal insights
+            insights = {
+                "token_usage": {
+                    "input_tokens": input_tokens,
+                    "output_tokens": output_tokens,
+                    "total_tokens": total_tokens
+                },
+                "costs": {
+                    "input_cost": float(input_cost),
+                    "output_cost": float(output_cost),
+                    "total_cost": float(total_cost)
+                },
+                "cumulative_usage": {
+                    "total_tokens": state.cumulative_tokens,
+                    "total_cost": float(state.cumulative_cost)
+                },
+                "response_time": response_time
+            }
+            
+            logging.info(f"Chat insights for user {user_id}: {insights}")
 
         except Exception as e:
             logging.error(f"Error during chat for user {user_id}: {str(e)}")
             yield f"Error: {str(e)}"
 
-    return StreamingResponse(generate_response(), media_type="text/plain")
+    response = StreamingResponse(generate_response(), media_type="text/plain")
+    response.headers["X-Chat-Insights"] = json.dumps(insights)
+    return response
 
 @app.delete("/delete_vectorstore/{user_id}")
 async def delete_vectorstore(user_id: str):
