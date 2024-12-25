@@ -18,6 +18,8 @@ from langchain.prompts import ChatPromptTemplate
 import uvicorn
 from openai import AuthenticationError
 from google.api_core import exceptions as google_exceptions
+from langchain_community.callbacks.manager import get_openai_callback
+
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
@@ -34,9 +36,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global variables to store initialized LLM, embeddings, and provider
-initialized_llm = None
-initialized_embeddings = None
+# Global variables to store API keys and provider
+api_key = None
 unstructured_api_key = None
 provider = None
 current_model = None
@@ -44,10 +45,10 @@ current_model = None
 async def generate_document_queries(
     document_content: str, num_queries: int = 4
 ) -> List[str]:
-    global initialized_llm
+    global api_key, provider, current_model
     
-    if not initialized_llm:
-        raise ValueError("LLM not initialized. Please call /initialize first.")
+    if not api_key or not provider or not current_model:
+        raise ValueError("API key, provider, and model not initialized. Please call /initialize first.")
     
     system_prompt = f"""
     Generate {num_queries} different questions that could be asked about the following document content:
@@ -65,10 +66,20 @@ async def generate_document_queries(
     """
 
     prompt = system_prompt
-    response = initialized_llm.invoke(prompt)
+    
+    if provider == "openai":
+        llm = ChatOpenAI(api_key=api_key, model=current_model)
+    elif provider == "gemini":
+        llm = ChatGoogleGenerativeAI(api_key=api_key, model=current_model)
+    else:
+        raise ValueError(f"Invalid provider: {provider}")
+        
+    with get_openai_callback() as cb:
 
-    queries = response.content.split("\n")
+        response = llm.invoke(prompt)
 
+        queries = response.content.split("\n")
+        print(cb)
     # Filter out any empty strings from the split
     return [query.strip() for query in queries if query.strip()]
 
@@ -81,9 +92,9 @@ async def root():
 @app.post("/initialize")
 async def initialize_llm(data: Dict[str, str]):
     """
-    Endpoint for initializing the LLM and embeddings with provided API keys, provider.
+    Endpoint for initializing the API keys and provider.
     """
-    global initialized_llm, initialized_embeddings, unstructured_api_key, provider, current_model
+    global api_key, unstructured_api_key, provider, current_model
     
     provider = data.get("provider", "openai").lower()
     api_key = data.get("api_key")
@@ -105,8 +116,6 @@ async def initialize_llm(data: Dict[str, str]):
                 raise HTTPException(status_code=401, detail="Invalid OpenAI API key")
             
             current_model = "gpt-4o-mini"
-            initialized_llm = ChatOpenAI(api_key=api_key, model=current_model, streaming=True)
-            initialized_embeddings = OpenAIEmbeddings(api_key=api_key, model="text-embedding-3-small")
         elif provider == "gemini":
             # Check if the Google API key is valid
             try:
@@ -116,20 +125,18 @@ async def initialize_llm(data: Dict[str, str]):
                 raise HTTPException(status_code=401, detail="Invalid Google API key")
             
             current_model = "gemini-1.5-flash"
-            initialized_llm = ChatGoogleGenerativeAI(api_key=api_key, model=current_model, streaming=True)
-            initialized_embeddings = GoogleGenerativeAIEmbeddings(api_key=api_key, model="models/text-embedding-004")
         else:
             raise HTTPException(status_code=400, detail="Invalid provider. Choose either 'openai' or 'gemini'")
         
         return JSONResponse(
-            content={"message": f"LLM and embeddings initialized successfully with {provider.capitalize()} using model {current_model}", "provider":f"{provider}"},
+            content={"message": f"API keys and provider initialized successfully with {provider.capitalize()} using model {current_model}", "provider":f"{provider}"},
             status_code=200
         )
     except HTTPException as he:
         raise he
     except Exception as e:
-        logging.error(f"Error initializing LLM and embeddings: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Error initializing LLM and embeddings: {str(e)}")
+        logging.error(f"Error initializing API keys and provider: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error initializing API keys and provider: {str(e)}")
 
 @app.post("/upload")
 async def upload_file(user_id: str, file: UploadFile = File(...)):
@@ -163,10 +170,10 @@ async def embed_file(data: Dict[str, str]):
     Endpoint for embedding the content of a PowerPoint file.
     Creates and saves a FAISS vector store for a specific user.
     """
-    global initialized_llm, initialized_embeddings, unstructured_api_key
+    global api_key, unstructured_api_key, provider, current_model
     
-    if not initialized_llm or not initialized_embeddings:
-        raise HTTPException(status_code=400, detail="LLM and embeddings not initialized. Please call /initialize first.")
+    if not api_key or not provider or not current_model:
+        raise HTTPException(status_code=400, detail="API key, provider, and model not initialized. Please call /initialize first.")
     
     file_path = data.get("file_path")
     user_id = data.get("user_id")
@@ -195,7 +202,15 @@ async def embed_file(data: Dict[str, str]):
         split_data = text_splitter.split_documents(data)
         logging.info(f"Documents split for user {user_id}. Number of chunks: {len(split_data)}")
 
-        vectorstore = FAISS.from_documents(split_data, initialized_embeddings)
+        # Initialize embeddings here
+        if provider == "openai":
+            embeddings = OpenAIEmbeddings(api_key=api_key, model="text-embedding-3-small")
+        elif provider == "gemini":
+            embeddings = GoogleGenerativeAIEmbeddings(api_key=api_key, model="models/text-embedding-004")
+        else:
+            raise ValueError(f"Invalid provider: {provider}")
+
+        vectorstore = FAISS.from_documents(split_data, embeddings)
         
         # Save the vectorstore for the specific user
         vectorstore_path = f"vectorstore/{user_id}"
@@ -217,18 +232,17 @@ async def embed_file(data: Dict[str, str]):
         raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
 @app.post("/chat")
-async def chat(user_id: str ,data: Dict[str, Any]):
+async def chat(user_id: str, data: Dict[str, Any]):
     """
     Endpoint for chatting with the AI about the embedded PowerPoint content.
     Uses a persistent FAISS vector store for retrieval specific to a user.
     """
-    global initialized_llm, initialized_embeddings, provider, current_model
+    global api_key, provider, current_model
     
-    if not initialized_llm or not initialized_embeddings:
-        raise HTTPException(status_code=400, detail="LLM and embeddings not initialized. Please call /initialize first.")
+    if not api_key or not provider or not current_model:
+        raise HTTPException(status_code=400, detail="API key, provider, and model not initialized. Please call /initialize first.")
     
     question = data.get("question", "")
-    # user_id = data.get("user_id")
     model = data.get("model")
     
     if not user_id:
@@ -240,8 +254,16 @@ async def chat(user_id: str ,data: Dict[str, Any]):
 
     async def generate_response():
         try:
+            # Initialize embeddings
+            if provider == "openai":
+                embeddings = OpenAIEmbeddings(api_key=api_key, model="text-embedding-3-small")
+            elif provider == "gemini":
+                embeddings = GoogleGenerativeAIEmbeddings(api_key=api_key, model="models/text-embedding-004")
+            else:
+                raise ValueError(f"Invalid provider: {provider}")
+
             try:
-                vectorstore = FAISS.load_local(vectorstore_path, initialized_embeddings, allow_dangerous_deserialization=True)
+                vectorstore = FAISS.load_local(vectorstore_path, embeddings, allow_dangerous_deserialization=True)
             except Exception as e:
                 logging.error(f"Error loading vector store for user {user_id}: {str(e)}")
                 yield f"Error: Unable to load the vector store. Please try embedding the document again."
@@ -294,24 +316,29 @@ You are an AI assistant specialized in analyzing PowerPoint presentations. Your 
 """
 )
 
-
-            # Use the model parameter if provided, otherwise use the initialized LLM
+            # Initialize LLM
             if model:
                 try:
                     if provider == "openai":
-                        llm_to_use = ChatOpenAI(model=model, streaming=True)
+                        llm_to_use = ChatOpenAI(api_key=api_key, model=model, streaming=True)
                     elif provider == "gemini":
-                        llm_to_use = ChatGoogleGenerativeAI(model=model, streaming=True)
+                        llm_to_use = ChatGoogleGenerativeAI(api_key=api_key, model=model, streaming=True)
                     else:
                         raise ValueError(f"Invalid provider: {provider}")
                     logging.info(f"Using specified model: {model}")
                 except Exception as e:
                     logging.error(f"Error initializing LLM with model {model}: {str(e)}")
                     yield f"Error: Unable to use the specified model {model}. Using the default model instead."
-                    llm_to_use = initialized_llm
+                    if provider == "openai":
+                        llm_to_use = ChatOpenAI(api_key=api_key, model=current_model, streaming=True)
+                    elif provider == "gemini":
+                        llm_to_use = ChatGoogleGenerativeAI(api_key=api_key, model=current_model, streaming=True)
                     logging.info(f"Using default model: {current_model}")
             else:
-                llm_to_use = initialized_llm
+                if provider == "openai":
+                    llm_to_use = ChatOpenAI(api_key=api_key, model=current_model, streaming=True)
+                elif provider == "gemini":
+                    llm_to_use = ChatGoogleGenerativeAI(api_key=api_key, model=current_model, streaming=True)
                 logging.info(f"Using default model: {current_model}")
 
             document_chain = create_stuff_documents_chain(llm_to_use, prompt)
