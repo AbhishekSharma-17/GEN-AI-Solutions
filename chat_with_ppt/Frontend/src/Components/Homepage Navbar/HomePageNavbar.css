@@ -5,6 +5,7 @@
   justify-content: space-between;
   box-shadow: 0px 0px 5px rgb(202, 201, 201);
   background-color: white;
+  background-attachment: fixed;
   /* border: 1px solid red; */
 }
 .homePage-navbar img {

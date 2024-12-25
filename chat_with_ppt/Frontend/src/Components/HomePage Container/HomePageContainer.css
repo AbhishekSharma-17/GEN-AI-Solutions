@@ -1,13 +1,15 @@
 .homePage-container{
-    /* border: 1px solid red; */
+    margin: 0;
+    /* border: 2px solid red; */
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    width: 100%;
-    padding: 50px 50px;
-    height: 90vh;
+    width: 90%;   
+    margin-left: 5%; 
+    margin-right: 5%; 
+    height: auto;
 }
 
 .homepage-textual-content, .homepage-setup-content{
