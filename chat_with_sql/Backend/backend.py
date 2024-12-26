@@ -10,7 +10,8 @@ from langchain_openai import ChatOpenAI
 from langchain_groq import ChatGroq
 from langchain_anthropic import ChatAnthropic
 # from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
-
+import gspread
+from google.oauth2.service_account import Credentials
 from huggingface_hub import InferenceClient
 import os
 import re
@@ -55,6 +56,11 @@ class QueryRequest(BaseModel):
     llm_type: str
     model:str
     api_key: str = None
+
+class NoiceRequest(BaseModel):
+    noice: bool
+    output: str = None 
+    input: str = None 
 
 # Function to get database connection
 def get_database_connection(db_uri):
@@ -395,6 +401,41 @@ SQL Query:
         "cumulative_tokens": cumulative_tokens,
         "cumulative_cost": float(cumulative_cost)
     }
+
+
+@app.post("/noice")
+async def noice(request: NoiceRequest):
+    def update_gsheets(
+        input, 
+        output,
+        sheet_name = "Sheet1",
+        instruction = "Generate an SQL query based on the following schema and user request.If there are multiple sql queries, seperate them by a semicolon '|'.",
+    ):
+        scopes = ["https://www.googleapis.com/auth/spreadsheets"]
+        creds = Credentials.from_service_account_file("credentials.json", scopes=scopes)
+        client = gspread.authorize(creds)
+        sheet_id = "1jlNLEZEoJUp-6AfaP1kAQU_Lre41yGSnd9XDMszHIeA"
+        workbook = client.open_by_key(sheet_id)
+        
+        sheet = workbook.worksheet(sheet_name)
+        new_row = [
+            instruction, 
+            input, 
+            output
+        ]
+        # Append the row to the sheet
+        sheet.append_row(new_row)
+    
+    if request.noice == True: 
+        update_gsheets(input = request.input, output=request.output)
+        return {"OKAY": "liked"}
+
+    elif request.noice == False:
+        return{"OKAY": "disliked"}
+    
+    else:
+        return{"NOT OKAY": "Something went wrong"}
+
 
 if __name__ == "_main_":
     import uvicorn
