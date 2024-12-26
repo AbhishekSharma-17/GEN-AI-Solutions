@@ -2,10 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 
 const VoiceChat = () => {
   const [isRecording, setIsRecording] = useState(false);
-  const [transcription, setTranscription] = useState('');
-  const [aiResponse, setAiResponse] = useState('');
-  const [transcriptionTime, setTranscriptionTime] = useState(null);
-  const [aiResponseTime, setAiResponseTime] = useState(null);
+  const [conversation, setConversation] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -16,15 +13,17 @@ const VoiceChat = () => {
   const mediaSourceRef = useRef(null);
   const sourceBufferRef = useRef(null);
   const ttsAudioChunksRef = useRef([]);
+  const chatboxRef = useRef(null);
 
   useEffect(() => {
     websocketRef.current = new WebSocket('ws://localhost:8000/ws');
     websocketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      setTranscription(data.transcription);
-      setAiResponse(data.ai_response);
-      setTranscriptionTime(data.transcription_time);
-      setAiResponseTime(data.ai_response_time);
+      setConversation(prev => [
+        ...prev,
+        { type: 'user', text: data.transcription, time: data.transcription_time },
+        { type: 'ai', text: data.ai_response, time: data.ai_response_time }
+      ]);
 
       // After receiving the AI response, send it to the TTS API
       fetchTTS(data.ai_response);
@@ -36,6 +35,12 @@ const VoiceChat = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (chatboxRef.current) {
+      chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
+    }
+  }, [conversation]);
 
   useEffect(() => {
     if (isPlaying) {
@@ -133,30 +138,30 @@ const VoiceChat = () => {
   };
 
   return (
-    <div>
+    <div className="voice-chat-container">
       <h1>Voice Chat</h1>
-      <button onClick={startRecording} disabled={isRecording}>
-        Start Recording
-      </button>
-      <button onClick={stopRecording} disabled={!isRecording}>
-        Stop Recording
-      </button>
-      {transcription && (
-        <div>
-          <h2>Transcription:</h2>
-          <p>{transcription}</p>
-          <p>Transcription Time: {transcriptionTime} seconds</p>
-        </div>
-      )}
-      {aiResponse && (
-        <div>
-          <h2>AI Response:</h2>
-          <p>{aiResponse}</p>
-          <p>AI Response Time: {aiResponseTime} seconds</p>
-        </div>
-      )}
-      <div>
-        <h2>TTS Audio:</h2>
+      <div className="recording-controls">
+        <button onClick={startRecording} disabled={isRecording}>
+          Start Recording
+        </button>
+        <button onClick={stopRecording} disabled={!isRecording}>
+          Stop Recording
+        </button>
+      </div>
+      <div className="chatbox" ref={chatboxRef}>
+        {conversation.map((message, index) => (
+          <div key={index} className={`message ${message.type}-message`}>
+            <p className="message-text">{message.text}</p>
+            <div className="time-chip-container">
+              <span className="time-chip-label">
+                {message.type === 'user' ? 'Transcription Time:' : 'AI Response Time:'}
+              </span>
+              <span className="time-chip">{message.time}s</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="tts-audio-section">
         <audio ref={audioRef} controls>
           Your browser does not support the audio element.
         </audio>
