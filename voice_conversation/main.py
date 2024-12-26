@@ -1,8 +1,8 @@
 import os
 import time
 from fastapi import FastAPI, WebSocket, HTTPException, Query
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 import uvicorn
 from openai import OpenAI
 from speech_tts import client, template
@@ -10,14 +10,14 @@ import tempfile
 
 app = FastAPI()
 
-# Mount the static files directory
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-@app.get("/")
-async def get():
-    with open("static/index.html", "r") as f:
-        html_content = f.read()
-    return HTMLResponse(content=html_content)
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Allow only our React app
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods
+    allow_headers=["*"],  # Allows all headers
+)
 
 @app.get("/tts")
 def text_to_speech(
