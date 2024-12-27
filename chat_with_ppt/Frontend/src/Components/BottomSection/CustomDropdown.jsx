@@ -23,8 +23,8 @@ const CustomDropdown = ({ options, selectedOption, setSelectedOption, provider }
       setSelectedOption(defaultModel);
     }
 
-    console.log("Provider changed:", provider);
-    console.log("Selected model:", defaultModel);
+    // console.log("Provider changed:", provider);
+    // console.log("Selected model:", defaultModel);
   }, [provider, options, setSelectedOption, selectedOption]);
 
   const handleSelect = (option) => {

@@ -222,7 +222,7 @@ const Main = () => {
                           <ResponseLoader />
                         ) : (
                           <div className="markdown-content">
-                            {console.log("Markdown content:", chat.text)}
+                            {/* {console.log("Markdown content:", chat.text)} */}
                             <ReactMarkdown
                               className="actual-markdown-content"
                               remarkPlugins={[remarkGfm]}
