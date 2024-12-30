@@ -93,14 +93,14 @@ const BottomSection = ({
   const handleSend = async (event) => {
     event.preventDefault();
     if (!input) return;
-
+  
     try {
       setShowResult(true);
       setLoadings(true);
       setRecentPrompt(input);
       setEmbededCost("");
       setEmbededToken("");
-
+  
       setInputToken("");
       setOutputToken("");
       setTotalToken("");
@@ -110,23 +110,23 @@ const BottomSection = ({
       setCumulativeTokens("");
       setCumulativeCost("");
       setResponseTime("");
-
+  
       const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [
         ...prev,
         { type: "user", text: input },
         { type: "bot", text: "", loading: true },
       ]);
-
+  
       setInput("");
-
+  
       const modelToUse = selectedModel
         ? selectedModel.value
         : responseProvider === "openai"
         ? "gpt-4o-mini"
         : "gemini-1.5-flash";
       setModelName(modelToUse);
-
+  
       const res = await fetch(
         `http://localhost:8000/chat?user_id=${encodeURIComponent(userId)}`,
         {
@@ -139,60 +139,60 @@ const BottomSection = ({
           }),
         }
       );
-
+  
       if (!res.ok) {
         throw new Error("Failed to fetch response from the server.");
       }
-
-      // Read X-Chat-Insights header before streaming the response
-      const insightsHeader = res.headers.get("X-Chat-Insights");
-      console.log("Raw Insights Header:", insightsHeader); // Debugging point #1
-
-      if (insightsHeader) {
-        const insights = JSON.parse(insightsHeader);
-        console.log("Parsed Insights:", insights); // Debugging point #2
-
-        setInputToken(insights.token_usage.input_tokens);
-        setOutputToken(insights.token_usage.output_tokens);
-        setTotalToken(insights.token_usage.total_tokens);
-        setInputCost(insights.costs.input_cost);
-        setOutputCost(insights.costs.output_cost);
-        setTotalCost(insights.costs.total_cost);
-        setCumulativeTokens(insights.cumulative_usage.total_tokens);
-        setCumulativeCost(insights.cumulative_usage.total_cost);
-        setResponseTime(insights.response_time);
-      } else {
-        console.warn("No X-Chat-Insights header found."); // Debugging point #3
-      }
-
+  
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedResponse = "";
-
+  
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-
+  
         const chunk = decoder.decode(value, { stream: true });
         accumulatedResponse += chunk;
-
+  
+        // Update chat history with partial response
+        const textOnly = accumulatedResponse.split("{")[0].trim(); // Extract main response text
         setChatHistory((prev) =>
           prev.map((chat, index) =>
             index === loaderIndex + 1
-              ? { ...chat, text: accumulatedResponse, loading: false }
+              ? { ...chat, text: textOnly, loading: false }
               : chat
           )
         );
       }
-
-      setResponse(accumulatedResponse);
+  
+      // Extract metadata (JSON) after the main response text
+      const metadataStart = accumulatedResponse.indexOf("{");
+      const metadata = metadataStart !== -1 ? JSON.parse(accumulatedResponse.slice(metadataStart)) : {};
+  
+      // Set response text
+      const textResponse = accumulatedResponse.split("{")[0].trim();
+      setResponse(textResponse);
       setPreviousPrompt((prev) => [...prev, input]);
+  
+      // Update state with metadata
+      if (metadata) {
+        setInputToken(metadata.input_tokens || 0);
+        setOutputToken(metadata.output_tokens || 0);
+        setTotalToken(metadata.total_tokens || 0);
+        setInputCost(metadata.input_cost || 0);
+        setOutputCost(metadata.output_cost || 0);
+        setTotalCost(metadata.total_cost || 0);
+        setCumulativeTokens(metadata.cumulative_tokens || 0);
+        setCumulativeCost(metadata.cumulative_cost || 0);
+        setResponseTime(metadata.response_time || 0);
+      }
     } catch (error) {
       console.error("Error:", error);
-
+  
       const errorMessage = "An error occurred. Please try again.";
       setResponse(errorMessage);
-
+  
       setChatHistory((prev) =>
         prev.map((chat, index) =>
           index === loaderIndex + 1
@@ -204,6 +204,7 @@ const BottomSection = ({
       setLoadings(false);
     }
   };
+  
 
   return (
     <div className="main-bottom container">
