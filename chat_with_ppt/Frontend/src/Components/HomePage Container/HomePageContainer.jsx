@@ -30,9 +30,9 @@ const HomePageContainer = () => {
     const Form_providerKey = providerKeyRef.current.value;
     const Form_unstructuredKey = unstructuredKeyRef.current.value;
 
-    console.log("Form Provider is : ", Form_provider);
-    console.log("Form Provider Key is : ", Form_providerKey);
-    console.log("Form Unstructured Key is : ", Form_unstructuredKey);
+    // console.log("Form Provider is : ", Form_provider);
+    // console.log("Form Provider Key is : ", Form_providerKey);
+    // console.log("Form Unstructured Key is : ", Form_unstructuredKey);
 
     // Set values in context
     setAPIProvider(Form_provider);
@@ -60,11 +60,11 @@ const HomePageContainer = () => {
       }
 
       const responseData = await response.json();
-      console.log("Response from server:", responseData);
+      // console.log("Response from server:", responseData);
 
       // Check if provider exists in responseData
       if (responseData.provider) {
-        console.log("Setting responseProvider to:", responseData.provider);
+        // console.log("Setting responseProvider to:", responseData.provider);
         setResponseProvider(responseData.provider);
       } else {
         console.error("Provider not found in response data.");
@@ -89,6 +89,7 @@ const HomePageContainer = () => {
   };
 
   return (
+    <div style={{backgroundColor: "rgb(250, 250, 250)", padding: "30px 0px"}}>
     <div className="homePage-container">
       <div className="homepage-textual-content">
         <div className="homepage-text-content">
@@ -196,9 +197,10 @@ const HomePageContainer = () => {
           </div>
         </div>
         <div className="homepage-setup-image">
-          <img src={assets.frontPage} alt="" />
+          <img src={assets.chatWithPPT} alt="" />
         </div>
       </div>
+    </div>
     </div>
   );
 };

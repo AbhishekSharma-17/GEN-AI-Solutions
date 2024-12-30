@@ -7,12 +7,9 @@ from langchain_community.utilities import SQLDatabase
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_openai import ChatOpenAI
-from langchain_groq import ChatGroq
+from langchain_aws import ChatBedrock
 from langchain_anthropic import ChatAnthropic
-# from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
-import gspread
-from google.oauth2.service_account import Credentials
-from huggingface_hub import InferenceClient
+import boto3
 import os
 import re
 import logging
@@ -57,11 +54,6 @@ class QueryRequest(BaseModel):
     model:str
     api_key: str = None
 
-class NoiceRequest(BaseModel):
-    noice: bool
-    output: str = None 
-    input: str = None 
-
 # Function to get database connection
 def get_database_connection(db_uri):
     try:
@@ -80,18 +72,16 @@ def clean(sql_query):
 
 # Function to extract SQL query from LLM response
 def extract_sql_query(response):
-    # Look for SQL query between triple backticks with 'sql' prefix
-    match = re.search(r'```sql\s*(.*?)\s*```', response, re.DOTALL | re.IGNORECASE)
+    # Look for SQL query between triple backticks
+    match = re.search(r'sql\s*(.*?)\s*', response, re.DOTALL)
     if match:
         return match.group(1).strip()
-    
     # If not found, look for the first SELECT statement
     match = re.search(r'\bSELECT\b.*', response, re.DOTALL | re.IGNORECASE)
     if match:
         return match.group(0).strip()
-    
     # If still not found, return the original response
-    return response.strip()
+    return response
 
 @app.post("/connect")
 async def connect(request: ConnectionRequest):
@@ -109,8 +99,6 @@ async def connect(request: ConnectionRequest):
 async def process_query(request: QueryRequest):
     global cumulative_tokens, cumulative_cost
     start_time = time.time()
-    
-  
     try:
         db = get_database_connection(request.db_uri)
     except Exception as e:
@@ -123,51 +111,32 @@ async def process_query(request: QueryRequest):
     if request.llm_type == "OpenAI":
         if not request.api_key:
             raise HTTPException(status_code=400, detail="OpenAI API key is required")
-        
         os.environ["OPENAI_API_KEY"] = request.api_key
-        llm = ChatOpenAI(temperature=0, model= request.model)
-
+        llm = ChatOpenAI(temperature=0, model="gpt-4o")
+    elif request.llm_type == "AWS Bedrock":
+        if not request.aws_access_key_id or not request.aws_secret_access_key:
+            raise HTTPException(status_code=400, detail="AWS credentials are required")
+        client = boto3.client(
+            "bedrock-runtime",
+            aws_access_key_id=request.aws_access_key_id,
+            aws_secret_access_key=request.aws_secret_access_key,
+            region_name="us-east-1"
+        )
+        llm = ChatBedrock(
+            client=client,
+            model="anthropic.claude-3-sonnet-20240229-v1:0",
+            region="us-east-1"
+        )
     elif request.llm_type == "Anthropic":
         if not request.api_key:
             raise HTTPException(status_code=400, detail="Anthropic API key is required")
         llm = ChatAnthropic(
-            model=request.model,
+            model="claude-3-sonnet-20240229",
             api_key=request.api_key
         )
-
-    elif request.llm_type == "Groq":
-        if not request.api_key:
-            raise HTTPException(status_code=400, detail="Groq API key is required")
-        llm = ChatGroq(
-            model=request.model,
-            api_key=request.api_key
-        )
-
-    elif request.llm_type == "HuggingFace":
-        if not request.api_key:
-            raise HTTPException(status_code=400, detail="Huggingface token API key is required")
-       
-        phi3_client = InferenceClient(token=request.api_key, timeout=5000)
-
     else:
         raise HTTPException(status_code=400, detail="Invalid LLM type")
-    def run_query(final_query): 
-        print("FINAL QUERY: ", final_query)
-        queries = final_query.split('|')
-        results = []
-        try: 
-            for query in queries:
-                if query.strip():
-                    try: 
-                        results_str = "query: " + query, "response: " + str(db.run(query))
-                        results.append(results_str)
-                    except: 
-                        print("INVALID QUERY: ", query)
-            print("RESULTS", results)            
-            return results
-        except Exception as e: 
-            print("Something went wrong")
-            return ""
+
     clean_sql = RunnableLambda(func=clean)
 
     template = """
@@ -253,144 +222,106 @@ Question:
 
 SQL Query:
     """
-    template_response = """
-        Based on the table schema, question and SQL response, write a concise response.
-        Include relevant numbers, names, and any other specific information from the SQL response.
-        If multiple queries were executed, summarize the results of all queries.
 
-        {schema}
-
-        Question: {question} 
-        SQL response: {response}
-
-        Detailed Answer:
-        """
     prompt = ChatPromptTemplate.from_template(template)
+
+    sql_chain = (
+        RunnablePassthrough.assign(schema=lambda _: schema)
+        | prompt 
+        | llm.bind(stop="\nSQL Result:")
+        | StrOutputParser()
+        | clean_sql
+    )
+
+    # Generate the SQL query
+    with get_openai_callback() as cb:
     
-    if request.llm_type == "HuggingFace":
-        combined_input_tokens = 0,
-        combined_output_tokens= 0,
-        combined_total_tokens= 0,
-        combined_input_cost= 0.0,
-        combined_output_cost= 0.0,
-        combined_total_cost= 0.0,
-        response_time = 0.0,
-        cumulative_tokens= 0,
-        cumulative_cost = 0.0
-        completion = phi3_client.chat.completions.create(
-            model=request.model, 
-            messages=[
-	                    {
-                            "role": "system",
-                            "content": template.format(schema = schema, question = request.question)
-	                    }
-                    ], 
-            max_tokens=2000
-        )
-
-        phi3_sql_query = completion.choices[0].message.content
-
-        extracted_sql_query = extract_sql_query(phi3_sql_query)
-
-        print("QUERY ===========================================")
-        print(extracted_sql_query) 
-        print("==========================================")
-        response = run_query(extracted_sql_query)   
-        print("QUERY RESPONSE===========================================")
-        print(response) 
-        print("==========================================")
-
-        completion = phi3_client.chat.completions.create(
-            model=request.model, 
-            messages=[
-	                    {
-                            "role": "system",
-                            "content": template_response.format(schema= schema, question = request.question, response = response),
-	                    }
-                    ], 
-            max_tokens=2000
-        )
-
-        result = completion.choices[0].message
-
-       
-
-    else: 
-
-        sql_chain = (
-            RunnablePassthrough.assign(schema=lambda _: schema)
-            | prompt 
-            | llm.bind(stop="\nSQL Result:")
-            | StrOutputParser()
-            | clean_sql
-        )
-
-        # Generate the SQL query
-        with get_openai_callback() as cb:
+        sql_query = sql_chain.invoke({"question": request.question, "schema": schema})
+        sql_input_tokens = cb.prompt_tokens
+        sql_output_tokens = cb.completion_tokens
+        sql_total_tokens = cb.total_tokens
         
-            sql_query = sql_chain.invoke({"question": request.question, "schema": schema})
-            sql_input_tokens = cb.prompt_tokens
-            sql_output_tokens = cb.completion_tokens
-            sql_total_tokens = cb.total_tokens
-            
-            (
-                    sql_total_cost,
-                    sql_input_cost,
-                    sql_output_cost,
-                ) = await TokenCostManager().calculate_cost(
-                    sql_input_tokens, sql_output_tokens, model_name=request.model
-                )
-        # Extract the actual SQL query
-        extracted_sql_query = extract_sql_query(sql_query)
-
-        print("extracted sql query+++++++++++++++") 
-        print(sql_query) 
-        print("----------------------------------")
-
-        prompt_response = ChatPromptTemplate.from_template(template_response)
-
-       
-
-        full_chain = (
-            RunnablePassthrough.assign(
-                # query=lambda _: extracted_sql_query,
-                schema=lambda _: schema,
-                response=lambda _: run_query(extracted_sql_query),
+        (
+                sql_total_cost,
+                sql_input_cost,
+                sql_output_cost,
+            ) = await TokenCostManager().calculate_cost(
+                sql_input_tokens, sql_output_tokens, model_name=request.model
             )
-            | prompt_response
-            | llm
+    # Extract the actual SQL query
+    extracted_sql_query = extract_sql_query(sql_query)
+
+    template_response = """
+    Based on the table schema, question and SQL response, write a concise response.
+    Include relevant numbers, names, and any other specific information from the SQL response.
+    If multiple queries were executed, summarize the results of all queries.
+
+    {schema}
+
+    Question: {question} 
+    SQL response: {response}
+
+    Detailed Answer:
+    """
+
+    prompt_response = ChatPromptTemplate.from_template(template_response)
+
+    def run_query(final_query): 
+        print("FINAL QUERY: ", final_query)
+        queries = final_query.split('|')
+        results = []
+        try: 
+            for query in queries:
+                if query.strip():
+                    try: 
+                        results_str = "query: " + query, "response: " + str(db.run(query))
+                        results.append(results_str)
+                    except: 
+                        print("INVALID QUERY: ", query)
+            print("RESULTS", results)            
+            return results
+        except Exception as e: 
+            print("Something went wrong")
+            return ""
+
+    full_chain = (
+        RunnablePassthrough.assign(
+            # query=lambda _: extracted_sql_query,
+            schema=lambda _: schema,
+            response=lambda _: run_query(extracted_sql_query),
         )
-
-
-        with get_openai_callback() as cb:
-            
-            result = full_chain.invoke({"question": request.question})
-            full_input_tokens = cb.prompt_tokens
-            full_output_tokens = cb.completion_tokens
-            full_total_tokens = cb.total_tokens
-            
-            (
-                    full_total_cost,
-                    full_input_cost,
-                    full_output_cost,
-                ) = await TokenCostManager().calculate_cost(
-                    full_input_tokens, full_output_tokens, model_name=request.model
-                )
-            
-        # Combine token and cost calculations
-        combined_input_tokens = sql_input_tokens + full_input_tokens
-        combined_output_tokens = sql_output_tokens + full_output_tokens
-        combined_total_tokens = sql_total_tokens + full_total_tokens
-        combined_input_cost = sql_input_cost + full_input_cost
-        combined_output_cost = sql_output_cost + full_output_cost
-        combined_total_cost = sql_total_cost + full_total_cost
+        | prompt_response
+        | llm
+    )
+    with get_openai_callback() as cb:
         
-        end_time = time.time()
-        response_time = end_time - start_time
-            
-        # Update cumulative usage
-        cumulative_tokens += combined_total_tokens
-        cumulative_cost += Decimal(str(combined_total_cost))
+        result = full_chain.invoke({"question": request.question})
+        full_input_tokens = cb.prompt_tokens
+        full_output_tokens = cb.completion_tokens
+        full_total_tokens = cb.total_tokens
+        
+        (
+                full_total_cost,
+                full_input_cost,
+                full_output_cost,
+            ) = await TokenCostManager().calculate_cost(
+                full_input_tokens, full_output_tokens, model_name=request.model
+            )
+        
+    # Combine token and cost calculations
+    combined_input_tokens = sql_input_tokens + full_input_tokens
+    combined_output_tokens = sql_output_tokens + full_output_tokens
+    combined_total_tokens = sql_total_tokens + full_total_tokens
+    combined_input_cost = sql_input_cost + full_input_cost
+    combined_output_cost = sql_output_cost + full_output_cost
+    combined_total_cost = sql_total_cost + full_total_cost
+    
+    end_time = time.time()
+    response_time = end_time - start_time
+        
+    # Update cumulative usage
+    cumulative_tokens += combined_total_tokens
+    cumulative_cost += Decimal(str(combined_total_cost))
 
     return {
         "sql_query": extracted_sql_query,
@@ -405,41 +336,6 @@ SQL Query:
         "cumulative_tokens": cumulative_tokens,
         "cumulative_cost": float(cumulative_cost)
     }
-
-
-@app.post("/noice")
-async def noice(request: NoiceRequest):
-    def update_gsheets(
-        input, 
-        output,
-        sheet_name = "Sheet1",
-        instruction = "Generate an SQL query based on the following schema and user request.If there are multiple sql queries, seperate them by a semicolon '|'.",
-    ):
-        scopes = ["https://www.googleapis.com/auth/spreadsheets"]
-        creds = Credentials.from_service_account_file("credentials.json", scopes=scopes)
-        client = gspread.authorize(creds)
-        sheet_id = "1jlNLEZEoJUp-6AfaP1kAQU_Lre41yGSnd9XDMszHIeA"
-        workbook = client.open_by_key(sheet_id)
-        
-        sheet = workbook.worksheet(sheet_name)
-        new_row = [
-            instruction, 
-            input, 
-            output
-        ]
-        # Append the row to the sheet
-        sheet.append_row(new_row)
-    
-    if request.noice == True: 
-        update_gsheets(input = request.input, output=request.output)
-        return {"OKAY": "liked"}
-
-    elif request.noice == False:
-        return{"OKAY": "disliked"}
-    
-    else:
-        return{"NOT OKAY": "Something went wrong"}
-
 
 if __name__ == "_main_":
     import uvicorn

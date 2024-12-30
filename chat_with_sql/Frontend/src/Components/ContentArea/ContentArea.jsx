@@ -156,11 +156,40 @@ const ContentArea = () => {
   };
 
   // handling like button click
-  const handleLikeClick = () => {
+  const handleLikeClick = async () => {
     console.log("Liked button click");
     setThumbsUpActive(true);
     setThumbsDownActive(false);
-  };
+
+    // Prepare the payload
+    const payload = {
+        noice: true,
+        output: query,
+        input: userQuestion,
+    };
+
+    try {
+        // Send POST request
+        const response = await fetch('http://localhost:8001/noice', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json', // Indicating the content type is JSON
+            },
+            body: JSON.stringify(payload) // Convert the payload to a JSON string
+        });
+
+        // Handle response
+        if (response.ok) {
+            const data = await response.json();
+            console.log("Response from server:", data);
+        } else {
+            console.error("Failed to send request:", response.status);
+        }
+    } catch (error) {
+        console.error("Error occurred while sending request:", error);
+    }
+};
+
 
   // handling dislike button click
   const handleDislikeClick = () => {
@@ -219,7 +248,7 @@ const ContentArea = () => {
               {answer && (
                 <div className="schema-answers">
                   <p>Answer</p>
-                  <div className="answer mt-3 mb-3">
+                  <div className="answer mt-3">
                     {answer || "Waiting for answer..."}
                   </div>
                   <div className="like-dislike mb-3">
