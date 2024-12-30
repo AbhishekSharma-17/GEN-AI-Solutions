@@ -1,22 +1,25 @@
 .homePage-container{
-    /* border: 1px solid red; */
+    margin: 0;
+    /* border: 2px solid red; */
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
     gap: 20px;
-    width: 100%;
-    padding: 100px 50px;
+    width: 90%;   
+    margin-left: 5%; 
+    margin-right: 5%; 
+    height: auto;
 }
 
 .homepage-textual-content, .homepage-setup-content{
+    /* border: 1px solid red; */
     width: 50%;
     padding: 20px;
-    /* border: 1px solid red; */
     display: flex;
     flex-direction: column;
     gap: 10px;
-    height: 700px;
+    height: auto;
 }
 .homepage-text-content{
     /* border: 1px solid black; */
@@ -25,16 +28,16 @@
     flex-direction: column;
 }
 .homepage-text-content p{
+    /* border: 1px solid red; */
     margin: 0;
     font-size: 2vw;
     font-weight: 500;
     font-family: Roboto;
     width: 100%;
-    /* border: 1px solid red; */
 }
 .homepage-text-content span{
-    margin-top: 20px!important;
     /* border: 1px solid red; */
+    margin-top: 20px!important;
     font-family: Roboto;
     font-size: 20px;
     color: rgb(155, 154, 154);
@@ -110,12 +113,52 @@
     font-weight: 400 !important;
 }
 .homepage-setup-image{
-    box-shadow: 0px 0px 7px rgb(228, 228, 228);
-    padding: 20px;
     border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
 }
 .homepage-setup-image img{
-    width: 100%;
-    height: 300px;
+    box-shadow: 0px 0px 7px rgb(228, 228, 228);
+    padding: 20px;
+    width: 80%;
+    height: auto;
+    background-size: cover;
     border-radius: 5px;
+}
+
+@media (max-width:768px)
+{
+    .homePage-container{
+        flex-direction: column;
+        padding: 10px 0px 20px 0px
+    }
+    .homepage-textual-content{
+        width: 100%;
+        /* border: 1px solid green; */
+    }
+    .homepage-textual-content p{
+        font-size: 7vw;
+    }
+    .homepage-setup-content{
+        display: none;
+    }
+}
+@media (max-width:368px)
+{
+    .homePage-container{
+        flex-direction: column;
+        padding: 10px 0px 20px 0px
+    }
+    .homepage-textual-content{
+        width: 100%;
+        /* border: 1px solid green; */
+    }
+    .homepage-textual-content p{
+        font-size: 7vw;
+    }
+    .homepage-setup-content{
+        display: none;
+    }
 }

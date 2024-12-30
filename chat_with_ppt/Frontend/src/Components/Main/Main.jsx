@@ -1,4 +1,6 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import assets from "../../assets/assets";
 import { Context } from "../../context/Context";
 import UploadSection from "../UploadSection/UploadSection";
@@ -7,7 +9,7 @@ import QueryCard from "../QueryCard/QueryCard";
 import BottomSection from "../BottomSection/BottomSection";
 import { FaUserCircle } from "react-icons/fa";
 import ResponseLoader from "../Response Loader/ResponseLoader";
-import './Main.css';
+import "./Main.css";
 
 const Main = () => {
   const {
@@ -19,6 +21,35 @@ const Main = () => {
     setLoadings,
     userId,
     responseProvider,
+
+    inputToken,
+    outputToken,
+    totalToken,
+    inputCost,
+    outputCost,
+    totalCost,
+    cumulativeTokens,
+    cumulativeCost,
+    embededToken,
+    embededCost,
+
+    setInputToken,
+    setOutputToken,
+    setTotalToken,
+    setInputCost,
+    setOutputCost,
+    setTotalCost,
+    setCumulativeTokens,
+    setCumulativeCost,
+
+    responseTime,
+    setResponseTime,
+
+    setEmbededToken,
+    setEmbededCost,
+
+    modelName,
+    setModelName,
   } = useContext(Context);
 
   const [file, setFile] = useState(null);
@@ -40,6 +71,9 @@ const Main = () => {
       setLoadings(true);
       setRecentPrompt(query);
 
+      setEmbededToken("");
+      setEmbededCost("");
+
       const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [
         ...prev,
@@ -47,7 +81,12 @@ const Main = () => {
         { type: "bot", text: "", loading: true },
       ]);
 
-      const modelToUse = selectedModel ? selectedModel.value : (responseProvider === 'openai' ? 'gpt-4o-mini' : 'gemini-1.5-flash');
+      const modelToUse = selectedModel
+        ? selectedModel.value
+        : responseProvider === "openai"
+        ? "gpt-4o-mini"
+        : "gemini-1.5-flash";
+      setModelName(modelToUse);
 
       const res = await fetch(`http://localhost:8000/chat?user_id=${userId}`, {
         method: "POST",
@@ -61,6 +100,21 @@ const Main = () => {
 
       if (!res.ok) {
         throw new Error("Failed to fetch response from the server.");
+      }
+
+      // Extract insights from the response header
+      const insightsHeader = res.headers.get("X-Chat-Insights");
+      if (insightsHeader) {
+        const insights = JSON.parse(insightsHeader);
+        setInputToken(insights.token_usage.input_tokens);
+        setOutputToken(insights.token_usage.output_tokens);
+        setTotalToken(insights.token_usage.total_tokens);
+        setInputCost(insights.costs.input_cost);
+        setOutputCost(insights.costs.output_cost);
+        setTotalCost(insights.costs.total_cost);
+        setCumulativeTokens(insights.cumulative_usage.total_tokens);
+        setCumulativeCost(insights.cumulative_usage.total_cost);
+        setResponseTime(insights.response_time);
       }
 
       const reader = res.body.getReader();
@@ -110,9 +164,9 @@ const Main = () => {
     <div className="main">
       {/* Navigation Bar */}
       <div className="nav">
-       
-          <a href="https://www.genaiprotos.com/"><img src={assets.genAILogo} alt="" /></a>
-       
+        <a href="https://www.genaiprotos.com/">
+          <img src={assets.genAILogo} alt="" />
+        </a>
         <img src={assets.icon} alt="" />
       </div>
 
@@ -120,7 +174,7 @@ const Main = () => {
       <div className="main-container container">
         {!isEmbedComplete ? (
           <>
- <Greeting />
+            <Greeting />
             <UploadSection
               file={file}
               setFile={setFile}
@@ -141,14 +195,24 @@ const Main = () => {
         ) : (
           <>
             {!showResult ? (
-              <QueryCard queries={queries} handleQueryClick={handleQueryClick} />
+              <QueryCard
+                queries={queries}
+                handleQueryClick={handleQueryClick}
+              />
             ) : (
-              <div className="result" ref={resultRef} style={{ overflowY: 'auto'}}>
+              <div
+                className="result"
+                ref={resultRef}
+                style={{ overflowY: "auto" }}
+              >
                 {chatHistory.map((chat, index) => (
                   <div key={index} className={`chat-message ${chat.type} chat`}>
                     {chat.type === "user" ? (
                       <div className="result-title">
-                        <FaUserCircle style={{ fontSize: "30px" }} className="result-title-user-icon" />
+                        <FaUserCircle
+                          style={{ fontSize: "30px" }}
+                          className="result-title-user-icon"
+                        />
                         <p>{chat.text}</p>
                       </div>
                     ) : (
@@ -157,7 +221,59 @@ const Main = () => {
                         {chat.loading ? (
                           <ResponseLoader />
                         ) : (
-                          <p dangerouslySetInnerHTML={{ __html: chat.text }} />
+                          <div className="markdown-content">
+                            {/* {console.log("Markdown content:", chat.text)} */}
+                            <ReactMarkdown
+                              className="actual-markdown-content"
+                              remarkPlugins={[remarkGfm]}
+                              components={{
+                                p: ({ node, ...props }) => (
+                                  <p
+                                    style={{ marginBottom: "1em" }}
+                                    {...props}
+                                  />
+                                ),
+                                li: ({ node, ...props }) => (
+                                  <li
+                                    style={{ marginBottom: "0.5em" }}
+                                    {...props}
+                                  />
+                                ),
+                                pre: ({ node, ...props }) => (
+                                  <pre
+                                    style={{
+                                      backgroundColor: "#f0f0f0",
+                                      padding: "1em",
+                                      borderRadius: "4px",
+                                      overflowX: "auto",
+                                    }}
+                                    {...props}
+                                  />
+                                ),
+                                code: ({ node, inline, ...props }) =>
+                                  inline ? (
+                                    <code
+                                      style={{
+                                        backgroundColor: "#e0e0e0",
+                                        padding: "0.2em 0.4em",
+                                        borderRadius: "3px",
+                                      }}
+                                      {...props}
+                                    />
+                                  ) : (
+                                    <code
+                                      style={{
+                                        display: "block",
+                                        whiteSpace: "pre-wrap",
+                                      }}
+                                      {...props}
+                                    />
+                                  ),
+                              }}
+                            >
+                              {chat.text}
+                            </ReactMarkdown>
+                          </div>
                         )}
                       </div>
                     )}

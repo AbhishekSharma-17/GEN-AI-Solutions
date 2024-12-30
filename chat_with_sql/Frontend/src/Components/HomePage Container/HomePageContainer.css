@@ -1,0 +1,179 @@
+.homePage-container {
+    /* border: 1px solid black; */
+    display: flex;
+    flex-direction: row;
+    /* flex-wrap: wrap; */
+    padding: 50px;
+    gap: 10px;
+    width: 100%;
+    min-height: 100vh; /* Ensures content fills the screen height */
+    height: auto;
+    box-sizing: border-box; /* Ensures padding doesn't affect overall width/height */
+    align-items: center; /* Centers content vertically */
+}
+
+.homepage-textual-content, .homepage-setup-content {
+    width: 50%;
+    padding: 20px;
+    /* border: 1px solid red; */
+    display: flex;
+    flex-direction: column;
+    height: auto; /* Adjusts height based on content */
+    gap: 10px;
+}
+
+.homepage-text-content {
+    display: flex;
+    flex-direction: column;
+}
+
+.homepage-text-content p {
+    margin: 0;
+    font-size: 40px;
+    font-weight: 500;
+    font-family: Roboto;
+    width: 100%;
+}
+
+.homepage-text-content span {
+    margin-top: 20px !important;
+    font-family: Roboto;
+    font-size: 20px;
+    color: rgb(155, 154, 154);
+    font-weight: 500;
+}
+
+.homepage-form-content {
+    padding: 10px;
+    margin-top: 20px;
+    width: 100%;
+}
+
+.homepage-form-content form {
+    background-color: white;
+    width: 100%;
+    padding: 50px 20px;
+    border-radius: 5px;
+    box-shadow: 0px 0px 7px rgb(228, 228, 228);
+    border-radius: 5px;
+}
+
+.homepage-form-content form button {
+    width: 100%;
+    font-weight: 500;
+}
+
+.homepage-setup-content .quick-setup-guide {
+    box-shadow: 0px 0px 7px rgb(228, 228, 228);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+    background-color: white;
+}
+
+.homepage-setup-content .quick-setup-guide p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: Roboto;
+}
+
+.quick-setup-guide .homepage-guide-list {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 30px;
+}
+
+.homepage-guide-list .item {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+}
+
+.homepage-guide-list .item .serial {
+    margin: 0;
+    padding: 10px;
+    border-radius: 50%;
+    width: 40px; /* Set a fixed width */
+    height: 40px; /* Set a fixed height to match the width */
+    background-color: rgb(230, 229, 229);
+    display: flex; /* Use flexbox to center the text */
+    align-items: center; /* Center vertically */
+    justify-content: center; /* Center horizontally */
+    text-align: center; /* Center text */
+}
+
+.item-title {
+    font-size: 15px !important;
+}
+
+.item-def {
+    color: grey;
+    font-weight: 400 !important;
+}
+
+.homepage-setup-image {
+    border-radius: 5px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.homepage-setup-image img {
+    box-shadow: 0px 0px 7px rgb(228, 228, 228);
+    padding: 10px;
+    width: 100%;
+    min-height: 350px; 
+    /* object-fit: cover; */
+    height:400px;
+    border-radius: 5px;
+    background-size:cover;
+    background-attachment: fixed;
+}
+
+/* Responsive adjustments for medium screens */
+@media (max-width: 768px) {
+    .homePage-container {
+        flex-direction: column;
+        padding: 10px 0px 20px 0px;
+        min-height: auto; /* Adjusts for smaller screen heights */
+    }
+
+    .homepage-textual-content {
+        width: 100%;
+    }
+
+    .homepage-textual-content p {
+        font-size: 7vw;
+    }
+
+    .homepage-setup-content {
+        display: none; /* Hides setup content for small screens */
+    }
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 368px) {
+    .homePage-container {
+        flex-direction: column;
+        padding: 10px 0px 20px 0px;
+    }
+
+    .homepage-textual-content {
+        width: 100%;
+    }
+
+    .homepage-textual-content p {
+        font-size: 7vw;
+    }
+
+    .homepage-setup-content {
+        display: none;
+    }
+}
