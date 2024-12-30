@@ -433,34 +433,39 @@ You are an AI assistant specialized in analyzing PowerPoint presentations. Your 
             end_time = time.time()
             response_time = end_time - start_time
 
-            nonlocal insights
-            insights = {
-                "token_usage": {
-                    "input_tokens": input_tokens,
-                    "output_tokens": output_tokens,
-                    "total_tokens": total_tokens
-                },
-                "costs": {
-                    "input_cost": float(input_cost),
-                    "output_cost": float(output_cost),
-                    "total_cost": float(total_cost)
-                },
-                "cumulative_usage": {
-                    "total_tokens": state.cumulative_tokens,
-                    "total_cost": float(state.cumulative_cost)
-                },
+            # Prepare metadata
+            metadata = {
+                "input_tokens": input_tokens,
+                "output_tokens": output_tokens,
+                "total_tokens": total_tokens,
+                "input_cost": float(input_cost),
+                "output_cost": float(output_cost),
+                "total_cost": float(total_cost),
+                "cumulative_tokens": state.cumulative_tokens,
+                "cumulative_cost": float(state.cumulative_cost),
                 "response_time": response_time
             }
-            
-            logging.info(f"Chat insights for user {user_id}: {insights}")
+
+            # Yield metadata as JSON in the last chunk
+            yield "\n\nMETADATA:" + json.dumps(metadata)
 
         except Exception as e:
             logging.error(f"Error during chat for user {user_id}: {str(e)}")
             yield f"Error: {str(e)}"
 
-    response = StreamingResponse(generate_response(), media_type="text/plain")
-    response.headers["X-Chat-Insights"] = json.dumps(insights)
-    return response
+    async def response_and_metadata():
+        response_content = ""
+        metadata = None
+        async for chunk in generate_response():
+            if chunk.startswith("\n\nMETADATA:"):
+                metadata = json.loads(chunk.replace("\n\nMETADATA:", ""))
+            else:
+                response_content += chunk
+                yield chunk
+        if metadata:
+            yield json.dumps(metadata)
+
+    return StreamingResponse(response_and_metadata(), media_type="text/event-stream")
 
 @app.delete("/delete_vectorstore/{user_id}")
 async def delete_vectorstore(user_id: str):
