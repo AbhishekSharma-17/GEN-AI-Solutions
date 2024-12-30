@@ -56,14 +56,17 @@ class StateManager:
 
 state = StateManager()
 
-@app.post("/reset_cumulative")
+@app.post("/global_reset")
 async def reset_cumulative():
     """
     Endpoint to reset the cumulative tokens and cost.
     """
     state.reset()
     return JSONResponse(
-        content={"message": "Cumulative tokens and cost have been reset"},
+        content={
+            "message": "Cumulative tokens and cost have been reset",
+            "resetVar": "true"
+        },
         status_code=200
     )
 
