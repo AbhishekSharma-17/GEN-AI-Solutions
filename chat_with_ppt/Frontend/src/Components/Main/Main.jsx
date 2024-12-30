@@ -286,6 +286,8 @@ const Main = () => {
           </>
         )}
       </div>
+
+      {isEmbedComplete ? 
       <div className="bottom-section-div">
         <BottomSection
           chatHistory={chatHistory}
@@ -294,6 +296,7 @@ const Main = () => {
           setSelectedModel={setSelectedModel}
         />
       </div>
+        :null}
     </div>
   );
 };

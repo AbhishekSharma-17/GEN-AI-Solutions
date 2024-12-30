@@ -13,10 +13,11 @@
   display: flex;
   align-items: center;
   /* border: 1px solid red; */
+  width: 100%;
   justify-content: space-between;
   font-size: 22px;
   padding: 5px 10px;
-  height: 5%!important;
+  height: 5% !important;
 }
 .main .nav a img {
   width: 150px;
@@ -92,7 +93,7 @@
   font-weight: 300;
   line-height: 1.8;
   margin: 0; /* Remove any margin */
-  padding:  5px 8px ;
+  padding: 5px 8px;
   border-radius: 7px;
 }
 
@@ -171,7 +172,7 @@
   color: black;
   font-weight: 500;
   background-color: white;
-  border-radius: 5px ;
+  border-radius: 5px;
 }
 
 .markdown-content table {
@@ -194,6 +195,283 @@
 
 /* result section in main.jsx styling ends here */
 
-.bottom-section-div{
+.bottom-section-div {
   padding: 0;
+}
+
+@media (max-width: 768px) {
+  .main .nav a img {
+    width: 120px;
+    border-radius: 0;
+  }
+  .main .nav img {
+    width: 20px;
+    border-radius: 50%;
+  }
+
+  /* result section in main.jsx styling starts here */
+  .result {
+    font-size: 15px;
+  }
+
+  .markdown-content {
+    font-size: 15px;
+  }
+
+  .result-data img {
+    width: 30px;
+  }
+
+  /* Markdown content styles */
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3,
+  .markdown-content h4,
+  .markdown-content h5,
+  .markdown-content h6 {
+    /* margin-top: 20px; */
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .markdown-content h1 {
+    font-size: 20px;
+  }
+
+  .markdown-content h2 {
+    font-size: 18px;
+  }
+
+  .markdown-content h3 {
+    font-size: 16px;
+  }
+
+  .markdown-content p {
+    margin-bottom: 13px;
+  }
+
+  .markdown-content code {
+    background-color: #e0e0e0;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.7em;
+  }
+
+  .markdown-content pre {
+    margin-bottom: 13px;
+  }
+
+  /* result section in main.jsx styling ends here */
+
+  .bottom-section-div {
+    padding: 0;
+  }
+}
+@media (max-width: 368px) {
+  .main .nav a img {
+    width: 120px;
+    border-radius: 0;
+  }
+  .main .nav img {
+    width: 20px;
+    border-radius: 50%;
+  }
+
+  /* result section in main.jsx styling starts here */
+  .result {
+    font-size: 15px;
+  }
+
+  .markdown-content {
+    font-size: 15px;
+  }
+
+  .result-data img {
+    width: 30px;
+  }
+
+  /* Markdown content styles */
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3,
+  .markdown-content h4,
+  .markdown-content h5,
+  .markdown-content h6 {
+    /* margin-top: 20px; */
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .markdown-content h1 {
+    font-size: 20px;
+  }
+
+  .markdown-content h2 {
+    font-size: 18px;
+  }
+
+  .markdown-content h3 {
+    font-size: 16px;
+  }
+
+  .markdown-content p {
+    margin-bottom: 13px;
+  }
+
+  .markdown-content code {
+    background-color: #e0e0e0;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.7em;
+  }
+
+  .markdown-content pre {
+    margin-bottom: 13px;
+  }
+
+  /* result section in main.jsx styling ends here */
+
+  .bottom-section-div {
+    padding: 0;
+  }
+}
+@media (max-width: 1000px) {
+  .main .nav a img {
+    width: 120px;
+    border-radius: 0;
+  }
+  .main .nav img {
+    width: 20px;
+    border-radius: 50%;
+  }
+
+  /* result section in main.jsx styling starts here */
+  .result {
+    font-size: 15px;
+  }
+
+  .markdown-content {
+    font-size: 15px;
+  }
+
+  .result-data img {
+    width: 30px;
+  }
+
+  /* Markdown content styles */
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3,
+  .markdown-content h4,
+  .markdown-content h5,
+  .markdown-content h6 {
+    /* margin-top: 20px; */
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .markdown-content h1 {
+    font-size: 20px;
+  }
+
+  .markdown-content h2 {
+    font-size: 18px;
+  }
+
+  .markdown-content h3 {
+    font-size: 16px;
+  }
+
+  .markdown-content p {
+    margin-bottom: 13px;
+  }
+
+  .markdown-content code {
+    background-color: #e0e0e0;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.7em;
+  }
+
+  .markdown-content pre {
+    margin-bottom: 13px;
+  }
+
+  /* result section in main.jsx styling ends here */
+
+  .bottom-section-div {
+    padding: 0;
+  }
+}
+@media (max-width: 320px) {
+  .main .nav a img {
+    width: 120px;
+    border-radius: 0;
+  }
+  .main .nav img {
+    width: 20px;
+    border-radius: 50%;
+  }
+
+  /* result section in main.jsx styling starts here */
+  .result {
+    font-size: 15px;
+  }
+
+  .markdown-content {
+    font-size: 15px;
+  }
+
+  .result-data img {
+    width: 30px;
+  }
+
+  /* Markdown content styles */
+  .markdown-content h1,
+  .markdown-content h2,
+  .markdown-content h3,
+  .markdown-content h4,
+  .markdown-content h5,
+  .markdown-content h6 {
+    /* margin-top: 20px; */
+    margin-bottom: 10px;
+    line-height: 1.2;
+  }
+
+  .markdown-content h1 {
+    font-size: 20px;
+  }
+
+  .markdown-content h2 {
+    font-size: 18px;
+  }
+
+  .markdown-content h3 {
+    font-size: 16px;
+  }
+
+  .markdown-content p {
+    margin-bottom: 13px;
+  }
+
+  .markdown-content code {
+    background-color: #e0e0e0;
+    padding: 0.2em 0.4em;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.7em;
+  }
+
+  .markdown-content pre {
+    margin-bottom: 13px;
+  }
+
+  /* result section in main.jsx styling ends here */
+
+  .bottom-section-div {
+    padding: 0;
+  }
 }
