@@ -80,16 +80,18 @@ def clean(sql_query):
 
 # Function to extract SQL query from LLM response
 def extract_sql_query(response):
-    # Look for SQL query between triple backticks
-    match = re.search(r'sql\s*(.*?)\s*', response, re.DOTALL)
+    # Look for SQL query between triple backticks with 'sql' prefix
+    match = re.search(r'```sql\s*(.*?)\s*```', response, re.DOTALL | re.IGNORECASE)
     if match:
         return match.group(1).strip()
+    
     # If not found, look for the first SELECT statement
     match = re.search(r'\bSELECT\b.*', response, re.DOTALL | re.IGNORECASE)
     if match:
         return match.group(0).strip()
+    
     # If still not found, return the original response
-    return response
+    return response.strip()
 
 @app.post("/connect")
 async def connect(request: ConnectionRequest):
@@ -341,7 +343,9 @@ SQL Query:
         # Extract the actual SQL query
         extracted_sql_query = extract_sql_query(sql_query)
 
-        
+        print("extracted sql query+++++++++++++++") 
+        print(sql_query) 
+        print("----------------------------------")
 
         prompt_response = ChatPromptTemplate.from_template(template_response)
 
