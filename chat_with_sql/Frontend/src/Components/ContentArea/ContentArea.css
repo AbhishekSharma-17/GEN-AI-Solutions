@@ -123,12 +123,11 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-end;
-    gap: 10px;
+    gap: 15px;
   }
   #Icon{
     font-size: 18px;
-    width: 35px;
-    /* height: 10px;   */
+    height: 15px;  
     color: grey;
     font-weight: bold!important;
 
