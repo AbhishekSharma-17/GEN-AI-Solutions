@@ -3,7 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 const VoiceChat = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [conversation, setConversation] = useState([]);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isAIResponseComplete, setIsAIResponseComplete] = useState(false);
 
@@ -74,13 +73,6 @@ const VoiceChat = () => {
     }
   }, [conversation]);
 
-  useEffect(() => {
-    if (isPlaying) {
-      audioRef.current.play();
-    } else {
-      audioRef.current.pause();
-    }
-  }, [isPlaying]);
 
   const appendNextChunk = () => {
     if (ttsAudioChunksRef.current.length && sourceBufferRef.current && !sourceBufferRef.current.updating) {
@@ -119,7 +111,6 @@ const VoiceChat = () => {
   };
 
   const fetchTTS = async (text) => {
-    setIsPlaying(false);
     setIsLoading(true);
     ttsAudioChunksRef.current = [];
 
@@ -152,8 +143,8 @@ const VoiceChat = () => {
               appendNextChunk();
             }
 
-            if (!isPlaying && audioRef.current.readyState >= 2) {
-              setIsPlaying(true);
+            if (audioRef.current.readyState >= 2) {
+              audioRef.current.play();
               setIsLoading(false);
             }
           }
@@ -194,12 +185,9 @@ const VoiceChat = () => {
         ))}
       </div>
       <div className="tts-audio-section">
-        <audio ref={audioRef} controls>
+        <audio ref={audioRef}>
           Your browser does not support the audio element.
         </audio>
-        <button onClick={() => setIsPlaying(!isPlaying)} disabled={isLoading}>
-          {isPlaying ? 'Pause' : 'Play'}
-        </button>
       </div>
     </div>
   );
