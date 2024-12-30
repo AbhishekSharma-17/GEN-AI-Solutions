@@ -1,10 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
+import './VoiceChat.css';
 
 const VoiceChat = () => {
   const [isRecording, setIsRecording] = useState(false);
   const [conversation, setConversation] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isAIResponseComplete, setIsAIResponseComplete] = useState(false);
+  const [selectedVoice, setSelectedVoice] = useState('Lyla');
+
+  const voiceOptions = ['Castiel', 'Harry', 'Lyla', 'Selena', 'Abhishek', 'Hiten'];
 
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
@@ -115,7 +119,7 @@ const VoiceChat = () => {
     ttsAudioChunksRef.current = [];
 
     try {
-      const response = await fetch(`http://localhost:8000/tts?text=${encodeURIComponent(text)}&voice=Lyla`, {
+      const response = await fetch(`http://localhost:8000/tts?text=${encodeURIComponent(text)}&voice=${selectedVoice}`, {
         method: 'GET',
       });
 
@@ -163,6 +167,20 @@ const VoiceChat = () => {
   return (
     <div className="voice-chat-container">
       <h1>Voice Chat</h1>
+      <div className="voice-selector">
+        <label htmlFor="voice-select">Select Voice: </label>
+        <select
+          id="voice-select"
+          value={selectedVoice}
+          onChange={(e) => setSelectedVoice(e.target.value)}
+        >
+          {voiceOptions.map((voice) => (
+            <option key={voice} value={voice}>
+              {voice}
+            </option>
+          ))}
+        </select>
+      </div>
       <div className="recording-controls">
         <button onClick={startRecording} disabled={isRecording}>
           Start Recording
