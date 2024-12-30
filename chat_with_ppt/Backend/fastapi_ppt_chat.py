@@ -48,10 +48,24 @@ current_model = None
 # Initialize state management class
 class StateManager:
     def __init__(self):
+        self.reset()
+
+    def reset(self):
         self.cumulative_tokens = 0
         self.cumulative_cost = Decimal('0')
 
 state = StateManager()
+
+@app.post("/reset_cumulative")
+async def reset_cumulative():
+    """
+    Endpoint to reset the cumulative tokens and cost.
+    """
+    state.reset()
+    return JSONResponse(
+        content={"message": "Cumulative tokens and cost have been reset"},
+        status_code=200
+    )
 
 async def generate_document_queries(
     document_content: str, num_queries: int = 4
