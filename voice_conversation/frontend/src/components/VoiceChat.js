@@ -200,7 +200,7 @@ const VoiceChat = () => {
           ))}
         </select>
         <button 
-          className="record-button" 
+          className={`record-button ${isRecording ? 'recording' : ''}`}
           onClick={isRecording ? stopRecording : startRecording}
           disabled={isLoading}
         >

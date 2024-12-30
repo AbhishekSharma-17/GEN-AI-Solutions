@@ -137,6 +137,18 @@ h1 {
   background-color: #f8f8f8;
 }
 
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(52, 152, 219, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+  }
+}
+
 .record-button {
   padding: 10px;
   font-size: 20px;
@@ -162,6 +174,15 @@ h1 {
   background-color: #bdc3c7;
   cursor: not-allowed;
   transform: none;
+}
+
+.record-button.recording {
+  animation: pulse 1.5s infinite;
+  background-color: #e74c3c;
+}
+
+.record-button.recording:hover {
+  background-color: #c0392b;
 }
 
 @media (max-width: 768px) {
