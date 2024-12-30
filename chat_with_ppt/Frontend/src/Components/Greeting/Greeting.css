@@ -4,14 +4,8 @@
     color: #383838;
     font-weight: 500;
     padding: 20px;
-    /* border: 1px solid red; */
     text-align: center;
-  }
-  .greet span {
-    /* background: -webkit-linear-gradient(15deg, #4b90ff, #ff5546);
-    background-clip: text;
-    -webkit-text-fill-color: transparent; */
-    margin: 0;
+    /* border: 1px solid red; */
   }
   .greetPara2{
     font-weight: 500;

@@ -21,17 +21,6 @@ const BottomSection = ({
     responseProvider,
     userId,
     setModelName,
-    inputToken,
-    outputToken,
-    totalToken,
-    inputCost,
-    outputCost,
-    totalCost,
-    cumulativeTokens,
-    cumulativeCost,
-    embededToken,
-    embededCost,
-
     setInputToken,
     setOutputToken,
     setTotalToken,
@@ -41,9 +30,6 @@ const BottomSection = ({
     setCumulativeTokens,
     setCumulativeCost,
     setResponseTime,
-
-    responseTime,
-
     setEmbededToken,
     setEmbededCost,
   } = useContext(Context);
@@ -100,7 +86,6 @@ const BottomSection = ({
       setRecentPrompt(input);
       setEmbededCost("");
       setEmbededToken("");
-  
       setInputToken("");
       setOutputToken("");
       setTotalToken("");
@@ -177,22 +162,21 @@ const BottomSection = ({
   
       // Update state with metadata
       if (metadata) {
-        setInputToken(metadata.input_tokens || 0);
-        setOutputToken(metadata.output_tokens || 0);
-        setTotalToken(metadata.total_tokens || 0);
-        setInputCost(metadata.input_cost || 0);
-        setOutputCost(metadata.output_cost || 0);
-        setTotalCost(metadata.total_cost || 0);
-        setCumulativeTokens(metadata.cumulative_tokens || 0);
-        setCumulativeCost(metadata.cumulative_cost || 0);
-        setResponseTime(metadata.response_time || 0);
+        setInputToken(parseInt(metadata.input_tokens) || 0);
+        setOutputToken(parseInt(metadata.output_tokens) || 0);
+        setTotalToken(parseInt(metadata.total_tokens) || 0);
+        setInputCost(parseFloat(metadata.input_cost).toFixed(5) || 0);
+        setOutputCost(parseFloat(metadata.output_cost).toFixed(5) || 0);
+        setTotalCost(parseFloat(metadata.total_cost).toFixed(5) || 0);
+        setCumulativeTokens(parseInt(metadata.cumulative_tokens) || 0);
+        setCumulativeCost(parseFloat(metadata.cumulative_cost).toFixed(3) || 0);
+        setResponseTime(parseFloat(metadata.response_time).toFixed(2) || 0);
+        
       }
     } catch (error) {
       console.error("Error:", error);
-  
       const errorMessage = "An error occurred. Please try again.";
       setResponse(errorMessage);
-  
       setChatHistory((prev) =>
         prev.map((chat, index) =>
           index === loaderIndex + 1

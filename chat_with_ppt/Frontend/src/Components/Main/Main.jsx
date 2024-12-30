@@ -21,18 +21,7 @@ const Main = () => {
     setLoadings,
     userId,
     responseProvider,
-
-    inputToken,
-    outputToken,
-    totalToken,
-    inputCost,
-    outputCost,
-    totalCost,
-    cumulativeTokens,
-    cumulativeCost,
-    embededToken,
-    embededCost,
-
+    setResponse,
     setInputToken,
     setOutputToken,
     setTotalToken,
@@ -41,14 +30,9 @@ const Main = () => {
     setTotalCost,
     setCumulativeTokens,
     setCumulativeCost,
-
-    responseTime,
     setResponseTime,
-
     setEmbededToken,
     setEmbededCost,
-
-    modelName,
     setModelName,
   } = useContext(Context);
 
@@ -70,9 +54,17 @@ const Main = () => {
       setShowResult(true);
       setLoadings(true);
       setRecentPrompt(query);
-
       setEmbededToken("");
       setEmbededCost("");
+      setInputToken("");
+      setOutputToken("");
+      setTotalToken("");
+      setInputCost("");
+      setOutputCost("");
+      setTotalCost("");
+      setCumulativeTokens("");
+      setCumulativeCost("");
+      setResponseTime("");
 
       const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [
@@ -102,21 +94,6 @@ const Main = () => {
         throw new Error("Failed to fetch response from the server.");
       }
 
-      // Extract insights from the response header
-      const insightsHeader = res.headers.get("X-Chat-Insights");
-      if (insightsHeader) {
-        const insights = JSON.parse(insightsHeader);
-        setInputToken(insights.token_usage.input_tokens);
-        setOutputToken(insights.token_usage.output_tokens);
-        setTotalToken(insights.token_usage.total_tokens);
-        setInputCost(insights.costs.input_cost);
-        setOutputCost(insights.costs.output_cost);
-        setTotalCost(insights.costs.total_cost);
-        setCumulativeTokens(insights.cumulative_usage.total_tokens);
-        setCumulativeCost(insights.cumulative_usage.total_cost);
-        setResponseTime(insights.response_time);
-      }
-
       const reader = res.body.getReader();
       const decoder = new TextDecoder();
       let accumulatedResponse = "";
@@ -128,16 +105,41 @@ const Main = () => {
         const chunk = decoder.decode(value, { stream: true });
         accumulatedResponse += chunk;
 
+        // Update chat history with partial response
+        const textOnly = accumulatedResponse.split("{")[0].trim(); // Extract main response text
+
         setChatHistory((prev) =>
           prev.map((chat, index) =>
             index === loaderIndex + 1
-              ? { ...chat, text: accumulatedResponse, loading: false }
+              ? { ...chat, text: textOnly, loading: false }
               : chat
           )
         );
       }
 
+      // Extract metadata (JSON) after the main response text
+      const metadataStart = accumulatedResponse.indexOf("{");
+      const metadata =
+        metadataStart !== -1
+          ? JSON.parse(accumulatedResponse.slice(metadataStart))
+          : {};
+
+      // Set response text
+      const textResponse = accumulatedResponse.split("{")[0].trim();
+      setResponse(textResponse);
       setPreviousPrompt((prev) => [...prev, query]);
+      // Update state with metadata
+      if (metadata) {
+        setInputToken(parseInt(metadata.input_tokens) || 0);
+        setOutputToken(parseInt(metadata.output_tokens) || 0);
+        setTotalToken(parseInt(metadata.total_tokens) || 0);
+        setInputCost(parseFloat(metadata.input_cost).toFixed(5) || 0);
+        setOutputCost(parseFloat(metadata.output_cost).toFixed(5) || 0);
+        setTotalCost(parseFloat(metadata.total_cost).toFixed(5) || 0);
+        setCumulativeTokens(parseInt(metadata.cumulative_tokens) || 0);
+        setCumulativeCost(parseFloat(metadata.cumulative_cost).toFixed(3) || 0);
+        setResponseTime(parseFloat(metadata.response_time).toFixed(2) || 0);
+      }
     } catch (error) {
       console.error("Error:", error);
       const errorMessage = "An error occurred. Please try again.";

@@ -6,7 +6,7 @@ import "./Sidebar.css";
 const Sidebar = () => {
   const handleExtension = () => {
     setExtended((prevExtended) => {
-      console.log("Toggling extended from", prevExtended, "to", !prevExtended);
+      // console.log("Toggling extended from", prevExtended, "to", !prevExtended);
       return !prevExtended;
     });
   };
@@ -38,20 +38,22 @@ const Sidebar = () => {
           alt="menu_icon"
         />
 
-        {extended ? (
+        {extended && responseTime && totalCost ? (
           <div className="token-display">
-            <div className="latency">
-              <span>{responseTime ? responseTime : 0} s</span>
-              <p>Response Time</p>
-            </div>
-            <div className="tokens">
-              <span>$ {totalCost ? totalCost : 0}</span>
-              <p>Response Cost</p>
+            <div className="latency-token">
+              <div className="latency">
+                <span>{responseTime ? responseTime : 0} s</span>
+                <p>Response Time</p>
+              </div>
+              <div className="tokens">
+                <span>$ {totalCost ? totalCost : 0}</span>
+                <p>Response Cost</p>
+              </div>
             </div>
 
             <div className="hover-content">
               <div className="speed-insights">
-                <p>Latest Chat Insights</p>
+                <p>Insights</p>
                 {modelName ? (
                   <p className="speed-insight-model-name">{modelName}</p>
                 ) : null}
@@ -81,30 +83,61 @@ const Sidebar = () => {
                 </p>
                 <div className="inference-time">
                   <div className="input-inference">
-                    <span className="token-value">{inputCost ? inputCost : "N/A"}</span>
+                    <span className="token-value">
+                      {inputCost ? inputCost : "N/A"}
+                    </span>
                     <span className="token-title">Input cost</span>
                   </div>
                   <div className="output-inference">
-                    <span className="token-value">{outputCost ? outputCost : "N/A"}</span>
+                    <span className="token-value">
+                      {outputCost ? outputCost : "N/A"}
+                    </span>
                     <span className="token-title">Output cost</span>
                   </div>
                   <div className="total-inference">
-                    <span className="token-value">{totalCost ? totalCost : "N/A"}</span>
+                    <span className="token-value">
+                      {totalCost ? totalCost : "N/A"}
+                    </span>
                     <span className="token-title">Total cost</span>
                   </div>
                 </div>
               </div>
 
-              <div style={{ padding: "10px" }}>
-                <p className="token-details-title">Cumulative</p>
-                <div className="cumulative-token-cost">
-                  <div className="cumulative-cost">
-                    <span className="token-value">{cumulativeCost ? cumulativeCost : 0}</span>
-                    <span className="token-title">Cumulative Cost</span>
+              {/* token per second starts */}
+              {embededCost !== "" && embededToken !== "" ? (
+                <div
+                  style={{
+                    padding: "10px",
+                    backgroundColor: "rgb(245, 245, 245)",
+                  }}
+                >
+                  <p className="token-details-title">Embeded Token / Cost </p>
+                  <div className="embeded-token-per-second">
+                    <div className="embeded-token">
+                      <span className="token-value">{embededToken || 0}</span>
+                      <span className="token-title">Embeded Tokens</span>
+                    </div>
+                    <div className="embeded-cost">
+                      <span className="token-value">{embededCost || 0}</span>
+                      <span className="token-title">Embeded Cost</span>
+                    </div>
                   </div>
+                </div>
+              ) : null}
+              {/* token per second ends */}
+
+              <div style={{ padding: "10px" }}>
+                <p className="token-details-title">Cumulative Token / Cost</p>
+                <div className="cumulative-token-cost">
                   <div className="cumulative-token">
                     <span className="token-value">{cumulativeTokens || 0}</span>
                     <span className="token-title">Cumulative Token</span>
+                  </div>
+                  <div className="cumulative-cost">
+                    <span className="token-value">
+                      {cumulativeCost ? cumulativeCost : 0}
+                    </span>
+                    <span className="token-title">Cumulative Cost</span>
                   </div>
                 </div>
               </div>

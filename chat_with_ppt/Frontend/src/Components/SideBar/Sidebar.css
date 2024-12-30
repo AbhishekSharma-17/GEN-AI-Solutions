@@ -60,9 +60,17 @@
     transform: scale(1);
   }
 }
-
+.latency-token{
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 20px;
+  /* border: 1px solid red; */
+  width: 100%;
+}
 .latency,
 .tokens {
+  /* border: 1px solid red; */
   width: 50%;
 }
 .latency p,
@@ -79,7 +87,7 @@
 .tokens span {
   color: rgb(58, 57, 57);
   font-weight: bold;
-  font-size: 25px;
+  font-size: 20px;
 }
 .hover-content {
   position: absolute;
