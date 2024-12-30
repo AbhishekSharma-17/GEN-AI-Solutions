@@ -283,14 +283,16 @@ const Main = () => {
                 ))}
               </div>
             )}
-            <BottomSection
-              chatHistory={chatHistory}
-              setChatHistory={setChatHistory}
-              selectedModel={selectedModel}
-              setSelectedModel={setSelectedModel}
-            />
           </>
         )}
+      </div>
+      <div className="bottom-section-div">
+        <BottomSection
+          chatHistory={chatHistory}
+          setChatHistory={setChatHistory}
+          selectedModel={selectedModel}
+          setSelectedModel={setSelectedModel}
+        />
       </div>
     </div>
   );

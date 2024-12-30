@@ -1,10 +1,8 @@
 .main-bottom {
   bottom: 0;
   width: 100%;
-  /* margin-left: 5%; */
-  /* margin-right: 5%; */
-  padding: 0px 20px;
-  margin-top:30px;
+  /* padding: 0px 20px; */
+  /* margin-top:30px; */
   /* border:1px solid orange ; */
 }
 
@@ -90,8 +88,9 @@
 }
 .main .bottom-info {
   font-size: 13px;
-  margin: 15px auto;
+  margin: 0;
   text-align: center;
   font-weight: 300;
   color: grey;
+  padding: 10px;
 }

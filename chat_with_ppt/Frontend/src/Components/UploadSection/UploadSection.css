@@ -5,7 +5,8 @@
     align-items: center;
     border: 2px dashed rgb(182, 179, 179);
     height: 200px;
-    width: 100%;
+    width: 80%;
+    margin: 0% 10%;
     cursor: pointer;
     padding: 10px;
     border-radius: 5px;
