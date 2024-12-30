@@ -5,7 +5,7 @@ import { Context } from "../../Context/Context";
 import QueryLoader from "../QueryLoader/QueryLoader";
 import { FaThumbsUp, FaThumbsDown } from "react-icons/fa";
 
-const ContentArea = () => {
+const ContentArea = ({ LLMType_modelName }) => {
   const {
     dbSchema,
     dbURI,
@@ -28,9 +28,9 @@ const ContentArea = () => {
     setOutputCost,
     setTotalCost,
     setModelName,
-    cumulativeTokens,
+    modelName,
     setCumulativeTokens,
-    cumulativeCost,
+
     setCumulativeCost,
     setResponseTime,
     thumbsUpActive,
@@ -64,23 +64,14 @@ const ContentArea = () => {
     setError(null);
     setQueryLoading(true);
 
-    // Set the model name based on LLM_Type, use a local variable to avoid async issues
-    let updatedModelName = "";
+    console.log("model name is : ", modelName)
 
-    if (LLM_Type === "OpenAI") {
-      updatedModelName = "gpt-4o";
-      setModelName("gpt-4o");
-    }
-    if (LLM_Type === "Anthropic") {
-      updatedModelName = "claude-3-sonnet-20240229";
-      setModelName("claude-3-sonnet-20240229");
-    }
 
     const form_data = {
       question: userQuestion,
       db_uri: Database_URI,
       llm_type: LLM_Type,
-      model: updatedModelName,
+      model: modelName,
       api_key: API_Key,
       aws_access_key_id: "",
       aws_secret_access_key: "",
@@ -163,33 +154,32 @@ const ContentArea = () => {
 
     // Prepare the payload
     const payload = {
-        noice: true,
-        output: query,
-        input: userQuestion,
+      noice: true,
+      output: query,
+      input: userQuestion,
     };
 
     try {
-        // Send POST request
-        const response = await fetch('http://localhost:8001/noice', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json', // Indicating the content type is JSON
-            },
-            body: JSON.stringify(payload) // Convert the payload to a JSON string
-        });
+      // Send POST request
+      const response = await fetch("http://localhost:8001/noice", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json", // Indicating the content type is JSON
+        },
+        body: JSON.stringify(payload), // Convert the payload to a JSON string
+      });
 
-        // Handle response
-        if (response.ok) {
-            const data = await response.json();
-            console.log("Response from server:", data);
-        } else {
-            console.error("Failed to send request:", response.status);
-        }
+      // Handle response
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Response from server:", data);
+      } else {
+        console.error("Failed to send request:", response.status);
+      }
     } catch (error) {
-        console.error("Error occurred while sending request:", error);
+      console.error("Error occurred while sending request:", error);
     }
-};
-
+  };
 
   // handling dislike button click
   const handleDislikeClick = () => {
@@ -200,7 +190,10 @@ const ContentArea = () => {
 
   return (
     <div className="content-Area">
-      <Navbar />
+      <Navbar
+        LLMType_modelName={LLMType_modelName}
+        setModelName={setModelName}
+      />
       <div className="database-schema">
         <p>Database Schema</p>
         <div className="schema">
@@ -240,16 +233,8 @@ const ContentArea = () => {
               {query && (
                 <div className="schema-generated-query">
                   <p>Generated SQL Query</p>
-                  <div className="query mt-3 mb-3">
+                  <div className="query mt-3">
                     {query || "Waiting for generated query..."}
-                  </div>
-                </div>
-              )}
-              {answer && (
-                <div className="schema-answers">
-                  <p>Answer</p>
-                  <div className="answer mt-3">
-                    {answer || "Waiting for answer..."}
                   </div>
                   <div className="like-dislike mb-3">
                     <FaThumbsUp
@@ -264,6 +249,14 @@ const ContentArea = () => {
                       className={thumbsDownActive ? "red-class" : ""}
                       // className="redd-class"
                     />
+                  </div>
+                </div>
+              )}
+              {answer && (
+                <div className="schema-answers">
+                  <p>Answer</p>
+                  <div className="answer mt-3">
+                    {answer || "Waiting for answer..."}
                   </div>
                 </div>
               )}

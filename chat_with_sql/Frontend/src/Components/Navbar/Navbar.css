@@ -1,6 +1,7 @@
 .main-navbar{
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
     padding: 10px;
     box-shadow: 0px 0px 6px grey;
     background-color: white;
@@ -13,3 +14,14 @@
     font-size: 25px;
     font-weight: bold;
 }
+#customDropdown{
+    border: 2px solid grey;
+    text-align: left;
+    font-weight: 500;
+}
+#customDropdown .dropdown-toggle::after {
+    display: none !important;
+  }
+  .dropdown-toggle::after {
+    display: none !important;
+  }
