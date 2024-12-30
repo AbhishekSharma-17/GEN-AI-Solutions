@@ -4,7 +4,8 @@ from fastapi import FastAPI, WebSocket, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import uvicorn
-from openai import OpenAI
+from langchain_openai import  ChatOpenAI
+from langchain.schema import HumanMessage, SystemMessage
 from speech_tts import client, template
 import tempfile
 
@@ -89,14 +90,14 @@ async def websocket_endpoint(websocket: WebSocket):
 
                 # Process the transcribed text with OpenAI
                 ai_start_time = time.time()
-                response = client.chat.completions.create(
-                    model="gpt-4o",
-                    messages=[
-                        {"role": "system", "content": template},
-                        {"role": "user", "content": text}
-                    ]
-                )
-                response_text = response.choices[0].message.content
+                chat = ChatOpenAI(model="gpt-4o")
+                messages = [
+                    SystemMessage(content=template),
+                    HumanMessage(content=text)
+                ]
+                ai_response = chat.invoke(messages)
+                response_text = ai_response.content
+                
                 ai_response_time = time.time() - ai_start_time
                 print(f"AI response: {response_text}")
                 print(f"AI response time: {ai_response_time:.2f} seconds")
