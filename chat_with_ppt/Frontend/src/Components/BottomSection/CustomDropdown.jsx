@@ -30,7 +30,7 @@ const CustomDropdown = ({ options, selectedOption, setSelectedOption, provider }
   const handleSelect = (option) => {
     setSelectedOption(option);
     setIsOpen(false);
-    console.log("Model selected:", option);
+    // console.log("Model selected:", option);
   };
 
   const handleToggle = () => {

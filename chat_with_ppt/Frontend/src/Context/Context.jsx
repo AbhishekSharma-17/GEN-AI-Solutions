@@ -53,6 +53,9 @@ const ContextProvider = (props) => {
   const [embededToken, setEmbededToken] = useState("");
   const [embededCost, setEmbededCost] = useState("");
 
+  // response cost 
+  const [totalResponseCost, setTotalResponseCost] = useState('');
+
   // Generate unique user ID on component mount
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
@@ -121,6 +124,7 @@ const ContextProvider = (props) => {
     setEmbededToken,
     embededCost,
     setEmbededCost,
+    totalResponseCost, setTotalResponseCost,
   };
 
   return (

@@ -6,22 +6,24 @@ import Main from "./Components/Main/Main";
 import Sidebar from "./Components/SideBar/Sidebar";
 import HomePage from "./Components/HomePage/HomePage";
 import { Context } from "./context/Context";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const App = () => {
   const { initialisationStatus } = useContext(Context);
 
   return (
-    <div className="main-page-section">
-      {!initialisationStatus ? <HomePage /> : (
-        <>
+    <>
+      {!initialisationStatus ? (
+        <HomePage />
+      ) : (
+        <div className="main-page-section">
           <Sidebar />
           <Main />
-        </>
+        </div>
       )}
       <ToastContainer />
-    </div>
+    </>
   );
 };
 

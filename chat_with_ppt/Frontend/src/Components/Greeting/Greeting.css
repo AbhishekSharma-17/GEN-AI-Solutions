@@ -4,17 +4,58 @@
     color: #383838;
     font-weight: 500;
     padding: 20px;
-    /* border: 1px solid red; */
     text-align: center;
-  }
-  .greet span {
-    /* background: -webkit-linear-gradient(15deg, #4b90ff, #ff5546);
-    background-clip: text;
-    -webkit-text-fill-color: transparent; */
-    margin: 0;
+    /* border: 1px solid red; */
   }
   .greetPara2{
     font-weight: 500;
     font-family: Inter!important;
+    /* border: 1px solid red; */
     margin: 0;
+  }
+
+
+  @media (max-width:1000px)
+  {
+    .greet {
+     margin: 0;
+    }
+    .greetPara2{
+      font-size: 30px;
+      padding: 0;
+      margin: 0;
+    }
+  }
+  @media (max-width:768px)
+  {
+    .greet {
+     margin: 0;
+    }
+    .greetPara2{
+      font-size: 30px;
+      padding: 0;
+      margin: 0;
+    }
+  }
+  @media (max-width:368px)
+  {
+    .greet {
+     margin: 0;
+    }
+    .greetPara2{
+      font-size: 25px;
+      padding: 0;
+      margin: 0;
+    }
+  }
+  @media (max-width:320px)
+  {
+    .greet {
+     margin: 0;
+    }
+    .greetPara2{
+      font-size: 25px;
+      padding: 0;
+      margin: 0;
+    }
   }
