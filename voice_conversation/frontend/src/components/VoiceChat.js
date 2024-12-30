@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './VoiceChat.css';
+import { FaMicrophone, FaStop } from 'react-icons/fa';
 
 const VoiceChat = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -167,14 +168,6 @@ const VoiceChat = () => {
   return (
     <div className="voice-chat-container">
       <h1>Voice Chat</h1>
-      <div className="recording-controls">
-        <button onClick={startRecording} disabled={isRecording}>
-          Start Recording
-        </button>
-        <button onClick={stopRecording} disabled={!isRecording}>
-          Stop Recording
-        </button>
-      </div>
       <div className="chatbox" ref={chatboxRef}>
         {conversation.map((message, index) => (
           <div key={index} className={`message ${message.type}-message`}>
@@ -206,6 +199,13 @@ const VoiceChat = () => {
             </option>
           ))}
         </select>
+        <button 
+          className="record-button" 
+          onClick={isRecording ? stopRecording : startRecording}
+          disabled={isLoading}
+        >
+          {isRecording ? <FaStop /> : <FaMicrophone />}
+        </button>
       </div>
     </div>
   );
