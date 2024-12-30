@@ -1,0 +1,66 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+.chat-box {
+  flex: 1;
+  overflow-y: auto;
+  color: black;
+  border: 1px solid #ccc;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.message {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.user {
+  background-color: #e6f2ff;
+  text-align: right;
+}
+
+.ai {
+  background-color: #f0f0f0;
+}
+
+.streaming-indicator {
+  font-style: italic;
+  color: #888;
+}
+
+.input-box {
+  display: flex;
+}
+
+.input-box input {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+.input-box button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.input-box button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
