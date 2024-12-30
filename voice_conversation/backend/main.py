@@ -88,25 +88,36 @@ async def websocket_endpoint(websocket: WebSocket):
                 print(f"Transcribed text: {text}")
                 print(f"Transcription time: {transcription_time:.2f} seconds")
 
-                # Process the transcribed text with OpenAI
+                # Process the transcribed text with OpenAI (streaming)
                 ai_start_time = time.time()
-                chat = ChatOpenAI(model="gpt-4o")
+                chat = ChatOpenAI(model="gpt-4o", streaming=True)
                 messages = [
                     SystemMessage(content=template),
                     HumanMessage(content=text)
                 ]
-                ai_response = chat.invoke(messages)
-                response_text = ai_response.content
                 
-                ai_response_time = time.time() - ai_start_time
-                print(f"AI response: {response_text}")
-                print(f"AI response time: {ai_response_time:.2f} seconds")
-
-                # Send both transcription and AI response to the client
+                # Send transcription to the client
                 await websocket.send_json({
                     "transcription": text,
-                    "ai_response": response_text,
                     "transcription_time": round(transcription_time, 2),
+                })
+
+                # Stream AI response
+                full_response = ""
+                async for chunk in chat.astream(messages):
+                    if chunk.content:
+                        full_response += chunk.content
+                        await websocket.send_json({
+                            "ai_response_chunk": chunk.content,
+                        })
+
+                ai_response_time = time.time() - ai_start_time
+                print(f"AI response: {full_response}")
+                print(f"AI response time: {ai_response_time:.2f} seconds")
+
+                # Send final message with timing information
+                await websocket.send_json({
+                    "ai_response_complete": True,
                     "ai_response_time": round(ai_response_time, 2)
                 })
             except Exception as e:

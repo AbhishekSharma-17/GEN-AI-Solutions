@@ -5,6 +5,7 @@ const VoiceChat = () => {
   const [conversation, setConversation] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isAIResponseComplete, setIsAIResponseComplete] = useState(false);
 
   const mediaRecorderRef = useRef(null);
   const audioChunksRef = useRef([]);
@@ -19,14 +20,35 @@ const VoiceChat = () => {
     websocketRef.current = new WebSocket('ws://localhost:8000/ws');
     websocketRef.current.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      setConversation(prev => [
-        ...prev,
-        { type: 'user', text: data.transcription, time: data.transcription_time },
-        { type: 'ai', text: data.ai_response, time: data.ai_response_time }
-      ]);
-
-      // After receiving the AI response, send it to the TTS API
-      fetchTTS(data.ai_response);
+      if (data.transcription) {
+        setConversation(prev => [
+          ...prev,
+          { type: 'user', text: data.transcription, time: data.transcription_time }
+        ]);
+      } else if (data.ai_response_chunk) {
+        setConversation(prev => {
+          const newConversation = [...prev];
+          const lastMessage = newConversation[newConversation.length - 1];
+          if (lastMessage && lastMessage.type === 'ai') {
+            // Append the new chunk, but remove any duplicated content
+            const newText = lastMessage.text + data.ai_response_chunk;
+            lastMessage.text = newText.replace(/(.+)(?=\1)/g, "");
+          } else {
+            newConversation.push({ type: 'ai', text: data.ai_response_chunk, time: null });
+          }
+          return newConversation;
+        });
+      } else if (data.ai_response_complete) {
+        setConversation(prev => {
+          const newConversation = [...prev];
+          const lastMessage = newConversation[newConversation.length - 1];
+          if (lastMessage && lastMessage.type === 'ai') {
+            lastMessage.time = data.ai_response_time;
+          }
+          return newConversation;
+        });
+        setIsAIResponseComplete(true);
+      }
     };
 
     return () => {
@@ -35,6 +57,16 @@ const VoiceChat = () => {
       }
     };
   }, []);
+
+  useEffect(() => {
+    if (isAIResponseComplete && conversation.length > 0) {
+      const lastMessage = conversation[conversation.length - 1];
+      if (lastMessage.type === 'ai') {
+        fetchTTS(lastMessage.text);
+        setIsAIResponseComplete(false);
+      }
+    }
+  }, [isAIResponseComplete, conversation]);
 
   useEffect(() => {
     if (chatboxRef.current) {
