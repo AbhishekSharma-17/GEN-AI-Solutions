@@ -167,20 +167,6 @@ const VoiceChat = () => {
   return (
     <div className="voice-chat-container">
       <h1>Voice Chat</h1>
-      <div className="voice-selector">
-        <label htmlFor="voice-select">Select Voice: </label>
-        <select
-          id="voice-select"
-          value={selectedVoice}
-          onChange={(e) => setSelectedVoice(e.target.value)}
-        >
-          {voiceOptions.map((voice) => (
-            <option key={voice} value={voice}>
-              {voice}
-            </option>
-          ))}
-        </select>
-      </div>
       <div className="recording-controls">
         <button onClick={startRecording} disabled={isRecording}>
           Start Recording
@@ -206,6 +192,20 @@ const VoiceChat = () => {
         <audio ref={audioRef}>
           Your browser does not support the audio element.
         </audio>
+      </div>
+      <div className="voice-selector">
+        <label htmlFor="voice-select">Select Voice: </label>
+        <select
+          id="voice-select"
+          value={selectedVoice}
+          onChange={(e) => setSelectedVoice(e.target.value)}
+        >
+          {voiceOptions.map((voice) => (
+            <option key={voice} value={voice}>
+              {voice}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );
