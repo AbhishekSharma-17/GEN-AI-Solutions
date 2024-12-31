@@ -69,9 +69,37 @@ def format_duration(seconds: float) -> str:
 
 full_recording = ""
 
-def send_to_llm(text: str) -> str:
-    # Replace this with your actual LLM API call
-    # For demonstration, we'll use a mock response
+def send_to_llm(text: str, is_final: bool = False) -> str:
+    system_prompt = """You are an expert interview assistant that provides immediate, ready-to-use answers for job interviews.
+    For each interview question, provide a complete, professional response that the interviewer can use directly.
+    Structure your answers to:
+    1. Start with a strong opening statement
+    2. Include relevant experience and concrete examples
+    3. Demonstrate technical knowledge where appropriate
+    4. End with a confident conclusion
+    
+    Format the answer as if speaking directly to the interviewer. Make it natural and conversational, yet professional.
+    If you hear something that's not a question, interpret the context and provide relevant talking points or follow-up responses.
+    
+    Remember: The user will be using your response verbatim in their interview, so make it sound natural when spoken."""
+
+    if is_final:
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": f"""Review this interview conversation and provide:
+1. A collection of polished, ready-to-use answers for the key questions discussed
+2. Additional variations of these answers to handle similar questions
+3. Important technical points and examples mentioned that could be reused
+4. Strong closing statements and follow-up responses
+
+Make all responses natural and ready for immediate use in future interviews:\n{text}"""}
+        ]
+    else:
+        messages = [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": f"Provide a professional interview answer for this question/topic:\n{text}"}
+        ]
+
     response = requests.post(
         "https://api.openai.com/v1/chat/completions",
         headers={
@@ -80,7 +108,8 @@ def send_to_llm(text: str) -> str:
         },
         json={
             "model": "gpt-3.5-turbo",
-            "messages": [{"role": "user", "content": text}]
+            "messages": messages,
+            "temperature": 0.7
         }
     )
     return response.json()['choices'][0]['message']['content']
@@ -92,26 +121,32 @@ async def print_messages_from_socket(socket: ClientConnection) -> None:
         content = json.loads(message)
         if content["type"] == "transcript" and content["data"]["is_final"]:
             text = content["data"]["utterance"]["text"].strip()
-            print(f"Transcription: {text}", flush=True)
+            print("\n📝 Interview Question/Topic:", flush=True)
+            print("-" * 50)
+            print(text)
+            print("-" * 50)
             full_recording += text + " "
             
-            # Send to LLM and print response
-            llm_response = send_to_llm(text)
-            print(f"LLM Response: {llm_response}\n", flush=True)
+            # Get suggested answer
+            print("\n💡 Suggested Response:", flush=True)
+            print("-" * 50)
+            suggested_answer = send_to_llm(text)
+            print(suggested_answer)
+            print("-" * 50 + "\n")
         
         if content["type"] == "post_final_transcript":
-            print("\n################ End of session ################\n")
+            print("\n################ Interview Session Complete ################\n")
 
 def print_full_recording():
-    print("\n################ Full Recording ################\n")
+    print("\n################ Interview Session Recording ################\n")
     print(full_recording.strip())
-    print("\n################ End of Full Recording ################\n")
+    print("\n################ End of Recording ################\n")
     
-    # Send full recording to LLM for final summary
-    final_summary = send_to_llm(f"Summarize the following conversation:\n{full_recording}")
-    print("\n################ LLM Final Summary ################\n")
+    # Get key talking points and strong answers for future use
+    final_summary = send_to_llm(full_recording, is_final=True)
+    print("\n################ Key Interview Points & Sample Answers ################\n")
     print(final_summary)
-    print("\n################ End of LLM Final Summary ################\n")
+    print("\n################ End of Interview Summary ################\n")
 
 
 async def stop_recording(websocket: ClientConnection) -> None:
@@ -136,8 +171,7 @@ STREAMING_CONFIGURATION: StreamingConfiguration = {
     "language_config": {
         "languages": ["en"],
         "code_switching": True,
-    },
-
+    }
 }
 
 
