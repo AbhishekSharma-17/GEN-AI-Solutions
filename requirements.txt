@@ -11,3 +11,4 @@ langchain-unstructured
 faiss-cpu
 langchain-google-genai
 pyaudio
+soundcard
