@@ -40,6 +40,9 @@ const ContextProvider = (props) => {
   const [thumbsUpActive, setThumbsUpActive] = useState("");
   const [thumbsDownActive, setThumbsDownActive] = useState("");
 
+  // question setting for noice endpoint
+  const [questionForNoice, setQuestionForNoice] = useState("");
+
   const contextValue = {
     isLoadings,
     setIsLoadings,
@@ -89,6 +92,8 @@ const ContextProvider = (props) => {
     setThumbsUpActive,
     thumbsDownActive,
     setThumbsDownActive,
+    questionForNoice,
+    setQuestionForNoice,
   };
 
   return (
