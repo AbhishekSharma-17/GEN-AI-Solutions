@@ -18,10 +18,14 @@ import ai_final from './AI-final.png'
 import gemini_icon from './gemini_icon.png'
 import chatGPTIcon from './chatGPTIcon.jpg'
 import frontPage from './frontpageImage.jpg'
+import groq from './Groq.png'
+import anthropic from './Anthropic.png'
+import hugging_face from './hugging_face.png'
 
 export const assets = {
     frontPage,
     chatGPTIcon,
+    groq,
     gemini_icon,
     genAILogo,
     ai_final,
@@ -30,6 +34,8 @@ export const assets = {
     ai_final,
     genAILogo,
     icon,
+    anthropic,
+    hugging_face,
     menu_icon,
     plus_icon,
     bulb_icon,
