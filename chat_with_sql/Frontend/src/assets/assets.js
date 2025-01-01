@@ -18,14 +18,11 @@ import ai_final from './AI-final.png'
 import gemini_icon from './gemini_icon.png'
 import chatGPTIcon from './chatGPTIcon.jpg'
 import frontPage from './frontpageImage.jpg'
-<<<<<<< HEAD
-import Groq_logo from './Groq.png'
-import hugging_logo from './hugging_face.png'
-=======
+
 import groq from './Groq.png'
 import anthropic from './Anthropic.png'
 import hugging_face from './hugging_face.png'
->>>>>>> fc07beac7914963b5777fb7d2fe7f17766b88ee9
+
 
 export const assets = {
     frontPage,
