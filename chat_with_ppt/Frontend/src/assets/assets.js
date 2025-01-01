@@ -19,6 +19,7 @@ import gemini_icon from './gemini_icon.png'
 import chatGPTIcon from './chatGPTIcon.jpg'
 import chatWithPPT from './chatWithPPT.jpg'
 
+
 export const assets = {
     chatWithPPT,
     chatGPTIcon,

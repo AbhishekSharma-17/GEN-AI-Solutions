@@ -18,6 +18,8 @@ import ai_final from './AI-final.png'
 import gemini_icon from './gemini_icon.png'
 import chatGPTIcon from './chatGPTIcon.jpg'
 import frontPage from './frontpageImage.jpg'
+import Groq_logo from './Groq.png'
+import hugging_logo from './hugging_face.png'
 
 export const assets = {
     frontPage,
@@ -38,7 +40,9 @@ export const assets = {
     message_icon,
     code_icon,
     send_icon,
-    gemini_icon
+    gemini_icon,
+    Groq_logo,
+    hugging_logo
 }
 
 export default assets
