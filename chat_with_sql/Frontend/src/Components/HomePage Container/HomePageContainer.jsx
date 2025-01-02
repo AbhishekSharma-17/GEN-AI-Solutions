@@ -1,5 +1,5 @@
-import React, { useContext, useRef } from "react";
 import "./HomePageContainer.css";
+import React, { useContext, useRef } from "react";
 import { assets } from "../../assets/assets";
 import { Context } from "../../Context/Context";
 // react toatify inclusion
