@@ -1,23 +1,13 @@
-import React, { useState } from 'react';
-import './Navbar.css';
-import '../../assets/assets'
-
+import React, { useState } from "react";
+import "./Navbar.css";
+import { assets } from "../../assets/assets";
 const Navbar = () => {
-  const [activePara, setActivePara] = useState('Get Started');
-
   return (
-    <div className='homePage-navbar'>
-      <div className="navbar-left">
-        <img src= {assets.icon} alt="" />
-        <a href="https://www.genaiprotos.com/" target='blank'><img src={assets.genAILogo} alt="" /></a>
-      </div>
-      <div className="navbar-right">
-        <p onClick={() => setActivePara('Documentation')} className={activePara === 'Documentation' ? 'active' : ''}>Documentation</p>
-        <a href="https://www.genaiprotos.com#contact-us" target='blank'><p onClick={() => setActivePara('Support')} className={activePara === 'Support' ? 'active' : ''}>Support</p></a>
-        <p onClick={() => setActivePara('Get Started')} className={activePara === 'Get Started' ? 'active' : ''}>Get started</p>
-      </div>
+    <div className="homePage-navbar">
+      <a href=""><img src={assets.icon} alt="" /></a>
+      <p className="navbar-title">SQL To PySpark </p>
     </div>
   );
-}
+};
 
 export default Navbar;
