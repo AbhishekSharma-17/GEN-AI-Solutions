@@ -3,18 +3,17 @@ import { createContext, useState } from "react";
 export const Context = createContext();
 
 const ContextProvider = (props) => {
-
-  // 
-  const [sample, setSample] = useState();
+  // provider
+  const [selectedProvider, setSelectedProvider] = useState();
 
   const ContextValue = {
-    sample,
-    setSample,
+    selectedProvider,
+    setSelectedProvider,
   };
 
   return (
     <Context.Provider value={ContextValue}>{props.children}</Context.Provider>
-  )
+  );
 };
 
 export default ContextProvider;

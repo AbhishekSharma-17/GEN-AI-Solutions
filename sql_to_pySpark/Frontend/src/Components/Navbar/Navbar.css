@@ -1,78 +1,57 @@
+/* Navbar.css */
+
 .homePage-navbar {
-    padding: 10px 8px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    box-shadow: 0px 0px 5px rgb(202, 201, 201);
-    background-color: white;
-    /* border: 1px solid red; */
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px 20px;
+  background-color: #f8f9fa;
+  gap: 7px;
+}
+
+.homePage-navbar img {
+  width: 30px;
+  height: 40px;
+  object-fit: contain;
+}
+
+.navbar-title {
+  font-size: 25px;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+  margin-left: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .homePage-navbar {
+    flex-direction: column;
+    text-align: center;
   }
-  .homePage-navbar img {
-    width: 40px;
-  }
-  .homePage-navbar .navbar-left {
-    width: 50%;
-    display: flex;
-    flex-direction: row;
-    gap: 20px;
-    /* border: 1px solid red; */
-  }
-  .homePage-navbar .navbar-left a img {
-    height: 20px;
-    width: 150px;
+
+  .navbar-title {
+    font-size: 1.2rem;
     margin-top: 10px;
   }
-  .homePage-navbar .navbar-left p {
-    margin: 0;
-    margin-top: 3px;
-    font-size: 22px;
-    font-weight: 500;
+
+  .homePage-navbar img {
+    width: 30px;
+    height: 30px;
   }
-  .homePage-navbar .navbar-right {
-    width: 50%;
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    gap: 20px;
-    /* border: 1px solid blue; */
+}
+
+@media (max-width: 480px) {
+  .homePage-navbar {
+    padding: 10px;
   }
-  .homePage-navbar .navbar-right p {
-    margin: 0;
-    cursor: pointer;
-    font-weight: 500;
+
+  .navbar-title {
+    font-size: 1rem;
   }
-  .navbar-right a {
-    color: black;
-    text-decoration: none;
+
+  .homePage-navbar img {
+    width: 25px;
+    height: 25px;
   }
-  .active {
-    background-color: black;
-    border-radius: 5px;
-    color: white;
-    padding: 5px 10px;
-  }
-  
-  @media (max-width: 768px) {
-    .homePage-navbar {
-      width: 100%;
-    }
-    .homePage-navbar .navbar-left img {
-      width: 50px;
-    }
-    .homePage-navbar .navbar-right p {
-      display: none;
-    }
-  }
-  @media (max-width: 368px) {
-    .homePage-navbar {
-      width: 100%;
-    }
-    .homePage-navbar .navbar-left img {
-      width: 50px;
-    }
-    .homePage-navbar .navbar-right p {
-      display: none;
-    }
-  }
-  
+}
