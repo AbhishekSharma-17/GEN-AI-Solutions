@@ -172,7 +172,7 @@
     width: 100%;
     text-align: left;
 }
-#customDropdown{
+#customDropdown1, #customDropdown2{
     border: 1px solid rgb(226, 226, 226);
     text-align: left;
 }

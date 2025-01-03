@@ -1,27 +1,23 @@
-/* MainPage.css */
+.main-container {
+  min-height: calc(100vh - 60px); /* Ensure content fits within the screen dynamically */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  background-color: #f5f9fa; /* Light background for contrast */
+  border-top: 1px solid #e6e4e4;
+  border-bottom: 1px solid #e6e4e4;
+  padding: 30px; /* Uniform padding for all screen sizes */
+}
 
-  
+/* Responsive Design */
+@media (max-width: 768px) {
   .main-container {
-    height: calc(100vh - 65px); /* Adjusted based on Navbar height */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    background-color: #f5f9fa; /* Change as needed */
-    border-bottom: 1px solid rgb(230, 228, 228);
-    border-top: 1px solid rgb(230, 228, 228);
-    padding: 30px 20px;
+    padding: 15px; /* Reduced padding for smaller devices */
   }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .main-container {
-      height: calc(100vh - 90px); /* Adjusted based on Navbar height for smaller screens */
-    }
+}
+
+@media (max-width: 480px) {
+  .main-container {
+    padding: 10px; /* Further reduced padding for very small screens */
   }
-  
-  @media (max-width: 480px) {
-    .main-container {
-      height: calc(100vh - 85px); /* Adjusted for very small screens */
-    }
-  }
-  
+}
