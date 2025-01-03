@@ -6,9 +6,23 @@ import assets from "../../assets/assets";
 import { Context } from "../../Context/Context";
 import { MdOutlineFileUpload } from "react-icons/md";
 
-
 const FileUpload = () => {
-  const { selectedProvider, setSelectedProvider } = useContext(Context);
+  const {
+    selectedProvider,
+    setSelectedProvider,
+    uploadedFiles,
+    setUploadedFiles,
+    providerChoice,
+    setProviderChoice,
+    apiKey,
+    setApiKey,
+    modelName,
+    setModelName,
+    conversionResults,
+    setConversionResults,
+    loading,
+    setLoading,
+  } = useContext(Context);
 
   const providerOptions = [
     { name: "OpenAI", value: "OpenAI", img: assets.chatGPTIcon },
@@ -17,17 +31,45 @@ const FileUpload = () => {
     { name: "Hugging Face", value: "Hugging Face", img: assets.hugging_face },
   ];
 
-  const SQLfileRef = useRef()
+  // Updated handleFileUpload
+  const handleFileUpload = (event) => {
+    const validFiles = Array.from(event.target.files).filter((file) =>
+      file.name.endsWith(".sql")
+    );
+    if (validFiles.length === 0) {
+      alert("Only .sql files are allowed!");
+      return;
+    }
+    setUploadedFiles((prevFiles) => [...prevFiles, ...validFiles]);
+  };
+
+  // Validation in handleConversion
+  const handleConversion = (e) => {
+    e.preventDefault(); // Prevent default form submission
+    if (!uploadedFiles.length) {
+      alert("Please upload at least one SQL file.");
+      return;
+    }
+    console.log("Uploaded files:", uploadedFiles);
+
+    // Additional conversion logic...
+  };
+
+  const SQLfileRef = useRef();
   return (
     <div className="file-upload container">
       <div className="file-upload-common">
-        <p className="file-upload-title">
+        <p className="file-upload-title text-bold">
           Convert your SQL queries to PySpark code effortlessly. Simply provide
           your API credentials, select the LLM provider, and upload your SQL
           files.
         </p>
       </div>
-      <form action="" className="file-upload-form">
+      <form
+        action=""
+        className="file-upload-form mt-3"
+        onSubmit={(event) => {handleConversion(event)}}
+      >
         <div className="file-upload-common api-llm-provider">
           <div className="mb-2 file-inputs">
             <label htmlFor="exampleSelect" className="form-label">
@@ -59,7 +101,7 @@ const FileUpload = () => {
                     <button
                       type="button" // Prevents form submission
                       className="dropdown-item d-flex align-items-center"
-                      //   onClick={() => setLLMType(provider.label)}
+                      onClick={() => setSelectedProvider(provider.value)}
                     >
                       <img
                         src={provider.img}
@@ -83,46 +125,53 @@ const FileUpload = () => {
         <div className="file-upload-common upload-section">
           <input
             type="file"
-            // onChange={handleFileChange}
+            onChange={handleFileUpload}
             accept=".sql"
             ref={SQLfileRef}
             hidden
             multiple
           />
           <MdOutlineFileUpload
-              onClick={() => SQLfileRef.current.click()}
-              style={{ cursor: "pointer", fontSize: "5rem", backgroundColor:"#e6e5e5", borderRadius:"50%", padding:"10px" , color:"grey"}}
-            />
-            <p className="file-icon-upload-text">
-              Drag and drop your .sql files here - or click to select.
-            </p>
+            onClick={() => SQLfileRef.current.click()}
+            style={{
+              cursor: "pointer",
+              fontSize: "5rem",
+              backgroundColor: "#e6e5e5",
+              borderRadius: "50%",
+              padding: "10px",
+              color: "grey",
+            }}
+          />
+          <p className="file-icon-upload-text">
+            Drag and drop your .sql files here - or click to select.
+          </p>
         </div>
       </form>
 
       <div className="file-upload-common uploaded-files">
         <div className="upload-file-title">
           <p>Upload Files</p>
-          <p id="number-of-files">Number of files : 4</p>
+          <p id="number-of-files">Number of files : {uploadedFiles.length}</p>
         </div>
         <div className="all-files">
-          <div className="file">
-            <div className="file-icon-name">
-              <TbFileTypeSql style={{ fontSize: "30px", color: "orange" }} />
+          {uploadedFiles.map((file, index) => (
+            <div className="file" key={index}>
+              <div className="file-icon-name">
+                <TbFileTypeSql style={{ fontSize: "30px", color: "orange" }} />
 
-              <p className="uploaded-file-name">alter_query.sql</p>
+                <p className="uploaded-file-name">{file.name}</p>
+              </div>
+              <FaRegTrashAlt style={{ color: "red" }} />
             </div>
-            <FaRegTrashAlt style={{ color: "red" }} />
-          </div>
+          ))}
         </div>
       </div>
 
       <div className="file-upload-common convert-btn-div">
-        <button type="submit" className="btn btn-dark convertbtn">
+        <button type="submit" className="btn btn-dark convertbtn" onClick={handleConversion}>
           Convert To PySpark
         </button>
-        <button type="submit" className="btn btn-light cancelbtn">
-          Cancel
-        </button>
+        
       </div>
     </div>
   );
