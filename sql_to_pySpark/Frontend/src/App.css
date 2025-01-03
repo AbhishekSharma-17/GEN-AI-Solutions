@@ -1,7 +1,8 @@
 .main-app {
-  min-height: 100vh; /* Ensures the app covers the full viewport height */
+  height: auto; /* Ensures the app covers the full viewport height */
   width: 100%;
   border: none; /* Remove or keep as per design */
   display: flex;
   flex-direction: column; /* Ensures proper layout of children components */
+  /* border: 1px solid red; */
 }
