@@ -122,7 +122,7 @@ const FileUpload = () => {
       const response = await fetch("http://localhost:8000/convert", {
         method: "POST",
         headers: {
-          "Accept": "application/json",
+          Accept: "application/json",
         },
         body: formData,
       });
@@ -144,7 +144,6 @@ const FileUpload = () => {
     setSelectedProvider("Select LLM Type");
     setModel("Select Model");
   };
-
 
   return (
     <div className="file-upload container">
@@ -294,27 +293,29 @@ const FileUpload = () => {
             <p>Upload Files</p>
             <p id="number-of-files">Number of files : {uploadedFiles.length}</p>
           </div>
-          {loading ? null : 
-          <div className="all-files">
-            {uploadedFiles.map((file, index) => (
-              <div className="file" key={index}>
-                <div className="file-icon-name">
-                  <TbFileTypeSql
-                    style={{ fontSize: "30px", color: "orange" }}
+          {loading ? null : (
+            <div className="all-files">
+              {uploadedFiles.map((file, index) => (
+                <div className="file" key={index}>
+                  <div className="file-icon-name">
+                    <TbFileTypeSql
+                      style={{ fontSize: "30px", color: "orange" }}
+                    />
+                    <p className="uploaded-file-name">{file.name}</p>
+                  </div>
+                  <FaRegTrashAlt
+                    style={{ color: "red", cursor: "pointer" }}
+                    onClick={() => {
+                      setUploadedFiles((prevFiles) =>
+                        prevFiles.filter((_, i) => i !== index)
+                      );
+                      toast.error(`${file.name} deleted successfully`);
+                    }}
                   />
-                  <p className="uploaded-file-name">{file.name}</p>
                 </div>
-                <FaRegTrashAlt
-                  style={{ color: "red", cursor: "pointer" }}
-                  onClick={() =>
-                    setUploadedFiles((prevFiles) =>
-                      prevFiles.filter((_, i) => i !== index)
-                    )
-                  }
-                />
-              </div>
-            ))}
-          </div>}
+              ))}
+            </div>
+          )}
         </div>
       ) : null}
 
