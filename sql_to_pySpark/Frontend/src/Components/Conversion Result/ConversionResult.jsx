@@ -103,7 +103,7 @@ const ConversionResult = ({ conversionResults }) => {
 
       <button
         onClick={handleDownloadAll}
-        className="btn btn-dark download-all-btn"
+        className="btn btn-dark download-all-btn mb-3 mt-5"
       >
         📁 Download All Files
       </button>
