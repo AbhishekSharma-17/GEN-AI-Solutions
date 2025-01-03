@@ -9,6 +9,7 @@
 *.faiss
 test.py
 *.txt
+sample.json
 
 
 # Frontend Records 

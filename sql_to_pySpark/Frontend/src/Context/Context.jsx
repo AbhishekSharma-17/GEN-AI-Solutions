@@ -9,14 +9,8 @@ const ContextProvider = (props) => {
   // uploaded file
   const [uploadedFiles, setUploadedFiles] = useState([]);
 
-  // model choice
-  const [providerChoice, setProviderChoice] = useState("ChatGPT");
-
   // API Key
   const [apiKey, setApiKey] = useState("");
-
-  // modelName
-  const [modelName, setModelName] = useState("");
 
   // Conversion Result
   const [conversionResults, setConversionResults] = useState([]);
@@ -24,21 +18,27 @@ const ContextProvider = (props) => {
   // loading state
   const [loading, setLoading] = useState(false);
 
+  // model Option
+  const [modelOption, setModelOption] = useState([]);
+
+  // setting model
+  const [model, setModel] = useState("");
+
   const ContextValue = {
     selectedProvider,
     setSelectedProvider,
     uploadedFiles,
     setUploadedFiles,
-    providerChoice,
-    setProviderChoice,
     apiKey,
     setApiKey,
-    modelName,
-    setModelName,
     conversionResults,
     setConversionResults,
     loading,
     setLoading,
+    modelOption,
+    setModelOption,
+    model,
+    setModel,
   };
 
   return (

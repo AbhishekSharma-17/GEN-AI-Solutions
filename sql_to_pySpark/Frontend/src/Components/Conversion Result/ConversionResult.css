@@ -1,0 +1,103 @@
+.tabs-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.tabs {
+    display: flex;
+    justify-content: flex-start;
+    gap: 10px;
+}
+
+.tab {
+    border: none;
+    padding: 5px 8px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.tab-content {
+    padding: 20px;
+    padding-top: 6px;
+    background-color: black;
+    color: white;
+    border-radius: 8px;
+    margin-top: 5px;
+    height: 500px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+.code-scrollable {
+    overflow-y: auto;
+    flex-grow: 1;
+}
+.code-scrollable::-webkit-scrollbar{
+    display: none;
+}
+.code-content {
+    white-space: pre-wrap;
+    padding: 0;
+    margin: 0;
+}
+
+/* Sticky header for the copy/download buttons */
+.sticky-header-container {
+    position: sticky;
+    top: 0;
+    background-color: black;
+    z-index: 10;
+    padding: 5px 0;
+    /* border: 1px solid red; */
+    padding: 0;
+    
+}
+
+.sticky-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+}
+
+.buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    gap: 10px;
+}
+
+.tab-content::-webkit-scrollbar {
+    display: none;
+}
+
+.active {
+    font-weight: bold;
+}
+
+.buttons p {
+    background-color: transparent;
+    padding: 1px 5px;
+    border: none;
+    cursor: pointer;
+}
+
+.copy-btn,
+.download-btn {
+    color: grey;
+    font-size: 20px;    
+    margin: 0!important;
+}
+
+.copy-btn:hover,
+.download-btn:hover {
+    color: #007bff;
+}
