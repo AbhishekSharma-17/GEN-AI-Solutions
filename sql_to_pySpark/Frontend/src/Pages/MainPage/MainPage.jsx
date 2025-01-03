@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import Navbar from "../../Components/Navbar/Navbar";
 import "./MainPage.css";
 import FileUpload from "../../Components/File Upload/FileUpload";

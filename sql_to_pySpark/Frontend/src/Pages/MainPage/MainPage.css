@@ -1,5 +1,7 @@
 .main-container {
-  min-height: calc(100vh - 60px); /* Ensure content fits within the screen dynamically */
+  box-sizing: border-box;
+  margin: 0;
+  height: calc(100vh - 60px); /* Ensure content fits within the screen dynamically */
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
@@ -7,6 +9,7 @@
   border-top: 1px solid #e6e4e4;
   border-bottom: 1px solid #e6e4e4;
   padding: 30px; /* Uniform padding for all screen sizes */
+  width: 100%;
 }
 
 /* Responsive Design */

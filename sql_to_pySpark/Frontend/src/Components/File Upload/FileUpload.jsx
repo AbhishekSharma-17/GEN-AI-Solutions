@@ -6,6 +6,8 @@ import assets from "../../assets/assets";
 import { Context } from "../../Context/Context";
 import { MdOutlineFileUpload } from "react-icons/md";
 import { toast } from "react-toastify";
+import ConversionResult from "../Conversion Result/ConversionResult";
+import Loader from "../Loader/Loader";
 
 const FileUpload = () => {
   const {
@@ -13,7 +15,6 @@ const FileUpload = () => {
     setSelectedProvider,
     uploadedFiles,
     setUploadedFiles,
-    apiKey,
     setApiKey,
     conversionResults,
     setConversionResults,
@@ -27,7 +28,6 @@ const FileUpload = () => {
 
   const SQLfileRef = useRef();
   const form_api_key = useRef();
-  const form_model_name = useRef();
 
   const providerOptions = [
     { name: "OpenAI", value: "OpenAI", img: assets.chatGPTIcon },
@@ -83,41 +83,42 @@ const FileUpload = () => {
   // Handle conversion
   const handleConversion = async (e) => {
     e.preventDefault();
+  
     if (!uploadedFiles.length) {
       toast.error("Please upload at least one SQL file.");
       return;
     }
-
+  
     if (!form_api_key.current.value) {
       toast.error("API Key is required.");
       return;
     }
-
+  
     if (!selectedProvider) {
       toast.error("Provider is required.");
       return;
     }
-
+  
     if (!model) {
       toast.error("Model is required.");
       return;
     }
-
+  
     toast.success("Conversion started!");
     setLoading(true);
-
+  
     const apiKey = form_api_key.current.value;
     setApiKey(apiKey);
-
+  
     const formData = new FormData();
     uploadedFiles.forEach((file) => {
       formData.append("files", file);
     });
-
+  
     formData.append("llm_type", selectedProvider);
     formData.append("api_key", apiKey);
     formData.append("model", model);
-
+  
     try {
       const response = await fetch("http://localhost:8000/convert", {
         method: "POST",
@@ -126,26 +127,40 @@ const FileUpload = () => {
         },
         body: formData,
       });
-
+  
       if (!response.ok) {
-        throw new Error("Network response was not ok");
+        throw new Error(`API Error: ${response.statusText}`);
       }
-
+  
       const data = await response.json();
-      setConversionResults(data);
-      console.log(data);
+      // console.log("API Response:", data);
+  
+      // Validate and update state
+      if (data?.results?.length > 0) {
+        setConversionResults(data.results); // Update with 'results' array
+        toast.success("Conversion successful!");
+      } else {
+        toast.error("No valid data received from server.");
+      }
+  
+      // console.log("Conversion Result after state update:", data.results);
     } catch (error) {
-      console.error("Error during conversion", error);
-      toast.error("An error occurred while converting the files");
+      console.error("Error during conversion:", error);
+      toast.error("An error occurred while converting the files.");
     }
-
+  
     setLoading(false);
     form_api_key.current.value = "";
     setSelectedProvider("Select LLM Type");
     setModel("Select Model");
   };
+  
 
-  return (
+  return conversionResults.length > 0 ? (
+    <>
+     <ConversionResult conversionResults={conversionResults}/>
+    </>
+  ) : (
     <div className="file-upload container">
       <div className="file-upload-common">
         <p className="file-upload-title text-bold">
@@ -154,11 +169,8 @@ const FileUpload = () => {
           files.
         </p>
       </div>
-      <form
-        action=""
-        className="file-upload-form mt-3"
-        onSubmit={handleConversion}
-      >
+
+      <form className="file-upload-form mt-3" onSubmit={handleConversion}>
         <div className="file-upload-common api-llm-provider">
           <div className="mb-2 file-inputs">
             <label htmlFor="exampleSelect" className="form-label">
@@ -293,7 +305,9 @@ const FileUpload = () => {
             <p>Upload Files</p>
             <p id="number-of-files">Number of files : {uploadedFiles.length}</p>
           </div>
-          {loading ? null : (
+          {loading ? <div className="loader-class">
+            <Loader></Loader>
+          </div> : (
             <div className="all-files">
               {uploadedFiles.map((file, index) => (
                 <div className="file" key={index}>
@@ -324,8 +338,9 @@ const FileUpload = () => {
           type="submit"
           className="btn btn-dark convertbtn"
           onClick={handleConversion}
+          disabled={loading}
         >
-          Convert To PySpark
+          {loading ? "Converting to PySpark..." : "Convert To PySpark"}
         </button>
       </div>
     </div>
