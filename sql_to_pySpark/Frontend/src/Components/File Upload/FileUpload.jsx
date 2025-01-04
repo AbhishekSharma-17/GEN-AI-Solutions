@@ -24,6 +24,7 @@ const FileUpload = () => {
     setModelOption,
     model,
     setModel,
+     setInitialiseModelName,
   } = useContext(Context);
 
   const SQLfileRef = useRef();
@@ -56,6 +57,26 @@ const FileUpload = () => {
           img: assets.anthropic,
         },
       ]);
+    }
+    else if (selectedProvider === "Groq") {
+      setModelOption([
+        {
+          name: "llama-3.3-70b-versatile",
+          img: assets.groq,
+        },
+        {
+          name: "gemma2-9b-it",
+          img: assets.groq,
+        },
+      ]);
+    }
+    else if (selectedProvider === "Hugging Face") {
+      setModelOption([
+        {
+          name: "microsoft/Phi-3.5-mini-instruct",
+          img: assets.hugging_face,
+        },
+      ]);
     } else {
       setModelOption([]);
     }
@@ -66,16 +87,22 @@ const FileUpload = () => {
     const validFiles = Array.from(event.target.files).filter((file) =>
       file.name.endsWith(".sql")
     );
-
+  
     const uniqueFiles = validFiles.filter(
       (file) => !uploadedFiles.some((uploaded) => uploaded.name === file.name)
     );
-
+  
+    // Check if adding these files would exceed the limit
+    if (uploadedFiles.length + uniqueFiles.length > 5) {
+      toast.error("You can only upload up to 5 files.");
+      return;
+    }
+  
     if (uniqueFiles.length === 0) {
       toast.error("No new valid .sql files to upload!");
       return;
     }
-
+  
     setUploadedFiles((prevFiles) => [...prevFiles, ...uniqueFiles]);
     toast.success(`${uniqueFiles.length} file(s) uploaded successfully!`);
   };
@@ -83,42 +110,42 @@ const FileUpload = () => {
   // Handle conversion
   const handleConversion = async (e) => {
     e.preventDefault();
-  
+
     if (!uploadedFiles.length) {
       toast.error("Please upload at least one SQL file.");
       return;
     }
-  
+
     if (!form_api_key.current.value) {
       toast.error("API Key is required.");
       return;
     }
-  
+
     if (!selectedProvider) {
       toast.error("Provider is required.");
       return;
     }
-  
+
     if (!model) {
       toast.error("Model is required.");
       return;
     }
-  
+
     toast.success("Conversion started!");
     setLoading(true);
-  
+
     const apiKey = form_api_key.current.value;
     setApiKey(apiKey);
-  
+
     const formData = new FormData();
     uploadedFiles.forEach((file) => {
       formData.append("files", file);
     });
-  
+
     formData.append("llm_type", selectedProvider);
     formData.append("api_key", apiKey);
     formData.append("model", model);
-  
+
     try {
       const response = await fetch("http://localhost:8000/convert", {
         method: "POST",
@@ -127,14 +154,14 @@ const FileUpload = () => {
         },
         body: formData,
       });
-  
+
       if (!response.ok) {
         throw new Error(`API Error: ${response.statusText}`);
       }
-  
+
       const data = await response.json();
       // console.log("API Response:", data);
-  
+
       // Validate and update state
       if (data?.results?.length > 0) {
         setConversionResults(data.results); // Update with 'results' array
@@ -142,23 +169,23 @@ const FileUpload = () => {
       } else {
         toast.error("No valid data received from server.");
       }
-  
+
       // console.log("Conversion Result after state update:", data.results);
     } catch (error) {
       console.error("Error during conversion:", error);
       toast.error("An error occurred while converting the files.");
     }
-  
+
     setLoading(false);
     form_api_key.current.value = "";
     setSelectedProvider("Select LLM Type");
+    setInitialiseModelName(model)
     setModel("Select Model");
   };
-  
 
   return conversionResults.length > 0 ? (
     <>
-     <ConversionResult conversionResults={conversionResults}/>
+      <ConversionResult conversionResults={conversionResults} />
     </>
   ) : (
     <div className="file-upload container">
@@ -305,9 +332,11 @@ const FileUpload = () => {
             <p>Upload Files</p>
             <p id="number-of-files">Number of files : {uploadedFiles.length}</p>
           </div>
-          {loading ? <div className="loader-class">
-            <Loader></Loader>
-          </div> : (
+          {loading ? (
+            <div className="loader-class">
+              <Loader></Loader>
+            </div>
+          ) : (
             <div className="all-files">
               {uploadedFiles.map((file, index) => (
                 <div className="file" key={index}>

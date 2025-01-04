@@ -1,13 +1,19 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { TbFileTextSpark } from "react-icons/tb";
 import { FiCopy, FiDownload } from "react-icons/fi";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import { LuAlarmClock } from "react-icons/lu";
+import { AiFillThunderbolt } from "react-icons/ai";
 
 import "./ConversionResult.css";
+import { Context } from "../../Context/Context";
 
 const ConversionResult = ({ conversionResults }) => {
   const [activeTab, setActiveTab] = useState(0);
+  const {initaliseModelName} = useContext(Context);
+  
+  
 
   const handleTabClick = (index) => {
     setActiveTab(index);
@@ -80,6 +86,101 @@ const ConversionResult = ({ conversionResults }) => {
                   sql to pySpark
                 </p>
                 <div className="buttons d-flex gap-3 m-0 p-0">
+                  <div className="hover-container">
+                    <div className="get-insights hover-text">
+                      <AiFillThunderbolt style={{color:"orange"}} />
+                      <span className="">Get Insights</span>
+                    </div>
+                    <div className="hover-div">
+                      {/* hover insights */}
+                      <div className="hover-insights">
+                        <p>Insights</p>
+                        <p id="hover-model">{initaliseModelName}</p>
+                      </div>
+                      {/* input/output token */}
+                      <div className="insight-token">
+                        <p>Input / Output Token</p>
+                        <div className="tokens-value">
+                          <div className="values">
+                            <span>
+                              {
+                                conversionResults[activeTab].conversion
+                                  .input_tokens
+                              }
+                            </span>
+                            <p className="token-heading">Input Token</p>
+                          </div>
+                          <div className="values">
+                            <span>
+                              {
+                                conversionResults[activeTab].conversion
+                                  .output_tokens
+                              }
+                            </span>
+                            <p className="token-heading">Output Token</p>
+                          </div>
+                          <div className="values">
+                            <span>
+                              {
+                                conversionResults[activeTab].conversion
+                                  .total_tokens
+                              }
+                            </span>
+                            <p className="token-heading">Total Token</p>
+                          </div>
+                        </div>
+                      </div>
+                      {/* input / output and total cost  */}
+                      <div className="insight-token" id="insight-cost">
+                        <p>
+                          Input / Output Cost{" "}
+                          <span style={{ fontSize: "15px", color: "grey" }}>
+                            ( in USD )
+                          </span>
+                        </p>
+                        <div className="tokens-value">
+                          <div className="values">
+                            <span>
+                              {
+                                conversionResults[activeTab].conversion
+                                  .input_cost
+                              }
+                            </span>
+                            <p className="token-heading">Input Cost</p>
+                          </div>
+                          <div className="values">
+                            <span>
+                              {
+                                conversionResults[activeTab].conversion
+                                  .output_cost
+                              }
+                            </span>
+                            <p className="token-heading">Output Cost</p>
+                          </div>
+                          <div className="values">
+                            <span>
+                              {
+                                conversionResults[activeTab].conversion
+                                  .total_cost
+                              }
+                            </span>
+                            <p className="token-heading">Total Cost</p>
+                          </div>
+                        </div>
+                      </div>
+                      {/* response time */}
+                      <div className="response-time">
+                        <LuAlarmClock />
+                        <p>
+                          Response time :{" "}
+                          {conversionResults[
+                            activeTab
+                          ].conversion.response_time.toFixed(2)}{" "}
+                          's{" "}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                   <p onClick={handleCopy} className="copy-btn">
                     <FiCopy />
                   </p>
