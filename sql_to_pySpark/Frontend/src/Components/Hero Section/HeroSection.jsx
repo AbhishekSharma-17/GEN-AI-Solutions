@@ -8,8 +8,8 @@ const HeroSection = () => {
     <section className="sql-to-pyspark-section">
       <div className="content-container">
         <div className="text-content">
-          <h1>SQL to PySpark Transformation Made Simple</h1>
-          <p>
+          <h1 style={{fontSize:"3vw", fontWeight:"bold", color:"black"}}>SQL to PySpark <br /> Transformation Made Simple</h1>
+          <p style={{fontStyle:"italic"}}>
             Transform your SQL queries into optimized PySpark code instantly.
             Save time and boost performance with our AI-powered conversion
             engine.
