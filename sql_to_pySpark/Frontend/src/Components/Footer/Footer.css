@@ -1,0 +1,143 @@
+/* General Styling */
+.footer-section {
+    background-color: #0d1117;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    padding: 40px 20px 0;
+  }
+  
+  .cta-section {
+    text-align: center;
+    padding: 20px;
+    background-color: #000000;
+    margin-bottom: 40px;
+  }
+  
+  .cta-section h2 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+  }
+  
+  .cta-section p {
+    font-size: 1.1rem;
+    margin-bottom: 20px;
+    color: #bbbbbb;
+  }
+  
+  .cta-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .cta-button:hover {
+    background-color: #f3f3f3;
+  }
+  
+  /* Footer Content */
+  .footer-content {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+  }
+  
+  .footer-column {
+    flex: 1;
+    min-width: 200px;
+  }
+  
+  .footer-column h3,
+  .footer-column h4 {
+    font-size: 1.2rem;
+    margin-bottom: 16px;
+  }
+  
+  .footer-column p {
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+  
+  .footer-column ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .footer-column ul li {
+    margin-bottom: 10px;
+  }
+  
+  .footer-column ul li a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: bold;
+  }
+  
+  .footer-column ul li a:hover {
+color: orange;
+ }
+ 
+  .footer-column form {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+  
+  .footer-column form input {
+    padding: 10px;
+    font-size: 0.9rem;
+    flex: 1;
+    border-radius: 4px;
+    border: 1px solid #444;
+    background-color: #161b22;
+    color: #ffffff;
+  }
+  
+  .footer-column form button {
+    padding: 10px 20px;
+    font-size: 0.9rem;
+    border: none;
+    border-radius: 4px;
+    background-color: #ffffff;
+    color: #000000;
+    cursor: pointer;
+  }
+  
+  .footer-column form button:hover {
+    background-color: #f3f3f3;
+  }
+  
+  /* Footer Bottom */
+  .footer-bottom {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 0.8rem;
+    border-top: 1px solid #222;
+    margin-top: 20px;
+  }
+  
+  .footer-bottom .social-links {
+    margin-top: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .footer-bottom .social-links a {
+    color: #ffffff;
+    margin: 0 10px;
+    text-decoration: none;
+  }
+  
+  .footer-bottom .social-links a:hover {
+    text-decoration: underline;
+  }
