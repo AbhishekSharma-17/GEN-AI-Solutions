@@ -24,6 +24,9 @@ const ContextProvider = (props) => {
   // setting model
   const [model, setModel] = useState("");
 
+  // saving state for model name
+  const [initaliseModelName, setInitialiseModelName] = useState("");
+
   const ContextValue = {
     selectedProvider,
     setSelectedProvider,
@@ -39,6 +42,8 @@ const ContextProvider = (props) => {
     setModelOption,
     model,
     setModel,
+    initaliseModelName,
+    setInitialiseModelName,
   };
 
   return (

@@ -9,22 +9,22 @@
 }
 
 .pl__ring--a {
-  stroke: #f42f25;
+  stroke: #1a1a1a;  /* Dark Grey - Almost Black */
 }
 
 .pl__ring--b {
   animation-name: ringB;
-  stroke: #f49725;
+  stroke: #4d4d4d;  /* Medium Grey */
 }
 
 .pl__ring--c {
   animation-name: ringC;
-  stroke: #255ff4;
+  stroke: #b3b3b3;  /* Light Grey */
 }
 
 .pl__ring--d {
   animation-name: ringD;
-  stroke: #f42582;
+  stroke: #534f4f;  /* Very Light Grey - Near White */
 }
 
 /* Animations */
