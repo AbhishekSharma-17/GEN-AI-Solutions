@@ -8,8 +8,7 @@
   
   .content-container {
     display: flex;
-    max-width: 1200px;
-    width: 100%;
+    max-width: 100%;
     gap: 20px;
   }
   
@@ -74,6 +73,7 @@
   
   .image-content img {
     max-width: 100%;
+    height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   }

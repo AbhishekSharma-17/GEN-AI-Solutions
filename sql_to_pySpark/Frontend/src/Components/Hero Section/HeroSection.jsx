@@ -1,8 +1,9 @@
 import React from "react";
-import "./LandingPageSection.css";
 import { assets } from "../../assets/assets";
+import { Link } from "react-router-dom";  // Import Link
+import './HeroSection.css';
 
-const LandingPageSection = () => {
+const HeroSection = () => {
   return (
     <section className="sql-to-pyspark-section">
       <div className="content-container">
@@ -14,22 +15,21 @@ const LandingPageSection = () => {
             engine.
           </p>
           <div className="button-group">
-            <button className="btn-primary">Try Free Demo</button>
+            <Link to="/main">  {/* Link to main page */}
+              <button className="btn-primary">Get Started</button>
+            </Link>
             <button className="btn-secondary">Watch Demo</button>
           </div>
         </div>
         <div className="image-content">
           <img
-            src={assets.pyspark_img} 
+            src={assets.pyspark_img}
             alt="SQL to PySpark"
           />
         </div>
       </div>
     </section>
-
-
-
   );
 };
 
-export default LandingPageSection;
+export default HeroSection;
