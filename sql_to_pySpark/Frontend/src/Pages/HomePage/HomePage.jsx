@@ -14,7 +14,6 @@ const HomePage = () => {
         display: "flex",
         flexDirection: "column",
         height: "auto",
-        border: "1px solid red",
       }}
     >
       <Homepage_Navbar></Homepage_Navbar>
