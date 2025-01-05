@@ -8,14 +8,13 @@ import { AiFillThunderbolt } from "react-icons/ai";
 
 import "./ConversionResult.css";
 import { Context } from "../../Context/Context";
+import { toast } from "react-toastify";
 
 const ConversionResult = ({ conversionResults }) => {
   const [activeTab, setActiveTab] = useState(0);
   const {
     initaliseModelName,
-    cumulativeTokens,
     setCumulativeTokens,
-    cumulativeCost,
     setCumulativeCost,
   } = useContext(Context);
 
@@ -29,8 +28,8 @@ const ConversionResult = ({ conversionResults }) => {
     });
     totalCost = totalCost.toFixed(3);
 
-    console.log("total token: ", totalTokens);
-    console.log("total cost: ", totalCost);
+    // console.log("total token: ", totalTokens);
+    // console.log("total cost: ", totalCost);
 
     setCumulativeTokens(totalTokens);
     setCumulativeCost(totalCost);
@@ -61,7 +60,7 @@ const ConversionResult = ({ conversionResults }) => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    toast.success(`${conversionResults[activeTab].filename} downladed.`)
+    toast.success(`${conversionResults[activeTab].filename} downladed.`);
   };
 
   const handleDownloadAll = () => {
