@@ -211,6 +211,7 @@ const FileUpload = () => {
               type="password"
               className="form-control"
               ref={form_api_key}
+              disabled={loading}
             />
           </div>
           <div className="mb-2 file-inputs">
@@ -224,6 +225,7 @@ const FileUpload = () => {
                 type="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
+                disabled={loading}
               >
                 {selectedProvider || "Select LLM Type"}
               </button>
@@ -270,6 +272,7 @@ const FileUpload = () => {
                   type="button"
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
+                  disabled={loading}
                 >
                   {model || "Select Model"}
                 </button>
