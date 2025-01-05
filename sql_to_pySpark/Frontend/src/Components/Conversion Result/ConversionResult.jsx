@@ -47,7 +47,7 @@ const ConversionResult = ({ conversionResults }) => {
   const handleCopy = () => {
     const code = conversionResults[activeTab].conversion.pysparkCode || "";
     navigator.clipboard.writeText(code);
-    alert("Code copied to clipboard!");
+    toast.success("Code copied to clipboard!");
   };
 
   const handleDownload = () => {
@@ -61,6 +61,7 @@ const ConversionResult = ({ conversionResults }) => {
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    toast.success(`${conversionResults[activeTab].filename} downladed.`)
   };
 
   const handleDownloadAll = () => {
@@ -73,7 +74,7 @@ const ConversionResult = ({ conversionResults }) => {
     });
 
     zip.generateAsync({ type: "blob" }).then((content) => {
-      saveAs(content, "converted_files.zip");
+      saveAs(content, "All_PySpark_Files.zip");
     });
   };
 
