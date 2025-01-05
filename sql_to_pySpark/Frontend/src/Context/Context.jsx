@@ -27,6 +27,10 @@ const ContextProvider = (props) => {
   // saving state for model name
   const [initaliseModelName, setInitialiseModelName] = useState("");
 
+  // cumulative cost and token
+  const [cumulativeTokens, setCumulativeTokens] = useState(0);
+  const [cumulativeCost, setCumulativeCost] = useState(0);
+
   const ContextValue = {
     selectedProvider,
     setSelectedProvider,
@@ -44,6 +48,10 @@ const ContextProvider = (props) => {
     setModel,
     initaliseModelName,
     setInitialiseModelName,
+    cumulativeTokens,
+    setCumulativeTokens,
+    cumulativeCost,
+    setCumulativeCost,
   };
 
   return (

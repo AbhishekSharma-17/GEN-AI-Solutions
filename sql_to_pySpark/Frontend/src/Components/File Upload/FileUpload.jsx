@@ -25,6 +25,8 @@ const FileUpload = () => {
     model,
     setModel,
      setInitialiseModelName,
+     setCumulativeTokens,
+     setCumulativeCost,
   } = useContext(Context);
 
   const SQLfileRef = useRef();
@@ -109,6 +111,8 @@ const FileUpload = () => {
 
   // Handle conversion
   const handleConversion = async (e) => {
+    setCumulativeCost(0)
+    setCumulativeTokens(0)
     e.preventDefault();
 
     if (!uploadedFiles.length) {
@@ -306,6 +310,7 @@ const FileUpload = () => {
             onChange={handleFileUpload}
             accept=".sql"
             ref={SQLfileRef}
+            disabled={loading}
             hidden
             multiple
           />

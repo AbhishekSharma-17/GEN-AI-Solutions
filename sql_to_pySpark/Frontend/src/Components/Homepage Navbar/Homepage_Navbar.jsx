@@ -25,7 +25,7 @@ const Homepage_Navbar = () => {
         </a>
 
         {/* code */}
-        <a href="#homepage-code-convertor" target="blank">
+        <a href="#homepage-code-convertor">
           <p
             onClick={() => setActivePara("Code")}
             className={activePara === "Code" ? "active" : ""}
@@ -63,7 +63,7 @@ const Homepage_Navbar = () => {
             Contact Us
           </p>
         </a>
-        
+
       </div>
     </div>
   );

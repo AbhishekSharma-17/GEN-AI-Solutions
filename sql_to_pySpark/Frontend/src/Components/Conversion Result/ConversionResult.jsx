@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TbFileTextSpark } from "react-icons/tb";
 import { FiCopy, FiDownload } from "react-icons/fi";
 import JSZip from "jszip";
@@ -11,9 +11,30 @@ import { Context } from "../../Context/Context";
 
 const ConversionResult = ({ conversionResults }) => {
   const [activeTab, setActiveTab] = useState(0);
-  const {initaliseModelName} = useContext(Context);
-  
-  
+  const {
+    initaliseModelName,
+    cumulativeTokens,
+    setCumulativeTokens,
+    cumulativeCost,
+    setCumulativeCost,
+  } = useContext(Context);
+
+  useEffect(() => {
+    let totalTokens = 0;
+    let totalCost = 0;
+
+    conversionResults.forEach((result) => {
+      totalTokens += result.conversion.total_tokens || 0;
+      totalCost += result.conversion.total_cost || 0;
+    });
+    totalCost = totalCost.toFixed(3);
+
+    console.log("total token: ", totalTokens);
+    console.log("total cost: ", totalCost);
+
+    setCumulativeTokens(totalTokens);
+    setCumulativeCost(totalCost);
+  }, [conversionResults]);
 
   const handleTabClick = (index) => {
     setActiveTab(index);
@@ -64,7 +85,9 @@ const ConversionResult = ({ conversionResults }) => {
             {conversionResults.map((result, index) => (
               <button
                 key={index}
-                className={`tab ${activeTab === index ? "active-file-tab" : ""}`}
+                className={`tab ${
+                  activeTab === index ? "active-file-tab" : ""
+                }`}
                 onClick={() => handleTabClick(index)}
               >
                 <span role="img" aria-label="file-icon">
@@ -88,7 +111,7 @@ const ConversionResult = ({ conversionResults }) => {
                 <div className="buttons d-flex gap-3 m-0 p-0">
                   <div className="hover-container">
                     <div className="get-insights hover-text">
-                      <AiFillThunderbolt style={{color:"orange"}} />
+                      <AiFillThunderbolt style={{ color: "orange" }} />
                       <span className="">Get Insights</span>
                     </div>
                     <div className="hover-div">
