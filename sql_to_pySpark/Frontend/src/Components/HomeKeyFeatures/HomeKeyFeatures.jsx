@@ -3,7 +3,7 @@ import "./HomeKeyFeatures.css";
 
 const HomeKeyFeatures = () => {
   return (
-    <div className="features-steps-section">
+    <div className="features-steps-section" id="homepage-features">
       <div className="key-features">
         <h2>Key Features</h2>
         <p>Powerful features to streamline your workflow</p>

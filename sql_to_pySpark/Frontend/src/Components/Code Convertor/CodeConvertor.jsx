@@ -3,7 +3,7 @@ import './CodeConvertor.css'
 
 const CodeConverter = () => {
   return (
-    <section className="code-converter">
+    <section className="code-converter" id="homepage-code-convertor">
       {/* Title and Subtitle */}
       <div className="converter-header">
         <h1>Interactive Code Converter</h1>
@@ -15,7 +15,7 @@ const CodeConverter = () => {
         {/* SQL Input Block */}
         <div className="code-block">
           <h3>SQL Input</h3>
-          <pre className="code-content">
+          <pre className="code-convertor-content">
             {`SELECT customer_id,
        SUM(order_amount) as total_amount
 FROM orders
@@ -29,7 +29,7 @@ ORDER BY total_amount DESC;`}
         {/* PySpark Output Block */}
         <div className="code-block">
           <h3>PySpark Output</h3>
-          <pre className="code-content" style={{color:"#3eb63e"}}>
+          <pre className="code-convertor-content" style={{color:"#3eb63e"}}>
             {`from pyspark.sql.functions import *
 
 df = spark.table("orders")

@@ -6,6 +6,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "react-toastify/dist/ReactToastify.css";  // Ensure Toastify styles are imported
 import "./App.css";
+import './index.css'
 import HomePage from "./Pages/HomePage/HomePage";
 
 const App = () => {

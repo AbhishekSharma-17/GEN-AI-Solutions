@@ -2,11 +2,10 @@ import React from "react";
 import './Footer.css'
 import { IoLogoYoutube } from "react-icons/io";
 import { FaLinkedin } from "react-icons/fa6";
-import assets from "../../assets/assets";
 
 const Footer = () => {
   return (
-    <footer className="footer-section">
+    <footer className="footer-section" id="contact">
     
 
       {/* Footer */}
@@ -14,7 +13,7 @@ const Footer = () => {
         {/* Logo and Description */}
         <div className="footer-column">
           
-          <h1 style={{color:"white", fontWeight:"bold"}}>GenAI Proto's</h1>
+          <h1 className="footer-h1">GenAI Protos</h1>
           <p>Transforming SQL to PySpark with AI-powered precision.</p>
         </div>
 

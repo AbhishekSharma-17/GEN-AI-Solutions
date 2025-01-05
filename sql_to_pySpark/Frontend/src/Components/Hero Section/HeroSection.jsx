@@ -5,7 +5,7 @@ import "./HeroSection.css";
 
 const HeroSection = () => {
   return (
-    <section className="sql-to-pyspark-section">
+    <section className="sql-to-pyspark-section" id="home">
       <div className="content-container">
         <div className="text-content">
           <h1 style={{ fontSize: "3vw", fontWeight: "bold", color: "black" }}>

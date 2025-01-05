@@ -64,7 +64,7 @@ const ConversionResult = ({ conversionResults }) => {
             {conversionResults.map((result, index) => (
               <button
                 key={index}
-                className={`tab ${activeTab === index ? "active" : ""}`}
+                className={`tab ${activeTab === index ? "active-file-tab" : ""}`}
                 onClick={() => handleTabClick(index)}
               >
                 <span role="img" aria-label="file-icon">

@@ -5,4 +5,5 @@
   display: flex;
   flex-direction: column; /* Ensures proper layout of children components */
   /* border: 1px solid red; */
+  animation: fadeIn 2s;
 }

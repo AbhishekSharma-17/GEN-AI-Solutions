@@ -4,7 +4,7 @@ import { FaArrowRightLong } from "react-icons/fa6";
 
 const Work = () => {
   return (
-    <div className="features-steps-section2">
+    <div className="features-steps-section2" id="work">
       <div className="how-it-works">
         <h2>How It Works</h2>
         <p>Simple steps to transform your code</p>

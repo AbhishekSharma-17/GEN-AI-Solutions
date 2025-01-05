@@ -15,7 +15,7 @@ const Homepage_Navbar = () => {
       </div>
       <div className="navbar-right">
         {/* home */}
-        <a href="#">
+        <a href="#home">
           <p
             onClick={() => setActivePara("Home")}
             className={activePara === "Home" ? "active" : ""}
@@ -25,7 +25,7 @@ const Homepage_Navbar = () => {
         </a>
 
         {/* code */}
-        <a href="#" target="blank">
+        <a href="#homepage-code-convertor" target="blank">
           <p
             onClick={() => setActivePara("Code")}
             className={activePara === "Code" ? "active" : ""}
@@ -35,7 +35,7 @@ const Homepage_Navbar = () => {
         </a>
 
         {/* features */}
-        <a href="#" target="blank">
+        <a href="#homepage-features">
           <p
             onClick={() => setActivePara("Features")}
             className={activePara === "Features" ? "active" : ""}
@@ -45,7 +45,7 @@ const Homepage_Navbar = () => {
         </a>
 
         {/* Works */}
-        <a href="#">
+        <a href="#work">
           <p
             onClick={() => setActivePara("Works")}
             className={activePara === "Works" ? "active" : ""}
@@ -54,7 +54,16 @@ const Homepage_Navbar = () => {
           </p>
         </a>
 
-
+        {/* contact */}
+        <a href="#contact">
+          <p
+            onClick={() => setActivePara("Contact")}
+            className={activePara === "Contact" ? "active" : ""}
+          >
+            Contact Us
+          </p>
+        </a>
+        
       </div>
     </div>
   );
