@@ -21,6 +21,7 @@ import frontPage from './frontpageImage.jpg'
 import groq from './Groq.png'
 import anthropic from './Anthropic.png'
 import hugging_face from './hugging_face.png'
+import SQL_img from './Chat_with_SQL.png'
 
 export const assets = {
     frontPage,
@@ -44,7 +45,8 @@ export const assets = {
     message_icon,
     code_icon,
     send_icon,
-    gemini_icon
+    gemini_icon,
+    SQL_img
 }
 
 export default assets

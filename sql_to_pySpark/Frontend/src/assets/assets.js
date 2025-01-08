@@ -16,7 +16,7 @@ import frontPage from './frontpageImage.jpg'
 import groq from './Groq.png'
 import anthropic from './Anthropic.png'
 import hugging_face from './hugging_face.png'
-import pyspark_img from './pyspark.jpg'
+import SQL_to_pyspark_img from './SQL_tO_Pyspark.png'
 
 export const assets = {
     frontPage,
@@ -41,7 +41,7 @@ export const assets = {
     code_icon,
     send_icon,
     gemini_icon,
-    pyspark_img
+    SQL_to_pyspark_img
 }
 
 export default assets;
