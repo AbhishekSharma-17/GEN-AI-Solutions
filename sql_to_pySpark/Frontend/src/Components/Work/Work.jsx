@@ -19,7 +19,7 @@ const Work = () => {
           </div>
           <div className="step-card">
             <div className="step-number">2</div>
-            <h3>Advanced Processing</h3>
+            <h3>Advanced Code Conversion</h3>
             <p>Our AI analyzes and optimizes your query.</p>
           </div>
 
@@ -28,7 +28,7 @@ const Work = () => {
           </div>
           <div className="step-card">
             <div className="step-number">3</div>
-            <h3>PySpark Output</h3>
+            <h3>Custom Code Update</h3>
             <p>Get your optimized PySpark code instantly.</p>
           </div>
         </div>

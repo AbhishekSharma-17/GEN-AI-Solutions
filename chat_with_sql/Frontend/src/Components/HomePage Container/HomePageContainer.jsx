@@ -241,7 +241,7 @@ const HomePageContainer = () => {
           </div>
         </div>
         <div className="homepage-setup-image">
-          <img src={assets.frontPage} alt="Setup" />
+          <img src={assets.SQL_img} alt="Setup" />
         </div>
       </div>
     </div>

@@ -11,7 +11,7 @@ const HeroSection = () => {
           <h1 style={{ fontSize: "3vw", fontWeight: "bold", color: "black" }}>
             SQL to PySpark <br /> Transformation Made Simple
           </h1>
-          <p style={{ fontStyle: "italic" }}>
+          <p style={{ fontStyle: "Times Romen" }}>
             Transform your SQL queries into optimized PySpark code instantly.
             Save time and boost performance with our AI-powered conversion
             engine.
@@ -28,7 +28,7 @@ const HeroSection = () => {
           </div>
         </div>
         <div className="image-content">
-          <img src={assets.pyspark_img} alt="SQL to PySpark" />
+          <img src={assets.SQL_to_pyspark_img} alt="SQL to PySpark" />
         </div>
       </div>
     </section>
