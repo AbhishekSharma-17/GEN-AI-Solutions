@@ -47,8 +47,8 @@ export const assets = {
     code_icon,
     send_icon,
     gemini_icon,
-    Groq_logo,
-    hugging_logo
+    groq,
+    hugging_face
 }
 
 export default assets
