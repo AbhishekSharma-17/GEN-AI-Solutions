@@ -8,5 +8,11 @@
   },
   "permissions": [
     "activeTab"
-  ]
+  ],
+  "host_permissions": [
+    "ws://localhost:8765/"
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  }
 }

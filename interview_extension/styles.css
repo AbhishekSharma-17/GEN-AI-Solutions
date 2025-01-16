@@ -101,7 +101,6 @@ button:disabled {
     padding: 10px;
     border-radius: 8px;
     margin-bottom: 10px;
-    white-space: pre-wrap;
 }
 
 .transcription-item {
@@ -109,6 +108,7 @@ button:disabled {
     border: 1px solid #bde0fe;
     align-self: flex-start;
     max-width: 80%;
+    white-space: pre-wrap;
 }
 
 .response-item {
@@ -116,6 +116,55 @@ button:disabled {
     border: 1px solid #b3e6c5;
     align-self: flex-end;
     max-width: 80%;
+}
+
+/* Markdown styles */
+.response-item h1,
+.response-item h2,
+.response-item h3,
+.response-item h4,
+.response-item h5,
+.response-item h6 {
+    margin-top: 10px;
+    margin-bottom: 5px;
+}
+
+.response-item h1 { font-size: 1.5em; }
+.response-item h2 { font-size: 1.3em; }
+.response-item h3 { font-size: 1.1em; }
+
+.response-item ul,
+.response-item ol {
+    padding-left: 20px;
+    margin-bottom: 10px;
+}
+
+.response-item li {
+    margin-bottom: 5px;
+}
+
+.response-item p {
+    margin-bottom: 10px;
+}
+
+.response-item code {
+    background-color: #f0f0f0;
+    padding: 2px 4px;
+    border-radius: 4px;
+}
+
+.response-item pre {
+    background-color: #f0f0f0;
+    padding: 10px;
+    border-radius: 4px;
+    overflow-x: auto;
+}
+
+.response-item blockquote {
+    border-left: 4px solid #ccc;
+    padding-left: 10px;
+    margin-left: 0;
+    font-style: italic;
 }
 
 .paired-container:last-child {
@@ -148,4 +197,27 @@ footer {
     font-size: 12px;
     box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
     border-radius: 0 0 20px 20px;
+}
+
+#status-indicator {
+    margin-top: 10px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+#status-indicator.info {
+    background-color: #3498db;
+    color: white;
+}
+
+#status-indicator.success {
+    background-color: #2ecc71;
+    color: white;
+}
+
+#status-indicator.error {
+    background-color: #e74c3c;
+    color: white;
 }

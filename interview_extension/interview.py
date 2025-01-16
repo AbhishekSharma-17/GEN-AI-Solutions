@@ -59,22 +59,28 @@ def init_live_session(config: StreamingConfiguration) -> InitiateResponse:
 full_recording = ""
 
 def send_to_llm(text: str, is_final: bool = False) -> str:
-    system_prompt = """You are an AI assistant helping with job interviews. Provide reasonably detailed answers to interview questions as if you are the interviewee. Structure your responses using bullet points or key points. Keep responses professional and informative. If you hear a statement instead of a question, respond appropriately in context."""
+    system_prompt = """You are an AI assistant helping with job interviews. Provide reasonably detailed answers to interview questions as if you are the interviewee. Structure your responses using Markdown formatting, including bullet points, headers, and emphasis where appropriate. Keep responses professional and informative. If you hear a statement instead of a question, respond appropriately in context."""
 
     if is_final:
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"""Analyze this interview conversation and provide:
-• Key points discussed in the interview (in bullet point format)
-• Suggested questions for the interviewee to ask the interviewer (in bullet point format)
-• A brief thank you note
+            {"role": "user", "content": f"""Analyze this interview conversation and provide in Markdown format:
+
+# Key Points Discussed
+[List key points in bullet points]
+
+# Suggested Questions for the Interviewer
+[List suggested questions in bullet points]
+
+# Thank You Note
+[A brief thank you note]
 
 Keep the response informative and ready for immediate use:\n{text}"""}
         ]
     else:
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"Provide a professional interview answer for this question/topic, using bullet points or key points:\n{text}"}
+            {"role": "user", "content": f"Provide a professional interview answer for this question/topic, using Markdown formatting with appropriate headers, bullet points, and emphasis:\n{text}"}
         ]
 
     response = requests.post(
