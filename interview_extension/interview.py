@@ -11,6 +11,7 @@ import os
 from dotenv import load_dotenv
 from websockets.asyncio.client import ClientConnection, connect
 from websockets.exceptions import ConnectionClosedOK
+import websockets
 
 load_dotenv()
 GLADIA_API_URL = "https://api.gladia.io"
@@ -27,7 +28,6 @@ class LanguageConfiguration(TypedDict):
 
 
 class StreamingConfiguration(TypedDict):
-
     encoding: Literal["wav/pcm", "wav/alaw", "wav/ulaw"]
     bit_depth: Literal[8, 16, 24, 32]
     sample_rate: Literal[8_000, 16_000, 32_000, 44_100, 48_000]
@@ -36,14 +36,8 @@ class StreamingConfiguration(TypedDict):
 
 
 def init_live_session(config: StreamingConfiguration) -> InitiateResponse:
-    import os, dotenv
-    from dotenv import load_dotenv
-
-    load_dotenv()
-
     gladia_key = os.getenv("GLADIA_API_KEY")
 
-    # gladia_key = get_gladia_key()
     response = requests.post(
         f"{GLADIA_API_URL}/v2/live",
         headers={"X-Gladia-Key": gladia_key},
@@ -55,16 +49,6 @@ def init_live_session(config: StreamingConfiguration) -> InitiateResponse:
         print(f"{response.status_code}: {response.text or response.reason}")
         exit(response.status_code)
     return response.json()
-
-
-def format_duration(seconds: float) -> str:
-    milliseconds = int(seconds * 1_000)
-    return time(
-        hour=milliseconds // 3_600_000,
-        minute=(milliseconds // 60_000) % 60,
-        second=(milliseconds // 1_000) % 60,
-        microsecond=milliseconds % 1_000 * 1_000,
-    ).isoformat(timespec="milliseconds")
 
 
 full_recording = ""
@@ -114,48 +98,32 @@ Make all responses natural and ready for immediate use in future interviews:\n{t
     )
     return response.json()['choices'][0]['message']['content']
 
-async def print_messages_from_socket(socket: ClientConnection) -> None:
+async def process_messages(socket: ClientConnection, extension_socket: websockets.WebSocketServerProtocol) -> None:
     global full_recording
 
     async for message in socket:
         content = json.loads(message)
         if content["type"] == "transcript" and content["data"]["is_final"]:
             text = content["data"]["utterance"]["text"].strip()
-            print("\n📝 Interview Question/Topic:", flush=True)
-            print("-" * 50)
-            print(text)
-            print("-" * 50)
             full_recording += text + " "
             
             # Get suggested answer
-            print("\n💡 Suggested Response:", flush=True)
-            print("-" * 50)
             suggested_answer = send_to_llm(text)
-            print(suggested_answer)
-            print("-" * 50 + "\n")
+            
+            # Send response to extension
+            response = {
+                "question": text,
+                "answer": suggested_answer
+            }
+            await extension_socket.send(json.dumps(response))
         
         if content["type"] == "post_final_transcript":
-            print("\n################ Interview Session Complete ################\n")
-
-def print_full_recording():
-    print("\n################ Interview Session Recording ################\n")
-    print(full_recording.strip())
-    print("\n################ End of Recording ################\n")
-    
-    # Get key talking points and strong answers for future use
-    final_summary = send_to_llm(full_recording, is_final=True)
-    print("\n################ Key Interview Points & Sample Answers ################\n")
-    print(final_summary)
-    print("\n################ End of Interview Summary ################\n")
-
+            await extension_socket.send(json.dumps({"type": "session_complete"}))
 
 async def stop_recording(websocket: ClientConnection) -> None:
-    print("\n\n>>>>> Ending the recording…")
     await websocket.send(json.dumps({"type": "stop_recording"}))
     await asyncio.sleep(0)
 
-
-## Sample code
 P = pyaudio.PyAudio()
 
 CHANNELS = 1
@@ -166,14 +134,13 @@ SAMPLE_RATE = 16_000
 STREAMING_CONFIGURATION: StreamingConfiguration = {
     "encoding": "wav/pcm",
     "sample_rate": SAMPLE_RATE,
-    "bit_depth": 16,  # It should match the FORMAT value
+    "bit_depth": 16,
     "channels": CHANNELS,
     "language_config": {
         "languages": ["en"],
         "code_switching": True,
     }
 }
-
 
 async def send_audio(socket: ClientConnection) -> None:
     stream = P.open(
@@ -194,29 +161,33 @@ async def send_audio(socket: ClientConnection) -> None:
         except ConnectionClosedOK:
             return
 
+async def handle_extension_connection(websocket):
+    global full_recording
+    full_recording = ""
+
+    response = init_live_session(STREAMING_CONFIGURATION)
+    async with connect(response["url"]) as gladia_socket:
+        send_audio_task = asyncio.create_task(send_audio(gladia_socket))
+        process_messages_task = asyncio.create_task(process_messages(gladia_socket, websocket))
+
+        try:
+            async for message in websocket:
+                if message == "stop":
+                    await stop_recording(gladia_socket)
+                    break
+        finally:
+            send_audio_task.cancel()
+            process_messages_task.cancel()
+            await asyncio.gather(send_audio_task, process_messages_task, return_exceptions=True)
+
+        # Send final summary
+        final_summary = send_to_llm(full_recording, is_final=True)
+        await websocket.send(json.dumps({"type": "final_summary", "summary": final_summary}))
 
 async def main():
-    response = init_live_session(STREAMING_CONFIGURATION)
-    async with connect(response["url"]) as websocket:
-        print("\n################ Begin session ################\n")
-        print("Press Enter to stop the recording.")
-
-        send_audio_task = asyncio.create_task(send_audio(websocket))
-        print_messages_task = asyncio.create_task(print_messages_from_socket(websocket))
-
-        # Wait for user to press Enter
-        await asyncio.get_event_loop().run_in_executor(None, input)
-
-        await stop_recording(websocket)
-
-        send_audio_task.cancel()
-        print_messages_task.cancel()
-        await asyncio.gather(
-            send_audio_task, print_messages_task, return_exceptions=True
-        )
-
-        print_full_recording()
-
+    server = await websockets.serve(handle_extension_connection, "localhost", 8765)
+    print("WebSocket server started on ws://localhost:8765")
+    await server.wait_closed()
 
 if __name__ == "__main__":
     asyncio.run(main())
