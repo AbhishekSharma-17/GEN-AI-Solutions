@@ -1,0 +1,210 @@
+npm install react-iconsbody {
+  font-family: 'Roboto', Arial, sans-serif;
+  background-color: #f0f4f8;
+  color: #333;
+  line-height: 1.6;
+}
+
+.voice-chat-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+h1 {
+  text-align: center;
+  color: #2c3e50;
+  font-size: 2.5em;
+  margin-bottom: 30px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.chatbox {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  height: 400px;
+  overflow-y: auto;
+  padding: 20px;
+  margin-bottom: 30px;
+  background-color: #f9f9f9;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 12px;
+  border-radius: 8px;
+  max-width: 80%;
+}
+
+.user-message {
+  background-color: #e8f5e9;
+  margin-left: auto;
+}
+
+.ai-message {
+  background-color: #e3f2fd;
+  margin-right: auto;
+}
+
+.message-text {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.time-chip-container {
+  display: flex;
+  justify-content: flex-end;
+  font-size: 12px;
+  color: #7f8c8d;
+}
+
+.time-chip-label {
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+.tts-audio-section {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.tts-audio-section audio {
+  width: 100%;
+  max-width: 400px;
+  border-radius: 30px;
+}
+
+.selector-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #ecf0f1;
+  border-radius: 8px;
+}
+
+.voice-selector {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+  background-color: #ecf0f1;
+  border-radius: 8px;
+}
+
+.voice-selector label {
+  margin-right: 15px;
+  font-weight: bold;
+  color: #2c3e50;
+  font-size: 16px;
+}
+
+.voice-selector select {
+  padding: 10px 15px;
+  font-size: 16px;
+  border: 2px solid #3498db;
+  border-radius: 6px;
+  background-color: white;
+  cursor: pointer;
+  color: #2c3e50;
+  transition: all 0.3s ease;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url('data:image/svg+xml;utf8,<svg fill="%233498db" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 10px top 50%;
+  background-size: 20px auto;
+  min-width: 150px;
+  flex-grow: 1;
+  margin-right: 15px;
+}
+
+.voice-selector select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
+  border-color: #2980b9;
+}
+
+.voice-selector select:hover {
+  border-color: #2980b9;
+  background-color: #f8f8f8;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0.7);
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(52, 152, 219, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(52, 152, 219, 0);
+  }
+}
+
+.record-button {
+  padding: 10px;
+  font-size: 20px;
+  color: white;
+  background-color: #3498db;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.record-button:hover {
+  background-color: #2980b9;
+  transform: scale(1.1);
+}
+
+.record-button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.record-button.recording {
+  animation: pulse 1.5s infinite;
+  background-color: #e74c3c;
+}
+
+.record-button.recording:hover {
+  background-color: #c0392b;
+}
+
+@media (max-width: 768px) {
+  .voice-chat-container {
+    padding: 20px;
+  }
+
+  .voice-selector {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .voice-selector label {
+    margin-bottom: 10px;
+  }
+
+  .voice-selector select {
+    margin-right: 0;
+    margin-bottom: 10px;
+  }
+
+  .record-button {
+    align-self: center;
+  }
+}

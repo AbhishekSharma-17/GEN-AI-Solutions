@@ -1,0 +1,31 @@
+.stat-sections {
+    padding: 80px 40px;
+    background-color: white;
+  }
+
+  .stats-section {
+    display: flex;
+    justify-content: space-evenly;
+    gap: 20px;
+    margin-top: 40px;
+  }
+  
+  .stat-card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    width: 25%;
+    box-shadow: 0px 0px 14px 5px rgba(95, 95, 95, 0.1);
+  }
+  
+  .stat-card h3 {
+    font-size: 1.8rem;
+    color: #333;
+    margin-bottom: 8px;
+  }
+  
+  .stat-card p {
+    font-size: 1rem;
+    color: #555;
+  }

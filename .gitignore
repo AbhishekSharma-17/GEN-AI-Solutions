@@ -8,6 +8,9 @@
 *.pkl
 *.faiss
 test.py
+*.txt
+sample.json
+
 
 
 # Frontend Records 
@@ -36,4 +39,13 @@ dist-ssr
 *.sln
 *.sw?
 
+# Credentials
 credentials.json
+
+.codegpt
+
+
+# Credentials
+credentials.json
+
+.codegpt

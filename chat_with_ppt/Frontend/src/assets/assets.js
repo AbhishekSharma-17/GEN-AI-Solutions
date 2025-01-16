@@ -17,8 +17,11 @@ import icon from './icon.png'
 import ai_final from './AI-final.png'
 import gemini_icon from './gemini_icon.png'
 import chatGPTIcon from './chatGPTIcon.jpg'
+import chatWithPPT from './chatWithPPT.jpg'
+import PPT_img from './Chat_with_PPT.png'
 
 export const assets = {
+    chatWithPPT,
     chatGPTIcon,
     gemini_icon,
     genAILogo,
@@ -36,7 +39,8 @@ export const assets = {
     message_icon,
     code_icon,
     send_icon,
-    gemini_icon
+    gemini_icon,
+    PPT_img
 }
 
 export default assets
