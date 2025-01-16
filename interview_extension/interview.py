@@ -12,9 +12,14 @@ from dotenv import load_dotenv
 from websockets.asyncio.client import ClientConnection, connect
 from websockets.exceptions import ConnectionClosedOK
 import websockets
+import nltk
+from nltk.tokenize import sent_tokenize
 
 load_dotenv()
 GLADIA_API_URL = "https://api.gladia.io"
+
+# Download necessary NLTK data
+nltk.download('punkt', quiet=True)
 
 
 class InitiateResponse(TypedDict):
@@ -86,26 +91,70 @@ Keep the response informative and ready for immediate use:\n{text}"""}
     )
     return response.json()['choices'][0]['message']['content']
 
+def is_question_complete(text: str) -> bool:
+    # Use NLTK to tokenize sentences
+    sentences = sent_tokenize(text)
+    if not sentences:
+        return False
+    
+    last_sentence = sentences[-1].strip()
+    
+    # Check if the last sentence ends with a question mark or period
+    if last_sentence.endswith(('?', '.')):
+        return True
+    
+    # Check for common question starters
+    question_starters = ['what', 'when', 'where', 'who', 'why', 'how', 'can', 'could', 'would', 'should', 'is', 'are', 'do', 'does', 'did']
+    if any(last_sentence.lower().startswith(starter) for starter in question_starters):
+        return True
+    
+    # If the sentence is longer than 10 words, consider it complete
+    if len(last_sentence.split()) > 10:
+        return True
+    
+    return False
+
 async def process_messages(socket: ClientConnection, extension_socket: websockets.WebSocketServerProtocol) -> None:
     global full_recording
+    current_question = ""
+    silence_counter = 0
+    max_silence = 3  # Maximum number of silent chunks before considering the question complete
 
     async for message in socket:
         content = json.loads(message)
-        if content["type"] == "transcript" and content["data"]["is_final"]:
+        if content["type"] == "transcript":
             text = content["data"]["utterance"]["text"].strip()
-            full_recording += text + " "
+            if text:
+                full_recording += text + " "
+                current_question += text + " "
+                silence_counter = 0
+            else:
+                silence_counter += 1
+
+            if content["data"]["is_final"] or (silence_counter >= max_silence and current_question.strip()):
+                if is_question_complete(current_question):
+                    # Get suggested answer
+                    suggested_answer = send_to_llm(current_question.strip())
+                    
+                    # Send response to extension
+                    response = {
+                        "question": current_question.strip(),
+                        "answer": suggested_answer
+                    }
+                    await extension_socket.send(json.dumps(response))
+                    current_question = ""  # Reset for the next question
+                    silence_counter = 0
             
-            # Get suggested answer
-            suggested_answer = send_to_llm(text)
-            
-            # Send response to extension
-            response = {
-                "question": text,
-                "answer": suggested_answer
-            }
-            await extension_socket.send(json.dumps(response))
-        
         if content["type"] == "post_final_transcript":
+            # If there's any remaining partial question, process it
+            if current_question.strip():
+                suggested_answer = send_to_llm(current_question.strip())
+                response = {
+                    "question": current_question.strip(),
+                    "answer": suggested_answer
+                }
+                await extension_socket.send(json.dumps(response))
+            
             await extension_socket.send(json.dumps({"type": "session_complete"}))
 
 async def stop_recording(websocket: ClientConnection) -> None:
