@@ -54,34 +54,22 @@ def init_live_session(config: StreamingConfiguration) -> InitiateResponse:
 full_recording = ""
 
 def send_to_llm(text: str, is_final: bool = False) -> str:
-    system_prompt = """You are an expert interview assistant that provides immediate, ready-to-use answers for job interviews.
-    For each interview question, provide a complete, professional response that the interviewer can use directly.
-    Structure your answers to:
-    1. Start with a strong opening statement
-    2. Include relevant experience and concrete examples
-    3. Demonstrate technical knowledge where appropriate
-    4. End with a confident conclusion
-    
-    Format the answer as if speaking directly to the interviewer. Make it natural and conversational, yet professional.
-    If you hear something that's not a question, interpret the context and provide relevant talking points or follow-up responses.
-    
-    Remember: The user will be using your response verbatim in their interview, so make it sound natural when spoken."""
+    system_prompt = """You are an AI assistant helping with job interviews. Provide reasonably detailed answers to interview questions as if you are the interviewee. Structure your responses using bullet points or key points. Keep responses professional and informative. If you hear a statement instead of a question, respond appropriately in context."""
 
     if is_final:
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"""Review this interview conversation and provide:
-1. A collection of polished, ready-to-use answers for the key questions discussed
-2. Additional variations of these answers to handle similar questions
-3. Important technical points and examples mentioned that could be reused
-4. Strong closing statements and follow-up responses
+            {"role": "user", "content": f"""Analyze this interview conversation and provide:
+• Key points discussed in the interview (in bullet point format)
+• Suggested questions for the interviewee to ask the interviewer (in bullet point format)
+• A brief thank you note
 
-Make all responses natural and ready for immediate use in future interviews:\n{text}"""}
+Keep the response informative and ready for immediate use:\n{text}"""}
         ]
     else:
         messages = [
             {"role": "system", "content": system_prompt},
-            {"role": "user", "content": f"Provide a professional interview answer for this question/topic:\n{text}"}
+            {"role": "user", "content": f"Provide a professional interview answer for this question/topic, using bullet points or key points:\n{text}"}
         ]
 
     response = requests.post(
