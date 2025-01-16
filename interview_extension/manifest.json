@@ -1,0 +1,12 @@
+{
+  "manifest_version": 3,
+  "name": "Interview Assistant",
+  "version": "1.0",
+  "description": "A simple UI for interview assistance",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": [
+    "activeTab"
+  ]
+}
