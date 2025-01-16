@@ -78,53 +78,48 @@ button:disabled {
 }
 
 .content-container {
-    display: flex;
     flex: 1;
-    gap: 20px;
-    overflow: hidden;
-}
-
-.transcription-container,
-.response-container {
-    display: flex;
-    flex-direction: column;
+    overflow-y: auto;
+    padding: 20px;
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 15px;
-    padding: 20px;
-    overflow: hidden;
-    transition: box-shadow 0.3s ease;
 }
 
-.transcription-container:hover,
-.response-container:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+.paired-container {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.transcription-container {
-    flex: 1;
-}
-
-.response-container {
-    flex: 2;
-}
-
-h2 {
-    font-size: 18px;
-    margin-top: 0;
-    margin-bottom: 15px;
-    color: #2c3e50;
-    border-bottom: 2px solid #3498db;
-    padding-bottom: 10px;
-}
-
-.scrollable-content {
-    flex: 1;
-    overflow-y: auto;
-    font-size: 14px;
-    line-height: 1.6;
+.transcription-item,
+.response-item {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 10px;
     white-space: pre-wrap;
-    padding-right: 15px;
+}
+
+.transcription-item {
+    background-color: #e8f4fc;
+    border: 1px solid #bde0fe;
+    align-self: flex-start;
+    max-width: 80%;
+}
+
+.response-item {
+    background-color: #e8fcf0;
+    border: 1px solid #b3e6c5;
+    align-self: flex-end;
+    max-width: 80%;
+}
+
+.paired-container:last-child {
+    margin-bottom: 0;
 }
 
 .scrollable-content::-webkit-scrollbar {
@@ -143,20 +138,6 @@ h2 {
 
 .scrollable-content::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
-
-.response-box {
-    background-color: #e8f4fc;
-    border: 1px solid #bde0fe;
-    border-radius: 15px;
-    padding: 15px;
-    height: 100%;
-    overflow-y: auto;
-    transition: background-color 0.3s ease;
-}
-
-.response-box:hover {
-    background-color: #d1e8f8;
 }
 
 footer {

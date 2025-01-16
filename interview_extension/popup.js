@@ -9,15 +9,15 @@ document.addEventListener('DOMContentLoaded', function() {
     startBtn.addEventListener('click', function() {
         startBtn.disabled = true;
         stopBtn.disabled = false;
-        transcriptionText.textContent = 'Interview session started. Listening...';
-        responseText.textContent = 'Waiting for the first question...';
+        updateTranscription('Interview session started. Listening...');
+        updateResponse('Waiting for the first question...');
         startInterviewSession();
     });
 
     stopBtn.addEventListener('click', function() {
         startBtn.disabled = false;
         stopBtn.disabled = true;
-        transcriptionText.textContent += '\n\nInterview session stopped.';
+        updateTranscription('Interview session stopped.');
         stopInterviewSession();
     });
 });
@@ -60,14 +60,28 @@ function stopInterviewSession() {
     }
 }
 
+function createPairedContainer() {
+    const contentContainer = document.querySelector('.content-container');
+    const pairedContainer = document.createElement('div');
+    pairedContainer.className = 'paired-container';
+    contentContainer.appendChild(pairedContainer);
+    return pairedContainer;
+}
+
 function updateTranscription(message) {
-    const transcriptionText = document.getElementById('transcriptionText');
-    transcriptionText.textContent += (transcriptionText.textContent ? '\n\n' : '') + message;
-    transcriptionText.scrollTop = transcriptionText.scrollHeight;
+    const pairedContainer = createPairedContainer();
+    const newTranscription = document.createElement('div');
+    newTranscription.className = 'transcription-item';
+    newTranscription.textContent = message;
+    pairedContainer.appendChild(newTranscription);
+    pairedContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
 }
 
 function updateResponse(message) {
-    const responseText = document.getElementById('responseText');
-    responseText.textContent = message;
-    responseText.scrollTop = responseText.scrollHeight;
+    const pairedContainer = document.querySelector('.paired-container:last-child');
+    const newResponse = document.createElement('div');
+    newResponse.className = 'response-item';
+    newResponse.textContent = message;
+    pairedContainer.appendChild(newResponse);
+    pairedContainer.scrollIntoView({ behavior: 'smooth', block: 'end' });
 }
