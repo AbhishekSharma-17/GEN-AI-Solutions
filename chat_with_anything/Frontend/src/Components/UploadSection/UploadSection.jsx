@@ -6,7 +6,6 @@ import "./UploadSection.css";
 import { toast } from "react-toastify";
 import { Context } from "../../Context/Context";
 
-
 const UploadSection = ({
   file,
   setFile,
@@ -38,7 +37,6 @@ const UploadSection = ({
     setEmbededToken,
     embededCost,
     setEmbededCost,
-    modelName,
   } = useContext(Context);
 
   const handleFileChange = (event) => {
@@ -183,7 +181,7 @@ const UploadSection = ({
       <input
         type="file"
         onChange={handleFileChange}
-        accept=".ppt, .pptx"
+        accept=".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg, .gif, .html, .csv, .xml, .rtf, .txt, .md, .zip, .ppt, .pptx"
         ref={fileInputRef}
         hidden
       />
@@ -204,7 +202,7 @@ const UploadSection = ({
               className="file-upload-icon-style"
             />
             <p className="file-icon-upload-text">
-              Drag and drop your .PPT, .PPTX here - or click to select.
+              Drag and drop your File's here - or click to select.
             </p>
           </>
         ) : !embedReady ? (

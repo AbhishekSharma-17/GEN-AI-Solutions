@@ -19,6 +19,33 @@
   padding: 5px 10px;
   height: 5% !important;
 }
+.main .nav .back-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 2px;
+  border-radius: 5px;
+  border: 1px solid rgb(172, 172, 172);
+  gap: 5px;
+  cursor: pointer;
+  color: rgb(83, 82, 82);
+  width: 60px;
+}
+
+/* hover effect on back button */
+.main .nav .back-div:hover .back-icon {
+  transform: translateX(-10px); /* Moves the element 10px to the right */
+  transition: transform 0.3s ease; /* Smooth animation for the transform */
+}
+.main .nav .back-div:hover {
+  background-color: rgb(245, 245, 245);
+}
+
+.main .nav .back-button {
+  padding-right: 5px;
+  font-size: 15px;
+}
 .main .nav a img {
   width: 150px;
   border-radius: 0;

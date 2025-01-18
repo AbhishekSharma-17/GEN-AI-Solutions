@@ -11,6 +11,7 @@ import ResponseLoader from "../Response Loader/ResponseLoader";
 import "./Main.css";
 import { Context } from "../../Context/Context";
 import { assets } from "../../assets/assets";
+import { TiArrowLeft } from "react-icons/ti";
 
 const Main = () => {
   const {
@@ -35,6 +36,8 @@ const Main = () => {
     setEmbededToken,
     setEmbededCost,
     setModelName,
+    isCardClicked,
+    setIsCardClicked,
   } = useContext(Context);
 
   const [file, setFile] = useState(null);
@@ -167,10 +170,12 @@ const Main = () => {
     <div className="main">
       {/* Navigation Bar */}
       <div className="nav">
+        <div className="back-div" onClick={() => setIsCardClicked(!isCardClicked)}>
+          <TiArrowLeft style={{fontSize:"20px"}} className="back-icon"/>
+        </div>
         <a href="https://www.genaiprotos.com/">
           <img src={assets.genAILogo} alt="" />
         </a>
-        <img src={assets.icon} alt="" />
       </div>
 
       {/* Main Container */}
@@ -225,7 +230,6 @@ const Main = () => {
                           <ResponseLoader />
                         ) : (
                           <div className="markdown-content">
-                            {/* {console.log("Markdown content:", chat.text)} */}
                             <ReactMarkdown
                               className="actual-markdown-content"
                               remarkPlugins={[remarkGfm]}
@@ -288,16 +292,16 @@ const Main = () => {
         )}
       </div>
 
-      {isEmbedComplete ? 
-      <div className="bottom-section-div">
-        <BottomSection
-          chatHistory={chatHistory}
-          setChatHistory={setChatHistory}
-          selectedModel={selectedModel}
-          setSelectedModel={setSelectedModel}
-        />
-      </div>
-        :null}
+      {isEmbedComplete ? (
+        <div className="bottom-section-div">
+          <BottomSection
+            chatHistory={chatHistory}
+            setChatHistory={setChatHistory}
+            selectedModel={selectedModel}
+            setSelectedModel={setSelectedModel}
+          />
+        </div>
+      ) : null}
     </div>
   );
 };

@@ -9,6 +9,8 @@ const HomePage = () => {
 
   // Function to hit the endpoint
   const resetGlobalState = async () => {
+    console.log('resetting global state');
+    
     try {
       const response = await fetch("http://localhost:8000/global_reset", {
         method: "POST", 

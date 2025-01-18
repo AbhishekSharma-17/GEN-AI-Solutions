@@ -14,13 +14,16 @@ const HomePageContainer = () => {
     setResponseProvider,
     setInitialisationStatus,
     apiProvider,
+    isLLMConfigured, setIsLLMConfigured,
   } = useContext(Context);
 
   const [isLoading, setIsLoading] = useState(false);
 
   // Create refs for input fields
   const providerKeyRef = useRef(null);
-  const unstructuredKeyRef = useRef(null);
+
+  // unstructure key
+  // const unstructuredKeyRef = useRef(null);
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -30,21 +33,25 @@ const HomePageContainer = () => {
     // Get values from refs
     const Form_provider = apiProvider; // Taken directly from context
     const Form_providerKey = providerKeyRef.current.value;
-    const Form_unstructuredKey = unstructuredKeyRef.current.value;
 
-    // console.log("Form Provider:", Form_provider);
-    // console.log("Form Provider Key:", Form_providerKey);
+    // const Form_unstructuredKey = unstructuredKeyRef.current.value;
+
+    console.log("Form Provider:", Form_provider);
+    console.log("Form Provider Key:", Form_providerKey);
+
     // console.log("Form Unstructured Key:", Form_unstructuredKey);
 
     // Set values in context
     setProviderKey(Form_providerKey);
-    setUnstructuredKey(Form_unstructuredKey);
+
+    // unstructured key 
+    // setUnstructuredKey(Form_unstructuredKey);
 
     // Prepare data to send to the endpoint
     const data = {
       provider: Form_provider,
       api_key: Form_providerKey,
-      unstructured_api_key: Form_unstructuredKey,
+      // unstructured_api_key: Form_unstructuredKey,
     };
 
     try {
@@ -73,7 +80,9 @@ const HomePageContainer = () => {
 
       // Reset form fields
       providerKeyRef.current.value = "";
-      unstructuredKeyRef.current.value = "";
+      // unstructuredKeyRef.current.value = "";
+      setIsLLMConfigured(true)
+
     } catch (error) {
       console.error("Error sending data:", error);
       toast.error("Failed to save configuration. Please try again.");
@@ -162,7 +171,9 @@ const HomePageContainer = () => {
                   ref={providerKeyRef}
                 />
               </div>
-              <div className="mb-4">
+
+              {/* unstructured key  */}
+              {/* <div className="mb-4">
                 <label
                   htmlFor="exampleFormControlTextarea1"
                   className="form-label"
@@ -175,7 +186,8 @@ const HomePageContainer = () => {
                   placeholder="Unstructured Key"
                   ref={unstructuredKeyRef}
                 />
-              </div>
+              </div> */}
+
               <div className="mb-4">
                 <button
                   type="submit"

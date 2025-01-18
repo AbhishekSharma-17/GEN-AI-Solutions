@@ -4,6 +4,15 @@ import { v4 as uuidv4 } from "uuid";
 export const Context = createContext();
 
 const ContextProvider = (props) => {
+  // agr LLM Configured Hojaye to
+  const [isLLMConfigured, setIsLLMConfigured] = useState(false);
+
+  // agr card click hojaye to
+  const [isCardClicked, setIsCardClicked] = useState(false);
+
+  // setting description for displaying at upload section
+  const [uploadSectionTitle, setUploadSectionTitle] = useState("");
+
   const [input, setInput] = useState(""); // to save input data
   const [recentPrompt, setRecentPrompt] = useState(""); // to save recent
   const [previousPrompt, setPreviousPrompt] = useState([]); // to save previous
@@ -53,8 +62,8 @@ const ContextProvider = (props) => {
   const [embededToken, setEmbededToken] = useState("");
   const [embededCost, setEmbededCost] = useState("");
 
-  // response cost 
-  const [totalResponseCost, setTotalResponseCost] = useState('');
+  // response cost
+  const [totalResponseCost, setTotalResponseCost] = useState("");
 
   // Generate unique user ID on component mount
   useEffect(() => {
@@ -69,6 +78,11 @@ const ContextProvider = (props) => {
   }, []);
 
   const contextValue = {
+    uploadSectionTitle, setUploadSectionTitle,
+    isCardClicked,
+    setIsCardClicked,
+    isLLMConfigured,
+    setIsLLMConfigured,
     initialisationStatus,
     setInitialisationStatus,
     responseProvider,
@@ -124,7 +138,8 @@ const ContextProvider = (props) => {
     setEmbededToken,
     embededCost,
     setEmbededCost,
-    totalResponseCost, setTotalResponseCost,
+    totalResponseCost,
+    setTotalResponseCost,
   };
 
   return (
