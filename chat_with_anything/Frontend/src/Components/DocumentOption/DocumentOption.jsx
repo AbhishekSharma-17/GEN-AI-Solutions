@@ -17,7 +17,7 @@ const DocumentOption = () => {
     },
     {
       img: assets.csv,
-      title: "Chat with XLS",
+      title: "Chat with CSV",
       description: "Analyze data from spreadsheets effortlessly.",
     },
     {
@@ -49,6 +49,11 @@ const DocumentOption = () => {
       img: assets.zip,
       title: "Chat with ZIP",
       description: "Process and analyze ZIP file contents.",
+    },
+    {
+      img: assets.zip,
+      title: "Chat with XLS",
+      description: "Process and analyze XLS file contents.",
     },
   ];
 
