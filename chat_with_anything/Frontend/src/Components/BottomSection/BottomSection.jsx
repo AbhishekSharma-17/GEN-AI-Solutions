@@ -1,8 +1,9 @@
 import React, { useContext, useState, useEffect } from "react";
-import assets from "../../assets/assets";
-import { Context } from "../../context/Context";
+
 import "./BottomSection.css";
 import CustomDropdown from "./CustomDropdown";
+import { Context } from "../../Context/Context";
+import { assets } from "../../assets/assets";
 
 const BottomSection = ({
   chatHistory,

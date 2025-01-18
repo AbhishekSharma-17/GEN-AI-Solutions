@@ -4,7 +4,8 @@ import Loader from "../Loader/Loader";
 import { MdOutlineFileUpload } from "react-icons/md";
 import "./UploadSection.css";
 import { toast } from "react-toastify";
-import { Context } from "../../context/Context";
+import { Context } from "../../Context/Context";
+
 
 const UploadSection = ({
   file,

@@ -1,6 +1,7 @@
 import React from "react";
-import assets from "../../assets/assets";
+
 import './QueryCard.css'
+import { assets } from "../../assets/assets";
 
 const QueryCard = ({ queries, handleQueryClick }) => {
   const icon1 = assets.message_icon;

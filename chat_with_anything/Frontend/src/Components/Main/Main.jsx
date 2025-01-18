@@ -1,8 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import assets from "../../assets/assets";
-import { Context } from "../../context/Context";
+
 import UploadSection from "../UploadSection/UploadSection";
 import Greeting from "../Greeting/Greeting";
 import QueryCard from "../QueryCard/QueryCard";
@@ -10,6 +9,8 @@ import BottomSection from "../BottomSection/BottomSection";
 import { FaUserCircle } from "react-icons/fa";
 import ResponseLoader from "../Response Loader/ResponseLoader";
 import "./Main.css";
+import { Context } from "../../Context/Context";
+import { assets } from "../../assets/assets";
 
 const Main = () => {
   const {
