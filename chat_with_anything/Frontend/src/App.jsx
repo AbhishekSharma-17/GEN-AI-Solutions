@@ -2,13 +2,13 @@ import React from "react";
 import "./App.css";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import Title from "./Components/Title/Title";
-import DocumentOption from "./Components/DocumentOption/DocumentOption";
+import ChatDocuments from "./Pages/Chat With Any/ChatDocuments";
+import HomePage from "./Pages/HomePage/HomePage";
 
 const App = () => {
-  return <div className="main-app container">
-    <Title></Title>
-    <DocumentOption></DocumentOption>
+  return <div className="main-app">
+   {/* <ChatDocuments/> */}
+   <HomePage></HomePage>
   </div>;
 };
 
