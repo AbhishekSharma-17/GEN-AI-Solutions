@@ -10,11 +10,11 @@ const HomePageContainer = () => {
   const {
     setAPIProvider,
     setProviderKey,
-    setUnstructuredKey,
+    // setUnstructuredKey,
     setResponseProvider,
     setInitialisationStatus,
     apiProvider,
-    isLLMConfigured, setIsLLMConfigured,
+     setIsLLMConfigured,
   } = useContext(Context);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -36,8 +36,8 @@ const HomePageContainer = () => {
 
     // const Form_unstructuredKey = unstructuredKeyRef.current.value;
 
-    console.log("Form Provider:", Form_provider);
-    console.log("Form Provider Key:", Form_providerKey);
+    // console.log("Form Provider:", Form_provider);
+    // console.log("Form Provider Key:", Form_providerKey);
 
     // console.log("Form Unstructured Key:", Form_unstructuredKey);
 

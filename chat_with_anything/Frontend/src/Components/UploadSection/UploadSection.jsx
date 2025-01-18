@@ -33,11 +33,12 @@ const UploadSection = ({
     setCumulativeTokens,
     setCumulativeCost,
     setResponseTime,
-    embededToken,
     setEmbededToken,
-    embededCost,
     setEmbededCost,
+    documentSelectedIcon,
+    extentionType,
   } = useContext(Context);
+// console.log('extention type : ',extentionType);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
@@ -181,16 +182,17 @@ const UploadSection = ({
       <input
         type="file"
         onChange={handleFileChange}
-        accept=".pdf, .doc, .docx, .xls, .xlsx, .png, .jpg, .jpeg, .gif, .html, .csv, .xml, .rtf, .txt, .md, .zip, .ppt, .pptx"
+        accept={extentionType}
         ref={fileInputRef}
         hidden
       />
       <div className="upload-section">
         {file && (
-          <p className="file-name">
-            <FaFilePowerpoint className="ppt_file_icon" />
-            {file.name}
-          </p>
+          <div className="file-name d-flex justify-content-center align-items-center gap-2">
+            {/* <FaFilePowerpoint className="ppt_file_icon" /> */}
+            <img src={documentSelectedIcon} alt="" srcset="" className="ppt_file_icon" width={"50px"} />
+            <p className="fw-bold">{file.name}</p>
+          </div>
         )}
         {uploading || embedding ? (
           <Loader />

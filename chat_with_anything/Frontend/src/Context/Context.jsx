@@ -13,6 +13,12 @@ const ContextProvider = (props) => {
   // setting description for displaying at upload section
   const [uploadSectionTitle, setUploadSectionTitle] = useState("");
 
+  // setting icon as per document selection
+  const [documentSelectedIcon, setDocumentSelectedIcon] = useState("");
+
+  // extension type of file
+  const [extentionType, setExtentionType] = useState("");
+
   const [input, setInput] = useState(""); // to save input data
   const [recentPrompt, setRecentPrompt] = useState(""); // to save recent
   const [previousPrompt, setPreviousPrompt] = useState([]); // to save previous
@@ -78,7 +84,11 @@ const ContextProvider = (props) => {
   }, []);
 
   const contextValue = {
-    uploadSectionTitle, setUploadSectionTitle,
+    extentionType, setExtentionType,
+    documentSelectedIcon,
+    setDocumentSelectedIcon,
+    uploadSectionTitle,
+    setUploadSectionTitle,
     isCardClicked,
     setIsCardClicked,
     isLLMConfigured,

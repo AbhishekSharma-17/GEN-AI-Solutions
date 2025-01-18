@@ -51,7 +51,7 @@ const DocumentOption = () => {
       description: "Process and analyze ZIP file contents.",
     },
     {
-      img: assets.zip,
+      img: assets.xls,
       title: "Chat with XLS",
       description: "Process and analyze XLS file contents.",
     },
