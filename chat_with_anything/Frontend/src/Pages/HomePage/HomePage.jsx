@@ -9,7 +9,7 @@ const HomePage = () => {
 
   // Function to hit the endpoint
   const resetGlobalState = async () => {
-    console.log('resetting global state');
+    // console.log('resetting global state');
     
     try {
       const response = await fetch("http://localhost:8000/global_reset", {
@@ -21,7 +21,7 @@ const HomePage = () => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log("Response from server for variable reset:", data.resetVar);
+        // console.log("Response from server for variable reset:", data.resetVar);
 
       } else {
         console.error("Failed to reset state:", response.status);

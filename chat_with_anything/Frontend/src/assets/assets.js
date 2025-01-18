@@ -9,6 +9,7 @@ import word from "./word.png";
 import xml from "./xml.png";
 import zip from "./zip.png";
 import ppt from "./ppt.png";
+import xls from "./xls.png";
 // importing copied from chat with ppt
 import history_icon from "./history_icon.png";
 import menu_icon from "./menu_icon.png";
@@ -38,6 +39,7 @@ export const assets = {
   rtf,
   word,
   xml,
+  xls,
   zip,
   // importing from chat with ppt
   chatWithPPT,
