@@ -6,6 +6,7 @@ import logoImage from './assets/logo.png';
 import FileStatistics from './components/FileStatistics';
 import FileTypes from './components/FileTypes';
 import FileHistory from './components/FileHistory';
+import ResultDisplay from './components/ResultDisplay';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -16,13 +17,13 @@ function App() {
   const fileStats = { totalFiles: 24, processed: 18, pending: 6 };
   const fileTypes = [
     { name: 'PDF', percentage: 45 },
-    { name: 'DOC', percentage: 30 },
+    { name: 'DOC', percentage: 20 },
     { name: 'XLS', percentage: 25 },
   ];
   const fileHistory = [
     { name: 'document1.pdf', status: 'success' },
     { name: 'spreadsheet.xlsx', status: 'success' },
-    { name: 'presentation.pptx', status: 'error' },
+    { name: 'presentation.pptx', status: 'sucess' },
   ];
 
   const handleFileChange = (event) => {
@@ -118,26 +119,7 @@ function App() {
               </form>
             </div>
 
-            <div>
-              <h2 className="text-lg font-semibold mb-4">Extracted Content</h2>
-              <div className="mb-4">
-                <button
-                  className={`px-4 py-2 rounded-l-md ${activeTab === 'text' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                  onClick={() => setActiveTab('text')}
-                >
-                  Text
-                </button>
-                <button
-                  className={`px-4 py-2 rounded-r-md ${activeTab === 'markdown' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                  onClick={() => setActiveTab('markdown')}
-                >
-                  Markdown
-                </button>
-              </div>
-              <pre className="bg-gray-100 p-4 rounded-md overflow-auto max-h-64 text-sm">
-                {extractedData || 'No content extracted yet. Upload a file to begin extraction process.'}
-              </pre>
-            </div>
+            <ResultDisplay result={extractedData} />
           </div>
         </div>
       </main>
