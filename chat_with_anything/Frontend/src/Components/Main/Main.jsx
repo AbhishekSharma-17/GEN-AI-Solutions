@@ -166,12 +166,46 @@ const Main = () => {
     }
   }, [chatHistory]);
 
+  // funtion to handle back button click
+  const handleBackButtonClick = async () => {
+    setIsCardClicked(!isCardClicked);
+    setPreviousPrompt([]);
+    // setting cost and token , resting to intial value or 0.
+    setInputToken("");
+    setOutputToken("");
+    setTotalToken("");
+    setInputCost("");
+    setOutputCost("");
+    setTotalCost("");
+    setCumulativeTokens("");
+    setCumulativeCost("");
+    setResponseTime("");
+    setEmbededToken("");
+    setEmbededCost("");
+    try {
+      const response = await fetch("http://localhost:8000/global_reset", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // console.log("Response from server for variable reset:", data.resetVar);
+      } else {
+        console.error("Failed to reset state:", response.status);
+      }
+    } catch (error) {
+      console.error("Error occurred while resetting state:", error);
+    }
+  };
   return (
     <div className="main">
       {/* Navigation Bar */}
       <div className="nav">
-        <div className="back-div" onClick={() => setIsCardClicked(!isCardClicked)}>
-          <TiArrowLeft style={{fontSize:"20px"}} className="back-icon"/>
+        <div className="back-div" onClick={handleBackButtonClick}>
+          <TiArrowLeft style={{ fontSize: "20px" }} className="back-icon" />
         </div>
         <a href="https://www.genaiprotos.com/">
           <img src={assets.genAILogo} alt="" />
