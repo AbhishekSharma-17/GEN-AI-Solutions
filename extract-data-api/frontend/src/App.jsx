@@ -3,11 +3,27 @@ import './App.css';
 import { FaHistory, FaCog, FaQuestionCircle } from 'react-icons/fa';
 import { pdfIcon, wordIcon, excelIcon, pptIcon, htmlIcon, xmlIcon, zipIcon } from './assets/assets';
 import logoImage from './assets/logo.png';
+import FileStatistics from './components/FileStatistics';
+import FileTypes from './components/FileTypes';
+import FileHistory from './components/FileHistory';
 
 function App() {
   const [file, setFile] = useState(null);
   const [extractedData, setExtractedData] = useState('');
   const [activeTab, setActiveTab] = useState('text');
+
+  // Mock data for components
+  const fileStats = { totalFiles: 24, processed: 18, pending: 6 };
+  const fileTypes = [
+    { name: 'PDF', percentage: 45 },
+    { name: 'DOC', percentage: 30 },
+    { name: 'XLS', percentage: 25 },
+  ];
+  const fileHistory = [
+    { name: 'document1.pdf', status: 'success' },
+    { name: 'spreadsheet.xlsx', status: 'success' },
+    { name: 'presentation.pptx', status: 'error' },
+  ];
 
   const handleFileChange = (event) => {
     setFile(event.target.files[0]);
@@ -62,30 +78,14 @@ function App() {
 
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
         <div className="flex space-x-8">
-          <div className="w-1/3 bg-white shadow rounded-lg p-6">
-            <h2 className="text-lg font-semibold mb-4">Data Information</h2>
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-medium">File Statistics</h3>
-                <p>Total Files: 24</p>
-                <p>Processed: 18</p>
-                <p>Pending: 6</p>
-              </div>
-              <div>
-                <h3 className="font-medium">File Types</h3>
-                <div className="flex items-center space-x-2">
-                  <img src={pdfIcon} alt="PDF" className="h-5 w-5" />
-                  <span>PDF (45%)</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <img src={wordIcon} alt="DOC" className="h-5 w-5" />
-                  <span>DOC (30%)</span>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <img src={excelIcon} alt="XLS" className="h-5 w-5" />
-                  <span>XLS (25%)</span>
-                </div>
-              </div>
+          <div className="w-1/3 space-y-6">
+            <div className="bg-white shadow rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4">Data Information</h2>
+              <FileStatistics {...fileStats} />
+              <FileTypes types={fileTypes} />
+            </div>
+            <div className="bg-white shadow rounded-lg p-6">
+              <FileHistory files={fileHistory} />
             </div>
           </div>
 
