@@ -27,8 +27,8 @@ const DocumentCard = ({ icon, title, description }) => {
       setExtentionType(".doc, .docx");
     } else if (title === "Chat with Image") {
       setExtentionType(".png, .jpg, .jpeg, .bmp, .gif, .tiff, .webp");
-    } else if (title === "Chat with RTF") {
-      setExtentionType(".rtf");
+    } else if (title === "Chat with XML") {
+      setExtentionType(".xml");
     } else if (title === "Chat with Markdown") {
       setExtentionType(".md");
     } else if (title === "Chat with HTML") {
