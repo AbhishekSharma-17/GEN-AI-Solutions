@@ -31,9 +31,9 @@ const DocumentOption = () => {
       description: "Extract insights from image files seamlessly.",
     },
     {
-      img: assets.rtf,
-      title: "Chat with RTF",
-      description: "Analyze and summarize RTF documents.",
+      img: assets.xml,
+      title: "Chat with XML",
+      description: "Analyze and summarize XML documents.",
     },
     {
       img: assets.markdown,
