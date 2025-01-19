@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { FaClipboard, FaDownload } from 'react-icons/fa';
 
 const ResultDisplay = ({ result, isLoading }) => {
   const [copied, setCopied] = useState(false);
@@ -22,38 +23,45 @@ const ResultDisplay = ({ result, isLoading }) => {
   };
 
   return (
-    <div className="result-display bg-white shadow-md rounded-lg p-6 mt-8">
+    <div className="result-display bg-white shadow-lg rounded-lg p-6 mt-8">
       <h3 className="text-2xl font-bold mb-4 text-gray-800">Extracted Content</h3>
-      <div className="result-container bg-gray-100 p-4 rounded-md mb-4 max-h-96 overflow-y-auto">
-        {isLoading ? (
-          <div className="flex justify-center items-center h-full">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+      <div className="result-container bg-gray-50 border border-gray-200 rounded-md mb-4 overflow-hidden">
+        <div className="bg-gray-100 px-4 py-2 border-b border-gray-200 flex justify-between items-center">
+          <span className="text-sm font-medium text-gray-600">Content</span>
+          <div className="flex space-x-2">
+            <button
+              onClick={handleCopy}
+              disabled={!result || isLoading}
+              className={`p-1 rounded transition-colors ${
+                copied ? 'text-green-500' : 'text-gray-400 hover:text-gray-600'
+              } ${(!result || isLoading) && 'opacity-50 cursor-not-allowed'}`}
+              title="Copy to Clipboard"
+            >
+              <FaClipboard />
+            </button>
+            <button
+              onClick={handleDownload}
+              disabled={!result || isLoading}
+              className={`p-1 rounded text-gray-400 hover:text-gray-600 transition-colors ${
+                (!result || isLoading) && 'opacity-50 cursor-not-allowed'
+              }`}
+              title="Download as .md"
+            >
+              <FaDownload />
+            </button>
           </div>
-        ) : result ? (
-          <pre className="whitespace-pre-wrap break-words text-sm text-gray-700">{result}</pre>
-        ) : (
-          <p className="text-gray-500 text-center">No content extracted yet. Upload a file to begin extraction process.</p>
-        )}
-      </div>
-      <div className="flex justify-end space-x-4">
-        <button
-          onClick={handleCopy}
-          disabled={!result || isLoading}
-          className={`px-4 py-2 rounded-md text-white font-semibold transition-colors ${
-            copied ? 'bg-green-500' : 'bg-blue-500 hover:bg-blue-600'
-          } ${(!result || isLoading) && 'opacity-50 cursor-not-allowed'}`}
-        >
-          {copied ? 'Copied!' : 'Copy to Clipboard'}
-        </button>
-        <button
-          onClick={handleDownload}
-          disabled={!result || isLoading}
-          className={`px-4 py-2 bg-purple-500 hover:bg-purple-600 text-white font-semibold rounded-md transition-colors ${
-            (!result || isLoading) && 'opacity-50 cursor-not-allowed'
-          }`}
-        >
-          Download as .md
-        </button>
+        </div>
+        <div className="p-4 max-h-96 overflow-y-auto scrollbar-hide">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-64">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
+            </div>
+          ) : result ? (
+            <pre className="whitespace-pre-wrap break-words text-sm text-gray-700">{result}</pre>
+          ) : (
+            <p className="text-gray-500 text-center py-12">No content extracted yet. Upload a file to begin extraction process.</p>
+          )}
+        </div>
       </div>
     </div>
   );
