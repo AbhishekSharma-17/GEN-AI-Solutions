@@ -3,7 +3,7 @@ import "./Loader.css";
 import { assets } from "../../assets/assets";
 
 const Loader = () => {
-  const loadingText = "Loading...";
+  const loadingText = "Uploading...";
 
   return (
     // <div className="loader" />
