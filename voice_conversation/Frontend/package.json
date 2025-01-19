@@ -11,10 +11,16 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "frontend": "file:",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-icons": "^5.4.0",
+<<<<<<<< HEAD:voice_conversation/Frontend/package.json
     "react-router-dom": "^7.1.1"
+========
+    "react-router-dom": "^7.0.2",
+    "react-toastify": "^11.0.2"
+>>>>>>>> 145ec631481f2cdba10dd6c2c3bfbd7483d69c6a:chat_with_sql/Frontend/package.json
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

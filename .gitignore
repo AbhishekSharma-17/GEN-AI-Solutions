@@ -9,6 +9,8 @@
 *.faiss
 test.py
 *.txt
+sample.json
+
 
 
 # Frontend Records 
@@ -39,3 +41,8 @@ dist-ssr
 
 # Credentials
 credentials.json
+<<<<<<< HEAD
+=======
+
+.codegpt
+>>>>>>> 145ec631481f2cdba10dd6c2c3bfbd7483d69c6a
