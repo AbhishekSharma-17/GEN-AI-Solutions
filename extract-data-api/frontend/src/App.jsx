@@ -126,7 +126,7 @@ function App() {
             </div>
 
             <FileDisplay file={file} />
-            <ResultDisplay result={extractedData} isLoading={isLoading} />
+            <ResultDisplay result={extractedData} isLoading={isLoading} fileName={file ? file.name : null} />
           </div>
         </div>
       </main>

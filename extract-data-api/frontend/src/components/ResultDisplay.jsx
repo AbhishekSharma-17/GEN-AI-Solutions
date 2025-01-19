@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { FaClipboard, FaDownload } from 'react-icons/fa';
 
-const ResultDisplay = ({ result, isLoading }) => {
+const ResultDisplay = ({ result, isLoading, fileName }) => {
   const [copied, setCopied] = useState(false);
 
   const handleCopy = () => {
@@ -15,7 +15,12 @@ const ResultDisplay = ({ result, isLoading }) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'extracted_content.md';
+    let downloadName = 'extracted_content.md';
+    if (fileName) {
+      const nameWithoutExtension = fileName.split('.').slice(0, -1).join('.');
+      downloadName = `${nameWithoutExtension}.md`;
+    }
+    a.download = downloadName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
