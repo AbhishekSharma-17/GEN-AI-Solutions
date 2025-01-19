@@ -242,7 +242,7 @@ const HomePageContainer = () => {
             </div>
           </div>
           <div className="homepage-setup-image">
-            <img src={assets.PPT_img} alt="" />
+            <img src={assets.chat_with_Document} alt="" />
           </div>
         </div>
       </div>
