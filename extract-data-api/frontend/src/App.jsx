@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import './App.css';
+import { FaHistory, FaCog, FaQuestionCircle } from 'react-icons/fa';
+import { pdfIcon, wordIcon, excelIcon, pptIcon, htmlIcon, xmlIcon, zipIcon } from './assets/assets';
+import logoImage from './assets/logo.png';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -39,11 +42,20 @@ function App() {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-white shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8 flex justify-between items-center">
-          <h1 className="text-3xl font-bold text-gray-900">LOGO</h1>
+          <img src={logoImage} alt="Logo" className="h-8 w-auto" />
           <div className="flex space-x-4">
-            <button className="text-gray-600 hover:text-gray-900">History</button>
-            <button className="text-gray-600 hover:text-gray-900">Settings</button>
-            <button className="text-gray-600 hover:text-gray-900">Help</button>
+            <button className="text-gray-600 hover:text-gray-900 flex items-center">
+              <FaHistory className="h-5 w-5 mr-1" />
+              History
+            </button>
+            <button className="text-gray-600 hover:text-gray-900 flex items-center">
+              <FaCog className="h-5 w-5 mr-1" />
+              Settings
+            </button>
+            <button className="text-gray-600 hover:text-gray-900 flex items-center">
+              <FaQuestionCircle className="h-5 w-5 mr-1" />
+              Help
+            </button>
           </div>
         </div>
       </header>
@@ -61,9 +73,18 @@ function App() {
               </div>
               <div>
                 <h3 className="font-medium">File Types</h3>
-                <p>PDF (45%)</p>
-                <p>DOC (30%)</p>
-                <p>TXT (25%)</p>
+                <div className="flex items-center space-x-2">
+                  <img src={pdfIcon} alt="PDF" className="h-5 w-5" />
+                  <span>PDF (45%)</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <img src={wordIcon} alt="DOC" className="h-5 w-5" />
+                  <span>DOC (30%)</span>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <img src={excelIcon} alt="XLS" className="h-5 w-5" />
+                  <span>XLS (25%)</span>
+                </div>
               </div>
             </div>
           </div>
@@ -75,9 +96,15 @@ function App() {
                 <div className="flex items-center justify-center w-full">
                   <label className="flex flex-col w-full h-32 border-4 border-dashed hover:bg-gray-100 hover:border-gray-300 rounded-lg">
                     <div className="flex flex-col items-center justify-center pt-7">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-12 h-12 text-gray-400 group-hover:text-gray-600" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z" clipRule="evenodd" />
-                      </svg>
+                      <div className="flex space-x-2">
+                        <img src={pdfIcon} alt="PDF" className="h-8 w-8" />
+                        <img src={wordIcon} alt="DOC" className="h-8 w-8" />
+                        <img src={excelIcon} alt="XLS" className="h-8 w-8" />
+                        <img src={pptIcon} alt="PPT" className="h-8 w-8" />
+                        <img src={htmlIcon} alt="HTML" className="h-8 w-8" />
+                        <img src={xmlIcon} alt="XML" className="h-8 w-8" />
+                        <img src={zipIcon} alt="ZIP" className="h-8 w-8" />
+                      </div>
                       <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
                         {file ? file.name : 'Drag and drop or click to select files'}
                       </p>
