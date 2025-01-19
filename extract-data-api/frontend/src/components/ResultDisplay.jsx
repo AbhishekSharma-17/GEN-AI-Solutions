@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { FaClipboard, FaDownload } from 'react-icons/fa';
+import { FaClipboard, FaDownload, FaCode, FaMarkdown } from 'react-icons/fa';
+import ReactMarkdown from 'react-markdown';
 
 const ResultDisplay = ({ result, isLoading, fileName }) => {
   const [copied, setCopied] = useState(false);
+  const [viewRaw, setViewRaw] = useState(false);
 
   const handleCopy = () => {
     navigator.clipboard.writeText(result);
@@ -35,6 +37,13 @@ const ResultDisplay = ({ result, isLoading, fileName }) => {
           <span className="text-sm font-medium text-gray-600">Content</span>
           <div className="flex space-x-2">
             <button
+              onClick={() => setViewRaw(!viewRaw)}
+              className="p-1 rounded text-gray-400 hover:text-gray-600 transition-colors"
+              title={viewRaw ? "View Formatted" : "View Raw"}
+            >
+              {viewRaw ? <FaMarkdown /> : <FaCode />}
+            </button>
+            <button
               onClick={handleCopy}
               disabled={!result || isLoading}
               className={`p-1 rounded transition-colors ${
@@ -62,7 +71,11 @@ const ResultDisplay = ({ result, isLoading, fileName }) => {
               <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
             </div>
           ) : result ? (
-            <pre className="whitespace-pre-wrap break-words text-sm text-gray-700">{result}</pre>
+            viewRaw ? (
+              <pre className="whitespace-pre-wrap break-words text-sm text-gray-700">{result}</pre>
+            ) : (
+              <ReactMarkdown className="prose max-w-none">{result}</ReactMarkdown>
+            )
           ) : (
             <p className="text-gray-500 text-center py-12">No content extracted yet. Upload a file to begin extraction process.</p>
           )}
