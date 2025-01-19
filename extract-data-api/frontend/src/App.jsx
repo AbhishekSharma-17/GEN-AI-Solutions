@@ -11,7 +11,7 @@ import ResultDisplay from './components/ResultDisplay';
 function App() {
   const [file, setFile] = useState(null);
   const [extractedData, setExtractedData] = useState('');
-  const [activeTab, setActiveTab] = useState('text');
+  const [isLoading, setIsLoading] = useState(false);
 
   // Mock data for components
   const fileStats = { totalFiles: 24, processed: 18, pending: 6 };
@@ -34,6 +34,9 @@ function App() {
     event.preventDefault();
     if (!file) return;
 
+    setIsLoading(true);
+    setExtractedData('');
+
     const formData = new FormData();
     formData.append('file', file);
 
@@ -52,6 +55,8 @@ function App() {
     } catch (error) {
       console.error('Error:', error);
       setExtractedData('Error occurred during extraction');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -119,7 +124,7 @@ function App() {
               </form>
             </div>
 
-            <ResultDisplay result={extractedData} />
+            <ResultDisplay result={extractedData} isLoading={isLoading} />
           </div>
         </div>
       </main>
