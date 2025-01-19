@@ -7,6 +7,7 @@ import FileStatistics from './components/FileStatistics';
 import FileTypes from './components/FileTypes';
 import FileHistory from './components/FileHistory';
 import ResultDisplay from './components/ResultDisplay';
+import FileDisplay from './components/FileDisplay';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -112,7 +113,7 @@ function App() {
                         <img src={zipIcon} alt="ZIP" className="h-8 w-8" />
                       </div>
                       <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
-                        {file ? file.name : 'Drag and drop or click to select files'}
+                        Drag and drop or click to select files
                       </p>
                     </div>
                     <input type="file" onChange={handleFileChange} className="opacity-0" />
@@ -124,6 +125,7 @@ function App() {
               </form>
             </div>
 
+            <FileDisplay file={file} />
             <ResultDisplay result={extractedData} isLoading={isLoading} />
           </div>
         </div>
