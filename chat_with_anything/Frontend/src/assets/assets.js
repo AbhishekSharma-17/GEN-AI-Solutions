@@ -27,6 +27,7 @@ import gemini_icon from "./gemini_icon.png";
 import chatGPTIcon from "./chatGPTIcon.jpg";
 import chatWithPPT from "./chatWithPPT.jpg";
 import PPT_img from "./Chat_with_PPT.png";
+import chat_with_Document from './Any_Documents.png'
 
 export const assets = {
   csv,
@@ -62,4 +63,5 @@ export const assets = {
   send_icon,
   gemini_icon,
   PPT_img,
+  chat_with_Document,
 };
