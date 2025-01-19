@@ -15,12 +15,22 @@ const FileUpload = ({ onFileUpload }) => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input type="file" onChange={handleFileChange} accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.zip,.html,.txt,.xml" />
-      <button type="submit" disabled={!file}>
-        Upload and Convert
-      </button>
-    </form>
+    <div className="file-upload-container">
+      <form onSubmit={handleSubmit}>
+        <div className="file-input-wrapper">
+          <button className="btn">Choose File</button>
+          <input
+            type="file"
+            onChange={handleFileChange}
+            accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx,.zip,.html,.txt,.xml"
+          />
+        </div>
+        <p>{file ? file.name : 'No file chosen'}</p>
+        <button type="submit" disabled={!file}>
+          Upload and Convert
+        </button>
+      </form>
+    </div>
   );
 };
 
