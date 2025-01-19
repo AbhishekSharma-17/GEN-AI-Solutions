@@ -1,7 +1,6 @@
 import React, { useContext } from "react";
-import { FaFilePowerpoint } from "react-icons/fa";
-import Loader from "../Loader/Loader";
 import { MdOutlineFileUpload } from "react-icons/md";
+import Loader from "../Loader/Loader";
 import "./UploadSection.css";
 import { toast } from "react-toastify";
 import { Context } from "../../Context/Context";
@@ -11,8 +10,6 @@ const UploadSection = ({
   setFile,
   uploading,
   setUploading,
-  embedReady,
-  setEmbedReady,
   embedding,
   setEmbedding,
   filePath,
@@ -38,17 +35,16 @@ const UploadSection = ({
     documentSelectedIcon,
     extentionType,
   } = useContext(Context);
-// console.log('extention type : ',extentionType);
 
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
     setFile(selectedFile);
-    setEmbedReady(false);
     setFilePath("");
   };
 
-  const handleFileUpload = async (event) => {
+  const handleFileUploadAndEmbed = async (event) => {
     event.preventDefault();
+
     if (!file) {
       toast.error("Please select a file to upload.");
       return;
@@ -58,8 +54,9 @@ const UploadSection = ({
     formData.append("file", file);
 
     try {
+      // Start uploading process
       setUploading(true);
-      const response = await fetch(
+      const uploadResponse = await fetch(
         `http://localhost:8000/upload?user_id=${userId}`,
         {
           method: "POST",
@@ -67,112 +64,69 @@ const UploadSection = ({
         }
       );
 
-      if (!response.ok) {
+      if (!uploadResponse.ok) {
         throw new Error("File upload failed.");
       }
 
-      const data = await response.json();
-      setFilePath(data.file_path);
-      setEmbedReady(true);
+      const uploadData = await uploadResponse.json();
+      setFilePath(uploadData.file_path);
       toast.success("File uploaded successfully!");
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      toast.error("File upload failed. Please try again.");
-    } finally {
-      setUploading(false);
-    }
-  };
 
-  const handleEmbedDoc = async () => {
-    setInputToken("");
-    setOutputToken("");
-    setTotalToken("");
-    setInputCost("");
-    setOutputCost("");
-    setTotalCost("");
-    setCumulativeTokens("");
-    setCumulativeCost("");
-    setResponseTime("");
-    setEmbededToken("");
-    setEmbededCost("");
-
-    if (!filePath) {
-      toast.error("No file path found. Please upload a file first.");
-      return;
-    }
-
-    try {
+      // Start embedding process
       setEmbedding(true);
-      const response = await fetch(
+
+      const embedResponse = await fetch(
         `http://localhost:8000/embed?user_id=${userId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ file_path: filePath, user_id: userId }),
+          body: JSON.stringify({
+            file_path: uploadData.file_path,
+            user_id: userId,
+          }),
         }
       );
 
-      if (!response.ok) {
+      if (!embedResponse.ok) {
         throw new Error("Embedding document failed.");
       }
 
-      const data = await response.json();
-      setFileResponse && setFileResponse(data);
+      const embedData = await embedResponse.json();
+      setFileResponse && setFileResponse(embedData);
 
-      // Set token values as floats rounded to 2 decimal places
-      if (data.query_input_tokens) {
-        setInputToken(parseInt(data.query_input_tokens));
-      }
-      if (data.query_output_tokens) {
-        setOutputToken(parseInt(data.query_output_tokens));
-      }
-      if (data.query_total_tokens) {
-        setTotalToken(parseInt(data.query_total_tokens));
-      }
+      // Update state with embedding results
+      if (embedData.query_input_tokens)
+        setInputToken(parseInt(embedData.query_input_tokens));
+      if (embedData.query_output_tokens)
+        setOutputToken(parseInt(embedData.query_output_tokens));
+      if (embedData.query_total_tokens)
+        setTotalToken(parseInt(embedData.query_total_tokens));
+      if (embedData.query_input_cost)
+        setInputCost(parseFloat(embedData.query_input_cost).toFixed(4));
+      if (embedData.query_output_cost)
+        setOutputCost(parseFloat(embedData.query_output_cost).toFixed(4));
+      if (embedData.query_total_cost)
+        setTotalCost(parseFloat(embedData.query_total_cost).toFixed(3));
+      if (embedData.response_time)
+        setResponseTime(parseFloat(embedData.response_time).toFixed(2));
+      if (embedData.cumulative_tokens)
+        setCumulativeTokens(parseFloat(embedData.cumulative_tokens).toFixed(2));
+      if (embedData.cumulative_cost)
+        setCumulativeCost(parseFloat(embedData.cumulative_cost).toFixed(2));
+      if (embedData.embedding_tokens)
+        setEmbededToken(parseInt(embedData.embedding_tokens));
+      if (embedData.embedding_cost)
+        setEmbededCost(parseFloat(embedData.embedding_cost).toFixed(6));
 
-      // Set cost values as floats rounded to 2 decimal places
-      if (data.query_input_cost) {
-        setInputCost(parseFloat(data.query_input_cost).toFixed(4));
-      }
-      if (data.query_output_cost) {
-        setOutputCost(parseFloat(data.query_output_cost).toFixed(4));
-      }
-      if (data.query_total_cost) {
-        setTotalCost(parseFloat(data.query_total_cost).toFixed(3));
-      }
-      if (data.response_time) {
-        setResponseTime(parseFloat(data.response_time).toFixed(2));
-      }
-
-      // cumulative token and cost
-      if (data.cumulative_tokens) {
-        setCumulativeTokens(parseFloat(data.cumulative_tokens).toFixed(2));
-      }
-      if (data.cumulative_cost) {
-        setCumulativeCost(parseFloat(data.cumulative_cost).toFixed(2));
-      }
-
-      // embeding token and cost
-      if (data.embedding_tokens) {
-        setEmbededToken(parseInt(data.embedding_tokens));
-      }
-      if (data.embedding_cost) {
-        setEmbededCost(parseFloat(data.embedding_cost).toFixed(6));
-      }
-
-      // Pass the queries to the parent component
-      setQueries((prevQueries) => [
-        ...prevQueries,
-        ...data.queries, // Assuming 'queries' is the response data
-      ]);
-
-      // Mark the embedding process as complete
+      // Update queries and mark embedding as complete
+      setQueries((prevQueries) => [...prevQueries, ...embedData.queries]);
       setIsEmbedComplete(true);
       toast.success("Document embedded successfully!");
     } catch (error) {
-      console.error("Error embedding document:", error);
-      toast.error("Embedding failed. Please try again.");
+      console.error("Error:", error);
+      toast.error("An error occurred. Please try again.");
     } finally {
+      setUploading(false);
       setEmbedding(false);
     }
   };
@@ -189,32 +143,52 @@ const UploadSection = ({
       <div className="upload-section">
         {file && (
           <div className="file-name d-flex justify-content-center align-items-center gap-2">
-            {/* <FaFilePowerpoint className="ppt_file_icon" /> */}
-            <img src={documentSelectedIcon} alt="" srcset="" className="ppt_file_icon" width={"50px"} />
+            <img
+              src={documentSelectedIcon}
+              alt=""
+              className="ppt_file_icon"
+              width={"50px"}
+            />
             <p className="fw-bold">{file.name}</p>
           </div>
         )}
         {uploading || embedding ? (
           <Loader />
-        ) : !file ? (
-          <>
-            <MdOutlineFileUpload
-              onClick={() => fileInputRef.current.click()}
-              style={{ cursor: "pointer", fontSize: "5rem" }}
-              className="file-upload-icon-style"
-            />
-            <p className="file-icon-upload-text">
-              Drag and drop your File's here - or click to select.
-            </p>
-          </>
-        ) : !embedReady ? (
-          <button onClick={handleFileUpload} className="btn btn-dark">
-            Upload File
-          </button>
         ) : (
-          <button onClick={handleEmbedDoc} className="btn btn-dark">
-            Embed Doc
-          </button>
+          <>
+            {!file ? (
+              <div
+                onClick={() => fileInputRef.current.click()}
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+                className="file-upload-div"
+              >
+                <MdOutlineFileUpload
+                  style={{
+                    cursor: "pointer",
+                    fontSize: "5rem",
+                    textAlign: "center",
+                  }}
+                  className="file-upload-icon-style"
+                />
+                <p className="file-icon-upload-text">
+                  Drag and drop your File's here - or click to select.
+                </p>
+              </div>
+            ) : (
+              <button
+                onClick={handleFileUploadAndEmbed}
+                className="btn btn-dark"
+              >
+                Upload File
+              </button>
+            )}
+          </>
         )}
       </div>
     </div>

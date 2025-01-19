@@ -15,11 +15,11 @@ const DocumentOption = () => {
       title: "Chat with PPT",
       description: "Extract insights from presentations easily.",
     },
-    {
-      img: assets.csv,
-      title: "Chat with CSV",
-      description: "Analyze data from spreadsheets effortlessly.",
-    },
+    // {
+    //   img: assets.csv,
+    //   title: "Chat with CSV",
+    //   description: "Analyze data from spreadsheets effortlessly.",
+    // },
     {
       img: assets.word,
       title: "Chat with DOC",
@@ -35,11 +35,11 @@ const DocumentOption = () => {
       title: "Chat with XML",
       description: "Analyze and summarize XML documents.",
     },
-    {
-      img: assets.markdown,
-      title: "Chat with Markdown",
-      description: "Simplify and extract data from Markdown files.",
-    },
+    // {
+    //   img: assets.markdown,
+    //   title: "Chat with Markdown",
+    //   description: "Simplify and extract data from Markdown files.",
+    // },
     {
       img: assets.html,
       title: "Chat with HTML",
