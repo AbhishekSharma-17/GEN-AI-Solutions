@@ -182,6 +182,7 @@ const Main = () => {
     setResponseTime("");
     setEmbededToken("");
     setEmbededCost("");
+    setShowResult(false);
     try {
       const response = await fetch("http://localhost:8000/global_reset", {
         method: "POST",
