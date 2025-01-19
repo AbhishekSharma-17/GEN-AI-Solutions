@@ -233,7 +233,17 @@ async def embed_file(data: Dict[str, str]):
         
         # Use MarkItDown to parse the document
         from openai import OpenAI
-        client = OpenAI(api_key=api_key)
+        
+        if provider == "openai":
+            client = OpenAI(api_key=api_key)
+        elif provider == "gemini":
+            client = OpenAI(
+                api_key=api_key,
+                base_url="https://generativelanguage.googleapis.com/v1beta/openai/"
+            )
+        else:
+            raise ValueError(f"Invalid provider: {provider}")
+        
         md = MarkItDown(llm_client=client, llm_model=current_model)
         result = md.convert(file_path)
         
