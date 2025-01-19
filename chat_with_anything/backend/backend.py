@@ -10,7 +10,7 @@ from fastapi.responses import StreamingResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings, ChatGoogleGenerativeAI
 from markitdown import MarkItDown
 from langchain_openai import OpenAI
 from langchain_community.vectorstores import FAISS
@@ -232,6 +232,7 @@ async def embed_file(data: Dict[str, str]):
         start_time = time.time()
         
         # Use MarkItDown to parse the document
+        from openai import OpenAI
         client = OpenAI(api_key=api_key)
         md = MarkItDown(llm_client=client, llm_model=current_model)
         result = md.convert(file_path)
