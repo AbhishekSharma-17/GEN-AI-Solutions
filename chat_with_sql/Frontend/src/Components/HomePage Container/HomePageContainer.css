@@ -21,6 +21,17 @@
     height: auto; /* Adjusts height based on content */
     gap: 10px;
 }
+#customDropdown{
+    border: 1px solid grey;
+    text-align: left;
+}
+#customDropdown .dropdown-toggle::after {
+    display: none !important;
+  }
+  .dropdown-toggle::after {
+    display: none !important;
+  }
+    
 
 .homepage-text-content {
     display: flex;
@@ -136,6 +147,8 @@
     background-size:cover;
     background-attachment: fixed;
 }
+
+
 
 /* Responsive adjustments for medium screens */
 @media (max-width: 768px) {

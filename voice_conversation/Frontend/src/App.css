@@ -1,0 +1,15 @@
+.app{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width:100%;
+  max-width: 100%;
+  min-height: 100vh;
+  height: 100vh;
+
+  /* display setting */
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  overflow: hidden;
+}

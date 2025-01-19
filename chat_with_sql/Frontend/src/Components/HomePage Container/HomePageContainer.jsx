@@ -1,10 +1,11 @@
-import React, { useContext, useRef } from "react";
 import "./HomePageContainer.css";
+import React, { useContext, useRef } from "react";
 import { assets } from "../../assets/assets";
 import { Context } from "../../Context/Context";
 // react toatify inclusion
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 const HomePageContainer = () => {
   const {
@@ -13,6 +14,7 @@ const HomePageContainer = () => {
     setDBURI,
     setAPI_KEY,
     setLLMType,
+    LLMType,
     setConnectedToDB,
     setError,
     connectedToDB,
@@ -34,9 +36,14 @@ const HomePageContainer = () => {
     setError("");
 
     // Gather data from the form
-    const LLM_Type = form_LLM_type.current.value;
+    const LLM_Type = form_LLM_type.current.textContent || LLMType;
     const Database_URI = form_Database_URI.current.value;
     const API_Key = form_API_Key.current.value;
+
+    // Log all the selected or entered details
+    console.log("Selected LLM Type:", LLM_Type);
+    console.log("Entered Database URI:", Database_URI);
+    console.log("Entered API Key:", API_Key);
 
     // Update states with the input values
     setLLMType(LLM_Type);
@@ -65,14 +72,10 @@ const HomePageContainer = () => {
       const data = await response.json();
       const schemaString = processSchemaString(data.schema);
       setDbSchema(schemaString);
-      // console.log(schemaString)
-      // console.log('dbSchema is : ', dbSchema)
 
       if (data) {
         setConnectedToDB(true); // Connection successful
         toast.success("Database Connected successfully!");
-        // alert("Database Connected successfully!", connectedToDB); // Temporary success feedback
-        // You can redirect or trigger other success behavior here
       } else {
         setError("Failed to connect. Verify the details.");
         toast.error("Failed to connect. Verify the details.");
@@ -85,6 +88,29 @@ const HomePageContainer = () => {
       setIsLoadings(false);
     }
   };
+
+  const providers = [
+    {
+      value: "openai",
+      label: "OpenAI",
+      img: assets.chatGPTIcon,
+    },
+    {
+      value: "anthropic",
+      label: "Anthropic",
+      img: assets.anthropic,
+    },
+    {
+      value: "hugging-face",
+      label: "Hugging Face",
+      img: assets.hugging_face,
+    },
+    {
+      value: "groq",
+      label: "Groq",
+      img: assets.groq,
+    },
+  ];
 
   return (
     <div className="homePage-container">
@@ -102,22 +128,46 @@ const HomePageContainer = () => {
               <label htmlFor="exampleSelect" className="form-label">
                 Select Provider
               </label>
-              <select
-                className="form-select"
-                id="exampleSelect"
-                aria-label="Default select example"
-                ref={form_LLM_type}
-                required
-              >
-                <option value="" disabled>
-                  LLM Type
-                </option>
-                <option value="OpenAI">OpenAI</option>
-                <option value="Anthropic">Anthropic</option>
-                {/* <option value="AWS">AWS Bedrock</option> */}
-              </select>
+              <div className="dropdown">
+                <button
+                  id="customDropdown"
+                  className="btn btn-transparent dropdown-toggle w-100"
+                  type="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                  ref={form_LLM_type}
+                >
+                  {LLMType || "Select LLM Type"}
+                </button>
+                <ul
+                  className="dropdown-menu w-100"
+                  aria-labelledby="dropdownMenuButton"
+                >
+                  {providers.map((provider) => (
+                    <li key={provider.value}>
+                      <button
+                        type="button" // Prevents form submission
+                        className="dropdown-item d-flex align-items-center"
+                        onClick={() => setLLMType(provider.label)}
+                      >
+                        <img
+                          src={provider.img}
+                          alt={provider.label}
+                          className="me-2"
+                          style={{
+                            width: "20px",
+                            height: "20px",
+                            borderRadius: "10px",
+                          }}
+                        />
+                        {provider.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
-            <div className="mb-3">
+            <div className="mb-4">
               <label htmlFor="databaseUri" className="form-label">
                 Database URI
               </label>
@@ -130,7 +180,7 @@ const HomePageContainer = () => {
                 required
               />
             </div>
-            <div className="mb-3">
+            <div className="mb-4">
               <label htmlFor="apiKey" className="form-label">
                 API Key
               </label>
@@ -191,7 +241,7 @@ const HomePageContainer = () => {
           </div>
         </div>
         <div className="homepage-setup-image">
-          <img src={assets.frontPage} alt="Setup" />
+          <img src={assets.SQL_img} alt="Setup" />
         </div>
       </div>
     </div>
