@@ -3,10 +3,14 @@ import base64
 from PIL import Image
 from io import BytesIO
 from langchain_unstructured import UnstructuredLoader
+from dotenv import load_dotenv
+
+load_dotenv()
 
 loader = UnstructuredLoader(
     file_path=["Frontend_enhacements.pdf"],
     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+    url=os.getenv("UNSTRUCTURED_API_URL"),
     partition_via_api=True,
     strategy="hi_res",
     extract_image_block_types=["Image", "Table"]
