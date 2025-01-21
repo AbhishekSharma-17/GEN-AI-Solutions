@@ -1,0 +1,22 @@
+.actual-upload{
+    background-color: rgba(247, 247, 247, 0.991);
+    height: 100%;
+    width: 100%;
+    border: 1px solid red;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+    padding: 30px 40px;
+    gap: 30px;
+}
+.file-upload{
+    border: 1px dashed green;
+    padding: 20px;
+    width: 100%;
+}
+.prototype-name p{
+    font-size: 50px;
+    font-family:Inter;
+    font-weight: bold;
+}
