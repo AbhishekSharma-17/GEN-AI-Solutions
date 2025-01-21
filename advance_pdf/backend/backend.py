@@ -244,8 +244,13 @@ async def embed_pdf(data: Dict[str, str]):
     try:
         start_time = time.time()
         
+        # Get the mode from the request data, default to "hi_res" if not provided
+        mode = data.get("mode", "hi_res")
+        if mode not in ["fast", "hi_res"]:
+            raise HTTPException(status_code=400, detail="Invalid mode. Must be either 'fast' or 'hi_res'")
+
         # Process text and images in parallel
-        text_task = asyncio.create_task(process_unstructured(file_path, unstructured_api_key, unstructured_api_url))
+        text_task = asyncio.create_task(process_unstructured(file_path, unstructured_api_key, unstructured_api_url, mode))
         image_task = asyncio.create_task(process_image(file_path, api_key))
 
         split_docs, image_result = await asyncio.gather(text_task, image_task)
