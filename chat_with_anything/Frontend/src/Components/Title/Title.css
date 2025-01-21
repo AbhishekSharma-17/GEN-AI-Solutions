@@ -1,0 +1,13 @@
+.anyDoc-title
+{
+    text-align: center;
+}
+.anydoc-title-tagline{
+    /* font-size: 1.5rem; */
+    color: grey;
+    font-weight: 500;
+    margin-top: 1rem;
+}
+.anyDoc-title h1{
+    font-weight: 700;
+}

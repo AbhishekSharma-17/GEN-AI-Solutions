@@ -1,0 +1,144 @@
+.main-bottom {
+  width: 100%;
+  padding: 0px 20px;
+}
+
+.search-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 5px;
+  background-color: #f0f4f9;
+  padding: 10px;
+  border-radius: 10px;
+  width: 100%;
+  box-shadow: 0px 0px 5px rgb(182, 182, 182);
+}
+
+.search-box input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  padding: 8px;
+  font-size: 18px;
+  width: 100%;
+}
+
+.search-box .dropdown-button-div {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mic-model-option {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  align-items: center;
+}
+
+.search-box img {
+  width: 24px;
+  cursor: pointer;
+}
+
+.custom-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 5px;
+  font-size: 14px;
+  color: rgb(109, 108, 108);
+  font-weight: 500;
+}
+
+.custom-select:hover {
+  background-color: rgb(224, 223, 223);
+  border-radius: 10px;
+  color: rgb(73, 73, 73);
+}
+
+.custom-select:focus {
+  outline: none;
+}
+
+.custom-select .option {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  align-items: center;
+}
+
+.custom-select .option img {
+  width: 20px;
+}
+
+.main .bottom-info {
+  font-size: 13px;
+  margin: 0;
+  text-align: center;
+  font-weight: 300;
+  color: grey;
+  padding: 10px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .search-box {
+    flex-direction: column;
+    gap: 10px;
+    padding: 8px;
+  }
+
+  .search-box .dropdown-button-div {
+    flex-direction: column;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+
+  .mic-model-option {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .search-box input {
+    font-size: 16px;
+    padding: 6px;
+  }
+
+  .search-box img {
+    width: 20px;
+  }
+
+  .custom-select {
+    font-size: 12px;
+    padding: 4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-box input {
+    font-size: 14px;
+    padding: 5px;
+  }
+
+  .custom-select {
+    font-size: 12px;
+  }
+
+  .mic-model-option {
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 5px;
+  }
+
+  .search-box img {
+    width: 18px;
+  }
+}

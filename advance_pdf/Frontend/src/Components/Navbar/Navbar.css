@@ -1,0 +1,15 @@
+.navbar{
+    padding: 10px 30px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border: 1px solid red;
+    align-items: center;
+}
+.genAILogo{
+    width: 200px;
+}
+.genAIIcon{
+    
+    width: 50px;
+}
