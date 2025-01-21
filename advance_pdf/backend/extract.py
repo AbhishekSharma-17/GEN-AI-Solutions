@@ -1,69 +1,42 @@
 import os
-import base64
-from PIL import Image
-from io import BytesIO
 from langchain_unstructured import UnstructuredLoader
 from dotenv import load_dotenv
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+import json
 
 load_dotenv()
 
 loader = UnstructuredLoader(
-    file_path=["Frontend_enhacements.pdf"],
+    file_path=["Latest-Smartphone-Trends-A-Deep-Dive.pptx"],
     api_key=os.getenv("UNSTRUCTURED_API_KEY"),
     url=os.getenv("UNSTRUCTURED_API_URL"),
     partition_via_api=True,
-    strategy="hi_res",
-    extract_image_block_types=["Image", "Table"]
+    strategy="hi_res"
+    
 )
 
 docs = loader.load()
 
-image_list = []
-table_list = []
-text_list = []
+class ContentMetadataSplitter(RecursiveCharacterTextSplitter):
+    def split_text(self, text):
+        content, metadata = text.split("METADATA_SEPARATOR")
+        content_chunks = super().split_text(content)
+        metadata_dict = json.loads(metadata)
+        return [f"{chunk}METADATA_SEPARATOR{json.dumps(metadata_dict)}" for chunk in content_chunks]
 
-for doc in docs:
-    if doc.metadata['category'] == 'Image':
-        image_list.append({
-            'content': doc.page_content,
-            'metadata': doc.metadata
-        })
-    elif doc.metadata['category'] == 'Table':
-        table_list.append({
-            'content': doc.page_content,
-            'metadata': doc.metadata
-        })
-    else:
-        text_list.append({
-            'content': doc.page_content,
-            'metadata': doc.metadata
-        })
+text_splitter = ContentMetadataSplitter(chunk_size=1000, chunk_overlap=200, length_function=len)
 
-print(f"Number of images extracted: {len(image_list)}")
-print(f"Number of tables extracted: {len(table_list)}")
-print(f"Number of text elements extracted: {len(text_list)}")
+combined_docs = [f"{doc.page_content}METADATA_SEPARATOR{json.dumps(doc.metadata)}" for doc in docs]
+split_docs = text_splitter.create_documents(combined_docs)
 
-print("\nSample text elements:")
-for i, text in enumerate(text_list[:3]):
-    print(f"{i+1}. Category: {text['metadata']['category']}")
-    print(f"   Content: {text['content'][:100]}...")  # Print first 100 characters of each text
+for doc in split_docs:
+    print("--------------------")
+    print(doc.page_content)
 
-print("\nImage elements:")
-for i, image in enumerate(image_list[:3]):
-    print(f"{i+1}. Element ID: {image['metadata']['element_id']}")
-    print(f"   Content sample: {image['content'][:50]}...")  # Print first 50 characters of content
+with open("document_chunks.txt", "w", encoding="utf-8") as f:
+    for doc in split_docs:
+        f.write(f"{doc.page_content}\n")
+        f.write("-" * 50 + "\n")  # Separator line between chunks
 
-print("\nTable elements:")
-for i, table in enumerate(table_list[:3]):
-    print(f"{i+1}. Element ID: {table['metadata']['element_id']}")
-    print(f"   Content sample: {table['content'][:50]}...")  # Print first 50 characters of content
-
-# If you want to save the images:
-# for i, image in enumerate(image_list):
-#     with open(f"extracted_image_{i}.txt", "w") as f:
-#         f.write(image['content'])
-
-# If you want to save the table data:
-# for i, table in enumerate(table_list):
-#     with open(f"extracted_table_{i}.txt", "w") as f:
-#         f.write(table['content'])
+print(f"Total number of chunks: {len(split_docs)}")
+print("Chunks have been written directly to 'document_chunks.txt'")
