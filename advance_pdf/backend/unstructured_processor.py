@@ -11,13 +11,16 @@ class ContentMetadataSplitter(RecursiveCharacterTextSplitter):
         metadata_dict = json.loads(metadata)
         return [f"{chunk}METADATA_SEPARATOR{json.dumps(metadata_dict)}" for chunk in content_chunks]
 
-async def process_unstructured(file_path: str, unstructured_api_key: str, unstructured_api_url: str) -> List[str]:
+async def process_unstructured(file_path: str, unstructured_api_key: str, unstructured_api_url: str, mode: str = "hi_res") -> List[str]:
+    if mode not in ["fast", "hi_res"]:
+        raise ValueError("Mode must be either 'fast' or 'hi_res'")
+
     loader = UnstructuredLoader(
         file_path=file_path,
         api_key=unstructured_api_key,
         url=unstructured_api_url,
         partition_via_api=True,
-        strategy="hi_res"
+        strategy=mode
     )
 
     docs = loader.load()
