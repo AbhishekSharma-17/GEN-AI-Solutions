@@ -29,14 +29,3 @@ text_splitter = ContentMetadataSplitter(chunk_size=1000, chunk_overlap=200, leng
 combined_docs = [f"{doc.page_content}METADATA_SEPARATOR{json.dumps(doc.metadata)}" for doc in docs]
 split_docs = text_splitter.create_documents(combined_docs)
 
-for doc in split_docs:
-    print("--------------------")
-    print(doc.page_content)
-
-with open("document_chunks.txt", "w", encoding="utf-8") as f:
-    for doc in split_docs:
-        f.write(f"{doc.page_content}\n")
-        f.write("-" * 50 + "\n")  # Separator line between chunks
-
-print(f"Total number of chunks: {len(split_docs)}")
-print("Chunks have been written directly to 'document_chunks.txt'")
