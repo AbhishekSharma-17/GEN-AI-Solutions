@@ -10,8 +10,8 @@ const Upload = () => {
       </div>
       <div className="file-upload">{/* upload all icon and text here  */}
 
-          <label htmlFor="file-upload" className="select-button">
-            <FiUpload style={{ fontSize: "50px" }} />
+          <label htmlFor="file-upload-input" className="select-button">
+            <FiUpload style={{ fontSize: "50px"}} />
           </label>
           <h3>Upload your PDF</h3>
           <p>Drag and drop your file here, or click to select</p>

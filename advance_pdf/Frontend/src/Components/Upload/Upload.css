@@ -2,7 +2,7 @@
     background-color: rgba(247, 247, 247, 0.991);
     height: 100%;
     width: 100%;
-    border: 1px solid red;
+    /* border: 1px solid red; */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -20,8 +20,16 @@
     box-shadow: 
     10px 10px 20px #bebebe, /* Dark shadow */
     -10px -10px 20px #ffffff; /* Light shadow */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
 }
 
+.file-upload  p{
+    color: grey;
+}
 .select-button {
     padding: 0.5rem 1rem;
     color: rgb(91, 88, 88);

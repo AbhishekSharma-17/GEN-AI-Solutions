@@ -3,7 +3,7 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    border: 1px solid red;
+    border: 1px solid rgb(223, 235, 239);
     align-items: center;
 }
 .genAILogo{

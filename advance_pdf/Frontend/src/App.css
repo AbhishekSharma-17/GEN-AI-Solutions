@@ -5,14 +5,14 @@
   overflow: hidden;
   height: 100vh;
   width: 100%;
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 .main-content{
   display: flex;
   flex-direction: row;
   height: 100%;
-  border: 1px solid yellow;
+  /* border: 1px solid yellow; */
 }
 .main-content .sidebar{
   /* border: 1px solid purple; */
@@ -23,13 +23,13 @@
 .main-content .chat{
   
   height:100%;
-  border: 1px solid green;
+  /* border: 1px solid green; */
   width: 30%;
 }
 .main-content .upload
 {
   height: 100%;
-  border: 1px solid green;
+  border: 1px solid rgb(218, 217, 217);
   width: 50%;
 
 }
