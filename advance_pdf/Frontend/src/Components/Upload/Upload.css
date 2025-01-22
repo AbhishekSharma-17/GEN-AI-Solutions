@@ -11,12 +11,25 @@
     gap: 30px;
 }
 .file-upload{
-    border: 1px dashed green;
+    border: 2px dashed #707070db;
     padding: 20px;
     width: 100%;
+    text-align: center;
+    padding: 2rem;
+    background: #cdcdcddb;
 }
+
+.select-button {
+    padding: 0.5rem 1rem;
+    color: rgb(91, 88, 88);
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+  }
+
 .prototype-name p{
     font-size: 50px;
     font-family:Inter;
     font-weight: bold;
 }
+
