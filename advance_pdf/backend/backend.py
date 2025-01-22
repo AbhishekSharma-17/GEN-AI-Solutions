@@ -250,14 +250,31 @@ async def embed_pdf(data: Dict[str, str]):
             raise HTTPException(status_code=400, detail="Invalid mode. Must be either 'fast' or 'hi_res'")
 
         # Process text and images in parallel
-        text_task = asyncio.create_task(process_unstructured(file_path, unstructured_api_key, unstructured_api_url, mode))
-        image_task = asyncio.create_task(process_image(file_path, api_key))
+        try:
+            text_task = asyncio.create_task(process_unstructured(file_path, unstructured_api_key, unstructured_api_url, mode))
+            image_task = asyncio.create_task(process_image(file_path, api_key))
 
-        split_docs, image_result = await asyncio.gather(text_task, image_task)
+            unstructured_result, image_result = await asyncio.gather(text_task, image_task)
+
+            split_docs = unstructured_result["split_docs"]
+            table_count = unstructured_result["table_count"]
+            image_count = image_result["image_count"]
+        except asyncio.CancelledError:
+            logging.error("Tasks were cancelled. Cleaning up...")
+            for task in [text_task, image_task]:
+                if not task.done():
+                    task.cancel()
+            await asyncio.gather(*[text_task, image_task], return_exceptions=True)
+            raise HTTPException(status_code=500, detail="Processing was interrupted")
+        except Exception as e:
+            logging.error(f"Error during parallel processing: {str(e)}")
+            raise HTTPException(status_code=500, detail=f"Error during processing: {str(e)}")
 
         # Combine text and image chunks
         combined_chunks = split_docs + image_result["image_chunks"]
         logging.info(f"Combined chunks: {len(combined_chunks)} (Text: {len(split_docs)}, Image: {len(image_result['image_chunks'])})")
+        logging.info(f"Total images in the PDF: {image_count}")
+        logging.info(f"Total tables in the PDF: {table_count}")
 
         # Initialize embeddings
         if provider == "openai":
@@ -310,7 +327,9 @@ async def embed_pdf(data: Dict[str, str]):
                 "total_cost": float(embedding_cost + Decimal(str(query_result["total_cost"]))),
                 "cumulative_tokens": state.cumulative_tokens,
                 "cumulative_cost": float(state.cumulative_cost),
-                "response_time": response_time
+                "response_time": response_time,
+                "image_count": image_count,
+                "table_count": table_count
             },
             status_code=200,
         )

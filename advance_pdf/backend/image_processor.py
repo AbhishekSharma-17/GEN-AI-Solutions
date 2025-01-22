@@ -4,7 +4,7 @@ import tempfile
 import base64
 import io
 import logging
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Any
 import fitz  # PyMuPDF
 from PIL import Image
 from openai import OpenAI
@@ -47,31 +47,35 @@ async def process_images_with_vision_model(images: List[Tuple[str, str]], api_ke
     image_explanations = []
     
     async def process_single_image(image_name: str, image_path: str) -> Tuple[str, str]:
-        with open(image_path, "rb") as image_file:
-            base64_image = base64.b64encode(image_file.read()).decode('utf-8')
-        
-        response = await asyncio.to_thread(
-            client.chat.completions.create,
-            model="gpt-4o",
-            messages=[
-                {
-                    "role": "user",
-                    "content": [
-                        {"type": "text", "text": "Provide a detailed explanation of this image."},
-                        {
-                            "type": "image_url",
-                            "image_url": {
-                                "url": f"data:image/jpeg;base64,{base64_image}"
-                            }
-                        },
-                    ],
-                }
-            ],
-            max_tokens=290,
-        )
-        
-        explanation = response.choices[0].message.content
-        return image_name, explanation
+        try:
+            with open(image_path, "rb") as image_file:
+                base64_image = base64.b64encode(image_file.read()).decode('utf-8')
+            
+            response = await asyncio.to_thread(
+                client.chat.completions.create,
+                model="gpt-4o",
+                messages=[
+                    {
+                        "role": "user",
+                        "content": [
+                            {"type": "text", "text": "Provide a detailed explanation of this image."},
+                            {
+                                "type": "image_url",
+                                "image_url": {
+                                    "url": f"data:image/jpeg;base64,{base64_image}"
+                                }
+                            },
+                        ],
+                    }
+                ],
+                max_tokens=290,
+            )
+            
+            explanation = response.choices[0].message.content
+            return image_name, explanation
+        except Exception as e:
+            logging.error(f"Error processing image {image_name}: {str(e)}")
+            return image_name, f"Error processing image: {str(e)}"
     
     tasks = [process_single_image(image_name, image_path) for image_name, image_path in images]
     image_explanations = await asyncio.gather(*tasks)
@@ -102,7 +106,7 @@ async def cleanup_temp_dir(temp_dir: str):
     await asyncio.to_thread(os.rmdir, temp_dir)
     logging.info(f"Temporary directory cleaned up: {temp_dir}")
 
-async def process_image(pdf_path: str, api_key: str) -> Dict[str, List[Document]]:
+async def process_image(pdf_path: str, api_key: str) -> Dict[str, Any]:
     temp_dir, extracted_images = await extract_images_from_pdf(pdf_path)
     
     try:
@@ -118,6 +122,9 @@ async def process_image(pdf_path: str, api_key: str) -> Dict[str, List[Document]
         
         logging.info(f"Image chunks saved to {output_file}")
         
-        return {"image_chunks": chunks}
+        return {
+            "image_chunks": chunks,
+            "image_count": len(extracted_images)
+        }
     finally:
         await cleanup_temp_dir(temp_dir)
