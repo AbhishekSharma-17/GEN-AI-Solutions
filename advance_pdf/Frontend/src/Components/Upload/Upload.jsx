@@ -19,7 +19,7 @@ const Upload = () => {
             type="file"
             accept="application/pdf"
             style={{ display: "none" }}
-            id="file-upload"
+            id="file-upload-input"
           />
 
       </div>
