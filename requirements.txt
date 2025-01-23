@@ -31,3 +31,5 @@ google-auth-oauthlib
 PyMuPDF
 pillow
 requests
+langchain-google-genai
+
