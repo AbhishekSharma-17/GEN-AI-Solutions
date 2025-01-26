@@ -1,0 +1,62 @@
+.actual-sidebar{
+    /* border: 1px solid red; */
+    height: 100%;
+    width: 100%;
+    padding: 10px;
+}
+.actual-sidebar .files-list{
+    height: 80%;
+    /* border: 1px solid green ; */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding: 20px 10px;
+    gap: 20px;
+    /* align-items: center; */
+}
+.actual-sidebar .token-list{
+    height: 20%;
+    /* border: 1px solid green ; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.actual-sidebar .files-list h2{
+    font-family: Inter;
+    color: rgb(97, 97, 97);
+}
+.actual-sidebar .files-list .files
+{
+    /* border: 1px solid purple; */
+    height: 100%;
+    overflow: scroll;
+    box-shadow: inset 0px 0px 15px 2px  rgb(236, 235, 235);
+    padding: 20px 8px ;
+}
+
+.files::-webkit-scrollbar
+{
+    display: none;
+}
+.files .file{
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 10px;
+    align-items: center;
+    padding: 5px 10px;
+    border: 1px solid grey;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+.files .file .file-data{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.file-data .file-name{
+    font-family: Inter;
+    color: black;
+    font-weight: bold;
+    font-size: 20px!important;
+}

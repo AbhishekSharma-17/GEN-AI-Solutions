@@ -1,0 +1,35 @@
+.main-app{
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  overflow: hidden;
+  height: 100vh;
+  width: 100%;
+  /* border: 1px solid red; */
+}
+
+.main-content{
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  /* border: 1px solid yellow; */
+}
+.main-content .sidebar{
+  /* border: 1px solid purple; */
+  /* padding: 10px; */
+  width: 20%;
+  height: 100%;
+}
+.main-content .chat{
+  
+  height:100%;
+  /* border: 1px solid green; */
+  width: 30%;
+}
+.main-content .upload
+{
+  height: 100%;
+  border: 1px solid rgb(218, 217, 217);
+  width: 50%;
+
+}
