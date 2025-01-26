@@ -49,8 +49,8 @@
 .main-chat .main-chat-query {
   height: 100%;
   display: flex;
-  justify-content: flex-end; /* Centers the .queries container horizontally */
-  align-items: center; /* Centers the .queries container vertically */
+  justify-content: center; /* Centers the .queries container horizontally */
+  align-items: flex-end; /* Centers the .queries container vertically */
   gap: 30px;
   padding: 20px;
   border: 1px solid green;
