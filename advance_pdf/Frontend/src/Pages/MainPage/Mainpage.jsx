@@ -8,7 +8,7 @@ import { useContext } from "react";
 import { Context } from "../../Context/Context";
 
 const Mainpage = () => {
-  const { embededComplete } = useContext(Context);
+  const { embededComplete, fileResponse } = useContext(Context);
 
   return (
     <div className="main-app">
@@ -33,6 +33,7 @@ const Mainpage = () => {
         </div>
 
         {/* Chat Section */}
+
         <div className="chat">
           <Chat />
         </div>

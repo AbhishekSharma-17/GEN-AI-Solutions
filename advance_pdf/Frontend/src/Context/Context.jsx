@@ -9,26 +9,29 @@ const ContextProvider = (props) => {
   const [providerKey, setProviderKey] = useState();
   const [unstructuredKey, setUnstructuredKey] = useState();
 
-
   // if we got file will update it in this stae
   const [file, setLocalFile] = useState(null);
-
 
   // upload hua ya nhi (upload and embedding endpoint)
   const [uploading, setUploading] = useState(false);
 
-
   // New state for unique user ID
   const [userId, setUserId] = useState(null);
 
-
-  // setting file path 
-  const [filepath, setFilePath] = useState('');
+  // setting file path
+  const [filepath, setFilePath] = useState("");
 
   // embedding complete
   const [embededComplete, setIsEmbedComplete] = useState(false);
 
+  // setting response coming from embedding endpoint , complete response hai
+  const [fileResponse, setFileResponse] = useState({});
 
+  // setting queries
+  const [initialQueries, setInitialQueries] = useState([]);
+
+  // will be using for fileList
+  const [filesList, setFileList] = useState([]);
 
   const [input, setInput] = useState(""); // to save input data
   const [recentPrompt, setRecentPrompt] = useState(""); // to save recent
@@ -37,7 +40,6 @@ const ContextProvider = (props) => {
   const [loadings, setLoadings] = useState(false); // if this is true then it will display loading animation
   const [resultData, setResultData] = useState(""); // used to display result on web page
 
-  const [fileResponse, setFileResponse] = useState(false);
   const [response, setResponse] = useState(""); // user query response
   const [queries, setQueries] = useState([{}]);
 
@@ -87,12 +89,16 @@ const ContextProvider = (props) => {
   }, []);
 
   const contextValue = {
-    filepath, setFilePath,
+    filepath,
+    setFilePath,
     uploading,
     setUploading,
     file,
     setLocalFile,
-    embededComplete, setIsEmbedComplete,
+    embededComplete,
+    setIsEmbedComplete,
+    initialQueries,
+    setInitialQueries,
 
     // here to upwards new state are defined
     initialisationStatus,
