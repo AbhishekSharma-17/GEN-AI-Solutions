@@ -3,7 +3,7 @@ import "./HomePageContainer.css";
 import assets from "../../assets/assets";
 
 import { toast } from "react-toastify";
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';
+import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { Context } from "../../Context/Context";
 import FancyLoader from "../Loader/FancyLoader";
 
@@ -11,10 +11,10 @@ const HomePageContainer = () => {
   const {
     setAPIProvider,
     setProviderKey,
-    setUnstructuredKey,
     setResponseProvider,
     setInitialisationStatus,
     apiProvider,
+    setUnstructuredKey,
   } = useContext(Context);
 
   const [isLoading, setIsLoading] = useState(false);
@@ -33,9 +33,9 @@ const HomePageContainer = () => {
     const Form_providerKey = providerKeyRef.current.value;
     const Form_unstructuredKey = unstructuredKeyRef.current.value;
 
-    // console.log("Form Provider:", Form_provider);
-    // console.log("Form Provider Key:", Form_providerKey);
-    // console.log("Form Unstructured Key:", Form_unstructuredKey);
+    console.log("Form Provider:", Form_provider);
+    console.log("Form Provider Key:", Form_providerKey);
+    console.log("Form Unstructured Key:", Form_unstructuredKey);
 
     // Set values in context
     setProviderKey(Form_providerKey);
@@ -153,7 +153,10 @@ const HomePageContainer = () => {
               </div>
 
               <div className="mb-4">
-                <label htmlFor="exampleFormControlInput1" className="form-label">
+                <label
+                  htmlFor="exampleFormControlInput1"
+                  className="form-label"
+                >
                   Provider Key
                 </label>
                 <input
@@ -163,9 +166,10 @@ const HomePageContainer = () => {
                   ref={providerKeyRef}
                 />
               </div>
-              {/* <div className="mb-4">
+
+              <div className="mb-4">
                 <label
-                  htmlFor="exampleFormControlTextarea1"
+                  htmlFor="exampleFormControlInput1"
                   className="form-label"
                 >
                   Unstructured Key
@@ -173,10 +177,11 @@ const HomePageContainer = () => {
                 <input
                   type="password"
                   className="form-control"
-                  placeholder="Unstructured Key"
+                  placeholder="Provider Key"
                   ref={unstructuredKeyRef}
                 />
-              </div> */}
+              </div>
+
               <div className="mb-4">
                 <button
                   type="submit"
@@ -186,7 +191,7 @@ const HomePageContainer = () => {
                   {isLoading ? (
                     <>
                       <span className="me-2">Saving</span>
-                      <FancyLoader/>
+                      <FancyLoader />
                     </>
                   ) : (
                     "Save Configuration"
@@ -205,8 +210,8 @@ const HomePageContainer = () => {
                 <div className="item-description">
                   <p className="item-title">Generate API Keys</p>
                   <p className="item-def">
-                    Visit your AI provider dashboard to generate the required API
-                    keys.
+                    Visit your AI provider dashboard to generate the required
+                    API keys.
                   </p>
                 </div>
               </div>

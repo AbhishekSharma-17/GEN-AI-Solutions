@@ -2,11 +2,9 @@ import React, { useContext } from "react";
 import "./PDFReview.css";
 import { FaPlus } from "react-icons/fa6";
 import { FiMinus } from "react-icons/fi";
-import { Document, Page, pdfjs } from "react-pdf";
 import { Context } from "../../Context/Context"; // Importing context
 
-// Set the workerSrc to a valid pdf.worker.js file for version 4.1.6
-pdfjs.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@2.10.377/build/pdf.worker.min.js`;
+
 
 const PDFReview = () => {
   const { file } = useContext(Context); // Accessing file from context
@@ -41,13 +39,11 @@ const PDFReview = () => {
       </div>
       <div className="review">
         <div className="actual-review">
-          {file ? (
-            <Document file={file}>
-              <Page pageNumber={1} />
-            </Document>
+          {/* {file ? (
+            "Hai PDF"
           ) : (
             <p>No file uploaded. Please upload a PDF to review.</p>
-          )}
+          )} */}
         </div>
       </div>
     </div>
