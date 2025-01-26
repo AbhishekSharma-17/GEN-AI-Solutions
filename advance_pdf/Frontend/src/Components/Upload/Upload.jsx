@@ -28,6 +28,7 @@ const Upload = () => {
     setQueries,
     setIsEmbedComplete,
     setFileResponse,
+    setInitialQueries,
   } = useContext(Context); // Accessing setFile from context
 
   const handleFileChange = (event) => {
@@ -85,6 +86,7 @@ const Upload = () => {
 
       const embedData = await embedResponse.json();
       setFileResponse && setFileResponse(embedData);
+      setInitialQueries(embedData.queries);
 
       // Update state with embedding results
       if (embedData.query_input_tokens)

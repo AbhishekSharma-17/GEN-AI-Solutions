@@ -34,15 +34,77 @@
   align-items: center;
   padding: 0px 20px;
   gap: 20px;
-  border-top:1px solid rgb(214, 213, 213) ;
+  border-top: 1px solid rgb(214, 213, 213);
 }
-.chat-inputs .chat-input-field{
-    /* border: 1px solid red; */
-    width: 100%;
+.chat-inputs .chat-input-field {
+  /* border: 1px solid red; */
+  width: 100%;
 }
-.chat-inputs #send-icon{
-    font-size: 25px;
-    background-color: black;
-    color: white;
-    padding: 10px;
+.chat-inputs #send-icon {
+  font-size: 25px;
+  background-color: black;
+  color: white;
+  padding: 10px;
+}
+.main-chat .main-chat-query {
+  height: 100%;
+  display: flex;
+  justify-content: flex-end; /* Centers the .queries container horizontally */
+  align-items: center; /* Centers the .queries container vertically */
+  gap: 30px;
+  padding: 20px;
+  border: 1px solid green;
+}
+
+.queries {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start; 
+  align-items: center; 
+  gap: 20px;
+  overflow-x: auto; 
+  overflow-y: hidden; 
+  border: 1px solid #ccc;
+  padding-top: 20px;
+  padding-bottom: 10px;
+  padding-left: 20px;
+  padding-right: 20px;
+  border-radius: 10px;
+  white-space: nowrap; 
+  scroll-behavior: smooth; 
+  box-shadow: inset 0px 0px 9px rgb(227, 227, 227);
+}
+.queries::-webkit-scrollbar {
+  height: 10px; /* Height of the horizontal scrollbar */
+  background: transparent; 
+  border-radius: 10px;
+  color: orange;
+}
+.queries::-webkit-scrollbar-track {
+  background: transparent; /* Makes the scrollbar track transparent */
+  border-radius: 10px;
+}
+.main-chat-query .queries .query {
+  border: 1px solid #ccc;
+  min-width: 200px; /* Ensures each .query div has a consistent width */
+  height: 200px;
+  padding: 10px;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: 0px 0px 7px #ccc;
+  cursor: pointer;
+  gap: 10px;
+
+}
+
+.query p {
+  overflow-wrap: break-word;
+  font-size: 13px;
+  color: #646363;
+  font-weight: 500;
+  font-family: Outfit, sans-serif;
+  text-align: justify;
+  white-space: normal;
 }
