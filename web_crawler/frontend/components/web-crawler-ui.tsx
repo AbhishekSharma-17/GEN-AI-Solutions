@@ -22,6 +22,7 @@ import { OutputDisplay } from "./output-display"
 import { FormatCheckboxes } from "./format-checkboxes"
 import { Header } from "./header"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { Toaster } from "@/components/ui/toaster"
 
 interface CrawlOptions {
   url: string
@@ -397,6 +398,7 @@ export default function WebCrawlerUI() {
           </footer>
         </div>
       </main>
+      <Toaster />
     </div>
   )
 }
