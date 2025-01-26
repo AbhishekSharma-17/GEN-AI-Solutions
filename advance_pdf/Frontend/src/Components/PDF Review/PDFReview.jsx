@@ -39,11 +39,11 @@ const PDFReview = () => {
       </div>
       <div className="review">
         <div className="actual-review">
-          {/* {file ? (
-            "Hai PDF"
+          {file ? (
+            <iframe src={URL.createObjectURL(file)} title="PDF Preview" width="100%" height="600px" />
           ) : (
             <p>No file uploaded. Please upload a PDF to review.</p>
-          )} */}
+          )}
         </div>
       </div>
     </div>
