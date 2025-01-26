@@ -25,7 +25,7 @@ width: 150px;
     flex-direction:row ;
     justify-content: center;
     align-items: center;
-    padding: 60px;
+    padding: 40px;
     gap: 40px;
 }
 .key-input-section{
