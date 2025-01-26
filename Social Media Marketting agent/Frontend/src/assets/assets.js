@@ -18,8 +18,10 @@ import chatWithPDF from "./PDF.png";
 import chatWithPPT from "./powerpoint.png";
 import socialAgent from "./social-agent.png";
 import chatWithSQL from "./SQL.png";
+import mockImage from "./mockImage.png";
 
 export const assets = {
+  mockImage,
   chatWithAnything,
   chatWithPDF,
   chatWithPPT,
