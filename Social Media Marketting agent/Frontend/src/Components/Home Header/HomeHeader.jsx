@@ -188,7 +188,7 @@ const HomeHeader = () => {
               <input
                 type="password"
                 className="form-control"
-                id="apiKey"
+                id="unstructured_ apiKey"
                 placeholder="Unstructured API Key"
                 ref={form_Unstructured_API_Key}
                 required

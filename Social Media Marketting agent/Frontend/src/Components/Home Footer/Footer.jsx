@@ -8,32 +8,32 @@ const Footer = () => {
   const projects = [
     {
       name: "Chat With PPT",
-      icon: assets.gemini_icon,
+      icon: assets.chatWithPPT,
       link: "https://www.youtube.com/watch?v=5Qc6QF8p",
     },
     {
       name: "Chat With PDF",
-      icon: assets.gemini_icon,
+      icon: assets.chatWithPDF,
       link: "https://www.youtube.com/watch?v=5Qc6QF8p",
     },
     {
       name: "Advanced PDF",
-      icon: assets.gemini_icon,
+      icon: assets.chatWithPDF,
       link: "https://www.youtube.com/watch?v=5Qc6QF8p",
     },
     {
         name: "Chat With Anything",
-        icon: assets.gemini_icon,
+        icon: assets.chatWithAnything,
         link: "https://www.youtube.com/watch?v=5Qc6QF8p",
     },
     {
       name: "Social Media Marketting Agent",
-      icon: assets.gemini_icon,
+      icon: assets.socialAgent,
       link: "https://www.youtube.com/watch?v=5Qc6QF8p",
     },
     {
-      name: "Chat With PPT",
-      icon: assets.gemini_icon,
+      name: "Chat With SQL",
+      icon: assets.chatWithSQL,
       link: "https://www.youtube.com/watch?v=5Qc6QF8p",
     },
   ];
@@ -44,7 +44,7 @@ const Footer = () => {
       <div className="footer-content">
         {/* Logo and Description */}
         <div className="footer-column">
-          <img src={assets.genAILogo} alt="" srcset="" />
+          <img src={assets.genAILogo} alt="" srcSet="" />
           <p>"Transforming Social Engagement with Intelligent Automation."</p>
         </div>
 
