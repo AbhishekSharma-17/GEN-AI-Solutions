@@ -1,7 +1,12 @@
 .home-header{
     height: 100vh;
     /* border: 1px solid red; */
-    background-attachment:fixed ;
+    /* background-attachment:fixed ; */
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 .home-navbar{
     padding: 10px 15px;

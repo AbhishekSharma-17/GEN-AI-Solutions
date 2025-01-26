@@ -117,6 +117,9 @@ const HomeHeader = () => {
       </div>
 
       {/* main content */}
+      <div>
+        
+      </div>
       <div className="header-main">
         <div className="key-input-section">
           <div className="tex-section">
