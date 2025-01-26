@@ -93,5 +93,5 @@ if __name__ == "__main__":
         start_url=start_url,
         output_dir="website_crawl",
         max_depth=3,
-        max_pages=500
+        max_pages=10
     )
