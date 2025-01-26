@@ -36,7 +36,8 @@ interface ScrapeOptions {
   formats: string[]
 }
 
-interface Result {
+interface PageData {
+  url: string
   markdown?: string
   html?: string
   structured_data?: Record<string, any>
@@ -56,7 +57,7 @@ export default function WebCrawlerUI() {
   })
   const [processing, setProcessing] = useState(false)
   const [progress, setProgress] = useState(0)
-  const [results, setResults] = useState<Result | null>(null)
+  const [results, setResults] = useState<PageData[]>([])
   const [activeTab, setActiveTab] = useState("crawl")
   const [error, setError] = useState<string | null>(null)
 
@@ -66,7 +67,7 @@ export default function WebCrawlerUI() {
     setError(null)
     setProcessing(true)
     setProgress(0)
-    setResults(null)
+    setResults([])
 
     try {
       const response = await fetch("http://localhost:8000/crawl", {
@@ -86,27 +87,39 @@ export default function WebCrawlerUI() {
         throw new Error("Failed to get response reader")
       }
 
+      let buffer = ""
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
 
         const chunk = new TextDecoder().decode(value)
-        console.log("Received chunk:", chunk)
-        const lines = chunk.split("\n\n")
+        buffer += chunk
+
+        const lines = buffer.split("\n\n")
+        buffer = lines.pop() || ""
+
         for (const line of lines) {
           if (line.startsWith("data: ")) {
-            const data = JSON.parse(line.slice(6))
-            if (data.progress) {
-              setProgress(data.progress)
-              console.log("Progress:", data.progress)
-            }
-            if (data.result) {
-              setResults(data.result)
-              console.log("Received result:", data.result)
-            }
-            if (data.error) {
-              setError(data.error)
-              console.log("Received error:", data.error)
+            try {
+              const data = JSON.parse(line.slice(6))
+              if (data.progress) {
+                setProgress(data.progress)
+                console.log("Progress:", data.progress)
+              }
+              if (data.result) {
+                setResults((prev) => {
+                  const newResults = [...prev, data.result]
+                  console.log("Updated results:", newResults)
+                  return newResults
+                })
+                console.log("Received result:", data.result)
+              }
+              if (data.error) {
+                setError(data.error)
+                console.log("Received error:", data.error)
+              }
+            } catch (error) {
+              console.error("Error parsing JSON:", error)
             }
           }
         }
@@ -125,7 +138,7 @@ export default function WebCrawlerUI() {
     setError(null)
     setProcessing(true)
     setProgress(0)
-    setResults(null)
+    setResults([])
 
     try {
       const response = await fetch("http://localhost:8000/scrape", {
@@ -145,27 +158,35 @@ export default function WebCrawlerUI() {
         throw new Error("Failed to get response reader")
       }
 
+      let buffer = ""
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
 
         const chunk = new TextDecoder().decode(value)
-        console.log("Received chunk:", chunk)
-        const lines = chunk.split("\n\n")
+        buffer += chunk
+
+        const lines = buffer.split("\n\n")
+        buffer = lines.pop() || ""
+
         for (const line of lines) {
           if (line.startsWith("data: ")) {
-            const data = JSON.parse(line.slice(6))
-            if (data.progress) {
-              setProgress(data.progress)
-              console.log("Progress:", data.progress)
-            }
-            if (data.result) {
-              setResults(data.result)
-              console.log("Received result:", data.result)
-            }
-            if (data.error) {
-              setError(data.error)
-              console.log("Received error:", data.error)
+            try {
+              const data = JSON.parse(line.slice(6))
+              if (data.progress) {
+                setProgress(data.progress)
+                console.log("Progress:", data.progress)
+              }
+              if (data.result) {
+                setResults([data.result])
+                console.log("Received result:", data.result)
+              }
+              if (data.error) {
+                setError(data.error)
+                console.log("Received error:", data.error)
+              }
+            } catch (error) {
+              console.error("Error parsing JSON:", error)
             }
           }
         }
@@ -356,11 +377,11 @@ export default function WebCrawlerUI() {
             </Card>
           )}
 
-          {results && (
+          {results.length > 0 && (
             <>
-              <OutputDisplay markdown={results.markdown} html={results.html} structured={results.structured_data} />
-
-              {results.links && (
+              <OutputDisplay pages={results} />
+              {console.log("Rendering OutputDisplay with results:", results)}
+              {results[0].links && (
                 <Card>
                   <CardHeader>
                     <CardTitle className="flex items-center space-x-2">
@@ -371,7 +392,7 @@ export default function WebCrawlerUI() {
                   <CardContent>
                     <ScrollArea className="h-[200px] w-full rounded-md border">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-2 p-4">
-                        {results.links.map((link, index) => (
+                        {results[0].links.map((link, index) => (
                           <div key={index} className="flex items-center gap-2 p-2 rounded-md bg-muted/50">
                             <LinkIcon className="h-4 w-4 text-blue-500" />
                             <a

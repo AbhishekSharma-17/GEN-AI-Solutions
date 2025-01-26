@@ -56,9 +56,12 @@ async def crawl(request: CrawlRequest):
                     progress = (i / total_pages) * 100
                     yield f"data: {json.dumps({'progress': progress})}\n\n"
                     logger.info(f"Progress: {progress:.2f}%")
-                    if i == total_pages:
+                    try:
                         yield f"data: {json.dumps({'result': result})}\n\n"
-                        logger.info("Final result sent")
+                    except Exception as e:
+                        logger.error(f"Error encoding result: {str(e)}")
+                        yield f"data: {json.dumps({'error': 'Error encoding result'})}\n\n"
+                    logger.info(f"Sent result for page {i}")
             except Exception as e:
                 logger.error(f"Error during crawl: {str(e)}")
                 yield f"data: {json.dumps({'error': str(e)})}\n\n"
@@ -85,7 +88,11 @@ async def scrape(request: ScrapeRequest):
                 result = await asyncio.to_thread(crawler.scrape_page, str(request.url), request.formats)
                 yield f"data: {json.dumps({'progress': 50})}\n\n"
                 logger.info("Progress: 50%")
-                yield f"data: {json.dumps({'result': result})}\n\n"
+                try:
+                    yield f"data: {json.dumps({'result': result})}\n\n"
+                except Exception as e:
+                    logger.error(f"Error encoding result: {str(e)}")
+                    yield f"data: {json.dumps({'error': 'Error encoding result'})}\n\n"
                 logger.info("Result sent")
                 yield f"data: {json.dumps({'progress': 100})}\n\n"
                 logger.info("Progress: 100%")
