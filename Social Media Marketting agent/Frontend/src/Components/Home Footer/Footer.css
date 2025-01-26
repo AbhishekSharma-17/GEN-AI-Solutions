@@ -1,0 +1,73 @@
+.footer {
+  display: flex;
+  flex-direction: column;
+  /* border: 1px solid red; */
+  padding: 30px 40px;
+  text-align: center;
+  gap: 50px;
+}
+.footer-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* border: 1px solid purple; */
+  padding: 20px 10px;
+}
+.footer-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  width: 60%;
+  /* border: 1px solid red; */
+}
+.footer-column img {
+  width: 400px;
+}
+.footer-column p{
+    font-weight: 500;
+
+}
+.footer-grid {
+  /* border: 1px solid red; */
+  width: 40%; /* Adjust the container width as needed */
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+
+  gap: 16px; /* Space between grid items */
+}
+
+.project-card {
+  border: 1px solid grey;
+  width: max-content;
+  padding: 8px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.project-card:hover {
+  transition: transform 0.3s ease;
+  transform: scale(1.05);
+}
+.project-card img {
+  width: 30px;
+}
+.project-card a {
+  color: grey;
+  font-weight: 500;
+}
+.footer-bottom{
+    border-top: 1px solid rgb(219, 219, 219);
+    padding-top: 20px;
+}
+.footer-bottom p {
+  font-size: 20px;
+  font-weight: 500;
+}
+.footer-bottom .social-links {  
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+}
