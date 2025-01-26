@@ -12,8 +12,8 @@ import Main from './Pages/Main/Main'
 const App = () => {
   return (
     <div className='main-app'>
-      {/* <Home></Home> */}
-      <Main></Main>
+      <Home></Home>
+      {/* <Main></Main> */}
     </div>
   )
 }
