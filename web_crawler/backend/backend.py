@@ -2,8 +2,19 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, HttpUrl
 from typing import List, Optional
 from Crawler import EnhancedWebTool
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Web Crawler API", description="API for crawling websites and extracting content")
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # Adjust this to match your frontend URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class CrawlRequest(BaseModel):
     url: HttpUrl
