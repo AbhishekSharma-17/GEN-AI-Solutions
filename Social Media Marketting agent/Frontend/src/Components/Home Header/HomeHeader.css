@@ -1,63 +1,93 @@
-.home-header{
+.home-header {
     height: 100vh;
-    /* border: 1px solid red; */
-    background-attachment:fixed ;
+    background-attachment: fixed;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
 }
-.home-navbar{
+
+.home-navbar {
     padding: 10px 15px;
     display: flex;
-    flex-direction:row ;
+    flex-direction: row;
     justify-content: space-between;
     align-items: center;
     box-shadow: 0px 0px 15px 0px rgb(229, 227, 227);
 }
-.home-navbar #logo{
-width: 150px;
+
+.home-navbar #logo {
+    width: 150px;
 }
-.home-navbar #icon{
+
+.home-navbar #icon {
     width: 40px;
 }
 
-.home-header .header-main{
-    border: 1px solid purple;    
-    height: auto;
+.home-header .header-main {
+    /* border: 1px solid purple; */
+    flex-grow: 1; /* Ensures the main section occupies remaining height */
     display: flex;
-    flex-direction:row ;
+    flex-direction: row;
     justify-content: center;
     align-items: center;
     padding: 40px;
     gap: 40px;
+    flex-wrap: wrap; /* Ensures elements wrap to avoid overlap on smaller screens */
 }
-.key-input-section{
+
+.key-input-section {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 30px;
-    padding: 50px 20px!important;
+    padding: 50px 20px !important;
+    width: 100%; /* Occupies full width on smaller screens */
+    max-width: 500px; /* Prevents the section from growing too wide */
+    box-shadow: 0px 0px 10px rgb(222, 221, 221);
+    border-radius: 5px;
 }
-.key-input-section h1{
+
+.key-input-section h1 {
     font-family: Inter;
     font-weight: bold;
-    /* font-size: 5em; */
-    /* height: auto; */
+    text-align: center; /* Centers the heading */
+    margin-bottom: 20px;
 }
-.key-input-section, .header-image-section
-{
-    width: 50%;
+
+.header-image-section {
+    width: 100%; /* Occupies full width on smaller screens */
+    max-width: 500px; /* Prevents the section from growing too wide */
     padding: 10px;
     border-radius: 5px;
-    /* border: 1px solid green; */
     box-shadow: 0px 0px 10px rgb(222, 221, 221);
 }
 
-#customDropdown{
+#customDropdown {
     border: 1px solid grey;
     text-align: left;
     font-weight: bold;
 }
+
 #customDropdown .dropdown-toggle::after {
     display: none !important;
-  }
-  .dropdown-toggle::after {
+}
+
+.dropdown-toggle::after {
     display: none !important;
-  }
+}
+
+/* Responsive styling for smaller screens */
+@media (max-width: 768px) {
+    .home-header .header-main {
+        flex-direction: column; /* Stack sections vertically */
+        gap: 20px;
+    }
+
+    .key-input-section, .header-image-section {
+        width: 90%; /* Adjust to take up more width on small screens */
+    }
+
+    .key-input-section h1 {
+        font-size: 1.5em; /* Adjust font size for smaller screens */
+    }
+}
