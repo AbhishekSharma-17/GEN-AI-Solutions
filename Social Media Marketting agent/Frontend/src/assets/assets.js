@@ -19,8 +19,18 @@ import chatWithPPT from "./powerpoint.png";
 import socialAgent from "./social-agent.png";
 import chatWithSQL from "./SQL.png";
 import mockImage from "./mockImage.png";
+import drive from "./drive.png";
+import facebook from "./facebook.png";
+import linkedIn from "./linkedin.png";
+import youtube from "./youtube.png";
+import instagram from "./instagram.png";
 
 export const assets = {
+  instagram,
+  drive,
+  facebook,
+  linkedIn,
+  youtube,
   mockImage,
   chatWithAnything,
   chatWithPDF,
