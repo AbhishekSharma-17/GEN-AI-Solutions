@@ -33,4 +33,5 @@ PyMuPDF
 pillow
 requests
 langchain-google-genai
-
+browser-use
+#playwright install
