@@ -1,0 +1,12 @@
+.main-app{
+    margin:0;
+    height: 100vh;
+    border: 1px solid red;
+}
+.main-content{
+    margin:auto;
+    width: 90%;
+    height: 100%;
+    box-shadow: 0px 0px 10px rgb(233, 232, 232);flex: 1;
+    border: 1px solid green;
+}
