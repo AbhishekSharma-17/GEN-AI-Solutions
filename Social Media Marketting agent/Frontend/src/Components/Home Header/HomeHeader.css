@@ -19,8 +19,8 @@ width: 150px;
 }
 
 .home-header .header-main{
-    /* border: 1px solid purple;     */
-    height: 80vh;
+    border: 1px solid purple;    
+    height: auto;
     display: flex;
     flex-direction:row ;
     justify-content: center;
@@ -49,10 +49,7 @@ width: 150px;
     /* border: 1px solid green; */
     box-shadow: 0px 0px 10px rgb(222, 221, 221);
 }
-.header-image-section{
-    
-    height: 500px;
-}
+
 #customDropdown{
     border: 1px solid grey;
     text-align: left;
