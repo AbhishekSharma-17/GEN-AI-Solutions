@@ -103,18 +103,8 @@ export default function Home() {
     setIsListening(false)
   }
 
-  const appendNextChunk = () => {
-    if (ttsAudioChunksRef.current.length && sourceBufferRef.current && !sourceBufferRef.current.updating) {
-      const chunk = ttsAudioChunksRef.current.shift()
-      if (chunk) {
-        sourceBufferRef.current.appendBuffer(chunk)
-      }
-    }
-  }
-
   const fetchTTS = async (text: string) => {
     setIsLoading(true)
-    ttsAudioChunksRef.current = []
 
     try {
       const response = await fetch(`http://localhost:8000/tts?text=${encodeURIComponent(text)}&voice=${selectedVoice}`, {
@@ -125,45 +115,15 @@ export default function Home() {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const reader = response.body?.getReader()
-      if (!reader) {
-        throw new Error('Response body is null')
-      }
+      const audioBlob = await response.blob()
+      const audioUrl = URL.createObjectURL(audioBlob)
 
-      const mediaSource = new MediaSource()
-      mediaSourceRef.current = mediaSource
       if (audioRef.current) {
-        audioRef.current.src = URL.createObjectURL(mediaSource)
+        audioRef.current.src = audioUrl
+        audioRef.current.play()
       }
 
-      mediaSource.addEventListener('sourceopen', async () => {
-        sourceBufferRef.current = mediaSource.addSourceBuffer('audio/mpeg')
-        sourceBufferRef.current.mode = 'sequence'
-        sourceBufferRef.current.addEventListener('updateend', appendNextChunk)
-
-        try {
-          while (true) {
-            const { done, value } = await reader.read()
-            if (done) break
-
-            if (value) {
-              ttsAudioChunksRef.current.push(value)
-              if (sourceBufferRef.current && !sourceBufferRef.current.updating) {
-                appendNextChunk()
-              }
-            }
-
-            if (audioRef.current && audioRef.current.readyState >= 2) {
-              audioRef.current.play()
-              setIsLoading(false)
-            }
-          }
-          mediaSource.endOfStream()
-        } catch (error) {
-          console.error('Error while streaming:', error)
-          setIsLoading(false)
-        }
-      })
+      setIsLoading(false)
     } catch (error) {
       console.error("Error fetching TTS:", error)
       setIsLoading(false)
