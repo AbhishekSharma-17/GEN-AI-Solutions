@@ -11,9 +11,9 @@ interface VoiceAgentProps {
   startListening: () => void
   stopListening: () => void
   conversation: Array<{ type: string; text: string; time: number | null }>
-  audioUrl: string
   selectedVoice: string
   setSelectedVoice: (voice: string) => void
+  isLoading: boolean
 }
 
 export default function VoiceAgent({
@@ -22,9 +22,9 @@ export default function VoiceAgent({
   startListening,
   stopListening,
   conversation,
-  audioUrl,
   selectedVoice,
   setSelectedVoice,
+  isLoading,
 }: VoiceAgentProps) {
   const [showHistory, setShowHistory] = useState(false)
 
@@ -117,17 +117,10 @@ export default function VoiceAgent({
               )}
             </motion.div>
           ))}
-
-          {audioUrl && (
-            <motion.div
-              className="bg-purple-50 p-6 rounded-xl border border-purple-200"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
-              <h2 className="text-xl font-semibold mb-3 text-purple-700">Audio Response:</h2>
-              <audio controls src={audioUrl} className="w-full" />
-            </motion.div>
+          {isLoading && (
+            <div className="flex justify-center items-center p-4">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
+            </div>
           )}
         </div>
       </div>
