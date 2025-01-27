@@ -75,7 +75,7 @@ export default function VoiceAgent({
             <select
               value={selectedVoice}
               onChange={(e) => setSelectedVoice(e.target.value)}
-              className="block appearance-none w-full bg-white border border-gray-300 hover:border-gray-400 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline"
+              className="block appearance-none w-full bg-blue-50 border border-blue-300 hover:border-blue-400 px-4 py-2 pr-8 rounded-lg shadow-sm text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors duration-200"
             >
               {voiceOptions.map((voice) => (
                 <option key={voice} value={voice.toLowerCase()}>
@@ -83,8 +83,8 @@ export default function VoiceAgent({
                 </option>
               ))}
             </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-blue-500">
+              <svg className="fill-current h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
                 <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
               </svg>
             </div>
@@ -105,25 +105,26 @@ export default function VoiceAgent({
         </AnimatePresence>
 
         <div className="space-y-4">
-          {conversation.map((message, index) => (
-            <motion.div
-              key={index}
-              className={`p-6 rounded-xl border ${
-                message.type === 'user' ? 'bg-gray-50 border-gray-200' : 'bg-blue-50 border-blue-200'
-              }`}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 * index }}
-            >
-              <h2 className={`text-xl font-semibold mb-3 ${message.type === 'user' ? 'text-gray-700' : 'text-blue-700'}`}>
-                {message.type === 'user' ? 'Transcription:' : 'AI Response:'}
-              </h2>
-              <p className="text-gray-600">{message.text}</p>
-              {message.time !== null && (
-                <p className="text-sm text-gray-400 mt-2">Time: {message.time.toFixed(2)}s</p>
-              )}
-            </motion.div>
-          ))}
+          {conversation.length > 0 && (
+            <>
+              <motion.div
+                className="p-6 rounded-xl border bg-gray-50 border-gray-200"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <h2 className="text-xl font-semibold mb-3 text-gray-700">Current Transcription:</h2>
+                <p className="text-gray-600">{conversation[conversation.length - 1].type === 'user' ? conversation[conversation.length - 1].text : 'Waiting for transcription...'}</p>
+              </motion.div>
+              <motion.div
+                className="p-6 rounded-xl border bg-blue-50 border-blue-200"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+              >
+                <h2 className="text-xl font-semibold mb-3 text-blue-700">Current AI Response:</h2>
+                <p className="text-gray-600">{conversation[conversation.length - 1].type === 'ai' ? conversation[conversation.length - 1].text : 'Waiting for AI response...'}</p>
+              </motion.div>
+            </>
+          )}
           {isLoading && (
             <div className="flex justify-center items-center p-4">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
