@@ -10,6 +10,7 @@ export default function Home() {
   const [conversation, setConversation] = useState<Array<{ type: string; text: string; time: number | null }>>([])
   const [selectedVoice, setSelectedVoice] = useState('alloy')
   const [isLoading, setIsLoading] = useState(false)
+  const [isAIResponseComplete, setIsAIResponseComplete] = useState(false)
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null)
   const audioChunksRef = useRef<Blob[]>([])
@@ -53,10 +54,10 @@ export default function Home() {
           const lastMessage = newConversation[newConversation.length - 1]
           if (lastMessage && lastMessage.type === 'ai') {
             lastMessage.time = data.ai_response_time
-            fetchTTS(lastMessage.text)
           }
           return newConversation
         })
+        setIsAIResponseComplete(true)
       }
     }
 
@@ -71,6 +72,25 @@ export default function Home() {
       }
     }
   }, [])
+
+  useEffect(() => {
+    if (isAIResponseComplete && conversation.length > 0) {
+      const lastMessage = conversation[conversation.length - 1]
+      if (lastMessage.type === 'ai') {
+        fetchTTS(lastMessage.text)
+        setIsAIResponseComplete(false)
+      }
+    }
+  }, [isAIResponseComplete, conversation])
+
+  const appendNextChunk = () => {
+    if (ttsAudioChunksRef.current.length && sourceBufferRef.current && !sourceBufferRef.current.updating) {
+      const chunk = ttsAudioChunksRef.current.shift()
+      if (chunk) {
+        sourceBufferRef.current.appendBuffer(chunk)
+      }
+    }
+  }
 
   const startListening = async () => {
     try {
@@ -105,6 +125,7 @@ export default function Home() {
 
   const fetchTTS = async (text: string) => {
     setIsLoading(true)
+    ttsAudioChunksRef.current = []
 
     try {
       const response = await fetch(`http://localhost:8000/tts?text=${encodeURIComponent(text)}&voice=${selectedVoice}`, {
@@ -115,15 +136,45 @@ export default function Home() {
         throw new Error(`HTTP error! status: ${response.status}`)
       }
 
-      const audioBlob = await response.blob()
-      const audioUrl = URL.createObjectURL(audioBlob)
-
-      if (audioRef.current) {
-        audioRef.current.src = audioUrl
-        audioRef.current.play()
+      const reader = response.body?.getReader()
+      if (!reader) {
+        throw new Error('Response body is null')
       }
 
-      setIsLoading(false)
+      const mediaSource = new MediaSource()
+      mediaSourceRef.current = mediaSource
+      if (audioRef.current) {
+        audioRef.current.src = URL.createObjectURL(mediaSource)
+      }
+
+      mediaSource.addEventListener('sourceopen', async () => {
+        sourceBufferRef.current = mediaSource.addSourceBuffer('audio/mpeg')
+        sourceBufferRef.current.mode = 'sequence'
+        sourceBufferRef.current.addEventListener('updateend', appendNextChunk)
+
+        try {
+          while (true) {
+            const { done, value } = await reader.read()
+            if (done) break
+
+            if (value) {
+              ttsAudioChunksRef.current.push(value)
+              if (sourceBufferRef.current && !sourceBufferRef.current.updating) {
+                appendNextChunk()
+              }
+            }
+
+            if (audioRef.current && audioRef.current.readyState >= 2) {
+              audioRef.current.play()
+              setIsLoading(false)
+            }
+          }
+          mediaSource.endOfStream()
+        } catch (error) {
+          console.error('Error while streaming:', error)
+          setIsLoading(false)
+        }
+      })
     } catch (error) {
       console.error("Error fetching TTS:", error)
       setIsLoading(false)
