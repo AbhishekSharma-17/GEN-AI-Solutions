@@ -31,6 +31,7 @@ const Chat = () => {
     setCumulativeTokens,
     setCumulativeCost,
     setResponseTime,
+    userId, // Assuming userId is in context
   } = useContext(Context);
 
   const handleHorizontalScroll = (event) => {
@@ -57,13 +58,14 @@ const Chat = () => {
       const responseProvider = "openai"; // Set your provider dynamically if needed
       const modelToUse = selectedModel || (responseProvider === "openai" ? "gpt-4o-mini" : "gemini-1.5-flash");
 
-      const res = await fetch(`http://localhost:8000/chat`, {
+      const res = await fetch(`http://localhost:8000/chat?user_id=${userId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           question: input,
           provider: responseProvider,
           model: modelToUse,
+          user_id: userId, // Use userId from context
         }),
       });
 
@@ -129,7 +131,18 @@ const Chat = () => {
     <div className="chat-section">
       <div className="chat-section-title">
         <p>Chat</p>
-        <p>X</p>
+        <div>
+        <label>Select Model:</label>
+        <select
+          value={selectedModel}
+          onChange={(e) => setSelectedModel(e.target.value)}
+        >
+          <option value="gpt-4o">GPT-4o</option>
+          <option value="gpt-4o-mini">GPT-4o Mini</option>
+          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+        </select>
+        </div>
       </div>
       <div className="main-chat">
         {!showResult && (
@@ -169,18 +182,7 @@ const Chat = () => {
         </button>
       </form>
 
-      <div className="model-selector">
-        <label>Select Model:</label>
-        <select
-          value={selectedModel}
-          onChange={(e) => setSelectedModel(e.target.value)}
-        >
-          <option value="gpt-4o">GPT-4o</option>
-          <option value="gpt-4o-mini">GPT-4o Mini</option>
-          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
-          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
-        </select>
-      </div>
+      
     </div>
   );
 };
