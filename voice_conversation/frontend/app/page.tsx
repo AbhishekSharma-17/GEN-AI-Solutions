@@ -186,8 +186,8 @@ export default function Home() {
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(176,196,222,0.1),rgba(176,196,222,0.2))]" />
       <div className="relative z-10">
         <Header />
-        <main className="flex p-8 h-[calc(100vh-64px)]">
-          <div className="w-1/3 pr-4 overflow-y-auto border-r border-gray-200">
+        <main className="flex h-[calc(100vh-64px)]">
+          <div className="w-1/3 p-8 overflow-y-auto border-r border-gray-200">
             <h2 className="text-2xl font-bold mb-4">Conversation History</h2>
             <div className="space-y-4">
               {conversation.map((message, index) => (
@@ -199,8 +199,8 @@ export default function Home() {
               ))}
             </div>
           </div>
-          <div className="w-2/3 pl-4 flex flex-col">
-            <div className="flex-grow overflow-y-auto">
+          <div className="w-2/3 fixed right-0 top-16 bottom-0 overflow-y-auto flex items-center justify-center">
+            <div className="w-full max-w-2xl p-8">
               <VoiceAgent
                 isConnected={isConnected}
                 isListening={isListening}
@@ -212,10 +212,10 @@ export default function Home() {
                 isLoading={isLoading}
               />
             </div>
-            <audio ref={audioRef} style={{ display: 'none' }}>
-              Your browser does not support the audio element.
-            </audio>
           </div>
+          <audio ref={audioRef} style={{ display: 'none' }}>
+            Your browser does not support the audio element.
+          </audio>
         </main>
       </div>
     </div>
