@@ -1,6 +1,7 @@
 import os
 import logging
 from openai import OpenAI
+from groq import Groq
 from dotenv import load_dotenv
 from portkey_ai import PORTKEY_GATEWAY_URL, createHeaders
 from langchain_core.prompts import ChatPromptTemplate
@@ -20,7 +21,11 @@ client = OpenAI(
                                   virtual_key = "openai-prod-a5528d"
                                   )
 )
-logger.info("OpenAI client initialized")
+# logger.info("OpenAI client initialized")
+client1 = OpenAI(
+    base_url="https://api.groq.com/openai/v1",
+    api_key=os.environ.get("GROQ_API_KEY")
+)
 
 template = """KrooAi is a Artificial Intelligence model by kroolo.
 

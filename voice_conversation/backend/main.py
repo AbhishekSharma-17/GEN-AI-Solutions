@@ -6,7 +6,7 @@ from fastapi.responses import StreamingResponse
 import uvicorn
 from langchain_openai import  ChatOpenAI
 from langchain.schema import HumanMessage, SystemMessage
-from speech_tts import client, template
+from speech_tts import client, template, client1
 import tempfile
 
 app = FastAPI()
@@ -43,6 +43,7 @@ def text_to_speech(
             status_code=400, detail="Text to convert to speech is required"
         )
 
+
     def generate():
         try:
             start_time = time.time()
@@ -78,9 +79,10 @@ async def websocket_endpoint(websocket: WebSocket):
                 start_time = time.time()
                 # Use the temporary file for transcription
                 with open(temp_audio_file_path, "rb") as audio_file:
-                    transcription = client.audio.transcriptions.create(
-                        model="whisper-1", 
-                        file=audio_file
+                    transcription = client1.audio.transcriptions.create(
+                        model="whisper-large-v3-turbo", 
+                        file=audio_file,
+                        prompt="Specify context or spelling"
                     )
 
                 text = transcription.text
