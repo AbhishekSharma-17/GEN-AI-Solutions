@@ -1,11 +1,16 @@
-import React from "react";
+import React, { useState, useContext } from "react";
 import "./Chat.css";
 import { BsFillSendFill } from "react-icons/bs";
 import { Context } from "../../Context/Context";
-import { useContext } from "react";
 import assets from "../../assets/assets";
 
 const Chat = () => {
+  const [selectedModel, setSelectedModel] = useState("");
+  const [input, setInput] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
+  const [response, setResponse] = useState("");
+  const [loading, setLoading] = useState(false);
+
   const images = [
     assets.bulb_icon,
     assets.compass_icon,
@@ -13,19 +18,10 @@ const Chat = () => {
     assets.message_icon,
   ];
 
-  const handleHorizontalScroll = (event) => {
-    const container = event.currentTarget;
-    container.scrollLeft += event.deltaY; // Scroll horizontally based on vertical wheel movement
-    event.preventDefault(); // Prevent the default vertical scrolling behavior
-  };
-
   const {
-    fileResponse,
-    setFileResponse,
     initialQueries,
     showResult,
     setShowResult,
-    setInput,
     setInputToken,
     setOutputToken,
     setTotalToken,
@@ -37,7 +33,11 @@ const Chat = () => {
     setResponseTime,
   } = useContext(Context);
 
-  console.log("Initial Queries Resposne: ", initialQueries);
+  const handleHorizontalScroll = (event) => {
+    const container = event.currentTarget;
+    container.scrollLeft += event.deltaY; // Scroll horizontally based on vertical wheel movement
+    event.preventDefault();
+  };
 
   const handleSend = async (event) => {
     event.preventDefault();
@@ -45,19 +45,7 @@ const Chat = () => {
 
     try {
       setShowResult(true);
-      setLoadings(true);
-      setRecentPrompt(input);
-      setEmbededCost("");
-      setEmbededToken("");
-      setInputToken("");
-      setOutputToken("");
-      setTotalToken("");
-      setInputCost("");
-      setOutputCost("");
-      setTotalCost("");
-      setCumulativeTokens("");
-      setCumulativeCost("");
-      setResponseTime("");
+      setLoading(true);
 
       const loaderIndex = chatHistory.length;
       setChatHistory((prev) => [
@@ -66,27 +54,18 @@ const Chat = () => {
         { type: "bot", text: "", loading: true },
       ]);
 
-      setInput("");
+      const responseProvider = "openai"; // Set your provider dynamically if needed
+      const modelToUse = selectedModel || (responseProvider === "openai" ? "gpt-4o-mini" : "gemini-1.5-flash");
 
-      const modelToUse = selectedModel
-        ? selectedModel.value
-        : responseProvider === "openai"
-        ? "gpt-4o-mini"
-        : "gemini-1.5-flash";
-      setModelName(modelToUse);
-
-      const res = await fetch(
-        `http://localhost:8000/chat?user_id=${encodeURIComponent(userId)}`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            question: input,
-            provider: responseProvider,
-            model: modelToUse,
-          }),
-        }
-      );
+      const res = await fetch(`http://localhost:8000/chat`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          question: input,
+          provider: responseProvider,
+          model: modelToUse,
+        }),
+      });
 
       if (!res.ok) {
         throw new Error("Failed to fetch response from the server.");
@@ -103,8 +82,7 @@ const Chat = () => {
         const chunk = decoder.decode(value, { stream: true });
         accumulatedResponse += chunk;
 
-        // Update chat history with partial response
-        const textOnly = accumulatedResponse.split("{")[0].trim(); // Extract main response text
+        const textOnly = accumulatedResponse.split("{")[0].trim();
         setChatHistory((prev) =>
           prev.map((chat, index) =>
             index === loaderIndex + 1
@@ -114,19 +92,14 @@ const Chat = () => {
         );
       }
 
-      // Extract metadata (JSON) after the main response text
       const metadataStart = accumulatedResponse.indexOf("{");
       const metadata =
         metadataStart !== -1
           ? JSON.parse(accumulatedResponse.slice(metadataStart))
           : {};
 
-      // Set response text
-      const textResponse = accumulatedResponse.split("{")[0].trim();
-      setResponse(textResponse);
-      setPreviousPrompt((prev) => [...prev, input]);
+      setResponse(accumulatedResponse.split("{")[0].trim());
 
-      // Update state with metadata
       if (metadata) {
         setInputToken(parseInt(metadata.input_tokens) || 0);
         setOutputToken(parseInt(metadata.output_tokens) || 0);
@@ -140,17 +113,15 @@ const Chat = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      const errorMessage = "An error occurred. Please try again.";
-      setResponse(errorMessage);
       setChatHistory((prev) =>
         prev.map((chat, index) =>
           index === loaderIndex + 1
-            ? { ...chat, text: errorMessage, loading: false }
+            ? { ...chat, text: "An error occurred. Please try again.", loading: false }
             : chat
         )
       );
     } finally {
-      setLoadings(false);
+      setLoading(false);
     }
   };
 
@@ -161,7 +132,7 @@ const Chat = () => {
         <p>X</p>
       </div>
       <div className="main-chat">
-        {showResult ? null : (
+        {!showResult && (
           <div className="main-chat-query">
             <div className="queries" onWheel={handleHorizontalScroll}>
               {initialQueries.map((query, index) => (
@@ -173,19 +144,23 @@ const Chat = () => {
             </div>
           </div>
         )}
+        <div className="chat-history">
+          {chatHistory.map((chat, index) => (
+            <div key={index} className={`chat-message ${chat.type}`}>
+              {chat.loading ? <p>Loading...</p> : <p>{chat.text}</p>}
+            </div>
+          ))}
+        </div>
       </div>
 
-      <form
-        className="chat-inputs"
-        onSubmit={handleSend}
-        style={{ border: "1px solid green" }}
-      >
+      <form className="chat-inputs" onSubmit={handleSend}>
         <div className="chat-input-field">
           <input
-            type="email"
-            class="form-control"
+            type="text"
+            className="form-control"
             id="input-query"
             placeholder="Ask here !!"
+            value={input}
             onChange={(event) => setInput(event.target.value)}
           />
         </div>
@@ -193,6 +168,19 @@ const Chat = () => {
           <BsFillSendFill />
         </button>
       </form>
+
+      <div className="model-selector">
+        <label>Select Model:</label>
+        <select
+          value={selectedModel}
+          onChange={(e) => setSelectedModel(e.target.value)}
+        >
+          <option value="gpt-4o">GPT-4o</option>
+          <option value="gpt-4o-mini">GPT-4o Mini</option>
+          <option value="gemini-1.5-flash">Gemini 1.5 Flash</option>
+          <option value="gemini-2.0-flash">Gemini 2.0 Flash</option>
+        </select>
+      </div>
     </div>
   );
 };
