@@ -64,18 +64,22 @@ def text_to_speech(
 
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
+    print("New WebSocket connection attempt")
     await websocket.accept()
+    print("WebSocket connection accepted")
     try:
         while True:
-            # Receive audio data from the client
-            audio_data = await websocket.receive_bytes()
-            
-            # Save audio to a temporary file
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_audio_file:
-                temp_audio_file.write(audio_data)
-                temp_audio_file_path = temp_audio_file.name
-
             try:
+                # Receive audio data from the client
+                audio_data = await websocket.receive_bytes()
+                print(f"Received audio data: {len(audio_data)} bytes")
+                
+                # Save audio to a temporary file
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as temp_audio_file:
+                    temp_audio_file.write(audio_data)
+                    temp_audio_file_path = temp_audio_file.name
+                print(f"Saved audio to temporary file: {temp_audio_file_path}")
+
                 start_time = time.time()
                 # Use the temporary file for transcription
                 with open(temp_audio_file_path, "rb") as audio_file:
@@ -103,6 +107,7 @@ async def websocket_endpoint(websocket: WebSocket):
                     "transcription": text,
                     "transcription_time": round(transcription_time, 2),
                 })
+                print("Sent transcription to client")
 
                 # Stream AI response
                 full_response = ""
@@ -112,6 +117,7 @@ async def websocket_endpoint(websocket: WebSocket):
                         await websocket.send_json({
                             "ai_response_chunk": chunk.content,
                         })
+                        print(f"Sent AI response chunk: {chunk.content}")
 
                 ai_response_time = time.time() - ai_start_time
                 print(f"AI response: {full_response}")
@@ -122,15 +128,20 @@ async def websocket_endpoint(websocket: WebSocket):
                     "ai_response_complete": True,
                     "ai_response_time": round(ai_response_time, 2)
                 })
+                print("Sent AI response complete message")
             except Exception as e:
                 print(f"Error processing audio: {str(e)}")
-                await websocket.send_text(f"Error: {str(e)}")
+                await websocket.send_json({"error": str(e)})
             finally:
                 # Remove the temporary file
-                os.remove(temp_audio_file_path)
+                if 'temp_audio_file_path' in locals():
+                    os.remove(temp_audio_file_path)
+                    print(f"Removed temporary file: {temp_audio_file_path}")
 
     except Exception as e:
         print(f"WebSocket error: {str(e)}")
+    finally:
+        print("WebSocket connection closed")
 
 if __name__ == "__main__":
     uvicorn.run(app, host="localhost", port=8000)
