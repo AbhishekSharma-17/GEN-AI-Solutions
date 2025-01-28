@@ -13,9 +13,10 @@ import ai_final from './AI-final.png'
 import gemini_icon from './gemini_icon.png'
 import chatGPTIcon from './chatGPTIcon.jpg'
 import chatWithPPT from './chatWithPPT.jpg'
-import PPT_img from './Advanced_PDF.png'
+import advancedPDF from './advancedPF_FrontPage.png';
 
 export const assets = {
+    advancedPDF,
     chatWithPPT,
     chatGPTIcon,
     gemini_icon,
@@ -34,7 +35,6 @@ export const assets = {
     code_icon,
     send_icon,
     gemini_icon,
-    PPT_img,
 }
 
 export default assets

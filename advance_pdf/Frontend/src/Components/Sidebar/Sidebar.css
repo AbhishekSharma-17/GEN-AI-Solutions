@@ -1,372 +1,147 @@
-.sidebar {
-  width: 100%;
+.actual-sidebar {
+  /* border: 1px solid red; */
   height: 100%;
+  width: 100%;
+  padding: 30px 15px 30px 15px;
   display: flex;
   flex-direction: column;
+}
+.insight-and-modelName{
+  display: flex;
   justify-content: space-between;
-  background-color: #f0f4f9;
-  padding: 25px 15px;
-  gap: 20px;
-  flex: 0 0 15%;
-  transition: flex 0.3s ease; /* Animation for sidebar width */
-  /* border: 1px solid red; */
+  align-items: center;
+  margin-bottom: 20px;
 }
-
-.sidebar.collapsed {
-  flex: 0 0 2%;
+.model-name{
+  background-color: #ece9e9;
+  border-radius: 5px;
+  padding: 2px 10px ;
+  border: 1px solid #bbb;
 }
-
-.sidebar.extended {
-  flex: 0 0 20%;
+.insight-and-modelName p{
+  color: rgb(19, 46, 120);
+  font-family: Inter;
+  font-weight: bold;
 }
-
-.sidebar .top {
-  height: 90%;
+.token-and-cost-display{
+  border: 1px solid rgb(182, 182, 182);
+  padding: 10px;
+  box-shadow: 0px 0px 12px  #e1e0e0;
+  width: 100%;
+  border-radius: 10px;
+  animation: fade-in 2s;
+}
+.tokens, .approx-cost, .embed-token, .cumulative-token-cost{
+  /* border: 1px solid purple; */
+  padding: 2px;
   display: flex;
   flex-direction: column;
-  gap: 30px;
-  /* border: 1px solid red; */
+  margin: 10px auto;
 }
-.sidebar .bottom {
-  height: 10%;
-  /* border: 1px solid red; */
+.div-heading{
+  font-family: Outfit;
+  font-size: 20px;
+  /* border: 1px solid yellow; */
+  margin: 0;
+}
+.value-title{
+  /* border: 1px solid green; */
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+.input-value, .output-values, .total-values{
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  /* border: 1px solid orangered; */
+  padding: 5px;
+  gap: 5px;
 }
-.sidebar .top .menu,
-.not-extended-sidebar .top .menu {
-  width: 20px;
-  cursor: pointer;
-  margin: 0;
-}
-
-.sidebar .token-display {
-  width: 200px;
-  background-color: rgb(243, 243, 243);
-  padding: 10px 10px;
-  border-radius: 7px;
-  box-shadow: 0px 0px 7px rgba(0, 0, 0, 0.2);
+.embed-value-title, .cumulative-value-title{
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  position: relative;
-  cursor: pointer;
-  animation: fadeIn 0.4s ease-in-out;
-  z-index: 1;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px;
+ 
 }
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
+.embed-value-title{
+  background-color: #ecf8fffc;
+  border-radius: 5px;
 }
-.latency-token {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 20px;
-  width: 180px;
-}
-.latency,
-.tokens {
-  /* border: 1px solid red; */
-  width: 100px;
-}
-.latency p,
-.tokens p {
-  /* border: 1px solid red; */
-  margin: 0;
-  font-weight: 500;
-  /* font-style: italic; */
-  font-family: Outfit;
-  font-size: 13px;
-  color: grey;
-}
-.latency span,
-.tokens span {
-  color: rgb(58, 57, 57);
+.numeric-value{
+  color: #0d92f4;
   font-weight: bold;
+  font-family: Outfit;
   font-size: 20px;
 }
-.hover-content {
-  position: absolute;
-  /* bottom: 1000%;  */
-  left: 100%;
-  background-color: white;
-  padding: 20px 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  white-space: nowrap;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  margin-top: 10px;
-  margin-left: 15px;
-  gap: 10px 5px;
-  font-family: Outfit;
-
-  display: flex;
-  flex-direction: column;
-
-  /* Initial state for transition */
-  opacity: 0;
-  visibility: hidden;
-  transform: translateY(10px); /* Slight movement for animation */
-  transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-}
-.hover-content p {
-  margin: 0;
-}
-.speed-insights {
-  text-align: center;
-  color: #001f3f;
-  font-weight: 500;
-  font-size: 22px;
-  font-family: Roboto Condensed !important;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-}
-
-.speed-insight-model-name {
-  font-size: 18px !important;
-  background-color: rgb(240, 239, 239);
-  margin: 0;
-  font-family: Outfit;
-  padding: 3px 10px;
-  border-radius: 5px;
-  color: rgb(43, 43, 43);
-}
-
-.input-output-token,
-.inference-time,
-.cumulative-token-cost,
-.embeded-token-per-second {
-  /* border : 1px solid red; */
-  display: flex;
-  flex-direction: row;
-  gap: 20px;
-  width: 100%;
-}
-.input-token,
-.output-token,
-.total-token,
-.input-inference,
-.output-inference,
-.total-inference {
-  /* border : 1px solid black; */
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 33%;
-}
-
-.embeded-token,
-.embeded-cost {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  width: 50%;
-  /* text-align: left; */
-}
-.cumulative-cost,
-.cumulative-token {
-  padding: 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: left;
-  width: 50% !important;
-  align-items: left !important;
-  background-color: rgb(245, 245, 245);
-  border-radius: 5px;
-  /* border: 1px solid red ; */
-}
-.token-details-title {
-  text-align: left;
-  font-size: 22px;
-  color: black;
-  font-weight: 400;
-}
-.token-value {
-  font-size: 1.5vw;
-  color: #0d92f4;
-  font-weight: 700;
-  /* color: orange; */
-}
-.token-title {
+.char-value{
   color: grey;
+  font-weight: 500;
 }
-.token-display:hover .hover-content {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0); /* Reset movement */
-}
-.sidebar .top .recent {
+
+/* reponse time and cost  */
+.response-time-cost
+{
   display: flex;
-  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  background-color: rgb(235, 235, 235);
+  font-weight: 500;
+  padding: 5px;
+  border-radius: 5px;
+
+}
+.response-time , .response-cost
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 10px;
-  height: 70vh;
-  /* border: 1px solid red; */
-  animation: fadeIn 2s;
-  overflow-y: scroll;
+  color: rgb(79, 78, 78);
+}
+.reponse-cost span , .reponse-time span
+{
+  font-size: 14px;
+  font-family: Outfit;
 }
 
-/* scrollbar styling starts */
-.sidebar .top .recent::-webkit-scrollbar {
-  display: none;
-}
-/* scrollbar styling ends */
-
-.sidebar .top .recent-title {
-  font-weight: 500;
-  margin: 0;
-}
-
-.sidebar .top .recent .recent-entry {
+/* .skeleton insights */
+.skeleton-insight{
+  /* border: 1px solid #ccc; */
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 3px;
-  padding: 8px 5px;
-  border-radius: 50px;
-  cursor: pointer;
-  min-width: max-content; /* background-color: rgb(241, 239, 239); */
+  justify-content: center;
+  align-items: center;
 }
-.sidebar .top .recent .recent-entry img {
-  width: 25px;
-  height: 25px;
-}
-.recent-entry p {
-  margin: 0;
-}
-.sidebar .top .recent .recent-entry:hover {
-  background-color: #ececec;
-  box-shadow: 0px 0px 4px #c7c6c6;
-  font-weight: 500;
-}
-.sidebar-bottom-para-text {
-  background: -webkit-linear-gradient(15deg, #032b44, #4682b4);
+.skeleton-insight .shimmer-text{
+  font-size: 40px;
+  font-family:Roboto;
+  font-weight: bold;
+  /* color: rgb(223, 222, 222); */
+  background: linear-gradient(90deg, #b0b0b0 25%, #d0d0d0 50%, #b0b0b0 75%);
+
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  color: transparent; /* Hide the text */
   background-clip: text;
-  /* border: 1px solid red; */
-  margin: 0;
-  -webkit-text-fill-color: transparent;
+  -webkit-background-clip: text; /* For Safari */
 }
-.sidebar-bottom-para-text a {
-  font-size: 20px !important;
-  font-weight: 500;
-}
-
-@media (max-width: 600px) {
-  .sidebar {
-    display: none;
-  }
+.shimmer-text {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 0.8s infinite;
+  color: transparent; /* Hide the text */
+  background-clip: text;
+  -webkit-background-clip: text; /* For Safari */
 }
 
-@media (max-width: 1500px) {
-  .sidebar .token-display {
-    padding: 10px;
-
-    z-index: 1;
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
   }
-  
-  .latency-token {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 10px;
-    width: 100%;
-  }
-  .latency,
-  .tokens {
-    /* border: 1px solid red; */
-    width: 100%;
-  }
-  .latency p,
-  .tokens p {
-    /* border: 1px solid red; */
-    margin: 0;
-    font-weight: 500;
-    /* font-style: italic; */
-    font-family: Outfit;
-    font-size: 13px;
-    color: grey;
-  }
-  .latency span,
-  .tokens span {
-    color: rgb(58, 57, 57);
-    font-weight: bold;
-    font-size: 15px;
-  }
-  .hover-content {
-    position: absolute;
-    left: 100%;
-    background-color: white;
-    /* padding: 15px;  */
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    white-space: nowrap;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    margin-top: 10px;
-    margin-left: 15px;
-    /* gap: 10px 5px; */
-    font-family: Outfit;
-    display: flex;
-    flex-direction: column;
-
-    /* Initial state for transition */
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(10px); /* Slight movement for animation */
-    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s ease;
-  }
-  .hover-content p {
-    margin: 0;
-  }
-  .speed-insights {
-    text-align: center;
-    color: #001f3f;
-    font-weight: 500;
-    font-size: 20px;
-    font-family: Roboto Condensed !important;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .speed-insight-model-name {
-    font-size: 16px !important;
-    background-color: rgb(240, 239, 239);
-    margin: 0;
-    font-family: Outfit;
-    padding: 3px 10px;
-    border-radius: 5px;
-    color: rgb(43, 43, 43);
-  }
-
-  
-  .token-details-title {
-    text-align: left;
-    font-size: 15px;
-    color: black;
-    font-weight: 400;
-  }
-  .token-value {
-    font-size: 15px;
-    color: #0d92f4;
-    font-weight: 700;
-    /* color: orange; */
-  }
-  .token-title {
-  font-size: 15px;
-    color: grey;
+  100% {
+    background-position: -200% 0;
   }
 }

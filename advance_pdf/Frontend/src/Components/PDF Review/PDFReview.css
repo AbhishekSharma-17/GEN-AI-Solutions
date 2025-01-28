@@ -14,35 +14,7 @@
     border: none;
     border-bottom: 1px solid rgb(211, 211, 211);
 }
-.pdf-zoom{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-evenly;
-    align-items: center;
-    gap: 10px;
-}
-#zoom-in , #zoom-out{
-    /* border: 1px solid red; */
-    padding: 5px;
-    font-size: 25px;
-    border-radius: 50%;
-}
-#zoom-out{
-    color: green;
-    background-color: rgb(197, 238, 197);
-}
-#zoom-in{
-    color: red;
-    background-color: rgb(246, 202, 202);
-}
-.zoom-level{
-    background-color: rgb(236, 236, 236);
-    border-radius: 5px;
-    color: black;
-    font-size: 13px;
-    padding: 4px 12px;
-    font-weight: bold;
-}
+
 .image-page-count{
     display: flex;
     justify-content: space-around;
@@ -64,15 +36,17 @@
 }
 .review{
     height: 100%;
-    padding: 10px 10px 0px 10px;
+    padding: 10px 10px 10px 10px;
     /* border: 1px solid green; */
 }
 .actual-review{
     border: 1px solid rgb(235, 235, 235);
+    /* border: 1px solid red; */
     box-shadow: 0px 0px 5px 0px #ccc;
     height: 100%;
     border-radius: 10px 10px 0px 0px;
     overflow: scroll;
+    padding: 10px;
 }
 .actual-review::-webkit-scrollbar{
     display: none;

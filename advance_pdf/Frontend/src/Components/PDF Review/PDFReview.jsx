@@ -4,43 +4,37 @@ import { FaPlus } from "react-icons/fa6";
 import { FiMinus } from "react-icons/fi";
 import { Context } from "../../Context/Context"; // Importing context
 
-
-
 const PDFReview = () => {
-  const { file } = useContext(Context); // Accessing file from context
+  const { file, imageCount, tableCount, showReview } = useContext(Context); // Accessing file from context
 
-  console.log("Received file in PDFReview:", file); // Debugging log
+  // console.log("Received file in PDFReview:", file); // Debugging log
 
   return (
     <div className="pdf-review">
       <div className="pdf-navbar">
-        <div className="pdf-zoom">
-          <FiMinus id="zoom-in" />
-          <span className="zoom-level">100%</span>
-          <FaPlus id="zoom-out" />
-        </div>
-        <div className="image-page-count">
+        <div className="image-page-count p-3">
           <div>
             <span id="span-title">
-              Images: <span id="span-values">2</span>{" "}
+              Image Count:  <span id="span-values">{imageCount}</span>{" "}
             </span>
           </div>
           <div>
             <span id="span-title">
-              Table: <span id="span-values">2</span>
-            </span>
-          </div>
-          <div>
-            <span id="span-title">
-              Page's: <span id="span-values">2</span>
+              Table Count: <span id="span-values">{tableCount}</span>{" "}
             </span>
           </div>
         </div>
       </div>
       <div className="review">
         <div className="actual-review">
-          {file ? (
-            <iframe src={URL.createObjectURL(file)} title="PDF Preview" width="100%" height="600px" />
+          {showReview ? (
+            <iframe
+              src={URL.createObjectURL(file)}
+              title="PDF Preview"
+              width="100%"
+              height="100%"
+              style={{ borderRadius: "5px" }}
+            />
           ) : (
             <p>No file uploaded. Please upload a PDF to review.</p>
           )}
