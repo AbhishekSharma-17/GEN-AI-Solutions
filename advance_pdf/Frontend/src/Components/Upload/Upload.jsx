@@ -8,6 +8,11 @@ import { toast } from "react-toastify";
 
 const Upload = () => {
   const {
+    setShowReview,
+    imageCount,
+    setImageCount,
+    tableCount,
+    setTableCount,
     file,
     setLocalFile,
     uploading,
@@ -80,6 +85,9 @@ const Upload = () => {
         }
       );
 
+      if (embedResponse.ok) {
+        setShowReview(true);
+      }
       if (!embedResponse.ok) {
         throw new Error("Embedding document failed.");
       }
@@ -110,7 +118,13 @@ const Upload = () => {
       if (embedData.embedding_tokens)
         setEmbededToken(parseInt(embedData.embedding_tokens));
       if (embedData.embedding_cost)
-        setEmbededCost(parseFloat(embedData.embedding_cost).toFixed(6));
+        setEmbededCost(parseFloat(embedData.embedding_cost).toFixed(5));
+      if (embedData.image_count) {
+        setImageCount(embedData.image_count);
+      }
+      if (embedData.table_count) {
+        setTableCount(embedData.table_count);
+      }
 
       // Update queries and mark embedding as complete
       setQueries((prevQueries) => [...prevQueries, ...embedData.queries]);

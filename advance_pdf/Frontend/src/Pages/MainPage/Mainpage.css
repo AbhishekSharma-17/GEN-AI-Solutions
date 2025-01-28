@@ -1,0 +1,47 @@
+.main-app {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start!important;
+    height: 100vh; /* Full viewport height */
+    width: 100%; /* Full width */
+    /* border: 1px solid red; Debugging border */
+    box-sizing: border-box;
+  }
+  
+  .main-app .navbars {
+    /* height: 20vh; Navbar takes 20% of the viewport height */
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .main-content {
+    display: flex;
+    flex-direction: row; /* Align children side by side */
+    width: 100%;
+    flex: 1;
+    height: calc(100vh - 20vh); /* Remaining height after subtracting navbar height */
+    /* border: 2px solid red; Debugging border */
+    box-sizing: border-box;
+  }
+  
+  .main-content .sidebar {
+    width: 20%; /* Sidebar takes 20% of width */
+    height: 100%; /* Match the height of .main-content */
+    border: 1px solid purple; /* Debugging border */
+    box-sizing: border-box;
+  }
+  
+  .main-content .upload {
+    width: 50%; /* Upload section takes 50% of width */
+    height: 100%; /* Match the height of .main-content */
+    border: 1px solid rgb(218, 217, 217); /* Debugging border */
+    box-sizing: border-box;
+  }
+  
+  .main-content .chat {
+    width: 30%; /* Chat section takes 30% of width */
+    height: 100%; /* Match the height of .main-content */
+    border: 1px solid green; /* Debugging border */
+    box-sizing: border-box;
+  }
+  

@@ -6,6 +6,7 @@ import HomePageNavbar from "../../Components/Homepage Navbar/HomePageNavbar";
 import Chat from "../../Components/Chat/Chat";
 import { useContext } from "react";
 import { Context } from "../../Context/Context";
+import './Mainpage.css'
 
 const Mainpage = () => {
   const { embededComplete, fileResponse } = useContext(Context);
@@ -13,7 +14,10 @@ const Mainpage = () => {
   return (
     <div className="main-app">
       {/* Navbar */}
+      <div className="navbars">
+
       <HomePageNavbar />
+      </div>
 
       {/* Main Content */}
       <div className="main-content">
@@ -24,10 +28,10 @@ const Mainpage = () => {
 
         {/* Upload and Review Section */}
         <div className="upload">
-          {embededComplete ? (
-            <PDFReview /> // Show PDFReview if a file is uploaded
+          {!embededComplete ? (
+            <Upload /> // Show PDFReview if a file is uploaded
           ) : (
-            <Upload /> // Show Upload component if no file is uploaded
+            <PDFReview /> // Show Upload component if no file is uploaded
           )}
           {/* <Upload></Upload> */}
         </div>

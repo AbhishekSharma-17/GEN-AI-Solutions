@@ -508,14 +508,16 @@ Your response should be based on the instructions and guidelines provided above,
                 response_content += chunk
                 yield chunk
         if metadata:
-            # Format metadata as Markdown
-            metadata_md = "\n\n### Metadata\n"
-            for key, value in metadata.items():
-                if isinstance(value, float):
-                    metadata_md += f"* *{key}*: {value:.6f}\n"
-                else:
-                    metadata_md += f"* *{key}*: {value}\n"
-            yield metadata_md
+            yield json.dumps(metadata)
+            
+            # # Format metadata as Markdown
+            # metadata_md = "\n\n### Metadata\n"
+            # for key, value in metadata.items():
+            #     if isinstance(value, float):
+            #         metadata_md += f"* *{key}*: {value:.6f}\n"
+            #     else:
+            #         metadata_md += f"* *{key}*: {value}\n"
+            # yield metadata_md
 
     return StreamingResponse(response_and_metadata(), media_type="text/event-stream")
 

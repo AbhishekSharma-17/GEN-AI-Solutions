@@ -4,35 +4,27 @@ import { v4 as uuidv4 } from "uuid";
 export const Context = createContext();
 
 const ContextProvider = (props) => {
+  // home page contect
   // taking APIprovider, ProviderKey, and unstructured key
   const [apiProvider, setAPIProvider] = useState();
   const [providerKey, setProviderKey] = useState();
   const [unstructuredKey, setUnstructuredKey] = useState();
-
-  // if we got file will update it in this stae
   const [file, setLocalFile] = useState(null);
 
+  // main page context
   // upload hua ya nhi (upload and embedding endpoint)
   const [uploading, setUploading] = useState(false);
-
-  // New state for unique user ID
-  const [userId, setUserId] = useState(null);
-
-  // setting file path
-  const [filepath, setFilePath] = useState("");
-
-  // embedding complete
+  const [userId, setUserId] = useState(null); // New state for unique user ID
+  const [filepath, setFilePath] = useState(""); // setting file path
   const [embededComplete, setIsEmbedComplete] = useState(false);
-
-  // setting response coming from embedding endpoint , complete response hai
-  const [fileResponse, setFileResponse] = useState({});
+  const [fileResponse, setFileResponse] = useState({}); // setting response coming from embedding endpoint , complete response hai
 
   // setting queries
   const [initialQueries, setInitialQueries] = useState([]);
 
-  // will be using for fileList
-  const [filesList, setFileList] = useState([]);
+  const[showReview, setShowReview] = useState(false)
 
+  const [chatHistory, setChatHistory] = useState([]);
   const [input, setInput] = useState(""); // to save input data
   const [recentPrompt, setRecentPrompt] = useState(""); // to save recent
   const [previousPrompt, setPreviousPrompt] = useState([]); // to save previous
@@ -41,16 +33,24 @@ const ContextProvider = (props) => {
   const [resultData, setResultData] = useState(""); // used to display result on web page
 
   const [response, setResponse] = useState(""); // user query response
+
   const [queries, setQueries] = useState([{}]);
 
   // modelName
   const [modelName, setModelName] = useState("");
+
+  // image count
+  const [imageCount, setImageCount] = useState(0);
+  // table count
+  const [tableCount, setTableCount] = useState(0);
 
   // JAB RESponse aayega to konse provider ka multi model chalana hai
   const [responseProvider, setResponseProvider] = useState(); // isko multi model ko choose krne k liye use krna hai
 
   // state for initialisation status
   const [initialisationStatus, setInitialisationStatus] = useState(false); // if this is true then it will display loading animation
+
+  const [selectedModel, setSelectedModel] = useState("");
 
   // tokens state
   const [inputToken, setInputToken] = useState("");
@@ -89,6 +89,14 @@ const ContextProvider = (props) => {
   }, []);
 
   const contextValue = {
+    showReview, setShowReview,
+    selectedModel, setSelectedModel,
+    imageCount,
+    setImageCount,
+    tableCount,
+    setTableCount,
+    chatHistory,
+    setChatHistory,
     filepath,
     setFilePath,
     uploading,
