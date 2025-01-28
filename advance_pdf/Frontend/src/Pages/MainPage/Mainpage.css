@@ -27,7 +27,7 @@
   .main-content .sidebar {
     width: 20%; /* Sidebar takes 20% of width */
     height: 100%; /* Match the height of .main-content */
-    border: 1px solid purple; /* Debugging border */
+    /* border: 1px solid purple; Debugging border */
     box-sizing: border-box;
   }
   
@@ -41,7 +41,7 @@
   .main-content .chat {
     width: 30%; /* Chat section takes 30% of width */
     height: 100%; /* Match the height of .main-content */
-    border: 1px solid green; /* Debugging border */
+    /* border: 1px solid green; Debugging border */
     box-sizing: border-box;
   }
   
