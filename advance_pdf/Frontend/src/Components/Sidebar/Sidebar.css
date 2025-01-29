@@ -1,62 +1,147 @@
-.actual-sidebar{
-    /* border: 1px solid red; */
-    height: 100%;
-    width: 100%;
-    padding: 10px;
+.actual-sidebar {
+  /* border: 1px solid red; */
+  height: 100%;
+  width: 100%;
+  padding: 30px 15px 30px 15px;
+  display: flex;
+  flex-direction: column;
 }
-.actual-sidebar .files-list{
-    height: 80%;
-    /* border: 1px solid green ; */
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    padding: 20px 10px;
-    gap: 20px;
-    /* align-items: center; */
+.insight-and-modelName{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
 }
-.actual-sidebar .token-list{
-    height: 20%;
-    /* border: 1px solid green ; */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+.model-name{
+  background-color: #ece9e9;
+  border-radius: 5px;
+  padding: 2px 10px ;
+  border: 1px solid #bbb;
 }
-.actual-sidebar .files-list h2{
-    font-family: Inter;
-    color: rgb(97, 97, 97);
+.insight-and-modelName p{
+  color: rgb(19, 46, 120);
+  font-family: Inter;
+  font-weight: bold;
 }
-.actual-sidebar .files-list .files
-{
-    /* border: 1px solid purple; */
-    height: 100%;
-    overflow: scroll;
-    box-shadow: inset 0px 0px 15px 2px  rgb(236, 235, 235);
-    padding: 20px 8px ;
+.token-and-cost-display{
+  border: 1px solid rgb(182, 182, 182);
+  padding: 10px;
+  box-shadow: 0px 0px 12px  #e1e0e0;
+  width: 100%;
+  border-radius: 10px;
+  animation: fade-in 2s;
+}
+.tokens, .approx-cost, .embed-token, .cumulative-token-cost{
+  /* border: 1px solid purple; */
+  padding: 2px;
+  display: flex;
+  flex-direction: column;
+  margin: 10px auto;
+}
+.div-heading{
+  font-family: Outfit;
+  font-size: 20px;
+  /* border: 1px solid yellow; */
+  margin: 0;
+}
+.value-title{
+  /* border: 1px solid green; */
+  padding: 5px;
+  display: flex;
+  justify-content: space-between;
+}
+.input-value, .output-values, .total-values{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid orangered; */
+  padding: 5px;
+  gap: 5px;
+}
+.embed-value-title, .cumulative-value-title{
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 5px;
+ 
+}
+.embed-value-title{
+  background-color: #ecf8fffc;
+  border-radius: 5px;
+}
+.numeric-value{
+  color: #0d92f4;
+  font-weight: bold;
+  font-family: Outfit;
+  font-size: 20px;
+}
+.char-value{
+  color: grey;
+  font-weight: 500;
 }
 
-.files::-webkit-scrollbar
+/* reponse time and cost  */
+.response-time-cost
 {
-    display: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+  background-color: rgb(235, 235, 235);
+  font-weight: 500;
+  padding: 5px;
+  border-radius: 5px;
+
 }
-.files .file{
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    gap: 10px;
-    align-items: center;
-    padding: 5px 10px;
-    border: 1px solid grey;
-    border-radius: 10px;
-    margin-bottom: 30px;
+.response-time , .response-cost
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  color: rgb(79, 78, 78);
 }
-.files .file .file-data{
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
+.reponse-cost span , .reponse-time span
+{
+  font-size: 14px;
+  font-family: Outfit;
 }
-.file-data .file-name{
-    font-family: Inter;
-    color: black;
-    font-weight: bold;
-    font-size: 20px!important;
+
+/* .skeleton insights */
+.skeleton-insight{
+  /* border: 1px solid #ccc; */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.skeleton-insight .shimmer-text{
+  font-size: 40px;
+  font-family:Roboto;
+  font-weight: bold;
+  /* color: rgb(223, 222, 222); */
+  background: linear-gradient(90deg, #b0b0b0 25%, #d0d0d0 50%, #b0b0b0 75%);
+
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  color: transparent; /* Hide the text */
+  background-clip: text;
+  -webkit-background-clip: text; /* For Safari */
+}
+.shimmer-text {
+  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 0.8s infinite;
+  color: transparent; /* Hide the text */
+  background-clip: text;
+  -webkit-background-clip: text; /* For Safari */
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
