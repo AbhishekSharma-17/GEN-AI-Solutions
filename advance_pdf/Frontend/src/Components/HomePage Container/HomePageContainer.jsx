@@ -177,7 +177,7 @@ const HomePageContainer = () => {
                 <input
                   type="password"
                   className="form-control"
-                  placeholder="Provider Key"
+                  placeholder="Unstructured Key"
                   ref={unstructuredKeyRef}
                 />
               </div>
@@ -236,7 +236,7 @@ const HomePageContainer = () => {
             </div>
           </div>
           <div className="homepage-setup-image">
-            <img src={assets.PPT_img} alt="" />
+            <img src={assets.advancedPDF} alt="" style={{borderRadius:"10px"}}/>
           </div>
         </div>
       </div>
