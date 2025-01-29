@@ -1,17 +1,16 @@
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import "./PDFReview.css";
-import { FaPlus } from "react-icons/fa6";
-import { FiMinus } from "react-icons/fi";
 import { Context } from "../../Context/Context"; // Importing context
 
 const PDFReview = () => {
   const { file, imageCount, tableCount, showReview } = useContext(Context); // Accessing file from context
 
-  // console.log("Received file in PDFReview:", file); // Debugging log
-
   console.log("PDFReview Component Rendered");
   console.log("File:", file);
   console.log("Show Review:", showReview);
+
+  // Memoize the file URL to prevent frequent re-renders
+  const fileUrl = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
 
   return (
     <div className="pdf-review">
@@ -19,7 +18,7 @@ const PDFReview = () => {
         <div className="image-page-count p-3">
           <div>
             <span id="span-title">
-              Image Count:  <span id="span-values">{imageCount}</span>{" "}
+              Image Count: <span id="span-values">{imageCount}</span>{" "}
             </span>
           </div>
           <div>
@@ -32,13 +31,17 @@ const PDFReview = () => {
       <div className="review">
         <div className="actual-review">
           {showReview ? (
-            <iframe
-              src={URL.createObjectURL(file)}
-              title="PDF Preview"
-              width="100%"
-              height="100%"
-              style={{ borderRadius: "5px" }}
-            />
+            fileUrl ? (
+              <iframe
+                src={fileUrl}
+                title="PDF Preview"
+                width="100%"
+                height="100%"
+                style={{ borderRadius: "5px" }}
+              />
+            ) : (
+              <p>Loading PDF...</p>
+            )
           ) : (
             <p>No file uploaded. Please upload a PDF to review.</p>
           )}
