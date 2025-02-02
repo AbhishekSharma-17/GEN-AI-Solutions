@@ -5,7 +5,7 @@ import Navbar from './Components/Navbar/Navbar'
 
 const App = () => {
   return (
-    <div>
+    <div className='main-app'>
       <Navbar></Navbar>
       <VoiceChat></VoiceChat>
     </div>

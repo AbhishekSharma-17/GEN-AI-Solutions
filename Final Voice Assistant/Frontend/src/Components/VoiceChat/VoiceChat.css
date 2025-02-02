@@ -5,32 +5,43 @@ npm install react-iconsbody {
   line-height: 1.6;
 }
 
+
 .voice-chat-container {
+  /* border: 1px solid green; */
   max-width: 800px;
+  height: 600px;
   margin: 40px auto;
-  padding: 30px;
+  padding: 20px;
   background-color: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
+  box-shadow: 0px 0px 10px grey;
+}
+#top{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* border: 1px solid green; */
 }
 
-h1 {
-  text-align: center;
+#top p{
+  font-size: 20px;
+  font-weight: bold;
   color: #2c3e50;
-  font-size: 35px;
-  margin-bottom: 30px;
   text-transform: uppercase;
   letter-spacing: 2px;
 }
 
 .chatbox {
+  margin: 20px auto;
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   height: 400px;
   overflow-y: auto;
   padding: 20px;
-  margin-bottom: 30px;
   background-color: #f9f9f9;
+}
+.chatbox::-webkit-scrollbar{
+  display: none;
 }
 
 .message {
@@ -43,16 +54,18 @@ h1 {
 .user-message {
   background-color: #e8f5e9;
   margin-left: auto;
+  border: 1px solid rgb(143, 249, 143);
 }
 
 .ai-message {
   background-color: #e3f2fd;
   margin-right: auto;
+  border: 1px solid rgb(107, 197, 246);
 }
 
 .message-text {
   margin: 0 0 8px 0;
-  font-size: 16px;
+  font-size: 14px;
 }
 
 .time-chip-container {
@@ -64,13 +77,13 @@ h1 {
 
 .time-chip-label {
   margin-right: 5px;
-  font-weight: bold;
+  font-weight: 500;
 }
 
 .tts-audio-section {
   display: flex;
   justify-content: center;
-  margin-bottom: 30px;
+  margin-bottom: 10px;
 }
 
 .tts-audio-section audio {
@@ -78,7 +91,7 @@ h1 {
   max-width: 400px;
   border-radius: 30px;
 }
-
+/*
 .selector-container {
   border: 1px solid green;
   display: flex;
@@ -88,31 +101,16 @@ h1 {
   padding: 20px;
   background-color: #ecf0f1;
   border-radius: 8px;
-}
+}*/
 
-.voice-selector {
-  margin-top: -20px;
-  border: 1px solid red;
-  display: flex;
-  align-items: center;
-  width: 50%;
-  justify-content: space-between;
-  padding: 10px;
-  background-color: #ecf0f1;
-  border-radius: 8px;
-}
 
-.voice-selector label {
-  margin-right: 15px;
-  font-weight: bold;
-  color: #2c3e50;
-  font-size: 16px;
-}
 
+
+/* nop need to change anything , UPDATED BY: VIPLOVE */
 .voice-selector select {
   padding: 10px 15px;
   font-size: 16px;
-  border: 2px solid #3498db;
+  border: 2px solid #a3a5a6;
   border-radius: 6px;
   background-color: white;
   cursor: pointer;
@@ -157,9 +155,12 @@ h1 {
 
 .voice-button-container{
   display: flex;
-  border: 1px solid red;
-  justify-self: center;
-  margin-top: 10px;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid red; */
+  width: 100%;
+  padding: 10px 0px;
+  gap:10px;
 }
 
 
@@ -221,4 +222,63 @@ h1 {
   .record-button {
     align-self: center;
   }
+}
+
+
+/* css animation for wave effect */
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Circle elements */
+.circle {
+  width: 10px;
+  height: 15px; /* Start height slightly bigger for smoother effect */
+  margin: 0 0.25em;
+  border-radius: 10px;
+  animation: waveAnim 2s infinite ease-in-out;
+  transition: height 2s ease-in-out;
+  box-shadow: 0px 0px 10px rgba(234, 188, 188, 0.7);
+}
+
+/* Smoother height animation */
+@keyframes waveAnim {
+  0% {
+    height: 15px;
+  }
+  50% {
+    height: 35px; /* Peak height */
+  }
+  100% {
+    height: 15px;
+  }
+}
+
+/* Light Red Gradient Colors */
+.circle:nth-child(1) {
+  background-color: #f87171; /* Light Red */
+  animation-delay: 0s;
+}
+
+.circle:nth-child(2) {
+  background-color: #ef4444; /* Soft Red */
+  animation-delay: 0.2s;
+}
+
+.circle:nth-child(3) {
+  background-color: #dc2626; /* Bright Red */
+  animation-delay: 0.4s;
+}
+
+.circle:nth-child(4) {
+  background-color: #b91c1c; /* Deep Red */
+  animation-delay: 0.6s;
+}
+
+.circle:nth-child(5) {
+  background-color: #991b1b; /* Darker Red */
+  animation-delay: 0.8s;
 }
