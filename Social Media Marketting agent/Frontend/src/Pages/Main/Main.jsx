@@ -55,7 +55,7 @@ const Main = () => {
               <label
                 htmlFor="exampleSelect"
                 className="form-label platform-selected-label"
-                style={{fontWeight:"500"}}
+                style={{ fontWeight: "500" }}
               >
                 Content Type
               </label>
@@ -143,13 +143,12 @@ const Main = () => {
             {/* image and video upload */}
             {platformSelected === "image" || platformSelected === "video" ? (
               <div className="image-and-video-upload mt-1 mb-1">
-                <label htmlFor="file-upload" className="imageVideo-upload">
-                  <FaCloudUploadAlt
-                    style={{ fontSize: "5em", color: "lightblue" }}
-                  />
-                  <p>Upload a File or Drag and Drop</p>
-                  <p>PNG, JPG, GIF, .mp4</p>
-                </label>
+                <FaCloudUploadAlt
+                  style={{ fontSize: "5em", color: "lightblue" }}
+                />
+                <p>Upload a File or Drag and Drop</p>
+                <p>PNG, JPG, GIF, .mp4</p>
+
                 <input
                   id="file-upload"
                   type="file"
@@ -169,7 +168,7 @@ const Main = () => {
 
           {/* caption display araea */}
           <div className="caption">
-            <p style={{fontWeight:"500"}}>Caption</p>
+            <p style={{ fontWeight: "500" }}>Caption</p>
             <div className="caption-area">
               <textarea
                 value={caption}
@@ -186,23 +185,19 @@ const Main = () => {
           </div>
 
           {/* post platform option starts here */}
-            <div className="post-to-platform">
-              <p style={{ fontWeight: "500", marginBottom: "10px" }}>
-                Platform
-              </p>
-              <form>
-                <div className="platform-option">
-
-                
+          <div className="post-to-platform">
+            <p style={{ fontWeight: "500", marginBottom: "10px" }}>Platform</p>
+            <form>
+              <div className="platform-option">
                 <label
                   style={{
                     display: "flex",
                     alignItems: "center",
                     marginBottom: "10px",
-                    border:"1px solid #ccc",
-                    width:"200px",
-                    padding:"10px 15px",
-                    borderRadius:"5px",
+                    border: "1px solid #ccc",
+                    width: "200px",
+                    padding: "10px 15px",
+                    borderRadius: "5px",
                   }}
                 >
                   <input
@@ -218,10 +213,10 @@ const Main = () => {
                     display: "flex",
                     alignItems: "center",
                     marginBottom: "10px",
-                    border:"1px solid #ccc",
-                    width:"200px",
-                    padding:"10px 15px",
-                    borderRadius:"5px",
+                    border: "1px solid #ccc",
+                    width: "200px",
+                    padding: "10px 15px",
+                    borderRadius: "5px",
                   }}
                 >
                   <input
@@ -236,10 +231,10 @@ const Main = () => {
                     display: "flex",
                     alignItems: "center",
                     marginBottom: "10px",
-                    border:"1px solid #ccc",
-                    width:"200px",
-                    padding:"10px 15px",
-                    borderRadius:"5px",
+                    border: "1px solid #ccc",
+                    width: "200px",
+                    padding: "10px 15px",
+                    borderRadius: "5px",
                   }}
                 >
                   <input
@@ -255,10 +250,10 @@ const Main = () => {
                     display: "flex",
                     alignItems: "center",
                     marginBottom: "10px",
-                    border:"1px solid #ccc",
-                    width:"200px",
-                    padding:"10px 15px",
-                    borderRadius:"5px",
+                    border: "1px solid #ccc",
+                    width: "200px",
+                    padding: "10px 15px",
+                    borderRadius: "5px",
                   }}
                 >
                   <input
@@ -266,21 +261,25 @@ const Main = () => {
                     value="facebook"
                     style={{ marginRight: "8px" }}
                   />
-               Instagram
+                  Instagram
                 </label>
-                </div>
-                <div className="btn-div">
-                  <button type="submit" className="btn btn-dark">POST</button>
-                  <button type="submit" className="btn btn-dark">POST TO ALL</button>
-                </div>
-              </form>
-            </div>
+              </div>
+              <div className="btn-div">
+                <button type="submit" className="btn btn-dark">
+                  POST
+                </button>
+                <button type="submit" className="btn btn-dark">
+                  POST TO ALL
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
 
         {/* review area starts here */}
         <div className="review-area">
           <div className="review-section">
-            <p style={{fontWeight:"500"}}>Preview</p>
+            <p style={{ fontWeight: "500" }}>Preview</p>
             <div className="content-review">
               <div className="content-review-image">
                 <img src={assets.gemini_icon} alt="" />
@@ -290,7 +289,7 @@ const Main = () => {
                 </div>
               </div>
               <div className="review-image">
-                <img src={assets.mockImage} alt="" width={30}/>
+                <img src={assets.mockImage} alt="" width={30} />
               </div>
               <div className="caption-view">
                 <p style={{ color: "rgb(147, 144, 144)", fontWeight: "500" }}>

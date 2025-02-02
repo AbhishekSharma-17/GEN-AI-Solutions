@@ -24,8 +24,10 @@ import facebook from "./facebook.png";
 import linkedIn from "./linkedin.png";
 import youtube from "./youtube.png";
 import instagram from "./instagram.png";
+import SocialAgent from "./Agent.png";
 
 export const assets = {
+  SocialAgent,
   instagram,
   drive,
   facebook,

@@ -209,7 +209,9 @@ const HomeHeader = () => {
             </div>
           </form>
         </div>
-        <div className="header-image-section"></div>
+        <div className="header-image-section">
+          <img src={assets.SocialAgent} alt="" />
+        </div>
       </div>
     </div>
   );

@@ -12,9 +12,9 @@ import MainProvider from "./Context/MainContext";
 const App = () => {
   return (
     <div className="app">
-      {/* <Home></Home> */}
+      <Home></Home>
 
-      <Main></Main>
+      {/* <Main></Main> */}
     </div>
   );
 };

@@ -31,7 +31,21 @@
   justify-content: flex-start;
   gap: 30px;
 }
+.image-and-video-upload{
+  border: 1px dashed #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  padding:30px ;
 
+}
+.image-and-video-upload p{
+  font-weight: bold;
+  font-size: 15px;
+  color: grey;
+}
 .platform-option {
   display: flex;
   flex-direction: column;
