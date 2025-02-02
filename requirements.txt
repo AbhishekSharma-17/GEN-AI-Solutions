@@ -33,4 +33,4 @@ PyMuPDF
 pillow
 requests
 langchain-google-genai
-
+websockets

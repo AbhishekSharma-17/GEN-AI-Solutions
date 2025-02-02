@@ -1,9 +1,7 @@
 import os
 import logging
 from openai import OpenAI
-from groq import Groq
 from dotenv import load_dotenv
-from portkey_ai import PORTKEY_GATEWAY_URL, createHeaders
 from langchain_core.prompts import ChatPromptTemplate
 
 load_dotenv()
@@ -15,12 +13,8 @@ logger = logging.getLogger(__name__)
 logger.info("Starting speech-to-text application")
 
 logger.info("Initializing OpenAI client")
-client = OpenAI(
-    base_url=PORTKEY_GATEWAY_URL,
-    default_headers=createHeaders(api_key = os.getenv("PORTKEY_API_KEY"),
-                                  virtual_key = "openai-prod-a5528d"
-                                  )
-)
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 # logger.info("OpenAI client initialized")
 client1 = OpenAI(
     base_url="https://api.groq.com/openai/v1",
