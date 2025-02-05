@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "title": "Email Protection | Cloudflare",
+    "description": "",
+    "language": "en-US",
+    "sourceURL": "https://help.kroolo.com/cdn-cgi/l/email-protection"
+  },
+  "structured_data": {
+    "full_text": "Email Protection | Cloudflare Please enable cookies. Email Protection You are unable to access this email address help.kroolo.com The website from which you got to this page is protected by Cloudflare. Email addresses on that page have been hidden in order to keep them from being accessed by malicious bots. You must enable Javascript in your browser in order to decode the e-mail address . If you have a website and are interested in protecting it in a similar way, you can sign up for Cloudflare . How does Cloudflare protect email addresses on website from spammers? Can I sign up for Cloudflare? Cloudflare Ray ID: 9097966418e54823 • Your IP: Click to reveal 157.66.147.0 • Performance & security by Cloudflare",
+    "headings": {
+      "h1": [
+        "Email Protection"
+      ],
+      "h2": [
+        "You are unable to access this email addresshelp.kroolo.com"
+      ]
+    },
+    "links": [
+      {
+        "text": "sign up for Cloudflare",
+        "href": "https://www.cloudflare.com/sign-up?utm_source=email_protection"
+      },
+      {
+        "text": "How does Cloudflare protect email addresses on website from spammers?",
+        "href": "https://support.cloudflare.com/hc/en-us/articles/200170016-What-is-Email-Address-Obfuscation-"
+      },
+      {
+        "text": "Can I sign up for Cloudflare?",
+        "href": "https://support.cloudflare.com/hc/en-us/categories/200275218-Getting-Started"
+      },
+      {
+        "text": "Cloudflare",
+        "href": "https://www.cloudflare.com/5xx-error-landing"
+      }
+    ],
+    "images": []
+  }
+}

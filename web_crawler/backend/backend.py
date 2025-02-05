@@ -108,4 +108,6 @@ async def scrape(request: ScrapeRequest):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend:app", host="localhost", port=8000, reload=True)
+    # uvicorn backend:app --host localhost --port 8000 --reload
+
 

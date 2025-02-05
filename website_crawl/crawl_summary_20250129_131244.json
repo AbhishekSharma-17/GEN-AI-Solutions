@@ -1,0 +1,19 @@
+{
+  "start_url": "https://help.kroolo.com/en/",
+  "total_pages_crawled": 10,
+  "crawl_timestamp": "20250129_131244",
+  "max_depth": 3,
+  "max_pages": 10,
+  "crawled_urls": [
+    "https://help.kroolo.com/en/",
+    "https://help.kroolo.com/cdn-cgi/l/email-protection",
+    "https://help.kroolo.com/en/#main-content",
+    "https://help.kroolo.com/en/collections/9105325-getting-started",
+    "https://help.kroolo.com/en/collections/9118206-workspaces",
+    "https://help.kroolo.com/en/collections/9118210-projects",
+    "https://help.kroolo.com/en/collections/9304750-goals",
+    "https://help.kroolo.com/en/collections/9304753-documents",
+    "https://help.kroolo.com/en/collections/9304752-collaboration",
+    "https://help.kroolo.com/en/collections/9304751-teams"
+  ]
+}
