@@ -33,4 +33,6 @@ PyMuPDF
 pillow
 requests
 langchain-google-genai
-
+langgraph
+IPython
+matplotlib
