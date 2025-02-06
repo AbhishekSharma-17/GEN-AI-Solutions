@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import "./VoiceChat.css";
 import { FaMicrophone, FaStop } from "react-icons/fa";
-import SpeechLoader from "../SpeechLoader/SpeechLoader";
+
 
 const VoiceChat = () => {
   const [isRecording, setIsRecording] = useState(false);
@@ -194,7 +194,7 @@ const VoiceChat = () => {
     <div className="voice-chat-container">
       {/* first div */}
       <div className="voice-chat-top" id="top">
-        <p>GenAI VOCAL</p>
+        <p>GenAI Talk</p>
         <div className="voice-selector">
           {/* <label htmlFor="voice-select">Select Voice: </label> */}
           <select
