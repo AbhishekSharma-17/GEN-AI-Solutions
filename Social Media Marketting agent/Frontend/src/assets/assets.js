@@ -19,16 +19,21 @@ import chatWithPPT from "./powerpoint.png";
 import socialAgent from "./social-agent.png";
 import chatWithSQL from "./SQL.png";
 import mockImage from "./mockImage.png";
-import drive from "./drive.png";
+import drive from "./google-drive.png";
 import facebook from "./facebook.png";
 import linkedIn from "./linkedin.png";
+import twitter from "./twitter.png";
 import youtube from "./youtube.png";
 import instagram from "./instagram.png";
+import avatar from "./Avatar.png"
+import video_camera from "./video-camera.png"
+import upload_img from "./upload.png"
 
 export const assets = {
   instagram,
   drive,
   facebook,
+  twitter,
   linkedIn,
   youtube,
   mockImage,
@@ -52,6 +57,9 @@ export const assets = {
   groq,
   anthropic,
   hugging_face,
+  avatar,
+  upload_img,
+  video_camera,
 };
 
 export default assets;

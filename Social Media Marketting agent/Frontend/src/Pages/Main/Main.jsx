@@ -25,22 +25,22 @@ const Main = () => {
     {
       value: "youtube",
       label: "YouTube URL",
-      img: assets.chatGPTIcon,
+      img: assets.youtube,
     },
     {
       value: "googleDrive",
       label: "Google Drive URL",
-      img: assets.anthropic,
+      img: assets.drive,
     },
     {
       value: "image",
       label: "Upload an Image",
-      img: assets.hugging_face,
+      img: assets.upload_img,
     },
     {
       value: "video",
       label: "Upload Video",
-      img: assets.groq,
+      img: assets.video_camera,
     },
   ];
 
@@ -145,7 +145,7 @@ const Main = () => {
               <div className="image-and-video-upload mt-1 mb-1">
                 <label htmlFor="file-upload" className="imageVideo-upload">
                   <FaCloudUploadAlt
-                    style={{ fontSize: "5em", color: "lightblue" }}
+                    style={{ fontSize: "5em", color: "lightblue"}}
                   />
                   <p>Upload a File or Drag and Drop</p>
                   <p>PNG, JPG, GIF, .mp4</p>
@@ -210,6 +210,7 @@ const Main = () => {
                     value="facebook"
                     style={{ marginRight: "8px" }}
                   />
+                  <img style={{borderRadius:"50%", height:"3vh", margin:"2px"}} src={assets.facebook} alt="" />
                   Facebook
                 </label>
 
@@ -229,6 +230,7 @@ const Main = () => {
                     value="facebook"
                     style={{ marginRight: "8px" }}
                   />
+                  <img style={{borderRadius:"50%", height:"3vh", margin:"2px"}} src={assets.linkedIn} alt="" />
                   Linked In
                 </label>
                 <label
@@ -247,6 +249,7 @@ const Main = () => {
                     value="facebook"
                     style={{ marginRight: "8px" }}
                   />
+                  <img style={{borderRadius:"50%", height:"3vh", margin:"2px"}} src={assets.twitter} alt="" />
                   Twitter
                 </label>
 
@@ -266,6 +269,7 @@ const Main = () => {
                     value="facebook"
                     style={{ marginRight: "8px" }}
                   />
+                  <img style={{borderRadius:"50%", height:"3vh", margin:"2px"}} src={assets.instagram} alt="" />
                Instagram
                 </label>
                 </div>
@@ -283,7 +287,7 @@ const Main = () => {
             <p style={{fontWeight:"500"}}>Preview</p>
             <div className="content-review">
               <div className="content-review-image">
-                <img src={assets.gemini_icon} alt="" />
+                <img src={assets.avatar} alt="" />
                 <div className="image-name-section">
                   <p style={{ fontWeight: "500" }}>Your Businnes Name</p>
                   <p style={{ color: "grey" }}>Just Now</p>
