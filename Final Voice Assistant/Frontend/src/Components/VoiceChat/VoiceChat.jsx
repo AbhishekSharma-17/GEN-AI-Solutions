@@ -194,7 +194,7 @@ const VoiceChat = () => {
     <div className="voice-chat-container">
       {/* first div */}
       <div className="voice-chat-top" id="top">
-        <p>GenAI Talk</p>
+        <p>AI Voice Assistant</p>
         <div className="voice-selector">
           {/* <label htmlFor="voice-select">Select Voice: </label> */}
           <select
