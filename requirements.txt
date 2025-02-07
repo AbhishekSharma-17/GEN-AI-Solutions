@@ -36,3 +36,4 @@ langchain-google-genai
 langgraph
 IPython
 matplotlib
+seaborn
