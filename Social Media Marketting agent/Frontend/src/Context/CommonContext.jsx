@@ -4,9 +4,11 @@ export const CommonContext = createContext();
 
 const CommonProvider = (props) => {
  const [error, setError] = useState('')
+ const [isLoadings, setIsLoadings] = useState(false); //state for loader
 
   const contextValue = {
     error, setError,
+    isLoadings, setIsLoadings
   };
 
   return (

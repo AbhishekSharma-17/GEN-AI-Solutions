@@ -1,12 +1,14 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef } from "react";
 import "./Main.css";
 import { MainContext } from "../../Context/MainContext";
 import assets from "../../assets/assets";
-import { IoLogoYoutube } from "react-icons/io";
-import { FaGoogleDrive } from "react-icons/fa";
+// import { IoLogoYoutube } from "react-icons/io";
+// import { FaGoogleDrive } from "react-icons/fa";
 import { FaCloudUploadAlt } from "react-icons/fa";
 
 const Main = () => {
+  const fileInputRef = useRef(null);
+
   // handling caption change.
   const handleCaptionChange = (e) => {
     setCaption(e.target.value); // Update caption state on input change
@@ -22,16 +24,16 @@ const Main = () => {
   } = useContext(MainContext);
 
   const platforms = [
-    {
-      value: "youtube",
-      label: "YouTube URL",
-      img: assets.chatGPTIcon,
-    },
-    {
-      value: "googleDrive",
-      label: "Google Drive URL",
-      img: assets.anthropic,
-    },
+    // {
+    //   value: "youtube",
+    //   label: "YouTube URL",
+    //   img: assets.chatGPTIcon,
+    // },
+    // {
+    //   value: "googleDrive",
+    //   label: "Google Drive URL",
+    //   img: assets.anthropic,
+    // },
     {
       value: "image",
       label: "Upload an Image",
@@ -43,6 +45,21 @@ const Main = () => {
       img: assets.groq,
     },
   ];
+
+  // handling file upload
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    console.log('file is:', file);
+
+    if (file) {
+        const localURL = URL.createObjectURL(file);
+        console.log('Generated Local URL:', localURL);
+        
+        // You can use this URL to display the image
+        document.getElementById("preview").src = localURL;
+    }
+};
+
 
   return (
     <div className="main-app">
@@ -104,7 +121,7 @@ const Main = () => {
 
           {/* rendering on basis of platform selected */}
           <div className="section-display">
-            {platformSelected === "youtube" ? (
+            {/* {platformSelected === "youtube" ? (
               <div className="youtube-url mt-1 mb-1">
                 <div class="input-group">
                   <span class="input-group-text" id="inputGroup-sizing-default">
@@ -119,9 +136,10 @@ const Main = () => {
                   />
                 </div>
               </div>
-            ) : null}
+            ) : null} */}
+
             {/* google drive url */}
-            {platformSelected === "googleDrive" ? (
+            {/* {platformSelected === "googleDrive" ? (
               <div className="googleDrive-url mt-1 mb-1">
                 <div class="input-group">
                   <span class="input-group-text" id="inputGroup-sizing-default">
@@ -138,11 +156,15 @@ const Main = () => {
                   />
                 </div>
               </div>
-            ) : null}
+            ) : null} */}
 
             {/* image and video upload */}
             {platformSelected === "image" || platformSelected === "video" ? (
-              <div className="image-and-video-upload mt-1 mb-1">
+              <div
+                className="image-and-video-upload mt-1 mb-1"
+                onClick={() => fileInputRef.current.click()}
+                style={{ cursor: "pointer" }}
+              >
                 <FaCloudUploadAlt
                   style={{ fontSize: "5em", color: "lightblue" }}
                 />
@@ -150,17 +172,11 @@ const Main = () => {
                 <p>PNG, JPG, GIF, .mp4</p>
 
                 <input
-                  id="file-upload"
+                  ref={fileInputRef}
                   type="file"
                   accept="image/png, image/jpeg, image/gif, video/mp4"
                   className="d-none"
-                  onChange={(e) => {
-                    // Handle file upload
-                    const file = e.target.files[0];
-                    if (file) {
-                      console.log("Selected file:", file);
-                    }
-                  }}
+                  onChange={handleFileUpload}
                 />
               </div>
             ) : null}
@@ -289,7 +305,7 @@ const Main = () => {
                 </div>
               </div>
               <div className="review-image">
-                <img src={assets.mockImage} alt="" width={30} />
+                <img src="" alt="" width={30} id="preview" />
               </div>
               <div className="caption-view">
                 <p style={{ color: "rgb(147, 144, 144)", fontWeight: "500" }}>
@@ -300,6 +316,7 @@ const Main = () => {
           </div>
         </div>
       </div>
+      {/* <img src="" id="preview" alt="" /> */}
     </div>
   );
 };

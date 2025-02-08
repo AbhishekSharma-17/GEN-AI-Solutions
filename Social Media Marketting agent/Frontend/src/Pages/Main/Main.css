@@ -61,9 +61,11 @@
   font-size: 14px;
   gap: 10px;
 }
-
-.review-image img {
-  width: 100%;
+.review-image{
+  text-align: center;
+}
+.review-image #preview {
+  width: 600px;
   height: auto;
   border-radius: 5px;
 }

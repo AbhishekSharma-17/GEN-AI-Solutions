@@ -9,17 +9,15 @@ const HomeHeader = () => {
   const {
     LLMType,
     setLLMType,
-    isLoadings,
-    setIsLoadings,
     form_LLM_type,
     form_API_Key,
     setAPI_KEY,
-    form_Unstructured_API_Key,
-    unstructured_API_KEY,
-    setUnstructured_API_KEY,
+    form_Groq_API_Key,
+    groq_API_KEY,
+    setGroq_API_KEY,
   } = useContext(HomeContext);
 
-  const { setError } = useContext(CommonContext);
+  const { setError, isLoadings, setIsLoadings } = useContext(CommonContext);
 
   const providers = [
     {
@@ -51,21 +49,21 @@ const HomeHeader = () => {
     // Gather data from the form
     const LLM_Type = form_LLM_type.current.textContent || LLMType;
     const API_Key = form_API_Key.current.value;
-    const unstructured_API_KEY = form_Unstructured_API_Key.current.value;
+    const groq_API_KEY = form_Groq_API_Key.current.value;
 
     // Log all the selected or entered details
     console.log("Selected LLM Type:", LLM_Type);
     console.log("Entered API Key:", API_Key);
-    console.log("Entered Unstructured API Key:", unstructured_API_KEY);
+    console.log("Entered Groq API Key:", groq_API_KEY);
 
     // Update states with the input values
     setLLMType(LLM_Type);
     setAPI_KEY(API_Key);
-    setUnstructured_API_KEY(unstructured_API_KEY);
+    setGroq_API_KEY(groq_API_KEY);
 
     // Prepare data for the API request
     const form_data = {
-      unstructured_API_Key: unstructured_API_KEY,
+      groq_api_key: groq_API_KEY,
       llm_type: LLM_Type,
       api_key: API_Key,
     };
@@ -117,9 +115,7 @@ const HomeHeader = () => {
       </div>
 
       {/* main content */}
-      <div>
-        
-      </div>
+      <div></div>
       <div className="header-main">
         <div className="key-input-section">
           <div className="tex-section">
@@ -169,31 +165,33 @@ const HomeHeader = () => {
                 </ul>
               </div>
             </div>
+            {LLMType !== "Groq" ? (
+              <div className="mb-4">
+                <label htmlFor="apiKey" className="form-label">
+                  {LLMType} API Key
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="apiKey"
+                  placeholder="API Key"
+                  ref={form_API_Key}
+                  required
+                />
+              </div>
+            ) : null}
 
-            <div className="mb-4">
-              <label htmlFor="apiKey" className="form-label">
-                API Key
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="apiKey"
-                placeholder="API Key"
-                ref={form_API_Key}
-                required
-              />
-            </div>
-            {/* for uunstructured key  */}
+            {/* for groq key  */}
             <div className="mb-4">
               <label htmlFor="unstructuredApiKey" className="form-label">
-                Unstructure API Key
+                Groq API Key
               </label>
               <input
                 type="password"
                 className="form-control"
                 id="unstructured_ apiKey"
                 placeholder="Unstructured API Key"
-                ref={form_Unstructured_API_Key}
+                ref={form_Groq_API_Key}
                 required
               />
             </div>
