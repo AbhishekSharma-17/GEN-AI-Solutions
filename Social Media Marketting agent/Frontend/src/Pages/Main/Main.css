@@ -65,9 +65,20 @@
   text-align: center;
 }
 .review-image #preview {
-  width: 600px;
+  width: 500px;
   height: auto;
   border-radius: 5px;
+}
+.dummy-image-div{
+  width: 100%;
+  height: auto;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #ccc;
+border-radius: 10px;
+  background-color: rgb(234, 234, 234);
 }
 
 .caption {

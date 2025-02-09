@@ -10,6 +10,8 @@
 test.py
 *.txt
 sample.json
+sample.jsx
+sample.css
 
 
 
@@ -43,3 +45,5 @@ dist-ssr
 credentials.json
 
 .codegpt
+
+Social Media Marketting agent/Backend/upload_to_drive_creds.json

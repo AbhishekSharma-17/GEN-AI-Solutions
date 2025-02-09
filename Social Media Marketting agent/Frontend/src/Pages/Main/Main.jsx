@@ -5,6 +5,7 @@ import assets from "../../assets/assets";
 // import { IoLogoYoutube } from "react-icons/io";
 // import { FaGoogleDrive } from "react-icons/fa";
 import { FaCloudUploadAlt } from "react-icons/fa";
+import { FaRegImage } from "react-icons/fa6";
 
 const Main = () => {
   const fileInputRef = useRef(null);
@@ -21,6 +22,8 @@ const Main = () => {
     setPlatformToView,
     caption,
     setCaption,
+    local_url,
+    setLocalURL,
   } = useContext(MainContext);
 
   const platforms = [
@@ -49,17 +52,20 @@ const Main = () => {
   // handling file upload
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
-    console.log('file is:', file);
+    console.log("file is:", file);
 
     if (file) {
-        const localURL = URL.createObjectURL(file);
-        console.log('Generated Local URL:', localURL);
-        
-        // You can use this URL to display the image
-        document.getElementById("preview").src = localURL;
-    }
-};
+      const localURL = URL.createObjectURL(file);
+      console.log("Generated Local URL:", localURL);
+      setLocalURL(localURL);
 
+      // You can use this URL to display the image
+      document.getElementById("preview").src = localURL;
+    }
+    // try{
+
+    // }
+  };
 
   return (
     <div className="main-app">
@@ -159,6 +165,7 @@ const Main = () => {
             ) : null} */}
 
             {/* image and video upload */}
+
             {platformSelected === "image" || platformSelected === "video" ? (
               <div
                 className="image-and-video-upload mt-1 mb-1"
@@ -192,11 +199,11 @@ const Main = () => {
                 placeholder="Enter your caption here"
                 rows="10"
                 className="form-control"
-                // disabled={caption.length > 20} // Correct way to conditionally disable the textarea
+                disabled={caption.length >= 200} // Correct way to conditionally disable the textarea
               />
             </div>
             <p style={{ fontSize: "15px", fontWeight: "500", color: "grey" }}>
-              {caption.length} / 2000 Characters
+              {caption.length} / 200 Characters
             </p>
           </div>
 
@@ -304,11 +311,18 @@ const Main = () => {
                   <p style={{ color: "grey" }}>Just Now</p>
                 </div>
               </div>
-              <div className="review-image">
-                <img src="" alt="" width={30} id="preview" />
-              </div>
+              {local_url ? (
+                <div className="review-image">
+                  <img src={local_url} alt="" width={30} id="preview" />
+                </div>
+              ) : (
+                <div className="dummy-image-div">
+                  <FaRegImage style={{ fontSize: "400px", color:"grey" }} />
+
+                </div>
+              )}
               <div className="caption-view">
-                <p style={{ color: "rgb(147, 144, 144)", fontWeight: "500" }}>
+                <p style={{ color: "rgb(108, 107, 107)", fontWeight: "500" }}>
                   {caption || "Caption..."}
                 </p>
               </div>

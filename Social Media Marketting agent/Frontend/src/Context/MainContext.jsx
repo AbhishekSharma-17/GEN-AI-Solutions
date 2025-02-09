@@ -7,6 +7,7 @@ const MainProvider = (props) => {
   const [platformSelected, setPlatformSelected] = useState("");
   const [platformToView, setPlatformToView] = useState("");
   const [caption, setCaption] = useState("");
+  const [local_url, setLocalURL] = useState('');
 
   const contextValue = {
     platformRef,
@@ -16,6 +17,7 @@ const MainProvider = (props) => {
     setPlatformToView,
     caption,
     setCaption,
+    local_url, setLocalURL
   };
 
   return (

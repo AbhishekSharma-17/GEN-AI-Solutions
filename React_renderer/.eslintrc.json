@@ -1,0 +1,8 @@
+{
+    "globals": {
+      "Babel": "readonly"
+    },
+    "rules": {
+      "react/react-in-jsx-scope": "off"
+    }
+  }
