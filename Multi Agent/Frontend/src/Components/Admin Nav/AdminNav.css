@@ -1,0 +1,15 @@
+.admin-navbar{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 20px;
+    padding: 15px 30px;
+    box-shadow: 0px 0px 10px 0px #ccc;
+}
+.admin-navbar #icon{
+    width:30px;
+}
+.admin-navbar #logo{
+    width: 150px;
+}
+
