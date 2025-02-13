@@ -31,7 +31,7 @@ TOOLS_MAPPING = {
 }
 
 # Create a global language model instance.
-model = ChatOpenAI(model="gpt-4", temperature=0)
+model = ChatOpenAI(model="gpt-4o", temperature=0)
 
 # In-memory storage for agents.
 agents_db = {}
@@ -110,7 +110,6 @@ def create_agent(agent_data: AgentCreate):
     
     checkpointer = MemorySaver()
     default_prompt = agent_data.system_prompt or "You are a helpful assistant."
-    # Create the LangGraph agent (without system_message parameter, as it is not supported).
     agent_instance = create_react_agent(model, selected_tools, checkpointer=checkpointer)
     
     agents_db[agent_id] = {
