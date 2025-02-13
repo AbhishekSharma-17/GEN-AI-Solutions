@@ -37,3 +37,5 @@ langgraph
 IPython
 matplotlib
 seaborn
+PyPDF2
+wikipedia
