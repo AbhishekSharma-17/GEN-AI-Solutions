@@ -1,13 +1,11 @@
-import React from 'react'
-import './User.css'
-
+import "./User.css";
 
 const User = () => {
   return (
-    <div>
-      <p>user here </p>
+    <div className="main-user">
+      <p>Aggao User Page pr </p>
     </div>
-  )
-}
+  );
+};
 
-export default User
+export default User;

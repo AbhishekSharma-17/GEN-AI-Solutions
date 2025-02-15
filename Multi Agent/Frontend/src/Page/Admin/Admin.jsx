@@ -1,10 +1,12 @@
-import React, { useContext } from "react";
+import  { useContext, useEffect } from "react";
 import "./Admin.css";
 import AdminNav from "../../Components/Admin Nav/AdminNav";
 import assets from "../../assets/assets";
-import { FaUser, FaUserShield } from "react-icons/fa6";
+import {  FaUserShield } from "react-icons/fa6";
 import { AdminContext } from "../../Context/AdminContext";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
+
 
 const Admin = () => {
   const {
@@ -27,6 +29,8 @@ const Admin = () => {
     allAgentData,
     setAllAgentData,
   } = useContext(AdminContext);
+
+  const navigate = useNavigate();
 
   const handleFormData = (event) => {
     event.preventDefault();
@@ -64,31 +68,49 @@ const Admin = () => {
   };
 
   const saveAgentData = () => {
-    console.log("Saving all agent")
+    if (!agentName || !agentDesc || !agentObj || !agentStringList) {
+        toast.warn("Please fill out all fields");
+        return;
+    }
+
+    console.log("Saving all agent");
     const agentData = {
-      agent_name: agentName,
-      agent_desc: agentDesc,
-      agent_tool: agentTool,
-      agent_obj: agentObj,
-      agent_string_list: agentStringList,
+        agent_name: agentName,
+        agent_desc: agentDesc,
+        agent_tool: agentTool,
+        agent_obj: agentObj,
+        agent_string_list: agentStringList,
     };
 
-    // console.log(agentData);
+    // Get existing agents from localStorage
+    const storedAgents = JSON.parse(localStorage.getItem("Agent")) || [];
+    
+    // Append new agentData
+    const newAgentData = [...storedAgents, agentData];
+    setAllAgentData(newAgentData);
+    
+    // Store updated array in localStorage
+    localStorage.setItem("Agent", JSON.stringify(newAgentData));
 
-    // Store in localStorage as JSON string
-    // localStorage.setItem("Agent", JSON.stringify(agentData));
+    console.log(`Total agents saved: ${newAgentData.length}`);
 
-    // Append new agentData to existing state
-    setAllAgentData((prevData) => [...prevData, agentData]);
-    console.log(allAgentData);
+    toast.success(`${agentData.agent_name} Created Successfully`);
 
     // Clear input fields
     setAgentName("");
     setAgentDesc("");
     setAgentObj("");
     setAgentStringList("");
+    setAgentTool([]);
+};
 
-  };
+// Load agents from localStorage on component mount
+useEffect(() => {
+    const storedAgents = JSON.parse(localStorage.getItem("Agent")) || [];
+    setAllAgentData(storedAgents);
+}, []);
+
+
 
   return (
     <div className="admin-page">
@@ -221,20 +243,22 @@ const Admin = () => {
                 <div className="mb-3 mt-3 button-div">
                   <button className="btn btn-dark">Reset</button>
                   <button
-                    className="btn btn-outline-dark"
+                    className="btn btn-outline-success"
                     onClick={saveAgentData}
                   >
-                    Create New Agent
+                    Save & Create New
                   </button>
                 </div>
               </div>
             </div>
+            {allAgentData.length>0 &&
             <button
               className="btn btn-dark"
               style={{ fontWeight: "500", fontSize: "18px" }}
+              onClick={() => navigate('/user')}
             >
-              Save All Agents
-            </button>
+              Save Agents to DB
+            </button>}
           </div>
         )}
       </div>
