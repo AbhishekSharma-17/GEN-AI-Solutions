@@ -1,0 +1,87 @@
+.main-user {
+  max-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+  max-width: 100%;
+  width: 100%;
+  display: flex;
+}
+
+/* sidebar */
+.user-sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #f0f5f8;
+  max-height: 100vh;
+  height: 100vh;
+  border: 1px solid #c8dce0;
+  width: 20%;
+  padding: 20px;
+}
+
+
+
+
+/* user graph section */
+.user-graph-section {
+  display: flex;
+  flex-direction: column;
+  /* justify-content: space-between; */
+  max-height: 100vh;
+  height: 100vh;
+  /* border: 1px solid orange; */
+  width: 50%;
+}
+
+.content-navbar{
+    /* border: 1px solid; */
+    width: 100%;
+    padding: 20px 25px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 30px;
+    box-shadow: 0px 0px 10px #ddd;
+}
+.content-navbar a {
+  margin: 0;
+  font-weight: 500;
+  text-decoration: none;
+  color: black;
+  padding: 5px 10px; /* Ensure consistent padding */
+  border-radius: 5px; /* Match hover effect */
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+}
+
+.content-navbar a:hover {
+  background-color: #e7e7e7;
+  color: #333; /* Slightly darker text for better contrast */
+  transform: scale(1.05); /* Subtle scaling effect */
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow effect */
+}
+
+.content{
+    border: 1px solid forestgreen;
+    overflow-y: scroll;
+    width: 100%;
+    height: 100%;
+    padding: 10px;
+}
+.content::-webkit-scrollbar{
+    /* display: none; */
+    background-color: transparent;
+}
+
+/* chat section style */
+.user-chat-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-height: 100vh;
+    height: 100vh;
+    border: 1px solid #ccc;
+    width: 30%;
+    padding: 20px;
+    background-color: #f0f5f8;
+  }

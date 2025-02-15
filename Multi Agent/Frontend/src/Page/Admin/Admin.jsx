@@ -1,12 +1,10 @@
-import  { useContext, useEffect } from "react";
+import { useContext, useEffect } from "react";
 import "./Admin.css";
 import AdminNav from "../../Components/Admin Nav/AdminNav";
 import assets from "../../assets/assets";
-import {  FaUserShield } from "react-icons/fa6";
+import { FaUserShield } from "react-icons/fa6";
 import { AdminContext } from "../../Context/AdminContext";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
-
 
 const Admin = () => {
   const {
@@ -28,9 +26,10 @@ const Admin = () => {
     setAgentStringList,
     allAgentData,
     setAllAgentData,
+    // display user
+    displayUser,
+    setDisplayUser,
   } = useContext(AdminContext);
-
-  const navigate = useNavigate();
 
   const handleFormData = (event) => {
     event.preventDefault();
@@ -69,26 +68,26 @@ const Admin = () => {
 
   const saveAgentData = () => {
     if (!agentName || !agentDesc || !agentObj || !agentStringList) {
-        toast.warn("Please fill out all fields");
-        return;
+      toast.warn("Please fill out all fields");
+      return;
     }
 
     console.log("Saving all agent");
     const agentData = {
-        agent_name: agentName,
-        agent_desc: agentDesc,
-        agent_tool: agentTool,
-        agent_obj: agentObj,
-        agent_string_list: agentStringList,
+      agent_name: agentName,
+      agent_desc: agentDesc,
+      agent_tool: agentTool,
+      agent_obj: agentObj,
+      agent_string_list: agentStringList,
     };
 
     // Get existing agents from localStorage
     const storedAgents = JSON.parse(localStorage.getItem("Agent")) || [];
-    
+
     // Append new agentData
     const newAgentData = [...storedAgents, agentData];
     setAllAgentData(newAgentData);
-    
+
     // Store updated array in localStorage
     localStorage.setItem("Agent", JSON.stringify(newAgentData));
 
@@ -102,15 +101,17 @@ const Admin = () => {
     setAgentObj("");
     setAgentStringList("");
     setAgentTool([]);
-};
+  };
 
-// Load agents from localStorage on component mount
-useEffect(() => {
+  // Load agents from localStorage on component mount
+  useEffect(() => {
     const storedAgents = JSON.parse(localStorage.getItem("Agent")) || [];
     setAllAgentData(storedAgents);
-}, []);
+  }, []);
 
-
+  const handleSaveToDB = () => {
+    setDisplayUser(true);
+  };
 
   return (
     <div className="admin-page">
@@ -118,7 +119,7 @@ useEffect(() => {
 
       <div className="main-admin-section">
         {/* admin login */}
-        {!isAdminLoggedIn ? (
+        {!isAdminLoggedIn && !displayUser ? (
           <div className="admin-login container">
             <form
               onSubmit={(event) => {
@@ -251,14 +252,15 @@ useEffect(() => {
                 </div>
               </div>
             </div>
-            {allAgentData.length>0 &&
-            <button
-              className="btn btn-dark"
-              style={{ fontWeight: "500", fontSize: "18px" }}
-              onClick={() => navigate('/user')}
-            >
-              Save Agents to DB
-            </button>}
+            {allAgentData.length > 0 && (
+              <button
+                className="btn btn-dark"
+                style={{ fontWeight: "500", fontSize: "18px" }}
+                onClick={handleSaveToDB}
+              >
+                Save Agents to DB
+              </button>
+            )}
           </div>
         )}
       </div>

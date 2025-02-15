@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, } from "react";
 
 export const AdminContext = createContext();
 
@@ -16,6 +16,10 @@ const AdminContextProvider = (props) => {
 
   //   this state will contain data of all agent saved by user
   const [allAgentData, setAllAgentData] = useState([]);
+
+  // display user Page
+  const [displayUser, setDisplayUser] =useState(false);
+
 
   const contextValue = {
     adminEmail,
@@ -36,6 +40,9 @@ const AdminContextProvider = (props) => {
     setAgentStringList,
     allAgentData,
     setAllAgentData,
+    // display user page
+    displayUser, setDisplayUser
+   
   };
 
   return (
