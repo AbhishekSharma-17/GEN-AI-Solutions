@@ -1,0 +1,61 @@
+.live-react-renderer {
+  display: flex;
+  height: 100vh;
+  gap: 20px;
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+.editor-panel {
+  flex: 1;
+  background: #1e1e1e;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.editor-panel textarea {
+  width: 100%;
+  height: 100%;
+  padding: 20px;
+  font-family: 'Fira Code', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #d4d4d4;
+  background: none;
+  border: none;
+  outline: none;
+  resize: none;
+}
+
+.preview-panel {
+  flex: 1;
+  background: #ffffff;
+  border-radius: 8px;
+  padding: 20px;
+  overflow: auto;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.error-fallback {
+  color: #ff4444;
+  padding: 20px;
+  background: #ffe6e6;
+  border-radius: 8px;
+  margin: 20px 0;
+  font-family: monospace;
+}
+
+.error-message {
+  color: #ff4444;
+  padding: 15px;
+  background: #ffe6e6;
+  border-radius: 6px;
+  margin-top: 15px;
+  font-family: monospace;
+}
+
+.error-message pre {
+  white-space: pre-wrap;
+  margin-top: 8px;
+}
