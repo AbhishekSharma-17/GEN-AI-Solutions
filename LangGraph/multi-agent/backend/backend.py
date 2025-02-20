@@ -7,214 +7,131 @@ from uuid import uuid4
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.memory import MemorySaver
 from langchain_openai import ChatOpenAI
+from typing import List, Any, Annotated, Dict, Optional
+from langchain.prompts import ChatPromptTemplate
+from fastapi.responses import JSONResponse
+from dotenv import load_dotenv
+import os
+from langchain_core.output_parsers import JsonOutputParser
 
-# Import tool functions from tools.py
-from tools import (
-    tavily_search,
-    web_crawler,
-    read_file_tool,
-    write_file_tool,
-    get_current_time_tool,
-    search_wikipedia_tool,
-    read_pdf_tool,
-)
+load_dotenv()
 
-# Map tool names to actual tool functions.
-TOOLS_MAPPING = {
-    "tavily_search": tavily_search,
-    "web_crawler": web_crawler,
-    "read_file": read_file_tool,
-    "write_file": write_file_tool,
-    "get_current_time": get_current_time_tool,
-    "search_wikipedia": search_wikipedia_tool,
-    "read_pdf": read_pdf_tool,
-}
-
-# Create a global language model instance.
-model = ChatOpenAI(model="gpt-4o", temperature=0)
-
-# In-memory storage for agents.
-agents_db = {}
+TEMP_DIR = "temp_data"
+os.makedirs(TEMP_DIR, exist_ok=True)
 
 app = FastAPI(title="Multi-Agent LangGraph API")
 
-# ---------------- Pydantic Models ---------------- #
-
-class Agent(BaseModel):
-    id: str
-    name: str
-    description: Optional[str] = None
-    goal: Optional[str] = None
-    tools: List[str]
-    personality: Optional[str] = None
-    tone: Optional[str] = None
-    domain_expertise: Optional[str] = None
-    system_prompt: Optional[str] = None
-    language: Optional[str] = None
-    temperature: Optional[float] = None
-    max_tokens: Optional[int] = None
-    tool_priority: Optional[List[str]] = None
-    memory_type: Optional[str] = None
-    tags: Optional[List[str]] = None
-    references: Optional[List[str]] = None
-
-class AgentCreate(BaseModel):
-    name: str
-    description: Optional[str] = None
-    goal: Optional[str] = None
-    tools: List[str]
-    personality: Optional[str] = None
-    tone: Optional[str] = None
-    domain_expertise: Optional[str] = None
-    system_prompt: Optional[str] = None
-    language: Optional[str] = None
-    temperature: Optional[float] = None
-    max_tokens: Optional[int] = None
-    tool_priority: Optional[List[str]] = None
-    memory_type: Optional[str] = None
-    tags: Optional[List[str]] = None
-    references: Optional[List[str]] = None
-
-class Prompt(BaseModel):
-    prompt: str
-
-# A simplified agent summary model for listing.
-class AgentSummary(BaseModel):
-    id: str
-    name: str
-
-# ---------------- Admin Endpoints ---------------- #
-
-@app.post("/admin/agents", response_model=Agent)
-def create_agent(agent_data: AgentCreate):
-    agent_id = str(uuid4())
-    selected_tools = []
-    if agent_data.tool_priority:
-        for tool_name in agent_data.tool_priority:
-            if tool_name in TOOLS_MAPPING:
-                selected_tools.append(TOOLS_MAPPING[tool_name])
-            else:
-                raise HTTPException(status_code=400, detail=f"Tool '{tool_name}' not found")
-        for tool_name in agent_data.tools:
-            if tool_name not in agent_data.tool_priority:
-                if tool_name in TOOLS_MAPPING:
-                    selected_tools.append(TOOLS_MAPPING[tool_name])
-                else:
-                    raise HTTPException(status_code=400, detail=f"Tool '{tool_name}' not found")
-    else:
-        for tool_name in agent_data.tools:
-            if tool_name in TOOLS_MAPPING:
-                selected_tools.append(TOOLS_MAPPING[tool_name])
-            else:
-                raise HTTPException(status_code=400, detail=f"Tool '{tool_name}' not found")
+@app.post("/prompt-generation")
+async def process_query(data: Dict[str, Any]):
+    user_id = data.get("user_id")
+    description = data.get("description")
+    goal = data.get("goal")
+    tools = data.get("tools")
+    personality = data.get("personality")
+    tone = data.get("tone")
+    domain_expertise = data.get("domain_expertise")
     
-    checkpointer = MemorySaver()
-    default_prompt = agent_data.system_prompt or "You are a helpful assistant."
-    agent_instance = create_react_agent(model, selected_tools, checkpointer=checkpointer)
+    if not all([user_id, description, goal, tools, personality, tone, domain_expertise]):
+        raise HTTPException(
+            status_code=400, 
+            detail="description, user_id, goal, tools, personality, tone and domain_expertise are required"
+        )
+        
+    system_prompt = """
+     Prompt Generator for AI Agents
+
+You are an expert prompt engineer tasked with creating system prompts for AI agents. Your goal is to generate concise, effective, and safe prompts based on the provided information.
+
+Given Inputs:
+Description: {description}
+Goal: {goal}
+Tools: {tools}
+Personality: {personality}
+Tone: {tone}
+Domain Expertise: {domain_expertise}
+
+## Input Parameters:
+- Description: Brief overview of the agent's purpose
+- Goal: The primary objective of the agent
+- Tools: List of tools the agent can use
+- Personality: Desired character traits of the agent
+- Tone: Communication style (e.g., formal, casual, technical)
+- Domain Expertise: Specific field(s) of knowledge
+
+## Guidelines:
+1. Keep the prompt under 30 lines for clarity and efficiency.
+2. Incorporate all provided parameters into the prompt.
+3. Emphasize the agent's goal and how to achieve it using the given tools.
+4. Reflect the specified personality and tone in the prompt's language.
+5. Highlight the domain expertise to guide the agent's knowledge focus.
+6. Include clear instructions on what the agent should and should not do.
+7. Implement ethical guidelines and safety measures in the prompt.
+8. Use concise language and avoid unnecessary verbosity.
+9. Structure the prompt logically for easy comprehension by the agent.
+10. Ensure the prompt encourages helpful and appropriate responses.
+11. Include the response format section in the prompt according to the usecase.
+
+Response format:
+
+{{"Agent_name": "name_of_the_agent",
+"system_prompt": "The_whole_system_prompt"}}
+
+
+## Output Format:
+Generate prompt in the Json format only along with the agent name.
+
+Remember: Your task is to create a prompt that will guide an AI agent effectively and safely. Prioritize clarity, relevance, and ethical considerations in your generated prompt.
+    """
     
-    agents_db[agent_id] = {
-        "id": agent_id,
-        "name": agent_data.name,
-        "description": agent_data.description,
-        "goal": agent_data.goal,
-        "tools": agent_data.tools,
-        "personality": agent_data.personality,
-        "tone": agent_data.tone,
-        "domain_expertise": agent_data.domain_expertise,
-        "system_prompt": default_prompt,
-        "language": agent_data.language,
-        "temperature": agent_data.temperature,
-        "max_tokens": agent_data.max_tokens,
-        "tool_priority": agent_data.tool_priority,
-        "memory_type": agent_data.memory_type,
-        "tags": agent_data.tags,
-        "references": agent_data.references,
-        "instance": agent_instance,
-    }
-    return Agent(**agents_db[agent_id])
-
-# ---------------- User Endpoints ---------------- #
-
-@app.get("/agents", response_model=List[AgentSummary])
-def list_agents():
-    """Return a list of all agents (only id and name)."""
-    return [AgentSummary(id=agent["id"], name=agent["name"]) for agent in agents_db.values()]
-
-import json
-from fastapi import HTTPException
-from typing import List
-from pydantic import BaseModel
-
-# Simplified agent summary model for listing.
-class AgentSummary(BaseModel):
-    id: str
-    name: str
-
-# Assume Prompt model and agents_db, model are already defined in your code.
-# Example Prompt model:
-class Prompt(BaseModel):
-    prompt: str
-
-@app.post("/agents/search", response_model=List[AgentSummary])
-def search_agents(prompt: Prompt):
-    """
-    Uses an LLM to semantically match the user's query against available agents.
-    The LLM is provided with a list of agents (id, name, description, tags)
-    and is instructed to return a JSON array of objects with only 'id' and 'name'.
-    """
-    # Gather metadata from all agents
-    agents_list = []
-    for agent in agents_db.values():
-        agents_list.append({
-            "id": agent["id"],
-            "name": agent["name"],
-            "description": agent.get("description", ""),
-            "tags": agent.get("tags", []),
+    prompt = ChatPromptTemplate.from_template(system_prompt)
+    
+    llm = ChatOpenAI(api_key= os.getenv("OPENAI_API_KEY"), model="gpt-4o")
+    output_parser = JsonOutputParser()
+    
+    chain = prompt | llm | output_parser
+    
+    try:
+        result = await chain.ainvoke({
+            "description": description,
+            "goal": goal,
+            "tools": tools,
+            "personality": personality,
+            "tone": tone,
+            "domain_expertise": domain_expertise
         })
+        
+        agent_name = result.get("Agent_name", f"Agent_{len(tools)}")
+        system_prompt = result.get("system_prompt", "")
 
-    # Construct the LLM prompt that includes the agents list and the user query.
-    system_prompt = (
-        "You are an expert matching engine. Below is a list of available AI agents along with their metadata.\n"
-        "Given the user's query, please select the agent(s) that best match the query and return a JSON array containing only the 'id' and 'name' of each matching agent. "
-        "If no agent is relevant, return an empty JSON array.\n\n"
-        "Agents:\n"
-    )
-    for agent in agents_list:
-        system_prompt += json.dumps(agent) + "\n"
-    system_prompt += "\nUser Query: " + prompt.prompt + "\n"
-    system_prompt += "Return only a JSON array of objects with keys 'id' and 'name'."
+        new_agent_data = {
+            "agent_name": agent_name,
+            "system_prompt": system_prompt,
+            "tools": tools
+        }
 
-    # Invoke the LLM with the constructed prompt.
-    llm_response = model.invoke([{"role": "system", "content": system_prompt}])
-    
-    try:
-        # Access the LLM output using the .content attribute.
-        matching_agents = json.loads(llm_response.content)
+        # File path for the user's data
+        file_path = os.path.join(TEMP_DIR, f"{user_id}.json")
+
+        # Load existing data if file exists, else create new
+        if os.path.exists(file_path):
+            with open(file_path, "r") as json_file:
+                user_data = json.load(json_file)
+        else:
+            user_data = {"user_id": user_id, "agents": []}
+
+        # Append the new agent to the existing list
+        user_data["agents"].append(new_agent_data)
+
+        # Save updated JSON
+        with open(file_path, "w") as json_file:
+            json.dump(user_data, json_file, indent=4)
+        
+        
+        
+        return JSONResponse(content={
+            "message": "Agent prompt generated and stored successfully.",
+            "agent_name": agent_name,
+            "system_prompt": system_prompt
+        })
     except Exception as e:
-        raise HTTPException(status_code=500, detail="LLM response parsing failed: " + str(e))
-    
-    if not isinstance(matching_agents, list):
-        raise HTTPException(status_code=500, detail="LLM did not return a JSON array")
-    
-    # Return only the id and name for each matching agent.
-    return [AgentSummary(**agent) for agent in matching_agents]
-
-
-@app.post("/agents/{agent_id}/execute")
-def execute_agent(agent_id: str, prompt: Prompt):
-    if agent_id not in agents_db:
-        raise HTTPException(status_code=404, detail="Agent not found")
-    agent_instance = agents_db[agent_id]["instance"]
-    input_state = {"messages": [{"role": "user", "content": prompt.prompt}]}
-    config = {"configurable": {"thread_id": 42}}  # Example config; adjust as needed.
-    try:
-        result = agent_instance.invoke(input_state, config=config)
-        return result
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-# ---------------- Main Entry ---------------- #
-
-if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run(app, host="localhost", port=8000)
+        raise HTTPException(status_code=500, detail=f"An error occurred: {str(e)}")
