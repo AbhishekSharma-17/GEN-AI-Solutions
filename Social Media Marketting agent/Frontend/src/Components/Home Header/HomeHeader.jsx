@@ -17,7 +17,7 @@ const HomeHeader = () => {
     setGroq_API_KEY,
   } = useContext(HomeContext);
 
-  const { setError, isLoadings, setIsLoadings } = useContext(CommonContext);
+  const { setError, isLoadings, setIsLoadings, setIsKeyProvided } = useContext(CommonContext);
 
   const providers = [
     {
@@ -69,37 +69,7 @@ const HomeHeader = () => {
     };
 
     console.log(form_data);
-
-    // try {
-    //   // Send data to the backend
-    //   const response = await fetch("http://localhost:8001/connect", {
-    //     method: "POST",
-    //     headers: { "Content-Type": "application/json" },
-    //     body: JSON.stringify(form_data),
-    //   });
-
-    //   if (!response.ok) {
-    //     throw new Error("Connection failed. Please check your credentials.");
-    //   }
-
-    //   const data = await response.json();
-    //   const schemaString = processSchemaString(data.schema);
-    //   setDbSchema(schemaString);
-
-    //   if (data) {
-    //     setConnectedToDB(true); // Connection successful
-    //     toast.success("Database Connected successfully!");
-    //   } else {
-    //     setError("Failed to connect. Verify the details.");
-    //     toast.error("Failed to connect. Verify the details.");
-    //   }
-    // } catch (err) {
-    //   setError(err.message);
-    //   setConnectedToDB(false);
-    //   setDbSchema("");
-    // } finally {
-    //   setIsLoadings(false);
-    // }
+    setIsKeyProvided(true);
   };
 
   return (
