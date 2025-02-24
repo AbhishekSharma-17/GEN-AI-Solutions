@@ -7,6 +7,7 @@
     "chart.js": "^4.4.7",
     "cra-template": "1.2.0",
     "d3": "^7.9.0",
+    "live-react-renderer": "file:",
     "react": "^19.0.0",
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^19.0.0",
