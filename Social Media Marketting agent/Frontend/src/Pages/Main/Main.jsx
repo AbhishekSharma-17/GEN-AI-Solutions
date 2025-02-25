@@ -27,16 +27,6 @@ const Main = () => {
   } = useContext(MainContext);
 
   const platforms = [
-    // {
-    //   value: "youtube",
-    //   label: "YouTube URL",
-    //   img: assets.chatGPTIcon,
-    // },
-    // {
-    //   value: "googleDrive",
-    //   label: "Google Drive URL",
-    //   img: assets.anthropic,
-    // },
     {
       value: "image",
       label: "Upload an Image",
