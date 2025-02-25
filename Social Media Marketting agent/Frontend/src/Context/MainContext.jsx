@@ -12,6 +12,10 @@ const MainProvider = (props) => {
   const [backendStatus, setBackendStatus] = useState('')
   const [isUploading, setIsUploading] = useState(false);
   const [mediaInfo, setMediaInfo] = useState({ file_path: null, media_url: null });
+  const [uploadCompleted, setUploadCompleted] = useState(false);
+  const [mediaURL, setMediaURL] = useState('')
+  const [uploadedFilePath, setUploadedFilePath] = useState('');
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const contextValue = {
     platformRef,
@@ -26,6 +30,10 @@ const MainProvider = (props) => {
     backendStatus, setBackendStatus,
     isUploading, setIsUploading,
     mediaInfo, setMediaInfo,
+    uploadCompleted, setUploadCompleted,
+    mediaURL, setMediaURL,
+    uploadedFilePath, setUploadedFilePath,
+    isAnalyzing, setIsAnalyzing,
   };
 
   return (

@@ -26,16 +26,6 @@ const HomeHeader = () => {
       img: assets.chatGPTIcon,
     },
     {
-      value: "anthropic",
-      label: "Anthropic",
-      img: assets.anthropic,
-    },
-    {
-      value: "hugging-face",
-      label: "Hugging Face",
-      img: assets.hugging_face,
-    },
-    {
       value: "groq",
       label: "Groq",
       img: assets.groq,
