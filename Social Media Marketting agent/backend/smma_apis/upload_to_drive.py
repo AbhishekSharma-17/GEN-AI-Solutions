@@ -4,7 +4,7 @@ from google.oauth2 import service_account
 import os
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
-SERVICE_ACCOUNT_FILE = 'C:/Users/ASUS/Desktop/social_media_script - Copy/backend/smma_apis/upload_to_drive_creds.json'
+SERVICE_ACCOUNT_FILE = 'C:/Users/user/Desktop/GEN-AI-Solutions/Social Media Marketting agent/backend/smma_apis/upload_to_drive_creds.json'
 PARENT_FOLDER_ID = "1vKJCWzipjtbkHY4Zjc-4EobN5wBBtwgY"
 
 def authenticate():

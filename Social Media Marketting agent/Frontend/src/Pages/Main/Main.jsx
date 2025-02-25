@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import "./Main.css";
 import { MainContext } from "../../Context/MainContext";
 import assets from "../../assets/assets";
@@ -10,11 +10,7 @@ import { FaRegImage } from "react-icons/fa6";
 const Main = () => {
   const fileInputRef = useRef(null);
 
-  // handling caption change.
-  const handleCaptionChange = (e) => {
-    setCaption(e.target.value); // Update caption state on input change
-  };
-
+  // state from main context
   const {
     platformSelected,
     setPlatformSelected,
@@ -24,7 +20,75 @@ const Main = () => {
     setCaption,
     local_url,
     setLocalURL,
+    setFile,file,
+    backendStatus, setBackendStatus,
+    isUploading, setIsUploading,
+    mediaInfo, setMediaInfo,
   } = useContext(MainContext);
+
+  useEffect(()=>{
+    checkBackendStatus()
+  },[])
+
+  // handling caption change.
+  const handleCaptionChange = (e) => {
+    setCaption(e.target.value); // Update caption state on input change
+  };
+
+  // checking for backend status 
+  const checkBackendStatus = async () => {
+    try {
+      const response = await fetch('http://127.0.0.1:8000/health');
+      if (response.ok) {
+        setBackendStatus('Connected');
+      } else {
+        throw new Error('Backend connection failed');
+      }
+    } catch (error) {
+      console.error('Backend connection error:', error);
+      setBackendStatus('Disconnected');
+    }
+  };
+  
+
+  // handle file upload 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    console.log("in handle Submit")
+    if (!file) return;
+  
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+  
+      const response = await fetch('http://127.0.0.1:8000/upload', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          // 'Content-Type' is not needed for FormData with fetch
+          // Fetch automatically sets the correct boundary for multipart/form-data
+        },
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      setMediaInfo({
+        file_path: data.file_path,
+        media_url: data.media_url,
+      });
+    } catch (error) {
+      console.error('Error uploading file:', error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+  
+
+  
 
   const platforms = [
     {
@@ -39,23 +103,11 @@ const Main = () => {
     },
   ];
 
-  // handling file upload
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    console.log("file is:", file);
-
-    if (file) {
-      const localURL = URL.createObjectURL(file);
-      console.log("Generated Local URL:", localURL);
-      setLocalURL(localURL);
-
-      // You can use this URL to display the image
-      document.getElementById("preview").src = localURL;
-    }
-    // try{
-
-    // }
+  // handling file change
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
   };
+
 
   return (
     <div className="main-app">
@@ -116,43 +168,7 @@ const Main = () => {
           </div>
 
           {/* rendering on basis of platform selected */}
-          <div className="section-display">
-            {/* {platformSelected === "youtube" ? (
-              <div className="youtube-url mt-1 mb-1">
-                <div class="input-group">
-                  <span class="input-group-text" id="inputGroup-sizing-default">
-                    <IoLogoYoutube style={{ color: "red", fontSize: "20px" }} />
-                  </span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-default"
-                    placeholder="Paste YouTube URL"
-                  />
-                </div>
-              </div>
-            ) : null} */}
-
-            {/* google drive url */}
-            {/* {platformSelected === "googleDrive" ? (
-              <div className="googleDrive-url mt-1 mb-1">
-                <div class="input-group">
-                  <span class="input-group-text" id="inputGroup-sizing-default">
-                    <FaGoogleDrive
-                      style={{ color: "grey", fontSize: "20px" }}
-                    />
-                  </span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-default"
-                    placeholder="Paste Google Drive URL"
-                  />
-                </div>
-              </div>
-            ) : null} */}
+          <form className="section-display" onSubmit={handleSubmit}>
 
             {/* image and video upload */}
 
@@ -173,11 +189,12 @@ const Main = () => {
                   type="file"
                   accept="image/png, image/jpeg, image/gif, video/mp4"
                   className="d-none"
-                  onChange={handleFileUpload}
+                  onChange={handleFileChange}
                 />
               </div>
             ) : null}
-          </div>
+            <button type="submit" className="btn btn-primary">Upload File</button> 
+          </form>
 
           {/* caption display araea */}
           <div className="caption">
