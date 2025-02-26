@@ -29,12 +29,16 @@ app.add_middleware(SessionMiddleware, secret_key="YOUR_SECRET_KEY_HERE")
 CLIENT_SECRETS_DIR = "./client_secrets"
 os.makedirs(CLIENT_SECRETS_DIR, exist_ok=True)
 
-# Define folder for downloaded files and the mapping file.
+# Define folder for downloaded files.
 DOWNLOAD_FOLDER = "downloaded_files"
 if not os.path.exists(DOWNLOAD_FOLDER):
     os.makedirs(DOWNLOAD_FOLDER)
 
-MAPPING_FILE = os.path.join(DOWNLOAD_FOLDER, "download_mapping.json")
+# Define folder for the mapping file and create mapping file there.
+MAPPING_FOLDER = "mapping_data"
+if not os.path.exists(MAPPING_FOLDER):
+    os.makedirs(MAPPING_FOLDER)
+MAPPING_FILE = os.path.join(MAPPING_FOLDER, "download_mapping.json")
 if not os.path.exists(MAPPING_FILE):
     with open(MAPPING_FILE, "w") as f:
         json.dump({}, f)
@@ -164,7 +168,8 @@ async def list_drive(request: Request):
         "files_count": file_count
     })
 
-# Sync files (download only new files).
+# Sync files (download only new files), skipping video, image, and ipynb files.
+# If no files exist locally, this will download all eligible files.
 @app.get("/sync")
 async def sync(request: Request):
     if "credentials" not in request.session:
@@ -195,20 +200,31 @@ async def sync(request: Request):
 
     downloaded = []
     skipped_existing = []
+    skipped_unsupported = []
     failed = []
     total_attempts = 0
+
+    # Define file extensions to skip (video, image, and ipynb files).
+    skip_extensions = [".mp4", ".mov", ".avi", ".mkv", ".ipynb", ".jpg", ".jpeg", ".png", ".gif", ".mp3"]
 
     for file_obj in all_files:
         if file_obj.get("mimeType") == "application/vnd.google-apps.folder":
             continue
         file_name = file_obj.get("name")
+        # If file has an unsupported extension, skip it.
+        if any(file_name.lower().endswith(ext) for ext in skip_extensions):
+            skipped_unsupported.append(file_name)
+            continue
+
         local_path = os.path.join(DOWNLOAD_FOLDER, file_name)
         if file_obj.get("mimeType").startswith("application/vnd.google-apps"):
             if not local_path.lower().endswith(".pdf"):
                 local_path += ".pdf"
+        # If the file already exists locally, skip it.
         if os.path.exists(local_path):
             skipped_existing.append(file_name)
             continue
+
         total_attempts += 1
         status, message = download_file(service, file_obj, local_path)
         if status == "downloaded":
@@ -220,10 +236,12 @@ async def sync(request: Request):
         "message": "Sync complete",
         "attempted_count": total_attempts,
         "downloaded_count": len(downloaded),
-        "skipped_count": len(skipped_existing),
+        "skipped_existing_count": len(skipped_existing),
+        "skipped_unsupported_count": len(skipped_unsupported),
         "failed_count": len(failed),
         "downloaded_files": downloaded,
-        "skipped_files": skipped_existing,
+        "skipped_existing_files": skipped_existing,
+        "skipped_unsupported_files": skipped_unsupported,
         "failed_files": failed
     })
 

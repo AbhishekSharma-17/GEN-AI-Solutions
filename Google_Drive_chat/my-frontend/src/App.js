@@ -68,7 +68,7 @@ function App() {
     }
   };
 
-  // Sync files (download only new files).
+  // Sync files (download new files, skipping unsupported ones).
   const handleSync = async () => {
     try {
       const response = await fetch("http://localhost:8000/sync", {
@@ -157,7 +157,8 @@ function App() {
           <div style={{ marginTop: "20px" }}>
             <p><strong>Attempted:</strong> {syncSummary.attempted_count}</p>
             <p><strong>Downloaded:</strong> {syncSummary.downloaded_count}</p>
-            <p><strong>Skipped:</strong> {syncSummary.skipped_count}</p>
+            <p><strong>Skipped (Existing):</strong> {syncSummary.skipped_existing_count}</p>
+            <p><strong>Skipped (Unsupported):</strong> {syncSummary.skipped_unsupported_count}</p>
             <p><strong>Failed:</strong> {syncSummary.failed_count}</p>
             {syncSummary.downloaded_files && syncSummary.downloaded_files.length > 0 && (
               <div>
@@ -169,11 +170,21 @@ function App() {
                 </ul>
               </div>
             )}
-            {syncSummary.skipped_files && syncSummary.skipped_files.length > 0 && (
+            {syncSummary.skipped_existing_files && syncSummary.skipped_existing_files.length > 0 && (
               <div>
-                <p><strong>Skipped Files:</strong></p>
+                <p><strong>Skipped (Existing) Files:</strong></p>
                 <ul>
-                  {syncSummary.skipped_files.map((file, index) => (
+                  {syncSummary.skipped_existing_files.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {syncSummary.skipped_unsupported_files && syncSummary.skipped_unsupported_files.length > 0 && (
+              <div>
+                <p><strong>Skipped (Unsupported) Files:</strong></p>
+                <ul>
+                  {syncSummary.skipped_unsupported_files.map((file, index) => (
                     <li key={index}>{file}</li>
                   ))}
                 </ul>
