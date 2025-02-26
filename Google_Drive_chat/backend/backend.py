@@ -856,6 +856,126 @@ async def embedding_status(request: Request):
         logging.error(f"Error in /embedding-status endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/disconnect")
+async def disconnect(request: Request):
+    """
+    Disconnect endpoint that will:
+    1. End the session
+    2. Delete all embeddings in Pinecone
+    3. Delete all downloaded files
+    4. Delete all mappings
+    5. Delete the client secret file
+    """
+    try:
+        logging.info("Starting disconnect process")
+        results = {
+            "session_cleared": False,
+            "pinecone_embeddings_deleted": False,
+            "downloaded_files_deleted": False,
+            "mappings_deleted": False,
+            "client_secret_deleted": False
+        }
+        
+        # 1. End the session
+        try:
+            if "credentials" in request.session:
+                request.session.pop("credentials")
+            if "state" in request.session:
+                request.session.pop("state")
+            request.session.clear()
+            results["session_cleared"] = True
+            logging.info("Session cleared successfully")
+        except Exception as e:
+            logging.error(f"Error clearing session: {str(e)}")
+        
+        # 2. Delete all embeddings in Pinecone
+        try:
+            from langchain.embeddings.openai import OpenAIEmbeddings
+            from langchain_pinecone import PineconeVectorStore
+            
+            # Initialize vectorstore with the same settings as in extract_and_chunk
+            embeddings = OpenAIEmbeddings(
+                model="text-embedding-3-small",
+                api_key=os.getenv("OPENAI_API_KEY")
+            )
+            
+            vectorstore = PineconeVectorStore(
+                index_name="testabhishek",
+                embedding=embeddings,
+                namespace="gdrive_search",
+                pinecone_api_key=os.getenv("PINECONE_API_KEY"),
+            )
+            
+            # Delete all vectors in the namespace
+            vectorstore.delete(delete_all=True)
+            results["pinecone_embeddings_deleted"] = True
+            logging.info("All embeddings deleted from Pinecone")
+        except Exception as e:
+            logging.error(f"Error deleting Pinecone embeddings: {str(e)}")
+        
+        # 3. Delete all downloaded files (recursively)
+        try:
+            if os.path.exists(DOWNLOAD_FOLDER) and os.path.isdir(DOWNLOAD_FOLDER):
+                import shutil
+                
+                # Count files and folders before deletion for logging
+                file_count = 0
+                folder_count = 0
+                for root, dirs, files in os.walk(DOWNLOAD_FOLDER):
+                    file_count += len(files)
+                    folder_count += len(dirs)
+                
+                # Delete all contents of the download folder
+                for item in os.listdir(DOWNLOAD_FOLDER):
+                    item_path = os.path.join(DOWNLOAD_FOLDER, item)
+                    if os.path.isfile(item_path):
+                        os.remove(item_path)
+                    elif os.path.isdir(item_path):
+                        shutil.rmtree(item_path)
+                
+                results["downloaded_files_deleted"] = True
+                logging.info(f"Deleted {file_count} files and {folder_count} folders from download directory")
+        except Exception as e:
+            logging.error(f"Error deleting downloaded files: {str(e)}")
+        
+        # 4. Delete all mappings
+        try:
+            # Clear mapping file
+            if os.path.exists(MAPPING_FILE):
+                with open(MAPPING_FILE, "w") as f:
+                    json.dump({}, f)
+            
+            # Clear embedding status file
+            if os.path.exists(EMBEDDING_STATUS_FILE):
+                with open(EMBEDDING_STATUS_FILE, "w") as f:
+                    json.dump({}, f)
+            
+            results["mappings_deleted"] = True
+            logging.info("All mappings and embedding status cleared")
+        except Exception as e:
+            logging.error(f"Error clearing mappings: {str(e)}")
+        
+        # 5. Delete the client secret file
+        try:
+            client_secret_path = os.path.join(CLIENT_SECRETS_DIR, "client_secret.json")
+            if os.path.exists(client_secret_path):
+                os.remove(client_secret_path)
+                results["client_secret_deleted"] = True
+                logging.info("Client secret file deleted")
+        except Exception as e:
+            logging.error(f"Error deleting client secret file: {str(e)}")
+        
+        # Return results
+        all_successful = all(results.values())
+        return JSONResponse(content={
+            "message": "Disconnect complete" if all_successful else "Disconnect partially complete with some errors",
+            "details": results,
+            "success": all_successful
+        })
+    except Exception as e:
+        logging.error(f"Error in /disconnect endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend:app", host="localhost", port=8000, reload=True)

@@ -8,6 +8,7 @@ function App() {
   const [syncSummary, setSyncSummary] = useState(null);
   const [embedResult, setEmbedResult] = useState(null);
   const [embeddingStatus, setEmbeddingStatus] = useState(null);
+  const [disconnectResult, setDisconnectResult] = useState(null);
   
   // Fetch embedding status when component mounts
   useEffect(() => {
@@ -143,6 +144,37 @@ function App() {
       }
     } catch (err) {
       console.error("Error fetching debug info", err);
+    }
+  };
+  
+  // Handle disconnect - clean up all resources
+  const handleDisconnect = async () => {
+    if (!window.confirm("Are you sure you want to disconnect? This will delete all downloaded files, embeddings, and session data.")) {
+      return;
+    }
+    
+    try {
+      const response = await fetch("http://localhost:8000/disconnect", {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setDisconnectResult(data);
+        
+        // Reset all state variables to reflect disconnected state
+        setFiles([]);
+        setDriveStats(null);
+        setSyncSummary(null);
+        setEmbedResult(null);
+        setEmbeddingStatus(null);
+        setUploadMessage('');
+      } else {
+        alert("Error disconnecting. See console for details.");
+        console.error("Error disconnecting:", await response.text());
+      }
+    } catch (err) {
+      console.error("Error disconnecting", err);
+      alert("Error disconnecting: " + err.message);
     }
   };
 
@@ -362,6 +394,66 @@ function App() {
                 </table>
               </div>
             )}
+          </div>
+        )}
+      </div>
+      
+      {/* Disconnect Section */}
+      <div style={{ marginBottom: "40px" }}>
+        <h2>Step 7: Disconnect</h2>
+        <div>
+          <p>Click the button below to disconnect from Google Drive, delete all downloaded files, embeddings, and session data:</p>
+          <button
+            onClick={handleDisconnect}
+            style={{
+              backgroundColor: "#dc3545",
+              color: "white",
+              padding: "10px 15px",
+              fontWeight: "bold",
+              border: "none",
+              borderRadius: "4px",
+              cursor: "pointer"
+            }}
+          >
+            Disconnect & Clean Up
+          </button>
+        </div>
+        
+        {disconnectResult && (
+          <div style={{ marginTop: "20px" }}>
+            <h3>Disconnect Results</h3>
+            <p><strong>Status:</strong> {disconnectResult.message}</p>
+            
+            <div style={{
+              backgroundColor: disconnectResult.success ? "#d4edda" : "#f8d7da",
+              padding: "15px",
+              borderRadius: "5px",
+              marginTop: "10px"
+            }}>
+              <h4>Details:</h4>
+              <ul>
+                <li>
+                  <strong>Session cleared:</strong>
+                  {disconnectResult.details.session_cleared ? "✅ Success" : "❌ Failed"}
+                </li>
+                <li>
+                  <strong>Pinecone embeddings deleted:</strong>
+                  {disconnectResult.details.pinecone_embeddings_deleted ? "✅ Success" : "❌ Failed"}
+                </li>
+                <li>
+                  <strong>Downloaded files deleted:</strong>
+                  {disconnectResult.details.downloaded_files_deleted ? "✅ Success" : "❌ Failed"}
+                </li>
+                <li>
+                  <strong>Mappings deleted:</strong>
+                  {disconnectResult.details.mappings_deleted ? "✅ Success" : "❌ Failed"}
+                </li>
+                <li>
+                  <strong>Client secret deleted:</strong>
+                  {disconnectResult.details.client_secret_deleted ? "✅ Success" : "❌ Failed"}
+                </li>
+              </ul>
+            </div>
           </div>
         )}
       </div>
