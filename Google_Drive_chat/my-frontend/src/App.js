@@ -5,6 +5,8 @@ function App() {
   const [uploadMessage, setUploadMessage] = useState('');
   const [files, setFiles] = useState([]);
   const [driveStats, setDriveStats] = useState(null);
+  const [downloadSummary, setDownloadSummary] = useState(null);
+  const [syncSummary, setSyncSummary] = useState(null);
 
   // Handle file selection.
   const handleFileChange = (e) => {
@@ -43,11 +45,11 @@ function App() {
     window.location.href = "http://localhost:8000/connect";
   };
 
-  // Fetch and display the list of files and drive stats.
+  // Fetch and display the list of Drive files and statistics.
   const handleListFiles = async () => {
     try {
       const response = await fetch("http://localhost:8000/list_drive", {
-        credentials: 'include', // Send cookies for session data.
+        credentials: 'include',
       });
       if (response.ok) {
         const data = await response.json();
@@ -67,10 +69,45 @@ function App() {
     }
   };
 
+  // Download all files.
+  const handleDownloadAll = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/download_all", {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setDownloadSummary(data);
+      } else {
+        alert("Error downloading files.");
+      }
+    } catch (err) {
+      console.error("Error downloading files", err);
+    }
+  };
+
+  // Sync files (download only new files).
+  const handleSync = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/sync", {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setSyncSummary(data);
+      } else {
+        alert("Error syncing files.");
+      }
+    } catch (err) {
+      console.error("Error syncing files", err);
+    }
+  };
+
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h1>FastAPI Google Drive OAuth Test</h1>
 
+      {/* Upload Section */}
       <div style={{ marginBottom: "40px" }}>
         <h2>Step 1: Upload Client Secret</h2>
         <input type="file" onChange={handleFileChange} accept="application/json" />
@@ -80,16 +117,17 @@ function App() {
         <p>{uploadMessage}</p>
       </div>
 
+      {/* Connect Section */}
       <div style={{ marginBottom: "40px" }}>
         <h2>Step 2: Connect to Google Drive</h2>
         <p>After uploading the client secret file, click below to connect:</p>
         <button onClick={handleConnect}>Connect</button>
       </div>
 
+      {/* List Drive Files Section */}
       <div style={{ marginBottom: "40px" }}>
         <h2>Step 3: List Drive Files & Statistics</h2>
         <button onClick={handleListFiles}>List Files</button>
-
         {driveStats && (
           <div style={{ marginTop: "20px" }}>
             <p><strong>Total Items:</strong> {driveStats.totalItems}</p>
@@ -97,7 +135,6 @@ function App() {
             <p><strong>Files:</strong> {driveStats.filesCount}</p>
           </div>
         )}
-
         {files.length > 0 && (
           <table border="1" cellPadding="5" cellSpacing="0" style={{ marginTop: "20px" }}>
             <thead>
@@ -127,6 +164,83 @@ function App() {
               ))}
             </tbody>
           </table>
+        )}
+      </div>
+
+      {/* Download All Section */}
+      <div style={{ marginBottom: "40px" }}>
+        <h2>Step 4: Download All Files</h2>
+        <button onClick={handleDownloadAll}>Download All</button>
+        {downloadSummary && (
+          <div style={{ marginTop: "20px" }}>
+            <p><strong>Attempted:</strong> {downloadSummary.attempted_count}</p>
+            <p><strong>Downloaded:</strong> {downloadSummary.downloaded_count}</p>
+            <p><strong>Failed:</strong> {downloadSummary.failed_count}</p>
+            {downloadSummary.downloaded_files && downloadSummary.downloaded_files.length > 0 && (
+              <div>
+                <p><strong>Downloaded Files:</strong></p>
+                <ul>
+                  {downloadSummary.downloaded_files.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {downloadSummary.failed_files && downloadSummary.failed_files.length > 0 && (
+              <div>
+                <p><strong>Failed Files:</strong></p>
+                <ul>
+                  {downloadSummary.failed_files.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Sync Section */}
+      <div style={{ marginBottom: "40px" }}>
+        <h2>Step 5: Sync New Files</h2>
+        <button onClick={handleSync}>Sync Files</button>
+        {syncSummary && (
+          <div style={{ marginTop: "20px" }}>
+            <p><strong>Attempted:</strong> {syncSummary.attempted_count}</p>
+            <p><strong>Downloaded:</strong> {syncSummary.downloaded_count}</p>
+            <p><strong>Skipped:</strong> {syncSummary.skipped_count}</p>
+            <p><strong>Failed:</strong> {syncSummary.failed_count}</p>
+            {syncSummary.downloaded_files && syncSummary.downloaded_files.length > 0 && (
+              <div>
+                <p><strong>Downloaded Files:</strong></p>
+                <ul>
+                  {syncSummary.downloaded_files.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {syncSummary.skipped_files && syncSummary.skipped_files.length > 0 && (
+              <div>
+                <p><strong>Skipped Files:</strong></p>
+                <ul>
+                  {syncSummary.skipped_files.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {syncSummary.failed_files && syncSummary.failed_files.length > 0 && (
+              <div>
+                <p><strong>Failed Files:</strong></p>
+                <ul>
+                  {syncSummary.failed_files.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
         )}
       </div>
     </div>
