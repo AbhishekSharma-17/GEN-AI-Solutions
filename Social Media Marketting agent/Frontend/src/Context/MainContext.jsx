@@ -16,6 +16,7 @@ const MainProvider = (props) => {
   const [mediaURL, setMediaURL] = useState('')
   const [uploadedFilePath, setUploadedFilePath] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisResult, setAnalysisResult] = useState(null);
 
   const contextValue = {
     platformRef,
@@ -34,6 +35,7 @@ const MainProvider = (props) => {
     mediaURL, setMediaURL,
     uploadedFilePath, setUploadedFilePath,
     isAnalyzing, setIsAnalyzing,
+    analysisResult, setAnalysisResult,
   };
 
   return (

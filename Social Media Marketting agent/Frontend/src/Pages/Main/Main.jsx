@@ -35,7 +35,8 @@ const Main = () => {
     setMediaURL,
     uploadedFilePath,
     setUploadedFilePath,
-    isAnalyzing, setIsAnalyzing
+    isAnalyzing, setIsAnalyzing,
+    analysisResult, setAnalysisResult,
   } = useContext(MainContext);
 
   // state from home context
@@ -127,8 +128,6 @@ const Main = () => {
     }
   };
 
-  console.log(platformSelected)
-
   // analyze media
   const handleAnalyzeMedia = async () => {
     setIsAnalyzing(true);
@@ -165,6 +164,11 @@ const Main = () => {
       // Parse and set the analysis result
       const resultData = await response.json();
       setAnalysisResult(resultData);
+
+      console.log(resultData.generation.captions); // captions array.
+      console.log(resultData.generation.captions[0].title); // returning title.
+      console.log(resultData.generation.captions[0].text);// returning text.
+      
     } catch (error) {
       console.error("Error analyzing media:", error);
       if (error.message.includes("Failed to fetch")) {

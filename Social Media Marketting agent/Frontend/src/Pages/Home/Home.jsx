@@ -8,11 +8,11 @@ import Footer from "../../Components/Home Footer/Footer";
 const Home = () => {
   return (
     <div className="home-page">
-      <HomeProvider>
+      {/* <HomeProvider> */}
         <HomeHeader></HomeHeader>
         <MediaSolution></MediaSolution>
         <Footer></Footer>
-      </HomeProvider>
+      {/* </HomeProvider> */}
     </div>
   );
 };
