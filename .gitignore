@@ -43,7 +43,5 @@ dist-ssr
 
 # Credentials
 credentials.json
-
 .codegpt
-
-Social Media Marketting agent/Backend/upload_to_drive_creds.json
+Social Media Marketting agent/backend/smma_apis/upload_to_drive_creds.json

@@ -4,7 +4,9 @@ from google.oauth2 import service_account
 import os
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
+
 SERVICE_ACCOUNT_FILE = 'C:\Users\viplo\OneDrive\Desktop\GEN-AI-Solutions\Social Media Marketting agent\Backend\smma_apis\upload_to_drive_creds.json'
+
 PARENT_FOLDER_ID = "1vKJCWzipjtbkHY4Zjc-4EobN5wBBtwgY"
 
 def authenticate():

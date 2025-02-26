@@ -28,7 +28,6 @@ gspread
 google-api-python-client 
 google-auth-httplib2 
 google-auth-oauthlib
-<<<<<<< HEAD
 
 # requirements for social agent
 openai
@@ -37,11 +36,4 @@ numpy
 Pillow
 fastapi
 langchain-core
-
-=======
-html2text
-PyMuPDF
-pillow
-requests
-langchain-google-genai
->>>>>>> c8aa7edd4ba52d628dba39a4f02973a5985fc07a
+tweepy

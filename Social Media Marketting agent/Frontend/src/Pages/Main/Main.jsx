@@ -1,4 +1,4 @@
-import React, { useContext, useRef } from "react";
+import React, { useContext, useEffect, useRef } from "react";
 import "./Main.css";
 import { MainContext } from "../../Context/MainContext";
 import assets from "../../assets/assets";
@@ -6,15 +6,12 @@ import assets from "../../assets/assets";
 // import { FaGoogleDrive } from "react-icons/fa";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { FaRegImage } from "react-icons/fa6";
+import { HomeContext } from "../../Context/HomeContext";
 
 const Main = () => {
   const fileInputRef = useRef(null);
 
-  // handling caption change.
-  const handleCaptionChange = (e) => {
-    setCaption(e.target.value); // Update caption state on input change
-  };
-
+  // state from main context
   const {
     platformSelected,
     setPlatformSelected,
@@ -24,7 +21,53 @@ const Main = () => {
     setCaption,
     local_url,
     setLocalURL,
+    setFile,
+    file,
+    backendStatus,
+    setBackendStatus,
+    isUploading,
+    setIsUploading,
+    mediaInfo,
+    setMediaInfo,
+    uploadCompleted,
+    setUploadCompleted,
+    mediaURL,
+    setMediaURL,
+    uploadedFilePath,
+    setUploadedFilePath,
+    isAnalyzing, setIsAnalyzing
   } = useContext(MainContext);
+
+  // state from home context
+  const {
+      LLMType,
+      API_KEY,
+      groq_API_KEY,
+    } = useContext(HomeContext);
+
+  useEffect(() => {
+    checkBackendStatus();
+  }, []);
+
+  // handling caption change.
+  const handleCaptionChange = (e) => {
+    setCaption(e.target.value); // Update caption state on input change
+  };
+
+  // checking for backend status
+  const checkBackendStatus = async () => {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/health");
+      if (response.ok) {
+        setBackendStatus("Connected");
+      } else {
+        throw new Error("Backend connection failed");
+      }
+    } catch (error) {
+      console.error("Backend connection error:", error);
+      setBackendStatus("Disconnected");
+    }
+  };
 
   const platforms = [
     {
@@ -39,24 +82,102 @@ const Main = () => {
     },
   ];
 
-  // handling file upload
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    console.log("file is:", file);
-
-    if (file) {
-      const localURL = URL.createObjectURL(file);
-      console.log("Generated Local URL:", localURL);
-      setLocalURL(localURL);
-
-      // You can use this URL to display the image
-      document.getElementById("preview").src = localURL;
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setUploadCompleted(false); // Reset upload state when a new file is selected
+      setMediaInfo(null); // Reset media info
     }
-    // try{
-
-    // }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!file) return;
+
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      const response = await fetch("http://127.0.0.1:8000/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Upload success:", data);
+
+      // Store uploaded file info
+      setMediaInfo({
+        file_path: data.file_path,
+        media_url: data.media_url,
+      });
+
+      setMediaURL(data.media_url);
+      setUploadedFilePath(data.file_path);
+      setUploadCompleted(true); // Mark upload as completed
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  console.log(platformSelected)
+
+  // analyze media
+  const handleAnalyzeMedia = async () => {
+    setIsAnalyzing(true);
+    try {
+      // Prepare form data
+      const analyzeFormData = new FormData();
+      analyzeFormData.append("file_path", uploadedFilePath);
+      analyzeFormData.append("is_video", platformSelected === "video" ? "true" : "false");
+      analyzeFormData.append("interval", "1");
+      analyzeFormData.append("llm_type", LLMType === 'OpenAI'?"gpt-4o":'');
+  
+      console.log('O',API_KEY);
+      console.log('g',groq_API_KEY);
+      // Append API keys based on LLM Type
+      if (LLMType === "OpenAI") {
+        analyzeFormData.append("api_key", API_KEY);
+        analyzeFormData.append("groq_api_key", groq_API_KEY);
+      } else {
+        analyzeFormData.append("groq_api_key", groq_API_KEY);
+      }
+  
+      // Send request using Fetch API
+      const response = await fetch("http://127.0.0.1:8000/analyze_media_and_gen_caption", {
+        method: "POST",
+        body: analyzeFormData,
+      });
+  
+      // Check if response is OK
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || "Unknown error");
+      }
+  
+      // Parse and set the analysis result
+      const resultData = await response.json();
+      setAnalysisResult(resultData);
+    } catch (error) {
+      console.error("Error analyzing media:", error);
+      if (error.message.includes("Failed to fetch")) {
+        console.log("Error connecting to the server. Please check if the backend is running.");
+      } else {
+        console.log(`Error analyzing media: ${error.message}`);
+      }
+    } finally {
+      setIsAnalyzing(false);
+    }
+  };
+  
+  
   return (
     <div className="main-app">
       <div className="main-content">
@@ -116,47 +237,10 @@ const Main = () => {
           </div>
 
           {/* rendering on basis of platform selected */}
-          <div className="section-display">
-            {/* {platformSelected === "youtube" ? (
-              <div className="youtube-url mt-1 mb-1">
-                <div class="input-group">
-                  <span class="input-group-text" id="inputGroup-sizing-default">
-                    <IoLogoYoutube style={{ color: "red", fontSize: "20px" }} />
-                  </span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-default"
-                    placeholder="Paste YouTube URL"
-                  />
-                </div>
-              </div>
-            ) : null} */}
 
-            {/* google drive url */}
-            {/* {platformSelected === "googleDrive" ? (
-              <div className="googleDrive-url mt-1 mb-1">
-                <div class="input-group">
-                  <span class="input-group-text" id="inputGroup-sizing-default">
-                    <FaGoogleDrive
-                      style={{ color: "grey", fontSize: "20px" }}
-                    />
-                  </span>
-                  <input
-                    type="text"
-                    class="form-control"
-                    aria-label="Sizing example input"
-                    aria-describedby="inputGroup-sizing-default"
-                    placeholder="Paste Google Drive URL"
-                  />
-                </div>
-              </div>
-            ) : null} */}
-
-            {/* image and video upload */}
-
-            {platformSelected === "image" || platformSelected === "video" ? (
+          <form className="section-display" onSubmit={handleSubmit}>
+            {/* Image and Video Upload */}
+            {!isUploading && !uploadCompleted && (
               <div
                 className="image-and-video-upload mt-1 mb-1"
                 onClick={() => fileInputRef.current.click()}
@@ -167,17 +251,41 @@ const Main = () => {
                 />
                 <p>Upload a File or Drag and Drop</p>
                 <p>PNG, JPG, GIF, .mp4</p>
-
                 <input
                   ref={fileInputRef}
                   type="file"
                   accept="image/png, image/jpeg, image/gif, video/mp4"
                   className="d-none"
-                  onChange={handleFileUpload}
+                  onChange={handleFileChange}
                 />
               </div>
-            ) : null}
-          </div>
+            )}
+
+            {/* Loader while uploading */}
+            {isUploading && (
+              <div className="loader">
+                <p>Uploading...</p>
+              </div>
+            )}
+
+            {/* Upload Button */}
+            {!isUploading && file && !uploadCompleted && (
+              <button type="submit" className="btn btn-primary">
+                Upload File
+              </button>
+            )}
+
+            {/* Analyze Button (Only after upload) */}
+            {uploadCompleted && mediaInfo && (
+              <button
+                type="button"
+                className="btn btn-success"
+                onClick={handleAnalyzeMedia}
+              >
+                Analyze File
+              </button>
+            )}
+          </form>
 
           {/* caption display araea */}
           <div className="caption">
@@ -307,8 +415,7 @@ const Main = () => {
                 </div>
               ) : (
                 <div className="dummy-image-div">
-                  <FaRegImage style={{ fontSize: "400px", color:"grey" }} />
-
+                  <FaRegImage style={{ fontSize: "400px", color: "grey" }} />
                 </div>
               )}
               <div className="caption-view">
