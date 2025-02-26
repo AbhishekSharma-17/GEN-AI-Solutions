@@ -164,63 +164,6 @@ async def list_drive(request: Request):
         "files_count": file_count
     })
 
-# Download all files (first-time download).
-@app.get("/download_all")
-async def download_all(request: Request):
-    if "credentials" not in request.session:
-        raise HTTPException(status_code=400, detail="Not connected. Please connect first.")
-    creds_data = request.session["credentials"]
-    credentials = Credentials(
-        token=creds_data["token"],
-        refresh_token=creds_data["refresh_token"],
-        token_uri=creds_data["token_uri"],
-        client_id=creds_data["client_id"],
-        client_secret=creds_data["client_secret"],
-        scopes=creds_data["scopes"]
-    )
-    from googleapiclient.discovery import build
-    service = build('drive', 'v3', credentials=credentials)
-    all_files = []
-    page_token = None
-    while True:
-        response = service.files().list(
-            pageSize=100,
-            fields="nextPageToken, files(id, name, mimeType, webViewLink)",
-            pageToken=page_token
-        ).execute()
-        all_files.extend(response.get("files", []))
-        page_token = response.get("nextPageToken")
-        if not page_token:
-            break
-
-    downloaded = []
-    failed = []
-    total_attempts = 0
-
-    for file_obj in all_files:
-        if file_obj.get("mimeType") == "application/vnd.google-apps.folder":
-            continue
-        total_attempts += 1
-        file_name = file_obj.get("name")
-        local_path = os.path.join(DOWNLOAD_FOLDER, file_name)
-        if file_obj.get("mimeType").startswith("application/vnd.google-apps"):
-            if not local_path.lower().endswith(".pdf"):
-                local_path += ".pdf"
-        status, message = download_file(service, file_obj, local_path)
-        if status == "downloaded":
-            downloaded.append(file_name)
-            update_mapping(file_obj, os.path.basename(local_path))
-        else:
-            failed.append(file_name)
-    return JSONResponse(content={
-        "message": "Download All complete",
-        "attempted_count": total_attempts,
-        "downloaded_count": len(downloaded),
-        "failed_count": len(failed),
-        "downloaded_files": downloaded,
-        "failed_files": failed
-    })
-
 # Sync files (download only new files).
 @app.get("/sync")
 async def sync(request: Request):

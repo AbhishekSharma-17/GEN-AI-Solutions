@@ -5,7 +5,6 @@ function App() {
   const [uploadMessage, setUploadMessage] = useState('');
   const [files, setFiles] = useState([]);
   const [driveStats, setDriveStats] = useState(null);
-  const [downloadSummary, setDownloadSummary] = useState(null);
   const [syncSummary, setSyncSummary] = useState(null);
 
   // Handle file selection.
@@ -66,23 +65,6 @@ function App() {
       }
     } catch (err) {
       console.error("Error fetching files", err);
-    }
-  };
-
-  // Download all files.
-  const handleDownloadAll = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/download_all", {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setDownloadSummary(data);
-      } else {
-        alert("Error downloading files.");
-      }
-    } catch (err) {
-      console.error("Error downloading files", err);
     }
   };
 
@@ -167,42 +149,9 @@ function App() {
         )}
       </div>
 
-      {/* Download All Section */}
-      <div style={{ marginBottom: "40px" }}>
-        <h2>Step 4: Download All Files</h2>
-        <button onClick={handleDownloadAll}>Download All</button>
-        {downloadSummary && (
-          <div style={{ marginTop: "20px" }}>
-            <p><strong>Attempted:</strong> {downloadSummary.attempted_count}</p>
-            <p><strong>Downloaded:</strong> {downloadSummary.downloaded_count}</p>
-            <p><strong>Failed:</strong> {downloadSummary.failed_count}</p>
-            {downloadSummary.downloaded_files && downloadSummary.downloaded_files.length > 0 && (
-              <div>
-                <p><strong>Downloaded Files:</strong></p>
-                <ul>
-                  {downloadSummary.downloaded_files.map((file, index) => (
-                    <li key={index}>{file}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {downloadSummary.failed_files && downloadSummary.failed_files.length > 0 && (
-              <div>
-                <p><strong>Failed Files:</strong></p>
-                <ul>
-                  {downloadSummary.failed_files.map((file, index) => (
-                    <li key={index}>{file}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-
       {/* Sync Section */}
       <div style={{ marginBottom: "40px" }}>
-        <h2>Step 5: Sync New Files</h2>
+        <h2>Step 4: Sync New Files</h2>
         <button onClick={handleSync}>Sync Files</button>
         {syncSummary && (
           <div style={{ marginTop: "20px" }}>
