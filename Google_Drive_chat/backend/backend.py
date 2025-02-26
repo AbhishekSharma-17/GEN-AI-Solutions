@@ -1,7 +1,9 @@
 import os
 import json
 import logging
+import asyncio
 import google_auth_oauthlib.flow
+import aiohttp
 from fastapi import FastAPI, Request, UploadFile, File, HTTPException
 from fastapi.responses import RedirectResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
@@ -51,8 +53,55 @@ if not os.path.exists(MAPPING_FILE):
 
 # Import UnstructuredAPIFileLoader.
 from langchain_community.document_loaders import UnstructuredAPIFileLoader
-
 ### Helper Functions ###
+
+async def download_file_async(service, file_obj, local_path, semaphore):
+    """Asynchronously download a file from Google Drive"""
+    mime_type = file_obj.get("mimeType")
+    file_name = file_obj.get("name")
+    file_id = file_obj.get("id")
+    
+    try:
+        async with semaphore:  # Control concurrency with semaphore
+            if mime_type.startswith("application/vnd.google-apps"):
+                # For Google Docs formats, export as PDF
+                download_url = f"https://www.googleapis.com/drive/v3/files/{file_id}/export?mimeType=application/pdf"
+                if not local_path.lower().endswith(".pdf"):
+                    local_path += ".pdf"
+            else:
+                download_url = f"https://www.googleapis.com/drive/v3/files/{file_id}?alt=media"
+            
+            # Get credentials from service
+            headers = {
+                "Authorization": f"Bearer {service._http.credentials.token}"
+            }
+            
+            # Use aiohttp for async HTTP requests
+            async with aiohttp.ClientSession() as session:
+                async with session.get(download_url, headers=headers) as response:
+                    if response.status != 200:
+                        error_text = await response.text()
+                        logging.error(f"Error downloading {file_name}: HTTP {response.status} - {error_text}")
+                        return ("failed", f"Failed: '{file_name}' - HTTP {response.status}")
+                    
+                    # Create directory if it doesn't exist
+                    os.makedirs(os.path.dirname(local_path), exist_ok=True)
+                    
+                    # Use async file writing with chunked download
+                    with open(local_path, 'wb') as f:
+                        # Download in chunks of 1MB for better performance
+                        chunk_size = 1024 * 1024
+                        total_size = 0
+                        
+                        async for chunk in response.content.iter_chunked(chunk_size):
+                            f.write(chunk)
+                            total_size += len(chunk)
+                    
+                    logging.info(f"Downloaded file: {file_name} ({total_size/1024/1024:.2f} MB)")
+                    return ("downloaded", f"Downloaded: '{file_name}'")
+    except Exception as e:
+        logging.error(f"Error downloading file {file_name}: {str(e)}")
+        return ("failed", f"Failed: '{file_name}' - {str(e)}")
 
 def download_file(service, file_obj, local_path):
     mime_type = file_obj.get("mimeType")
@@ -68,7 +117,8 @@ def download_file(service, file_obj, local_path):
         from googleapiclient.http import MediaIoBaseDownload
         import io
         with io.FileIO(local_path, 'wb') as fh:
-            downloader = MediaIoBaseDownload(fh, request)
+            # Use a larger chunk size (1MB) for better performance
+            downloader = MediaIoBaseDownload(fh, request, chunksize=1024*1024)
             done = False
             while not done:
                 status, done = downloader.next_chunk()
@@ -304,6 +354,8 @@ async def sync(request: Request):
     )
     from googleapiclient.discovery import build
     service = build('drive', 'v3', credentials=credentials)
+    
+    # Fetch all files from Google Drive
     all_files = []
     page_token = None
     while True:
@@ -326,9 +378,12 @@ async def sync(request: Request):
     # Define file extensions to skip: video, image, ipynb, mp3, HEIC.
     skip_extensions = [".mp4", ".mov", ".avi", ".mkv", ".ipynb", ".jpg", ".jpeg", ".png", ".gif", ".mp3", ".heic"]
 
+    # Filter files to download
+    files_to_download = []
     for file_obj in all_files:
         if file_obj.get("mimeType") == "application/vnd.google-apps.folder":
             continue
+            
         file_name = file_obj.get("name")
         if any(file_name.lower().endswith(ext) for ext in skip_extensions):
             skipped_unsupported.append(file_name)
@@ -338,16 +393,40 @@ async def sync(request: Request):
         if file_obj.get("mimeType").startswith("application/vnd.google-apps"):
             if not local_path.lower().endswith(".pdf"):
                 local_path += ".pdf"
+                
         if os.path.exists(local_path):
             skipped_existing.append(file_name)
             continue
+            
+        files_to_download.append((file_obj, local_path))
         total_attempts += 1
-        status, message = download_file(service, file_obj, local_path)
+
+    # Create a semaphore to limit concurrent downloads (adjust based on system capabilities)
+    # Too many concurrent connections can overwhelm the network or API rate limits
+    max_concurrent_downloads = 10
+    semaphore = asyncio.Semaphore(max_concurrent_downloads)
+    
+    # Define the download task
+    async def download_task(file_obj, local_path):
+        status, message = await download_file_async(service, file_obj, local_path, semaphore)
         if status == "downloaded":
-            downloaded.append(file_name)
+            downloaded.append(file_obj.get("name"))
             update_mapping(file_obj, os.path.basename(local_path))
         else:
-            failed.append(file_name)
+            failed.append(file_obj.get("name"))
+        return status, message
+    
+    # Create download tasks
+    download_tasks = [download_task(file_obj, local_path) for file_obj, local_path in files_to_download]
+    
+    # Execute all download tasks concurrently
+    if download_tasks:
+        logging.info(f"Starting concurrent download of {len(download_tasks)} files with max concurrency of {max_concurrent_downloads}")
+        results = await asyncio.gather(*download_tasks)
+        logging.info(f"Completed concurrent downloads: {len([r for r, _ in results if r == 'downloaded'])} successful, {len([r for r, _ in results if r == 'failed'])} failed")
+    else:
+        logging.info("No new files to download")
+    
     logging.info("Sync complete.")
     return JSONResponse(content={
         "message": "Sync complete",
