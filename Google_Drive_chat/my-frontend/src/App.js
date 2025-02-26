@@ -6,6 +6,7 @@ function App() {
   const [files, setFiles] = useState([]);
   const [driveStats, setDriveStats] = useState(null);
   const [syncSummary, setSyncSummary] = useState(null);
+  const [embedResult, setEmbedResult] = useState(null);
 
   // Handle file selection.
   const handleFileChange = (e) => {
@@ -68,7 +69,7 @@ function App() {
     }
   };
 
-  // Sync files (download new files, skipping unsupported ones).
+  // Sync files (download new files).
   const handleSync = async () => {
     try {
       const response = await fetch("http://localhost:8000/sync", {
@@ -85,6 +86,23 @@ function App() {
     }
   };
 
+  // Embed documents.
+  const handleEmbed = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/embed", {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setEmbedResult(data);
+      } else {
+        alert("Error embedding documents.");
+      }
+    } catch (err) {
+      console.error("Error embedding documents", err);
+    }
+  };
+
   return (
     <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
       <h1>FastAPI Google Drive OAuth Test</h1>
@@ -93,9 +111,7 @@ function App() {
       <div style={{ marginBottom: "40px" }}>
         <h2>Step 1: Upload Client Secret</h2>
         <input type="file" onChange={handleFileChange} accept="application/json" />
-        <button onClick={handleUpload} style={{ marginLeft: "10px" }}>
-          Upload
-        </button>
+        <button onClick={handleUpload} style={{ marginLeft: "10px" }}>Upload</button>
         <p>{uploadMessage}</p>
       </div>
 
@@ -195,6 +211,27 @@ function App() {
                 <p><strong>Failed Files:</strong></p>
                 <ul>
                   {syncSummary.failed_files.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Embed Section */}
+      <div style={{ marginBottom: "40px" }}>
+        <h2>Step 5: Embed Documents</h2>
+        <button onClick={handleEmbed}>Embed Documents</button>
+        {embedResult && (
+          <div style={{ marginTop: "20px" }}>
+            <p>{embedResult.message}</p>
+            {embedResult.failed_count > 0 && (
+              <div>
+                <p><strong>Files that failed to process:</strong> {embedResult.failed_count}</p>
+                <ul>
+                  {embedResult.failed_files.map((file, index) => (
                     <li key={index}>{file}</li>
                   ))}
                 </ul>
