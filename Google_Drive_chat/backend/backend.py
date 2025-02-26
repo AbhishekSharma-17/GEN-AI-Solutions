@@ -200,7 +200,7 @@ def document_loader(file_path):
     # Combine all page contents.
     return "\n".join([doc.page_content for doc in documents])
 
-async def extract_and_chunk(chunk_size: int = 1500, max_workers: int = 5):
+async def extract_and_chunk(chunk_size: int = 1500, max_workers: int = 5, batch_size: int = 50):
     """
     Optimized function to extract text from files, chunk it, and embed it into Pinecone.
     Only processes files that haven't been embedded before or have been modified.
@@ -208,6 +208,7 @@ async def extract_and_chunk(chunk_size: int = 1500, max_workers: int = 5):
     Args:
         chunk_size: Maximum size of each text chunk
         max_workers: Maximum number of concurrent extraction workers
+        batch_size: Number of chunks to embed in each batch (smaller batches are faster but make more API calls)
     
     Returns:
         tuple: (total_chunks, processed_files, skipped_files, failed_files)
@@ -426,20 +427,50 @@ async def extract_and_chunk(chunk_size: int = 1500, max_workers: int = 5):
             from langchain_pinecone import PineconeVectorStore
             
             start_time = time.time()
+            # Configure OpenAI embeddings with optimized settings
+            embeddings = OpenAIEmbeddings(
+                model="text-embedding-3-small",  # Fastest model
+                api_key=os.getenv("OPENAI_API_KEY"),
+                show_progress_bar=False,  # Disable progress bar for faster processing
+                request_timeout=60.0,  # Increase timeout for larger batches
+                chunk_size=batch_size  # Match chunk size to batch size for optimal performance
+            )
+            
+            # Initialize vectorstore with optimized embeddings
             vectorstore = PineconeVectorStore(
                 index_name="testabhishek",
-                embedding=OpenAIEmbeddings(model="text-embedding-3-small", api_key=os.getenv("OPENAI_API_KEY")),
+                embedding=embeddings,
                 namespace="gdrive_search",
                 pinecone_api_key=os.getenv("PINECONE_API_KEY"),
             )
             
             # Process in batches to avoid overwhelming the API
-            batch_size = 100
+            total_batches = (len(chunk_texts) - 1) // batch_size + 1
+            logging.info(f"Processing {len(chunk_texts)} chunks in {total_batches} batches (batch size: {batch_size})")
+            
+            # Create metadata with source information for better retrieval
+            metadatas = []
+            for chunk_id in chunk_ids:
+                file_name = chunk_id.split('_')[0]
+                metadatas.append({"source": file_name})
+            
+            # Process batches with progress tracking
             for i in range(0, len(chunk_texts), batch_size):
+                batch_start_time = time.time()
                 batch_texts = chunk_texts[i:i+batch_size]
                 batch_ids = chunk_ids[i:i+batch_size]
-                vectorstore.add_texts(texts=batch_texts, metadatas=[{}] * len(batch_texts), ids=batch_ids)
-                logging.info(f"Embedded batch {i//batch_size + 1}/{(len(chunk_texts)-1)//batch_size + 1}")
+                batch_metadatas = metadatas[i:i+batch_size]
+                
+                # Add texts to vectorstore
+                vectorstore.add_texts(
+                    texts=batch_texts,
+                    metadatas=batch_metadatas,
+                    ids=batch_ids
+                )
+                
+                batch_time = time.time() - batch_start_time
+                batch_num = i//batch_size + 1
+                logging.info(f"Embedded batch {batch_num}/{total_batches} in {batch_time:.2f}s ({len(batch_texts)} chunks)")
             
             embedding_time = time.time() - start_time
             logging.info(f"Successfully embedded {len(chunk_texts)} chunks into Pinecone in {embedding_time:.2f} seconds")
@@ -668,6 +699,54 @@ async def sync(request: Request):
 @app.get("/embed")
 async def embed(request: Request):
     try:
+        # Check if there are any files that need to be embedded
+        embedding_status = {}
+        if os.path.exists(EMBEDDING_STATUS_FILE):
+            with open(EMBEDDING_STATUS_FILE, "r") as f:
+                try:
+                    embedding_status = json.load(f)
+                except json.JSONDecodeError:
+                    embedding_status = {}
+        
+        # Get list of files in download folder
+        files_to_check = []
+        for file_name in os.listdir(DOWNLOAD_FOLDER):
+            if file_name == os.path.basename(MAPPING_FILE) or file_name.startswith('.'):
+                continue
+                
+            file_path = os.path.join(DOWNLOAD_FOLDER, file_name)
+            if not os.path.isfile(file_path):
+                continue
+                
+            # Check if file has already been embedded
+            file_stat = os.stat(file_path)
+            file_modified_time = file_stat.st_mtime
+            file_size = file_stat.st_size
+            
+            file_key = f"{file_name}_{file_size}_{file_modified_time}"
+            
+            if file_name in embedding_status:
+                # Skip if file hasn't changed since last embedding
+                if embedding_status[file_name]["file_key"] == file_key:
+                    continue
+            
+            files_to_check.append(file_name)
+        
+        # If no files need to be embedded, return early
+        if not files_to_check:
+            logging.info("No new or modified files to embed - skipping embedding process")
+            return JSONResponse(content={
+                "message": "No new or modified files to embed",
+                "processed_files": [],
+                "processed_count": 0,
+                "skipped_files": list(embedding_status.keys()),
+                "skipped_count": len(embedding_status),
+                "failed_files": [],
+                "failed_count": 0
+            })
+        
+        # Otherwise, proceed with embedding
+        logging.info(f"Found {len(files_to_check)} files that need to be embedded")
         logging.info("Starting embed endpoint with optimized processing")
         total_chunks, processed_files, skipped_files, failed_files = await extract_and_chunk()
         
