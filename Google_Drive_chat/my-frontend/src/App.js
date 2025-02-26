@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -7,6 +7,12 @@ function App() {
   const [driveStats, setDriveStats] = useState(null);
   const [syncSummary, setSyncSummary] = useState(null);
   const [embedResult, setEmbedResult] = useState(null);
+  const [embeddingStatus, setEmbeddingStatus] = useState(null);
+  
+  // Fetch embedding status when component mounts
+  useEffect(() => {
+    fetchEmbeddingStatus();
+  }, []);
 
   // Handle file selection.
   const handleFileChange = (e) => {
@@ -95,11 +101,48 @@ function App() {
       if (response.ok) {
         const data = await response.json();
         setEmbedResult(data);
+        // After embedding, refresh the embedding status
+        fetchEmbeddingStatus();
       } else {
         alert("Error embedding documents.");
       }
     } catch (err) {
       console.error("Error embedding documents", err);
+    }
+  };
+  
+  // Fetch embedding status
+  const fetchEmbeddingStatus = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/embedding-status", {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setEmbeddingStatus(data);
+      } else {
+        console.error("Error fetching embedding status");
+      }
+    } catch (err) {
+      console.error("Error fetching embedding status", err);
+    }
+  };
+  
+  // Debug file paths and status
+  const debugFiles = async () => {
+    try {
+      const response = await fetch("http://localhost:8000/debug-files", {
+        credentials: 'include',
+      });
+      if (response.ok) {
+        const data = await response.json();
+        console.log("Debug file info:", data);
+        alert("Debug info logged to console. Check browser developer tools.");
+      } else {
+        console.error("Error fetching debug info");
+      }
+    } catch (err) {
+      console.error("Error fetching debug info", err);
     }
   };
 
@@ -227,6 +270,29 @@ function App() {
         {embedResult && (
           <div style={{ marginTop: "20px" }}>
             <p>{embedResult.message}</p>
+            
+            {embedResult.processed_count > 0 && (
+              <div>
+                <p><strong>Files processed:</strong> {embedResult.processed_count}</p>
+                <ul>
+                  {embedResult.processed_files.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {embedResult.skipped_count > 0 && (
+              <div>
+                <p><strong>Files skipped (already embedded):</strong> {embedResult.skipped_count}</p>
+                <ul>
+                  {embedResult.skipped_files.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
             {embedResult.failed_count > 0 && (
               <div>
                 <p><strong>Files that failed to process:</strong> {embedResult.failed_count}</p>
@@ -235,6 +301,65 @@ function App() {
                     <li key={index}>{file}</li>
                   ))}
                 </ul>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+      
+      {/* Embedding Status Section */}
+      <div style={{ marginBottom: "40px" }}>
+        <h2>Step 6: View Embedding Status</h2>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button onClick={fetchEmbeddingStatus}>View Embedding Status</button>
+          <button onClick={fetchEmbeddingStatus} title="Refresh status">🔄 Refresh</button>
+          <button onClick={debugFiles} style={{ backgroundColor: "#f0ad4e" }}>Debug Files</button>
+        </div>
+        {embeddingStatus && (
+          <div style={{ marginTop: "20px" }}>
+            <p>{embeddingStatus.message}</p>
+            
+            <div style={{ display: "flex", marginBottom: "20px" }}>
+              <div style={{ flex: 1, padding: "10px", backgroundColor: "#f0f0f0", margin: "0 10px 0 0", borderRadius: "5px" }}>
+                <h3>Summary</h3>
+                <p><strong>Total Embedded Files:</strong> {embeddingStatus.total_embedded_files}</p>
+                <p><strong>Total Chunks:</strong> {embeddingStatus.total_chunks}</p>
+                <p><strong>Files Not Yet Embedded:</strong> {embeddingStatus.not_embedded_count}</p>
+              </div>
+            </div>
+            
+            {embeddingStatus.not_embedded_count > 0 && (
+              <div style={{ marginBottom: "20px" }}>
+                <h3>Files Not Yet Embedded</h3>
+                <ul>
+                  {embeddingStatus.not_embedded_files.map((file, index) => (
+                    <li key={index}>{file}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {embeddingStatus.total_embedded_files > 0 && (
+              <div>
+                <h3>Embedded Files Details</h3>
+                <table border="1" cellPadding="5" cellSpacing="0" style={{ width: "100%" }}>
+                  <thead>
+                    <tr>
+                      <th>File Name</th>
+                      <th>Chunks</th>
+                      <th>Last Embedded</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {Object.entries(embeddingStatus.status).map(([fileName, data], index) => (
+                      <tr key={index}>
+                        <td>{fileName}</td>
+                        <td>{data.chunks}</td>
+                        <td>{new Date(data.last_embedded).toLocaleString()}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>

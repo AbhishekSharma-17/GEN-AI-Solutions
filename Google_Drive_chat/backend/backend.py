@@ -10,8 +10,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from google.oauth2.credentials import Credentials
 from dotenv import load_dotenv
-# Configure logging.
-logging.basicConfig(level=logging.INFO)
+
+# Define current directory for absolute paths
+CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Configure logging with file output
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler(os.path.join(CURRENT_DIR, "gdrive_chat.log"))
+    ]
+)
 
 # Allow insecure transport for local development.
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
@@ -34,22 +45,55 @@ app.add_middleware(
 app.add_middleware(SessionMiddleware, secret_key="YOUR_SECRET_KEY_HERE")
 
 # Define folder for client secrets.
-CLIENT_SECRETS_DIR = "./client_secrets"
+CLIENT_SECRETS_DIR = os.path.join(CURRENT_DIR, "client_secrets")
 os.makedirs(CLIENT_SECRETS_DIR, exist_ok=True)
 
 # Define folder for downloaded files.
-DOWNLOAD_FOLDER = "downloaded_files"
+DOWNLOAD_FOLDER = os.path.join(CURRENT_DIR, "downloaded_files")
 if not os.path.exists(DOWNLOAD_FOLDER):
     os.makedirs(DOWNLOAD_FOLDER)
 
 # Define folder for the mapping file.
-MAPPING_FOLDER = "mapping_data"
+# Use absolute paths to ensure files are created in the correct location
+MAPPING_FOLDER = os.path.join(CURRENT_DIR, "mapping_data")
 if not os.path.exists(MAPPING_FOLDER):
     os.makedirs(MAPPING_FOLDER)
 MAPPING_FILE = os.path.join(MAPPING_FOLDER, "download_mapping.json")
+EMBEDDING_STATUS_FILE = os.path.join(MAPPING_FOLDER, "embedding_status.json")
+
+# Initialize mapping files if they don't exist
 if not os.path.exists(MAPPING_FILE):
     with open(MAPPING_FILE, "w") as f:
         json.dump({}, f)
+        
+# Ensure embedding status file exists and is writable
+try:
+    if not os.path.exists(EMBEDDING_STATUS_FILE):
+        with open(EMBEDDING_STATUS_FILE, "w") as f:
+            json.dump({}, f)
+        logging.info(f"Created new embedding status file at {EMBEDDING_STATUS_FILE}")
+    else:
+        # Test if file is readable
+        with open(EMBEDDING_STATUS_FILE, "r") as f:
+            try:
+                embedding_status = json.load(f)
+                logging.info(f"Successfully loaded existing embedding status with {len(embedding_status)} entries")
+            except json.JSONDecodeError:
+                logging.warning(f"Embedding status file exists but is not valid JSON. Creating new file.")
+                with open(EMBEDDING_STATUS_FILE, "w") as f:
+                    json.dump({}, f)
+except Exception as e:
+    logging.error(f"Error initializing embedding status file: {str(e)}")
+    # Create the file in the current directory as a fallback
+    EMBEDDING_STATUS_FILE = "embedding_status.json"
+    with open(EMBEDDING_STATUS_FILE, "w") as f:
+        json.dump({}, f)
+    logging.info(f"Created embedding status file in current directory as fallback")
+
+# Log that we're initializing the application
+logging.info(f"Initializing application with mapping folder: {MAPPING_FOLDER}")
+logging.info(f"Embedding status file: {EMBEDDING_STATUS_FILE}")
+logging.info(f"Download folder: {DOWNLOAD_FOLDER}")
 
 # Import UnstructuredAPIFileLoader.
 from langchain_community.document_loaders import UnstructuredAPIFileLoader
@@ -156,18 +200,38 @@ def document_loader(file_path):
     # Combine all page contents.
     return "\n".join([doc.page_content for doc in documents])
 
-def extract_and_chunk(chunk_size: int = 1500):
+async def extract_and_chunk(chunk_size: int = 1500, max_workers: int = 5):
+    """
+    Optimized function to extract text from files, chunk it, and embed it into Pinecone.
+    Only processes files that haven't been embedded before or have been modified.
+    
+    Args:
+        chunk_size: Maximum size of each text chunk
+        max_workers: Maximum number of concurrent extraction workers
+    
+    Returns:
+        tuple: (total_chunks, processed_files, skipped_files, failed_files)
+    """
     import nltk
     from nltk.tokenize import sent_tokenize
+    import concurrent.futures
+    import time
+    from datetime import datetime
+    
+    # Start timing the overall process
+    process_start_time = time.time()
+    
     nltk.download('punkt', quiet=True)
     
     chunks_file_path = os.path.join(os.path.dirname(__file__), "chunks.txt")
     total_chunks = 0
     chunk_texts = []
     chunk_ids = []
-    failed_files = []  # Files that fail during extraction/chunking.
+    processed_files = []
+    skipped_files = []
+    failed_files = []
     
-    # Load mapping.
+    # Load file mappings
     mapping = {}
     if os.path.exists(MAPPING_FILE):
         with open(MAPPING_FILE, "r") as f:
@@ -176,74 +240,234 @@ def extract_and_chunk(chunk_size: int = 1500):
             except json.JSONDecodeError:
                 mapping = {}
     
-    logging.info("Starting extraction and chunking process.")
-    try:
-        with open(chunks_file_path, "w", encoding="utf-8") as chunks_file:
-            for file_name in os.listdir(DOWNLOAD_FOLDER):
-                # Skip the mapping file if it appears in the download folder.
-                if file_name == os.path.basename(MAPPING_FILE):
-                    continue
-                logging.info(f"Processing file: {file_name}")
-                file_path = os.path.join(DOWNLOAD_FOLDER, file_name)
-                try:
-                    # Use unstructured extraction.
-                    extracted_text = document_loader(file_path)
-                    logging.info(f"Successfully extracted file: {file_name}")
-                except Exception as e:
-                    logging.error(f"Error extracting file {file_name} with unstructured: {str(e)}. Skipping file.")
-                    failed_files.append(file_name)
-                    continue
-
-                drive_link = mapping.get(file_name, "Not available")
-                source = f"Drive Link: {drive_link}"
-                sentences = sent_tokenize(extracted_text)
-                chunks = []
-                current_chunk = ""
-                for sentence in sentences:
-                    if len(current_chunk) + len(sentence) <= chunk_size:
+    # Load embedding status
+    embedding_status = {}
+    if os.path.exists(EMBEDDING_STATUS_FILE):
+        with open(EMBEDDING_STATUS_FILE, "r") as f:
+            try:
+                embedding_status = json.load(f)
+            except json.JSONDecodeError:
+                embedding_status = {}
+    
+    logging.info("Starting optimized extraction and chunking process")
+    
+    # Get list of files to process
+    files_to_process = []
+    for file_name in os.listdir(DOWNLOAD_FOLDER):
+        # Skip non-files and mapping files
+        if file_name == os.path.basename(MAPPING_FILE) or file_name.startswith('.'):
+            continue
+            
+        file_path = os.path.join(DOWNLOAD_FOLDER, file_name)
+        if not os.path.isfile(file_path):
+            continue
+            
+        # Check if file has already been embedded
+        file_stat = os.stat(file_path)
+        file_modified_time = file_stat.st_mtime
+        file_size = file_stat.st_size
+        
+        file_key = f"{file_name}_{file_size}_{file_modified_time}"
+        
+        if file_name in embedding_status:
+            # Skip if file hasn't changed since last embedding
+            if embedding_status[file_name]["file_key"] == file_key:
+                logging.info(f"Skipping already embedded file: {file_name} (embedded on {embedding_status[file_name]['last_embedded']})")
+                skipped_files.append(file_name)
+                continue
+            else:
+                logging.info(f"File changed since last embedding: {file_name} - will re-embed")
+        
+        files_to_process.append((file_name, file_path, file_key))
+    
+    logging.info(f"Found {len(files_to_process)} files to process, {len(skipped_files)} files skipped (already embedded)")
+    
+    # Log the names of files that will be processed
+    if files_to_process:
+        logging.info(f"Files that will be processed: {', '.join([f[0] for f in files_to_process])}")
+    else:
+        logging.info("No new or modified files to process - all files are already embedded")
+    
+    # Define extraction function for parallel processing
+    def process_file(file_info):
+        file_name, file_path, file_key = file_info
+        start_time = time.time()
+        
+        try:
+            logging.info(f"Extracting text from: {file_name}")
+            extracted_text = document_loader(file_path)
+            extraction_time = time.time() - start_time
+            logging.info(f"Successfully extracted text from: {file_name} ({len(extracted_text)} chars) in {extraction_time:.2f} seconds")
+            
+            drive_link = mapping.get(file_name, "Not available")
+            source = f"Drive Link: {drive_link}"
+            
+            # Improved chunking with better handling of long sentences
+            sentences = sent_tokenize(extracted_text)
+            chunks = []
+            current_chunk = ""
+            
+            for sentence in sentences:
+                # If a single sentence is longer than chunk_size, split it
+                if len(sentence) > chunk_size:
+                    # If we have content in the current chunk, save it first
+                    if current_chunk:
+                        chunks.append(current_chunk.strip())
+                        current_chunk = ""
+                    
+                    # Split the long sentence into smaller pieces
+                    words = sentence.split()
+                    current_piece = ""
+                    
+                    for word in words:
+                        if len(current_piece) + len(word) + 1 <= chunk_size:
+                            current_piece += word + " "
+                        else:
+                            if current_piece:
+                                chunks.append(current_piece.strip())
+                            current_piece = word + " "
+                    
+                    if current_piece:
+                        current_chunk = current_piece
+                else:
+                    # Normal sentence handling
+                    if len(current_chunk) + len(sentence) + 1 <= chunk_size:
                         current_chunk += sentence + " "
                     else:
                         if current_chunk:
                             chunks.append(current_chunk.strip())
                         current_chunk = sentence + " "
-                if current_chunk:
-                    chunks.append(current_chunk.strip())
-                
-                logging.info(f"Created {len(chunks)} chunks for file: {file_name}")
-                for i, chunk in enumerate(chunks, start=1):
-                    metadata_str = f"Source: {source}\nDocument: {file_name}\nChunk: {i}/{len(chunks)}"
-                    combined_chunk = f"{metadata_str}\n\n{chunk}"
-                    try:
-                        json.dump({"metadata": metadata_str, "content": combined_chunk}, chunks_file, ensure_ascii=False)
-                        chunks_file.write("\n")
-                    except Exception as e:
-                        logging.error(f"Error writing chunk for {file_name}: {str(e)}")
-                        failed_files.append(file_name)
-                        continue
-                    chunk_texts.append(combined_chunk)
-                    chunk_ids.append(f"{file_name}_{i}")
-                    total_chunks += 1
-    except Exception as e:
-        logging.error(f"Error in extract_and_chunk: {str(e)}")
-        raise
-
-    try:
-        from langchain.embeddings.openai import OpenAIEmbeddings
-        from langchain_pinecone import PineconeVectorStore
-        vectorstore = PineconeVectorStore(
-            index_name="testabhishek",
-            embedding=OpenAIEmbeddings(model="text-embedding-3-small", api_key=os.getenv("OPENAI_API_KEY")),
-            namespace="gdrive_search",
-            pinecone_api_key=os.getenv("PINECONE_API_KEY"),
-        )
-        if chunk_texts:
-            vectorstore.add_texts(texts=chunk_texts, metadatas=[{}] * len(chunk_texts), ids=chunk_ids)
-            logging.info("Successfully embedded chunks into Pinecone.")
-    except Exception as e:
-        logging.error(f"Error embedding chunks in Pinecone: {str(e)}")
+            
+            if current_chunk:
+                chunks.append(current_chunk.strip())
+            
+            file_chunks = []
+            file_chunk_ids = []
+            
+            for i, chunk in enumerate(chunks, start=1):
+                metadata_str = f"Source: {source}\nDocument: {file_name}\nChunk: {i}/{len(chunks)}"
+                combined_chunk = f"{metadata_str}\n\n{chunk}"
+                file_chunks.append(combined_chunk)
+                file_chunk_ids.append(f"{file_name}_{i}")
+            
+            processing_time = time.time() - start_time
+            logging.info(f"Created {len(chunks)} chunks for {file_name} in {processing_time:.2f} seconds")
+            
+            return {
+                "status": "success",
+                "file_name": file_name,
+                "file_key": file_key,
+                "chunks": file_chunks,
+                "chunk_ids": file_chunk_ids,
+                "chunk_count": len(chunks)
+            }
+        except Exception as e:
+            logging.error(f"Error processing {file_name}: {str(e)}")
+            return {
+                "status": "failed",
+                "file_name": file_name,
+                "error": str(e)
+            }
     
+    # Process files in parallel
+    with open(chunks_file_path, "w", encoding="utf-8") as chunks_file:
+        if files_to_process:
+            with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+                future_to_file = {executor.submit(process_file, file_info): file_info for file_info in files_to_process}
+                
+                for future in concurrent.futures.as_completed(future_to_file):
+                    file_info = future_to_file[future]
+                    file_name = file_info[0]
+                    
+                    try:
+                        result = future.result()
+                        
+                        if result["status"] == "success":
+                            # Write chunks to file
+                            for chunk in result["chunks"]:
+                                try:
+                                    json.dump({"metadata": "", "content": chunk}, chunks_file, ensure_ascii=False)
+                                    chunks_file.write("\n")
+                                except Exception as e:
+                                    logging.error(f"Error writing chunk for {file_name}: {str(e)}")
+                            
+                            # Add to embedding lists
+                            chunk_texts.extend(result["chunks"])
+                            chunk_ids.extend(result["chunk_ids"])
+                            total_chunks += result["chunk_count"]
+                            processed_files.append(file_name)
+                            
+                            # Update embedding status
+                            embedding_status[file_name] = {
+                                "file_key": result["file_key"],
+                                "last_embedded": datetime.now().isoformat(),
+                                "chunks": result["chunk_count"]
+                            }
+                        else:
+                            failed_files.append(file_name)
+                    except Exception as e:
+                        logging.error(f"Error handling result for {file_name}: {str(e)}")
+                        failed_files.append(file_name)
+    
+    # Save updated embedding status
+    try:
+        logging.info(f"Saving embedding status to {EMBEDDING_STATUS_FILE} with {len(embedding_status)} entries")
+        with open(EMBEDDING_STATUS_FILE, "w") as f:
+            json.dump(embedding_status, f, indent=2)
+        logging.info(f"Successfully saved embedding status file")
+    except Exception as e:
+        logging.error(f"Error saving embedding status file: {str(e)}")
+    
+    # Embed chunks if any
+    if chunk_texts:
+        try:
+            logging.info(f"Embedding {len(chunk_texts)} chunks into Pinecone")
+            from langchain.embeddings.openai import OpenAIEmbeddings
+            from langchain_pinecone import PineconeVectorStore
+            
+            start_time = time.time()
+            vectorstore = PineconeVectorStore(
+                index_name="testabhishek",
+                embedding=OpenAIEmbeddings(model="text-embedding-3-small", api_key=os.getenv("OPENAI_API_KEY")),
+                namespace="gdrive_search",
+                pinecone_api_key=os.getenv("PINECONE_API_KEY"),
+            )
+            
+            # Process in batches to avoid overwhelming the API
+            batch_size = 100
+            for i in range(0, len(chunk_texts), batch_size):
+                batch_texts = chunk_texts[i:i+batch_size]
+                batch_ids = chunk_ids[i:i+batch_size]
+                vectorstore.add_texts(texts=batch_texts, metadatas=[{}] * len(batch_texts), ids=batch_ids)
+                logging.info(f"Embedded batch {i//batch_size + 1}/{(len(chunk_texts)-1)//batch_size + 1}")
+            
+            embedding_time = time.time() - start_time
+            logging.info(f"Successfully embedded {len(chunk_texts)} chunks into Pinecone in {embedding_time:.2f} seconds")
+        except Exception as e:
+            logging.error(f"Error embedding chunks in Pinecone: {str(e)}")
+            # Mark files as failed if embedding fails
+            for file_name in processed_files:
+                if file_name in embedding_status:
+                    del embedding_status[file_name]
+                failed_files.append(file_name)
+            
+            # Save updated embedding status after failure
+            try:
+                logging.info(f"Saving updated embedding status after failure")
+                with open(EMBEDDING_STATUS_FILE, "w") as f:
+                    json.dump(embedding_status, f, indent=2)
+                logging.info(f"Successfully saved embedding status after failure")
+            except Exception as e:
+                logging.error(f"Error saving embedding status after failure: {str(e)}")
+    
+    # Calculate and log the total processing time
+    process_end_time = time.time()
+    total_process_time = process_end_time - process_start_time
     logging.info(f"Extraction and chunking complete. Total chunks: {total_chunks}")
-    return total_chunks, failed_files
+    logging.info(f"Total processing time: {total_process_time:.2f} seconds")
+    logging.info(f"Files processed: {len(processed_files)}, Files skipped: {len(skipped_files)}, Files failed: {len(failed_files)}")
+    
+    return total_chunks, processed_files, skipped_files, failed_files
 
 ### Endpoints ###
 
@@ -444,16 +668,113 @@ async def sync(request: Request):
 @app.get("/embed")
 async def embed(request: Request):
     try:
-        logging.info("Starting embed endpoint. Extracting and chunking files.")
-        total_chunks, failed_files = extract_and_chunk()
-        logging.info("Embed endpoint completed.")
+        logging.info("Starting embed endpoint with optimized processing")
+        total_chunks, processed_files, skipped_files, failed_files = await extract_and_chunk()
+        
+        logging.info(f"Embed endpoint completed: {len(processed_files)} files processed, {len(skipped_files)} files skipped, {len(failed_files)} files failed")
+        
         return JSONResponse(content={
             "message": f"Extraction, chunking, and embedding complete. Total chunks: {total_chunks}",
+            "processed_files": processed_files,
+            "processed_count": len(processed_files),
+            "skipped_files": skipped_files,
+            "skipped_count": len(skipped_files),
             "failed_files": failed_files,
             "failed_count": len(failed_files)
         })
     except Exception as e:
         logging.error(f"Error in /embed endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/debug-files")
+async def debug_files(request: Request):
+    """Debug endpoint to check file paths and existence"""
+    try:
+        file_info = {
+            "current_dir": CURRENT_DIR,
+            "mapping_folder": {
+                "path": MAPPING_FOLDER,
+                "exists": os.path.exists(MAPPING_FOLDER),
+                "is_dir": os.path.isdir(MAPPING_FOLDER) if os.path.exists(MAPPING_FOLDER) else False
+            },
+            "mapping_file": {
+                "path": MAPPING_FILE,
+                "exists": os.path.exists(MAPPING_FILE),
+                "size": os.path.getsize(MAPPING_FILE) if os.path.exists(MAPPING_FILE) else 0
+            },
+            "embedding_status_file": {
+                "path": EMBEDDING_STATUS_FILE,
+                "exists": os.path.exists(EMBEDDING_STATUS_FILE),
+                "size": os.path.getsize(EMBEDDING_STATUS_FILE) if os.path.exists(EMBEDDING_STATUS_FILE) else 0
+            },
+            "download_folder": {
+                "path": DOWNLOAD_FOLDER,
+                "exists": os.path.exists(DOWNLOAD_FOLDER),
+                "is_dir": os.path.isdir(DOWNLOAD_FOLDER) if os.path.exists(DOWNLOAD_FOLDER) else False,
+                "file_count": len(os.listdir(DOWNLOAD_FOLDER)) if os.path.exists(DOWNLOAD_FOLDER) and os.path.isdir(DOWNLOAD_FOLDER) else 0
+            }
+        }
+        
+        # Try to read embedding status file
+        if os.path.exists(EMBEDDING_STATUS_FILE):
+            try:
+                with open(EMBEDDING_STATUS_FILE, "r") as f:
+                    embedding_status = json.load(f)
+                file_info["embedding_status_content"] = {
+                    "entry_count": len(embedding_status),
+                    "entries": list(embedding_status.keys())
+                }
+            except Exception as e:
+                file_info["embedding_status_content"] = {
+                    "error": str(e)
+                }
+        
+        return JSONResponse(content=file_info)
+    except Exception as e:
+        logging.error(f"Error in debug endpoint: {str(e)}")
+        return JSONResponse(content={"error": str(e)})
+
+@app.get("/embedding-status")
+async def embedding_status(request: Request):
+    """
+    Get the status of all embedded files, including when they were last embedded
+    and how many chunks were created for each file.
+    """
+    try:
+        if not os.path.exists(EMBEDDING_STATUS_FILE):
+            return JSONResponse(content={
+                "message": "No embedding status found",
+                "status": {}
+            })
+            
+        with open(EMBEDDING_STATUS_FILE, "r") as f:
+            try:
+                embedding_status = json.load(f)
+            except json.JSONDecodeError:
+                embedding_status = {}
+        
+        # Get total number of chunks
+        total_chunks = sum(file_data.get("chunks", 0) for file_data in embedding_status.values())
+        
+        # Get list of files in download folder that haven't been embedded
+        downloaded_files = set(os.listdir(DOWNLOAD_FOLDER))
+        embedded_files = set(embedding_status.keys())
+        not_embedded = list(downloaded_files - embedded_files)
+        
+        # Filter out non-files and special files
+        not_embedded = [f for f in not_embedded if os.path.isfile(os.path.join(DOWNLOAD_FOLDER, f))
+                        and not f.startswith('.') and f != os.path.basename(MAPPING_FILE)]
+        
+        return JSONResponse(content={
+            "message": f"Found {len(embedding_status)} embedded files with {total_chunks} total chunks",
+            "status": embedding_status,
+            "total_embedded_files": len(embedding_status),
+            "total_chunks": total_chunks,
+            "not_embedded_files": not_embedded,
+            "not_embedded_count": len(not_embedded)
+        })
+    except Exception as e:
+        logging.error(f"Error in /embedding-status endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
