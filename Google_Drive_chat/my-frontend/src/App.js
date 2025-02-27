@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -9,6 +9,10 @@ function App() {
   const [embedResult, setEmbedResult] = useState(null);
   const [embeddingStatus, setEmbeddingStatus] = useState(null);
   const [disconnectResult, setDisconnectResult] = useState(null);
+  const [chatQuery, setChatQuery] = useState('');
+  const [chatResponse, setChatResponse] = useState('');
+  const [isChatLoading, setIsChatLoading] = useState(false);
+  const chatResponseRef = useRef(null);
   
   // Fetch embedding status when component mounts
   useEffect(() => {
@@ -175,6 +179,54 @@ function App() {
     } catch (err) {
       console.error("Error disconnecting", err);
       alert("Error disconnecting: " + err.message);
+    }
+  };
+  
+  // Handle chat with documents
+  const handleChat = async (e) => {
+    e.preventDefault();
+    if (!chatQuery.trim()) return;
+    
+    setIsChatLoading(true);
+    setChatResponse('');
+    
+    try {
+      const response = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_query: chatQuery,
+          namespace: "gdrive_search"
+        }),
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Error: ${response.status}`);
+      }
+      
+      // Handle streaming response
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+      
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        
+        const text = decoder.decode(value);
+        setChatResponse(prev => prev + text);
+        
+        // Auto-scroll to bottom of chat response
+        if (chatResponseRef.current) {
+          chatResponseRef.current.scrollTop = chatResponseRef.current.scrollHeight;
+        }
+      }
+    } catch (err) {
+      console.error("Error in chat:", err);
+      setChatResponse("Error: Could not get a response. Please try again.");
+    } finally {
+      setIsChatLoading(false);
     }
   };
 
@@ -398,9 +450,74 @@ function App() {
         )}
       </div>
       
+      {/* Chat Section */}
+      <div style={{ marginBottom: "40px" }}>
+        <h2>Step 7: Chat with Your Documents</h2>
+        <p>Ask questions about your Google Drive documents:</p>
+        
+        <form onSubmit={handleChat} style={{ marginBottom: "20px" }}>
+          <div style={{ display: "flex", marginBottom: "10px" }}>
+            <input
+              type="text"
+              value={chatQuery}
+              onChange={(e) => setChatQuery(e.target.value)}
+              placeholder="Ask a question about your documents..."
+              style={{
+                flex: 1,
+                padding: "10px",
+                fontSize: "16px",
+                borderRadius: "4px",
+                border: "1px solid #ccc"
+              }}
+            />
+            <button
+              type="submit"
+              disabled={isChatLoading}
+              style={{
+                marginLeft: "10px",
+                padding: "10px 20px",
+                backgroundColor: "#4CAF50",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: isChatLoading ? "not-allowed" : "pointer",
+                opacity: isChatLoading ? 0.7 : 1
+              }}
+            >
+              {isChatLoading ? "Processing..." : "Ask"}
+            </button>
+          </div>
+        </form>
+        
+        {(chatResponse || isChatLoading) && (
+          <div
+            style={{
+              border: "1px solid #ddd",
+              borderRadius: "5px",
+              padding: "15px",
+              backgroundColor: "#f9f9f9",
+              maxHeight: "400px",
+              overflowY: "auto",
+              marginBottom: "20px"
+            }}
+            ref={chatResponseRef}
+          >
+            <h3>Response:</h3>
+            {isChatLoading && !chatResponse && (
+              <div style={{ textAlign: "center", padding: "20px" }}>
+                <p>Thinking...</p>
+              </div>
+            )}
+            <div style={{ whiteSpace: "pre-wrap" }}>
+              {chatResponse}
+            </div>
+          </div>
+        )}
+      </div>
+      
       {/* Disconnect Section */}
       <div style={{ marginBottom: "40px" }}>
-        <h2>Step 7: Disconnect</h2>
+        <h2>Step 8: Disconnect</h2>
         <div>
           <p>Click the button below to disconnect from Google Drive, delete all downloaded files, embeddings, and session data:</p>
           <button
