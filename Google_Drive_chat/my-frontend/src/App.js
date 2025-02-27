@@ -182,7 +182,7 @@ function App() {
     }
   };
   
-  // Handle chat with documents
+  // Handle chat with documents using streaming response
   const handleChat = async (e) => {
     e.preventDefault();
     if (!chatQuery.trim()) return;
@@ -191,7 +191,8 @@ function App() {
     setChatResponse('');
     
     try {
-      const response = await fetch("http://localhost:8000/chat", {
+      // Create a fetch request to the chat-te endpoint
+      const response = await fetch("http://localhost:8000/chat-te", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -200,22 +201,25 @@ function App() {
           user_query: chatQuery,
           namespace: "gdrive_search"
         }),
+        credentials: 'include',
       });
       
       if (!response.ok) {
-        throw new Error(`Error: ${response.status}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
       }
       
-      // Handle streaming response
+      // Process the streaming response
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       
+      // Read the stream
       while (true) {
-        const { done, value } = await reader.read();
+        const { value, done } = await reader.read();
         if (done) break;
         
-        const text = decoder.decode(value);
-        setChatResponse(prev => prev + text);
+        // Decode and append the chunk to the response
+        const chunk = decoder.decode(value, { stream: true });
+        setChatResponse(prev => prev + chunk);
         
         // Auto-scroll to bottom of chat response
         if (chatResponseRef.current) {
@@ -223,8 +227,10 @@ function App() {
         }
       }
     } catch (err) {
-      console.error("Error in chat:", err);
-      setChatResponse("Error: Could not get a response. Please try again.");
+      console.error("Error in chat request:", err);
+      setChatResponse(prev =>
+        prev || "Error: Could not get a response. Please try again."
+      );
     } finally {
       setIsChatLoading(false);
     }

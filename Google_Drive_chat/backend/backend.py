@@ -4,7 +4,7 @@ import logging
 import asyncio
 import google_auth_oauthlib.flow
 import aiohttp
-from fastapi import FastAPI, Request, UploadFile, File, HTTPException
+from fastapi import FastAPI, Request, UploadFile, File, HTTPException, Query
 from fastapi.responses import RedirectResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel
 from langchain_community.document_loaders import UnstructuredAPIFileLoader
@@ -19,6 +19,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from google.oauth2.credentials import Credentials
 from dotenv import load_dotenv
+from typing import Optional
 
 # Define current directory for absolute paths
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -985,7 +986,7 @@ async def disconnect(request: Request):
         logging.error(f"Error in /disconnect endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.post("/chat")
+@app.post("/chat-te")
 async def chat(request: ChatRequest):
     """
     Chat endpoint that provides responses based on embedded documents in Pinecone.
@@ -998,26 +999,19 @@ async def chat(request: ChatRequest):
                     answer = chunk["answer"]
                     yield f"{answer}"
                 except Exception as e:
-                    logging.error(f"Error in chunk processing: {e}")
                     pass
         except Exception as e:
-            logging.error(f"Error in generate_response: {e}")
             raise HTTPException(status_code=500, detail=str(e))
 
     try:
         # Initialize OpenAI language model
-        llm = ChatOpenAI(
-            model="gpt-4o",
-            temperature=0,
-            api_key=os.getenv("OPENAI_API_KEY"),
-            streaming=True
-        )
+        llm = ChatOpenAI(model="gpt-4o-mini", api_key = os.getenv("OPENAI_API_KEY")        )
 
         # Configure retriever with Pinecone
         vectorstore = PineconeVectorStore(
             index_name="testabhishek",
-            embedding=OpenAIEmbeddings(api_key=os.getenv("OPENAI_API_KEY")),
-            namespace=request.namespace,
+            embedding=OpenAIEmbeddings(model="text-embedding-3-small",api_key = os.getenv("OPENAI_API_KEY")),
+            namespace="gdrive_search",
             pinecone_api_key=os.getenv("PINECONE_API_KEY"),
         )
 
@@ -1107,7 +1101,6 @@ async def chat(request: ChatRequest):
         )
 
     except Exception as e:
-        logging.error(f"Error in chat endpoint: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
