@@ -6,6 +6,7 @@ import { FaCloudUploadAlt } from "react-icons/fa";
 import { FaRegImage } from "react-icons/fa6";
 import { HomeContext } from "../../Context/HomeContext";
 import Loader from "../../Components/Loader/Loader";
+import { toast } from "react-toastify";
 
 const Main = () => {
   const fileInputRef = useRef(null);
@@ -18,6 +19,7 @@ const Main = () => {
     linkedin: false
   });
   const [isPosting, setIsPosting] = useState(false);
+  const [isPostingAll, setIsPostingAll] = useState(false);
 
   // state from main context
   const {
@@ -243,16 +245,20 @@ const Main = () => {
     }
     
     if (platformsToPost.length === 0) {
-      alert('Please select at least one platform');
+      toast.error('Please select at least one platform');
       return;
     }
 
     if (!selectedCaptionTitle || !selectedCaptionText) {
-      alert('Please select a caption first');
+      toast.error('Please select a caption first');
       return;
     }
 
-    setIsPosting(true);
+    if (postToAll) {
+      setIsPostingAll(true);
+    } else {
+      setIsPosting(true);
+    }
     try {
       // Prepare the content
       const content = `${selectedCaptionTitle}\n\n${selectedCaptionText}`;
@@ -283,7 +289,7 @@ const Main = () => {
         }
         
         console.log("Posted to all platforms successfully");
-        alert("Posted to all platforms successfully!");
+        toast.success("Posted to all platforms successfully!");
       } 
       // If posting to selected platforms individually
       else {
@@ -311,13 +317,17 @@ const Main = () => {
           console.log(`Posted to ${platform} successfully`);
         }
         
-        alert("Posted to selected platforms successfully!");
+        toast.success("Posted to selected platforms successfully!");
       }
     } catch (error) {
       console.error("Error posting:", error);
-      alert(`Error posting: ${error.message}`);
+      toast.error(`Error posting: ${error.message}`);
     } finally {
-      setIsPosting(false);
+      if (postToAll) {
+        setIsPostingAll(false);
+      } else {
+        setIsPosting(false);
+      }
     }
   };
 
@@ -385,29 +395,36 @@ const Main = () => {
             <form className="section-display" onSubmit={handleSubmit}>
               {/* Image and Video Upload */}
               {!isUploading && !uploadCompleted && (
-                <div
-                  className="image-and-video-upload mt-1 mb-1"
-                  onClick={() => fileInputRef.current.click()}
-                  style={{ cursor: "pointer" }}
-                >
+                <>
+                  {/* Only show upload area when no file is selected */}
                   {!fileName && (
-                    <>
+                    <div
+                      className="image-and-video-upload mt-1 mb-1"
+                      onClick={() => fileInputRef.current.click()}
+                      style={{ cursor: "pointer" }}
+                    >
                       <FaCloudUploadAlt
                         style={{ fontSize: "5em", color: "lightblue" }}
                       />
                       <p>Upload a File or Drag and Drop</p>
                       <p>PNG, JPG, GIF, .mp4</p>
-                    </>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/png, image/jpeg, image/gif, video/mp4"
+                        className="d-none"
+                        onChange={handleFileChange}
+                      />
+                    </div>
                   )}
-                  {fileName && <p>Selected File: {fileName}</p>}
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/png, image/jpeg, image/gif, video/mp4"
-                    className="d-none"
-                    onChange={handleFileChange}
-                  />
-                </div>
+                  
+                  {/* Separate div for displaying filename */}
+                  {fileName && (
+                    <div className="file-info-display mt-4 mb-4">
+                      <p>Selected File: {fileName}</p>
+                    </div>
+                  )}
+                </>
               )}
 
               {/* Loader while uploading */}
@@ -433,7 +450,7 @@ const Main = () => {
                   className="btn btn-success"
                   onClick={handleAnalyzeMedia}
                 >
-                  {isAnalyzing ? "Analyzing..." : "Analyze File"}
+                  {isAnalyzing ? "Analyzing Media..." : "Analyze File"}
                 </button>
               )}
             </form>
@@ -495,7 +512,7 @@ const Main = () => {
                     value="facebook"
                     checked={selectedPlatforms.facebook}
                     onChange={handlePlatformCheckboxChange}
-                    disabled={isPosting}
+                    disabled={isPosting || isPostingAll}
                     style={{ marginRight: "8px" }}
                   />
                   Facebook
@@ -517,7 +534,7 @@ const Main = () => {
                     value="linkedin"
                     checked={selectedPlatforms.linkedin}
                     onChange={handlePlatformCheckboxChange}
-                    disabled={isPosting}
+                    disabled={isPosting || isPostingAll}
                     style={{ marginRight: "8px" }}
                   />
                   LinkedIn
@@ -538,7 +555,7 @@ const Main = () => {
                     value="twitter"
                     checked={selectedPlatforms.twitter}
                     onChange={handlePlatformCheckboxChange}
-                    disabled={isPosting}
+                    disabled={isPosting || isPostingAll}
                     style={{ marginRight: "8px" }}
                   />
                   Twitter
@@ -560,7 +577,7 @@ const Main = () => {
                     value="instagram"
                     checked={selectedPlatforms.instagram}
                     onChange={handlePlatformCheckboxChange}
-                    disabled={isPosting}
+                    disabled={isPosting || isPostingAll}
                     style={{ marginRight: "8px" }}
                   />
                   Instagram
@@ -579,9 +596,9 @@ const Main = () => {
                   type="button" 
                   className="btn btn-dark"
                   onClick={handlePostToAll}
-                  disabled={isPosting || !selectedCaptionText}
+                  disabled={isPostingAll || !selectedCaptionText}
                 >
-                  {isPosting ? 'POSTING...' : 'POST TO ALL'}
+                  {isPostingAll ? 'POSTING...' : 'POST TO ALL'}
                 </button>
               </div>
             </form>
