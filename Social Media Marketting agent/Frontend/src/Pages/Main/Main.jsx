@@ -22,9 +22,10 @@ const Main = () => {
     setCaption,
     local_url,
     setLocalURL,
+
     setFile,
     file,
-    backendStatus,
+
     setBackendStatus,
     isUploading,
     setIsUploading,
@@ -40,20 +41,19 @@ const Main = () => {
     setIsAnalyzing,
     analysisResult,
     setAnalysisResult,
-    selectedCaption,
     setSelectedCaption,
     generatedCaptions = [],
     setGeneratedCaptions,
     fileName,
     setFileName,
+    selectedCaptionTitle,
+    setSelectedCaptionTitle,
+    selectedCaptionText, 
+    setSelectedCaptionText,
   } = useContext(MainContext);
 
   // state from home context
-  const {
-      LLMType,
-      API_KEY,
-      groq_API_KEY,
-    } = useContext(HomeContext);
+  const { LLMType, API_KEY, groq_API_KEY } = useContext(HomeContext);
 
   useEffect(() => {
     checkBackendStatus();
@@ -72,22 +72,22 @@ const Main = () => {
         setBackendStatus("Connected");
       } else {
         throw new Error("Backend connection failed");
-      setFile(selectedFile);
-      setFileName(selectedFile.name); // Set the filename in the state
-      setUploadCompleted(false); // Reset upload state when a new file is selected
-      setMediaInfo(null); // Reset media info
-      setFile(selectedFile);
-      setFileName(selectedFile.name); // Set the filename in the state
-      setUploadCompleted(false); // Reset upload state when a new file is selected
-      setMediaInfo(null); // Reset media info
-      setFile(selectedFile);
-      setFileName(selectedFile.name); // Set the filename in the state
-      setLocalURL(URL.createObjectURL(selectedFile)); // Set the local URL for preview
-      setFile(selectedFile);
-      setFileName(selectedFile.name); // Set the filename in the state
-      const objectURL = URL.createObjectURL(selectedFile);
-      setLocalURL(objectURL); // Set the local URL for preview
-    }
+        setFile(selectedFile);
+        setFileName(selectedFile.name); // Set the filename in the state
+        setUploadCompleted(false); // Reset upload state when a new file is selected
+        setMediaInfo(null); // Reset media info
+        setFile(selectedFile);
+        setFileName(selectedFile.name); // Set the filename in the state
+        setUploadCompleted(false); // Reset upload state when a new file is selected
+        setMediaInfo(null); // Reset media info
+        setFile(selectedFile);
+        setFileName(selectedFile.name); // Set the filename in the state
+        setLocalURL(URL.createObjectURL(selectedFile)); // Set the local URL for preview
+        setFile(selectedFile);
+        setFileName(selectedFile.name); // Set the filename in the state
+        const objectURL = URL.createObjectURL(selectedFile);
+        setLocalURL(objectURL); // Set the local URL for preview
+      }
     } catch (error) {
       console.error("Backend connection error:", error);
       setBackendStatus("Disconnected");
@@ -116,40 +116,46 @@ const Main = () => {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!file) return;
+  e.preventDefault();
+  if (!file) return;
 
-    setIsUploading(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
-      const response = await fetch("http://127.0.0.1:8000/upload", {
-        method: "POST",
-        body: formData,
-      });
+  // Generate local URL for the selected file
+  const localFileURL = URL.createObjectURL(file);
+  setLocalURL(localFileURL); // Store the local URL in state
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+  setIsUploading(true);
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    
+    const response = await fetch("http://127.0.0.1:8000/upload", {
+      method: "POST",
+      body: formData,
+    });
 
-      const data = await response.json();
-      console.log("Upload success:", data);
-
-      // Store uploaded file info
-      setMediaInfo({
-        file_path: data.file_path,
-        media_url: data.media_url,
-      });
-
-      setMediaURL(data.media_url);
-      setUploadedFilePath(data.file_path);
-      setUploadCompleted(true); // Mark upload as completed
-    } catch (error) {
-      console.error("Error uploading file:", error);
-    } finally {
-      setIsUploading(false);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
     }
-  };
+
+    const data = await response.json();
+    console.log("Upload success:", data);
+
+    // Store uploaded file info
+    setMediaInfo({
+      file_path: data.file_path,
+      media_url: data.media_url,
+    });
+
+    setMediaURL(data.media_url);
+    setUploadedFilePath(data.file_path);
+    setUploadCompleted(true); // Mark upload as completed
+  } catch (error) {
+    console.error("Error uploading file:", error);
+  } finally {
+    setIsUploading(false);
+  }
+};
+
 
   // analyze media
   const handleAnalyzeMedia = async () => {
@@ -158,12 +164,13 @@ const Main = () => {
       // Prepare form data
       const analyzeFormData = new FormData();
       analyzeFormData.append("file_path", uploadedFilePath);
-      analyzeFormData.append("is_video", platformSelected === "video" ? "true" : "false");
+      analyzeFormData.append(
+        "is_video",
+        platformSelected === "video" ? "true" : "false"
+      );
       analyzeFormData.append("interval", "1");
-      analyzeFormData.append("llm_type", LLMType === 'OpenAI'?"gpt-4o":'');
-  
-      console.log('O',API_KEY);
-      console.log('g',groq_API_KEY);
+      analyzeFormData.append("llm_type", LLMType === "OpenAI" ? "gpt-4o" : "");
+
       // Append API keys based on LLM Type
       if (LLMType === "OpenAI") {
         analyzeFormData.append("api_key", API_KEY);
@@ -171,31 +178,35 @@ const Main = () => {
       } else {
         analyzeFormData.append("groq_api_key", groq_API_KEY);
       }
-  
+
       // Send request using Fetch API
-      const response = await fetch("http://127.0.0.1:8000/analyze_media_and_gen_caption", {
-        method: "POST",
-        body: analyzeFormData,
-      });
-  
+      const response = await fetch(
+        "http://127.0.0.1:8000/analyze_media_and_gen_caption",
+        {
+          method: "POST",
+          body: analyzeFormData,
+        }
+      );
+
       // Check if response is OK
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.detail || "Unknown error");
       }
-  
+
       // Parse and set the analysis result
       const resultData = await response.json();
       setAnalysisResult(resultData);
 
       // Extract and set the generated captions
-      const captions = resultData.generation.captions.map(caption => `${caption.title}: ${caption.text}`);
+      const captions = resultData.generation.captions;
       setGeneratedCaptions(captions);
-      
     } catch (error) {
       console.error("Error analyzing media:", error);
       if (error.message.includes("Failed to fetch")) {
-        console.log("Error connecting to the server. Please check if the backend is running.");
+        console.log(
+          "Error connecting to the server. Please check if the backend is running."
+        );
       } else {
         console.log(`Error analyzing media: ${error.message}`);
       }
@@ -203,8 +214,7 @@ const Main = () => {
       setIsAnalyzing(false);
     }
   };
-  
-  
+
   return (
     <div className="main-app">
       <div className="main-content">
@@ -253,8 +263,7 @@ const Main = () => {
                             height: "20px",
                             borderRadius: "10px",
                           }}
-                  
-                />
+                        />
                         {platform.label}
                       </button>
                     </li>
@@ -268,78 +277,96 @@ const Main = () => {
 
           {platformSelected && (
             <form className="section-display" onSubmit={handleSubmit}>
-            {/* Image and Video Upload */}
-            {!isUploading && !uploadCompleted && (
-              <div
-                className="image-and-video-upload mt-1 mb-1"
-                onClick={() => fileInputRef.current.click()}
-                style={{ cursor: "pointer" }}
-              >
-                {!fileName && (
-                  <>
-                    <FaCloudUploadAlt
-                      style={{ fontSize: "5em", color: "lightblue" }}
-                    />
-                    <p>Upload a File or Drag and Drop</p>
-                    <p>PNG, JPG, GIF, .mp4</p>
-                  </>
-                )}
-                {fileName && <p>Selected File: {fileName}</p>}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/png, image/jpeg, image/gif, video/mp4"
-                  className="d-none"
-                  onChange={handleFileChange}
-                />
-              </div>
-            )}
+              {/* Image and Video Upload */}
+              {!isUploading && !uploadCompleted && (
+                <div
+                  className="image-and-video-upload mt-1 mb-1"
+                  onClick={() => fileInputRef.current.click()}
+                  style={{ cursor: "pointer" }}
+                >
+                  {!fileName && (
+                    <>
+                      <FaCloudUploadAlt
+                        style={{ fontSize: "5em", color: "lightblue" }}
+                      />
+                      <p>Upload a File or Drag and Drop</p>
+                      <p>PNG, JPG, GIF, .mp4</p>
+                    </>
+                  )}
+                  {fileName && <p>Selected File: {fileName}</p>}
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png, image/jpeg, image/gif, video/mp4"
+                    className="d-none"
+                    onChange={handleFileChange}
+                  />
+                </div>
+              )}
 
-            {/* Loader while uploading */}
-            {isUploading && (
-              <div className="loader">
-                <p><Loader></Loader></p>
-              </div>
-            )}
+              {/* Loader while uploading */}
+              {isUploading && (
+                <div className="loader">
+                  <p>
+                    <Loader></Loader>
+                  </p>
+                </div>
+              )}
 
-            {/* Upload Button */}
-            {!isUploading && file && !uploadCompleted && (
-              <button type="submit" className="btn btn-primary">
-                Upload File
-              </button>
-            )}
+              {/* Upload Button */}
+              {!isUploading && file && !uploadCompleted && (
+                <button type="submit" className="btn btn-primary">
+                  Upload File
+                </button>
+              )}
 
-            {/* Display the selected file name within the form tag */}
-            {/* {fileName && !uploadCompleted && (
+              {/* Display the selected file name within the form tag */}
+              {/* {fileName && !uploadCompleted && (
               <p className="file-name-display">Selected File:</p>
             )} */}
 
-            {/* Analyze Button (Only after upload) */}
-            {uploadCompleted && mediaInfo && !analysisResult && (
-              <button
-                type="button"
-                className="btn btn-success"
-                onClick={handleAnalyzeMedia}
-              >
-                {isAnalyzing ? "Analyzing..." : "Analyze File"}
-              </button>
-            )}
+              {/* Analyze Button (Only after upload) */}
+              {uploadCompleted && mediaInfo && !analysisResult && (
+                <button
+                  type="button"
+                  className="btn btn-success"
+                  onClick={handleAnalyzeMedia}
+                >
+                  {isAnalyzing ? "Analyzing..." : "Analyze File"}
+                </button>
+              )}
             </form>
           )}
 
           {/* caption display araea */}
+
           <div className="caption">
             <p style={{ fontWeight: "500" }}>Caption</p>
-            <div className="caption-list" style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
+            <div
+              className="caption-list"
+              style={{
+                maxHeight: "500px",
+                overflowY: "auto",
+                border: "1px solid #ccc",
+                padding: "10px",
+                borderRadius: "5px",
+              }}
+            >
               {generatedCaptions.map((caption, index) => (
                 <div key={index} className="caption-item">
-                  <p>{caption}</p>
+                  <p style={{ fontWeight: "500" }}>{caption.title}</p>
+                  <p style={{ fontStyle: "italic" }}>{caption.text}</p>
                   <button
                     type="button"
-                    className="btn btn-secondary"
-                    onClick={() => setSelectedCaption(caption)}
+                    id="set-caption-button"
+                    className="btn btn-warning"
+                    style={{ fontWeight: "bold" }}
+                    onClick={() => {
+                      setSelectedCaptionTitle(caption.title);
+                      setSelectedCaptionText(caption.text);
+                    }}
                   >
-                    Select
+                    Set Caption
                   </button>
                 </div>
               ))}
@@ -446,7 +473,7 @@ const Main = () => {
               <div className="content-review-image">
                 <img src={assets.gemini_icon} alt="" />
                 <div className="image-name-section">
-                  <p style={{ fontWeight: "500" }}>Your Businnes Name</p>
+                  <p style={{ fontWeight: "500" }}>GenAI Protos</p>
                   <p style={{ color: "grey" }}>Just Now</p>
                 </div>
               </div>
@@ -461,7 +488,7 @@ const Main = () => {
               )}
               <div className="caption-view">
                 <textarea
-                  value={selectedCaption}
+                  value={`${selectedCaptionTitle}\n\n${selectedCaptionText}`}
                   onChange={(e) => setSelectedCaption(e.target.value)}
                   placeholder="Caption"
                   rows="4"

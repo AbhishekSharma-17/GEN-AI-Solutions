@@ -220,7 +220,7 @@ async def get_uploaded_file(filename: str):
         return FileResponse(file_path)
     raise HTTPException(status_code=404, detail="File not found")
 
-@app.post("/post/linkedin")
+@app.post("/post/   in")
 async def post_to_linkedin(data: Dict[str, Any]):
     content = data.get("content", None)
     file_path = data.get("file_path", None) 

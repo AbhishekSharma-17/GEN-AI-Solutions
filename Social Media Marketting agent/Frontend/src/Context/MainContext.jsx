@@ -18,7 +18,8 @@ const MainProvider = (props) => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [generatedCaptions, setGeneratedCaptions] = useState([]);
-  const [selectedCaption, setSelectedCaption] = useState("");
+  const [selectedCaptionTitle, setSelectedCaptionTitle] = useState("");
+  const [selectedCaptionText, setSelectedCaptionText] = useState("");
 
   const [fileName, setFileName] = useState("");
 
@@ -41,8 +42,10 @@ const MainProvider = (props) => {
     isAnalyzing, setIsAnalyzing,
     analysisResult, setAnalysisResult,
     generatedCaptions, setGeneratedCaptions,
-    selectedCaption, setSelectedCaption,
-    fileName, setFileName
+    // selectedCaption, setSelectedCaption,
+    fileName, setFileName,
+    selectedCaptionTitle, setSelectedCaptionTitle,
+    selectedCaptionText, setSelectedCaptionText
   };
 
   return (

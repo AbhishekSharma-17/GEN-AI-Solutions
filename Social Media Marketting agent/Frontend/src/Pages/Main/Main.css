@@ -153,6 +153,18 @@ border-radius: 10px;
   align-items: flex-start;
 }
 
+.caption-item {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  border: 1px solid #ccc;
+  padding: 10px;
+  border-radius: 10px;
+  gap: 10px;
+  align-items: flex-start; /* Aligns all child elements to the left */
+}
+
+
 @media (max-width: 768px) {
   .main-content {
     flex-direction: column;
