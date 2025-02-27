@@ -8,15 +8,19 @@ const MainProvider = (props) => {
   const [platformToView, setPlatformToView] = useState("");
   const [caption, setCaption] = useState("");
   const [local_url, setLocalURL] = useState('');
-  const [file, setFile] = useState(null)
-  const [backendStatus, setBackendStatus] = useState('')
+  const [file, setFile] = useState(null);
+  const [backendStatus, setBackendStatus] = useState('');
   const [isUploading, setIsUploading] = useState(false);
   const [mediaInfo, setMediaInfo] = useState({ file_path: null, media_url: null });
   const [uploadCompleted, setUploadCompleted] = useState(false);
-  const [mediaURL, setMediaURL] = useState('')
+  const [mediaURL, setMediaURL] = useState('');
   const [uploadedFilePath, setUploadedFilePath] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
+  const [generatedCaptions, setGeneratedCaptions] = useState([]);
+  const [selectedCaption, setSelectedCaption] = useState("");
+
+  const [fileName, setFileName] = useState("");
 
   const contextValue = {
     platformRef,
@@ -36,6 +40,9 @@ const MainProvider = (props) => {
     uploadedFilePath, setUploadedFilePath,
     isAnalyzing, setIsAnalyzing,
     analysisResult, setAnalysisResult,
+    generatedCaptions, setGeneratedCaptions,
+    selectedCaption, setSelectedCaption,
+    fileName, setFileName
   };
 
   return (

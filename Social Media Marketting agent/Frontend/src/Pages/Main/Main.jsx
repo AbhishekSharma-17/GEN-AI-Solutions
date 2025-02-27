@@ -7,6 +7,7 @@ import assets from "../../assets/assets";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { FaRegImage } from "react-icons/fa6";
 import { HomeContext } from "../../Context/HomeContext";
+import Loader from "../../Components/Loader/Loader";
 
 const Main = () => {
   const fileInputRef = useRef(null);
@@ -35,8 +36,16 @@ const Main = () => {
     setMediaURL,
     uploadedFilePath,
     setUploadedFilePath,
-    isAnalyzing, setIsAnalyzing,
-    analysisResult, setAnalysisResult,
+    isAnalyzing,
+    setIsAnalyzing,
+    analysisResult,
+    setAnalysisResult,
+    selectedCaption,
+    setSelectedCaption,
+    generatedCaptions = [],
+    setGeneratedCaptions,
+    fileName,
+    setFileName,
   } = useContext(MainContext);
 
   // state from home context
@@ -63,7 +72,22 @@ const Main = () => {
         setBackendStatus("Connected");
       } else {
         throw new Error("Backend connection failed");
-      }
+      setFile(selectedFile);
+      setFileName(selectedFile.name); // Set the filename in the state
+      setUploadCompleted(false); // Reset upload state when a new file is selected
+      setMediaInfo(null); // Reset media info
+      setFile(selectedFile);
+      setFileName(selectedFile.name); // Set the filename in the state
+      setUploadCompleted(false); // Reset upload state when a new file is selected
+      setMediaInfo(null); // Reset media info
+      setFile(selectedFile);
+      setFileName(selectedFile.name); // Set the filename in the state
+      setLocalURL(URL.createObjectURL(selectedFile)); // Set the local URL for preview
+      setFile(selectedFile);
+      setFileName(selectedFile.name); // Set the filename in the state
+      const objectURL = URL.createObjectURL(selectedFile);
+      setLocalURL(objectURL); // Set the local URL for preview
+    }
     } catch (error) {
       console.error("Backend connection error:", error);
       setBackendStatus("Disconnected");
@@ -87,8 +111,7 @@ const Main = () => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      setUploadCompleted(false); // Reset upload state when a new file is selected
-      setMediaInfo(null); // Reset media info
+      setFileName(selectedFile.name); // Set the filename in the state
     }
   };
 
@@ -165,9 +188,9 @@ const Main = () => {
       const resultData = await response.json();
       setAnalysisResult(resultData);
 
-      console.log(resultData.generation.captions); // captions array.
-      console.log(resultData.generation.captions[0].title); // returning title.
-      console.log(resultData.generation.captions[0].text);// returning text.
+      // Extract and set the generated captions
+      const captions = resultData.generation.captions.map(caption => `${caption.title}: ${caption.text}`);
+      setGeneratedCaptions(captions);
       
     } catch (error) {
       console.error("Error analyzing media:", error);
@@ -230,7 +253,8 @@ const Main = () => {
                             height: "20px",
                             borderRadius: "10px",
                           }}
-                        />
+                  
+                />
                         {platform.label}
                       </button>
                     </li>
@@ -242,7 +266,8 @@ const Main = () => {
 
           {/* rendering on basis of platform selected */}
 
-          <form className="section-display" onSubmit={handleSubmit}>
+          {platformSelected && (
+            <form className="section-display" onSubmit={handleSubmit}>
             {/* Image and Video Upload */}
             {!isUploading && !uploadCompleted && (
               <div
@@ -250,11 +275,16 @@ const Main = () => {
                 onClick={() => fileInputRef.current.click()}
                 style={{ cursor: "pointer" }}
               >
-                <FaCloudUploadAlt
-                  style={{ fontSize: "5em", color: "lightblue" }}
-                />
-                <p>Upload a File or Drag and Drop</p>
-                <p>PNG, JPG, GIF, .mp4</p>
+                {!fileName && (
+                  <>
+                    <FaCloudUploadAlt
+                      style={{ fontSize: "5em", color: "lightblue" }}
+                    />
+                    <p>Upload a File or Drag and Drop</p>
+                    <p>PNG, JPG, GIF, .mp4</p>
+                  </>
+                )}
+                {fileName && <p>Selected File: {fileName}</p>}
                 <input
                   ref={fileInputRef}
                   type="file"
@@ -268,7 +298,7 @@ const Main = () => {
             {/* Loader while uploading */}
             {isUploading && (
               <div className="loader">
-                <p>Uploading...</p>
+                <p><Loader></Loader></p>
               </div>
             )}
 
@@ -279,34 +309,41 @@ const Main = () => {
               </button>
             )}
 
+            {/* Display the selected file name within the form tag */}
+            {/* {fileName && !uploadCompleted && (
+              <p className="file-name-display">Selected File:</p>
+            )} */}
+
             {/* Analyze Button (Only after upload) */}
-            {uploadCompleted && mediaInfo && (
+            {uploadCompleted && mediaInfo && !analysisResult && (
               <button
                 type="button"
                 className="btn btn-success"
                 onClick={handleAnalyzeMedia}
               >
-                Analyze File
+                {isAnalyzing ? "Analyzing..." : "Analyze File"}
               </button>
             )}
-          </form>
+            </form>
+          )}
 
           {/* caption display araea */}
           <div className="caption">
             <p style={{ fontWeight: "500" }}>Caption</p>
-            <div className="caption-area">
-              <textarea
-                value={caption}
-                onChange={handleCaptionChange}
-                placeholder="Enter your caption here"
-                rows="10"
-                className="form-control"
-                disabled={caption.length >= 200} // Correct way to conditionally disable the textarea
-              />
+            <div className="caption-list" style={{ maxHeight: '300px', overflowY: 'auto', border: '1px solid #ccc', padding: '10px', borderRadius: '5px' }}>
+              {generatedCaptions.map((caption, index) => (
+                <div key={index} className="caption-item">
+                  <p>{caption}</p>
+                  <button
+                    type="button"
+                    className="btn btn-secondary"
+                    onClick={() => setSelectedCaption(caption)}
+                  >
+                    Select
+                  </button>
+                </div>
+              ))}
             </div>
-            <p style={{ fontSize: "15px", fontWeight: "500", color: "grey" }}>
-              {caption.length} / 200 Characters
-            </p>
           </div>
 
           {/* post platform option starts here */}
@@ -346,7 +383,7 @@ const Main = () => {
                 >
                   <input
                     type="checkbox"
-                    value="facebook"
+                    value="linkedin"
                     style={{ marginRight: "8px" }}
                   />
                   Linked In
@@ -364,7 +401,7 @@ const Main = () => {
                 >
                   <input
                     type="checkbox"
-                    value="facebook"
+                    value="twitter"
                     style={{ marginRight: "8px" }}
                   />
                   Twitter
@@ -383,7 +420,7 @@ const Main = () => {
                 >
                   <input
                     type="checkbox"
-                    value="facebook"
+                    value="instagram"
                     style={{ marginRight: "8px" }}
                   />
                   Instagram
@@ -423,9 +460,13 @@ const Main = () => {
                 </div>
               )}
               <div className="caption-view">
-                <p style={{ color: "rgb(108, 107, 107)", fontWeight: "500" }}>
-                  {caption || "Caption..."}
-                </p>
+                <textarea
+                  value={selectedCaption}
+                  onChange={(e) => setSelectedCaption(e.target.value)}
+                  placeholder="Caption"
+                  rows="4"
+                  className="form-control"
+                />
               </div>
             </div>
           </div>
