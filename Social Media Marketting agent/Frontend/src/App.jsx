@@ -13,7 +13,10 @@ import { CommonContext } from "./Context/CommonContext";
 const App = () => {
   const { isKeyProvided } = useContext(CommonContext);
   return (
-    <div className="app">{isKeyProvided ? <Main></Main> : <Home></Home>}</div>
+    <div className="app">
+      {isKeyProvided ? <Main></Main> : <Home></Home>}
+      <ToastContainer />
+    </div>
   );
 };
 

@@ -4,6 +4,7 @@ import assets from "../../assets/assets";
 import Home from "../../Pages/Home/Home";
 import { HomeContext } from "../../Context/HomeContext";
 import { CommonContext } from "../../Context/CommonContext";
+import { toast } from "react-toastify";
 
 const HomeHeader = () => {
   const {
@@ -42,9 +43,9 @@ const HomeHeader = () => {
     const groq_API_KEY = form_Groq_API_Key.current.value;
 
     // Log all the selected or entered details
-    console.log("Selected LLM Type:", LLM_Type);
-    console.log("Entered API Key:", API_Key);
-    console.log("Entered Groq API Key:", groq_API_KEY);
+    // console.log("Selected LLM Type:", LLM_Type);
+    // console.log("Entered API Key:", API_Key);
+    // console.log("Entered Groq API Key:", groq_API_KEY);
 
     // Update states with the input values
     setLLMType(LLM_Type);
@@ -60,6 +61,7 @@ const HomeHeader = () => {
 
     console.log(form_data);
     setIsKeyProvided(true);
+    toast.success("Configuration Saved");
   };
 
   return (
@@ -150,7 +152,7 @@ const HomeHeader = () => {
                 type="password"
                 className="form-control"
                 id="unstructured_ apiKey"
-                placeholder="Unstructured API Key"
+                placeholder="API Key"
                 ref={form_Groq_API_Key}
                 required
               />
