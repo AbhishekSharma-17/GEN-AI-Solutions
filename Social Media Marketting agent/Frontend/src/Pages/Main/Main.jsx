@@ -1,9 +1,7 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "./Main.css";
 import { MainContext } from "../../Context/MainContext";
 import assets from "../../assets/assets";
-// import { IoLogoYoutube } from "react-icons/io";
-// import { FaGoogleDrive } from "react-icons/fa";
 import { FaCloudUploadAlt } from "react-icons/fa";
 import { FaRegImage } from "react-icons/fa6";
 import { HomeContext } from "../../Context/HomeContext";
@@ -11,6 +9,15 @@ import Loader from "../../Components/Loader/Loader";
 
 const Main = () => {
   const fileInputRef = useRef(null);
+  
+  // Add state for posting functionality
+  const [selectedPlatforms, setSelectedPlatforms] = useState({
+    facebook: false,
+    instagram: false,
+    twitter: false,
+    linkedin: false
+  });
+  const [isPosting, setIsPosting] = useState(false);
 
   // state from main context
   const {
@@ -72,21 +79,6 @@ const Main = () => {
         setBackendStatus("Connected");
       } else {
         throw new Error("Backend connection failed");
-        setFile(selectedFile);
-        setFileName(selectedFile.name); // Set the filename in the state
-        setUploadCompleted(false); // Reset upload state when a new file is selected
-        setMediaInfo(null); // Reset media info
-        setFile(selectedFile);
-        setFileName(selectedFile.name); // Set the filename in the state
-        setUploadCompleted(false); // Reset upload state when a new file is selected
-        setMediaInfo(null); // Reset media info
-        setFile(selectedFile);
-        setFileName(selectedFile.name); // Set the filename in the state
-        setLocalURL(URL.createObjectURL(selectedFile)); // Set the local URL for preview
-        setFile(selectedFile);
-        setFileName(selectedFile.name); // Set the filename in the state
-        const objectURL = URL.createObjectURL(selectedFile);
-        setLocalURL(objectURL); // Set the local URL for preview
       }
     } catch (error) {
       console.error("Backend connection error:", error);
@@ -112,50 +104,51 @@ const Main = () => {
     if (selectedFile) {
       setFile(selectedFile);
       setFileName(selectedFile.name); // Set the filename in the state
+      const objectURL = URL.createObjectURL(selectedFile);
+      setLocalURL(objectURL); // Set the local URL for preview
     }
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  if (!file) return;
+    e.preventDefault();
+    if (!file) return;
 
-  // Generate local URL for the selected file
-  const localFileURL = URL.createObjectURL(file);
-  setLocalURL(localFileURL); // Store the local URL in state
+    // Generate local URL for the selected file
+    const localFileURL = URL.createObjectURL(file);
+    setLocalURL(localFileURL); // Store the local URL in state
 
-  setIsUploading(true);
-  try {
-    const formData = new FormData();
-    formData.append("file", file);
-    
-    const response = await fetch("http://127.0.0.1:8000/upload", {
-      method: "POST",
-      body: formData,
-    });
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+      
+      const response = await fetch("http://127.0.0.1:8000/upload", {
+        method: "POST",
+        body: formData,
+      });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Upload success:", data);
+
+      // Store uploaded file info
+      setMediaInfo({
+        file_path: data.file_path,
+        media_url: data.media_url,
+      });
+
+      setMediaURL(data.media_url);
+      setUploadedFilePath(data.file_path);
+      setUploadCompleted(true); // Mark upload as completed
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    } finally {
+      setIsUploading(false);
     }
-
-    const data = await response.json();
-    console.log("Upload success:", data);
-
-    // Store uploaded file info
-    setMediaInfo({
-      file_path: data.file_path,
-      media_url: data.media_url,
-    });
-
-    setMediaURL(data.media_url);
-    setUploadedFilePath(data.file_path);
-    setUploadCompleted(true); // Mark upload as completed
-  } catch (error) {
-    console.error("Error uploading file:", error);
-  } finally {
-    setIsUploading(false);
-  }
-};
-
+  };
 
   // analyze media
   const handleAnalyzeMedia = async () => {
@@ -212,6 +205,117 @@ const Main = () => {
       }
     } finally {
       setIsAnalyzing(false);
+    }
+  };
+
+  // Handle checkbox change for platform selection
+  const handlePlatformCheckboxChange = (e) => {
+    const { value, checked } = e.target;
+    setSelectedPlatforms(prev => ({
+      ...prev,
+      [value]: checked
+    }));
+  };
+
+  // Handle post to all platforms
+  const handlePostToAll = (e) => {
+    e.preventDefault();
+    setSelectedPlatforms({
+      facebook: true,
+      instagram: true,
+      twitter: true,
+      linkedin: true
+    });
+    handlePost(true);
+  };
+
+  // Handle post to selected platforms
+  const handlePost = async (postToAll = false) => {
+    // Prepare the platforms to post to
+    let platformsToPost = [];
+    
+    if (postToAll) {
+      platformsToPost = ['facebook', 'instagram', 'twitter', 'linkedin'];
+    } else {
+      platformsToPost = Object.keys(selectedPlatforms).filter(platform => selectedPlatforms[platform]);
+    }
+    
+    if (platformsToPost.length === 0) {
+      alert('Please select at least one platform');
+      return;
+    }
+
+    if (!selectedCaptionTitle || !selectedCaptionText) {
+      alert('Please select a caption first');
+      return;
+    }
+
+    setIsPosting(true);
+    try {
+      // Prepare the content
+      const content = `${selectedCaptionTitle}\n\n${selectedCaptionText}`;
+      
+      // Prepare the payload
+      const mediaType = platformSelected === "video" ? "video" : "image";
+      
+      // If posting to all platforms at once
+      if (postToAll) {
+        const payload = {
+          content: content,
+          media_url: mediaURL,
+          media_type: mediaType,
+          file_path: uploadedFilePath
+        };
+        
+        const response = await fetch("http://127.0.0.1:8000/post/all", {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload)
+        });
+        
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.detail || "Unknown error");
+        }
+        
+        console.log("Posted to all platforms successfully");
+        alert("Posted to all platforms successfully!");
+      } 
+      // If posting to selected platforms individually
+      else {
+        for (const platform of platformsToPost) {
+          const payload = {
+            content: content,
+            media_url: mediaURL,
+            media_type: mediaType,
+            file_path: uploadedFilePath
+          };
+          
+          const response = await fetch(`http://127.0.0.1:8000/post/${platform}`, {
+            method: "POST",
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
+          });
+          
+          if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(`Error posting to ${platform}: ${errorData.detail || "Unknown error"}`);
+          }
+          
+          console.log(`Posted to ${platform} successfully`);
+        }
+        
+        alert("Posted to selected platforms successfully!");
+      }
+    } catch (error) {
+      console.error("Error posting:", error);
+      alert(`Error posting: ${error.message}`);
+    } finally {
+      setIsPosting(false);
     }
   };
 
@@ -320,11 +424,6 @@ const Main = () => {
                 </button>
               )}
 
-              {/* Display the selected file name within the form tag */}
-              {/* {fileName && !uploadCompleted && (
-              <p className="file-name-display">Selected File:</p>
-            )} */}
-
               {/* Analyze Button (Only after upload) */}
               {uploadCompleted && mediaInfo && !analysisResult && (
                 <button
@@ -338,7 +437,7 @@ const Main = () => {
             </form>
           )}
 
-          {/* caption display araea */}
+          {/* caption display area */}
 
           <div className="caption">
             <p style={{ fontWeight: "500" }}>Caption</p>
@@ -392,6 +491,9 @@ const Main = () => {
                   <input
                     type="checkbox"
                     value="facebook"
+                    checked={selectedPlatforms.facebook}
+                    onChange={handlePlatformCheckboxChange}
+                    disabled={isPosting}
                     style={{ marginRight: "8px" }}
                   />
                   Facebook
@@ -411,9 +513,12 @@ const Main = () => {
                   <input
                     type="checkbox"
                     value="linkedin"
+                    checked={selectedPlatforms.linkedin}
+                    onChange={handlePlatformCheckboxChange}
+                    disabled={isPosting}
                     style={{ marginRight: "8px" }}
                   />
-                  Linked In
+                  LinkedIn
                 </label>
                 <label
                   style={{
@@ -429,6 +534,9 @@ const Main = () => {
                   <input
                     type="checkbox"
                     value="twitter"
+                    checked={selectedPlatforms.twitter}
+                    onChange={handlePlatformCheckboxChange}
+                    disabled={isPosting}
                     style={{ marginRight: "8px" }}
                   />
                   Twitter
@@ -448,17 +556,30 @@ const Main = () => {
                   <input
                     type="checkbox"
                     value="instagram"
+                    checked={selectedPlatforms.instagram}
+                    onChange={handlePlatformCheckboxChange}
+                    disabled={isPosting}
                     style={{ marginRight: "8px" }}
                   />
                   Instagram
                 </label>
               </div>
               <div className="btn-div">
-                <button type="submit" className="btn btn-dark">
-                  POST
+                <button 
+                  type="button" 
+                  className="btn btn-dark"
+                  onClick={() => handlePost(false)}
+                  disabled={isPosting || !selectedCaptionText || Object.values(selectedPlatforms).every(v => !v)}
+                >
+                  {isPosting ? 'POSTING...' : 'POST'}
                 </button>
-                <button type="submit" className="btn btn-dark">
-                  POST TO ALL
+                <button 
+                  type="button" 
+                  className="btn btn-dark"
+                  onClick={handlePostToAll}
+                  disabled={isPosting || !selectedCaptionText}
+                >
+                  {isPosting ? 'POSTING...' : 'POST TO ALL'}
                 </button>
               </div>
             </form>
@@ -499,7 +620,6 @@ const Main = () => {
           </div>
         </div>
       </div>
-      {/* <img src="" id="preview" alt="" /> */}
     </div>
   );
 };
