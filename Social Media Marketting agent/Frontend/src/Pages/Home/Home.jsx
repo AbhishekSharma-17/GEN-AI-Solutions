@@ -7,12 +7,12 @@ import Footer from "../../Components/Home Footer/Footer";
 
 const Home = () => {
   return (
-    <div className="home-page">
-      {/* <HomeProvider> */}
+    <div className="home-page responsive-container">
+      <div className="home-content">
         <HomeHeader></HomeHeader>
         <MediaSolution></MediaSolution>
         <Footer></Footer>
-      {/* </HomeProvider> */}
+      </div>
     </div>
   );
 };

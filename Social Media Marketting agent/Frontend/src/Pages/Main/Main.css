@@ -1,6 +1,8 @@
 .main-app {
   margin: 0;
-  padding: 30px;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .main-content {
@@ -11,6 +13,7 @@
   justify-content: space-between;
   box-shadow: 0px 0px 10px rgb(233, 232, 232);
   padding: 20px;
+  max-width: 1400px;
 }
 
 .upload-area,
@@ -18,10 +21,11 @@
   flex: 1;
   min-width: 300px;
   max-width: 48%;
-  padding: 10px 15px;
+  padding: 15px;
   border: 1px solid rgb(229, 229, 229);
-  border-radius: 5px;
+  border-radius: 8px;
   box-sizing: border-box;
+  background: #fff;
 }
 
 .upload-area {
@@ -29,23 +33,35 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 30px;
+  gap: 20px;
+  height: fit-content;
 }
-.image-and-video-upload{
+
+.image-and-video-upload {
   border: 1px dashed #ccc;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 20px;
-  padding:30px ;
+  gap: 15px;
+  padding: 25px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
 
+.image-and-video-upload:hover {
+  border-color: #666;
+  background-color: #f8f9fa;
 }
-.image-and-video-upload p{
-  font-weight: bold;
-  font-size: 15px;
-  color: grey;
+
+.image-and-video-upload p {
+  font-weight: 600;
+  font-size: 0.9rem;
+  color: #666;
+  margin: 0;
 }
+
 .platform-option {
   display: flex;
   flex-direction: column;
@@ -55,119 +71,180 @@
 .platform-label {
   display: flex;
   align-items: center;
-  padding: 10px 15px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 14px;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.9rem;
   gap: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
 }
-.review-image{
+
+.platform-label:hover {
+  background-color: #f8f9fa;
+  border-color: #999;
+}
+
+.review-image {
   text-align: center;
-}
-.review-image #preview {
-  width: 500px;
-  height: auto;
-  border-radius: 5px;
-}
-.dummy-image-div{
+  margin: 15px 0;
   width: 100%;
+}
+
+.review-image #preview {
+  max-width: 500px;
   height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.preview-media {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+#preview-video {
+  width: 100%;
+  max-width: 500px;
+  background-color: #000;
+  margin: 0 auto;
+}
+
+.dummy-image-div {
+  width: 100%;
+  height: 200px;
   padding: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid #ccc;
-border-radius: 10px;
-  background-color: rgb(234, 234, 234);
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #f8f9fa;
+  color: #666;
 }
 
 .caption {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
+
 .post-to-platform form {
   display: flex;
   flex-direction: column;
+  gap: 15px;
 }
+
 .post-to-platform .platform-option {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 10px;
+  gap: 15px;
   align-items: center;
+  flex-wrap: wrap;
 }
+
 .btn-div {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 15px;
+  margin-top: 10px;
 }
+
 .btn-div .btn {
-  width: 50%;
+  flex: 1;
+  min-width: 120px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
 }
+
 .content-review {
-  border: 1px solid rgb(232, 229, 229);
-
-  border-radius: 5px; /* Rounded corners */
-  display: flex; /* Enable flex layout */
-  flex-direction: column; /* Stack children vertically */
-  padding: 10px 15px; /* Add inner spacing */
-  gap: 20px; /* Space between child elements */
-  width: 90%; /* Set the width to 90% of its container */
-  /* height: 100%; */
+  border: 1px solid #eee;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  gap: 15px;
+  width: 95%;
   margin: 10px auto;
-  overflow-y: scroll;
+  max-height: 400px;
+  overflow-y: auto;
+  background: #fff;
 }
-.caption-view {
 
-  overflow-y: auto; 
-  word-wrap: break-word; 
-  white-space: pre-wrap; 
-  /* border: 1px solid green; */
-  padding: 10px 3px;
+.caption-view {
+  overflow-y: auto;
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  padding: 10px;
   box-sizing: border-box;
-  color: rgb(84, 82, 82); 
-}
-.caption-view::-webkit-scrollbar{
-  display: none;
-}
-.content-review::-webkit-scrollbar {
-  display: none;
+  color: #545454;
+  font-size: 0.9rem;
+  line-height: 1.5;
 }
 
 .content-review-image {
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
+  padding: 8px;
 }
+
 .content-review-image img {
-  width: 50px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
-  border: 1px solid #e2e0e0;
+  border: 1px solid #eee;
+  object-fit: cover;
 }
+
 .image-name-section {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
+  gap: 4px;
 }
 
 .caption-item {
   display: flex;
   flex-direction: column;
-  margin: 10px;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 10px;
-  gap: 10px;
-  align-items: flex-start; /* Aligns all child elements to the left */
+  margin: 8px;
+  border: 1px solid #eee;
+  padding: 12px;
+  border-radius: 8px;
+  gap: 12px;
+  align-items: flex-start;
+  transition: all 0.2s ease;
 }
 
+.caption-item:hover {
+  border-color: #ccc;
+  background-color: #f8f9fa;
+}
 
-@media (max-width: 768px) {
+/* Responsive Styles */
+@media (max-width: 1200px) {
   .main-content {
-    flex-direction: column;
+    padding: 15px;
+  }
+
+  .upload-area,
+  .review-area {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 992px) {
+  .main-app {
+    padding: 15px;
+  }
+
+  .main-content {
+    gap: 15px;
   }
 
   .upload-area,
@@ -175,9 +252,91 @@ border-radius: 10px;
     max-width: 100%;
     min-width: 100%;
   }
+}
+
+@media (max-width: 768px) {
+  .main-app {
+    padding: 10px;
+  }
+
+  .main-content {
+    flex-direction: column;
+    padding: 12px;
+  }
 
   .btn-div {
     flex-direction: column;
-    gap: 10px;
   }
+
+  .btn-div .btn {
+    width: 100%;
+  }
+
+  .platform-label {
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .content-review {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .image-and-video-upload {
+    padding: 20px;
+  }
+
+  #preview-video {
+    max-width: 100%;
+  }
+  
+  .review-image #preview {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 576px) {
+  .main-app {
+    padding: 8px;
+  }
+
+  .main-content {
+    padding: 10px;
+    gap: 12px;
+  }
+
+  .upload-area,
+  .review-area {
+    padding: 10px;
+  }
+
+  .image-and-video-upload p {
+    font-size: 0.85rem;
+  }
+
+  .content-review-image img {
+    width: 35px;
+    height: 35px;
+  }
+
+  .caption-view {
+    font-size: 0.85rem;
+  }
+
+  .caption-item {
+    padding: 10px;
+    margin: 6px;
+  }
+}
+
+/* Hide scrollbars but keep functionality */
+.caption-view::-webkit-scrollbar,
+.content-review::-webkit-scrollbar {
+  display: none;
+}
+
+/* For Firefox */
+.caption-view,
+.content-review {
+  scrollbar-width: none;
 }

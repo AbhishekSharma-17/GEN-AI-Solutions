@@ -1,5 +1,5 @@
 .home-header {
-    height: 100vh;
+    min-height: 100vh;
     background-attachment: fixed;
     display: flex;
     flex-direction: column;
@@ -13,36 +13,45 @@
     justify-content: space-between;
     align-items: center;
     box-shadow: 0px 0px 15px 0px rgb(229, 227, 227);
+    position: sticky;
+    top: 0;
+    background: white;
+    z-index: 1000;
 }
 
 .home-navbar #logo {
     width: 150px;
+    height: auto;
 }
 
 .home-navbar #icon {
     width: 40px;
+    height: auto;
 }
 
 .home-header .header-main {
-    /* border: 1px solid purple; */
-    flex-grow: 1; /* Ensures the main section occupies remaining height */
+    flex: 1;
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
-    padding: 40px;
+    padding: 20px;
     gap: 40px;
-    flex-wrap: wrap; /* Ensures elements wrap to avoid overlap on smaller screens */
+    flex-wrap: wrap;
+    margin: 20px auto;
+    max-width: 1200px;
 }
 
 .key-input-section {
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 30px;
     padding: 20px !important;
-    width: 100%; /* Occupies full width on smaller screens */
-    max-width: 500px; /* Prevents the section from growing too wide */
+    width: 100%;
+    min-width: 300px;
+    max-width: 500px;
     box-shadow: 0px 0px 10px rgb(222, 221, 221);
     border-radius: 5px;
 }
@@ -50,50 +59,97 @@
 .key-input-section h1 {
     font-family: Inter;
     font-weight: bold;
-    text-align: center; /* Centers the heading */
+    text-align: center;
     margin-bottom: 20px;
+    font-size: 2rem;
+    line-height: 1.2;
 }
 
 .header-image-section {
-    width: 100%; /* Occupies full width on smaller screens */
-    max-width: 500px; /* Prevents the section from growing too wide */
+    flex: 1;
+    width: 100%;
+    min-width: 300px;
+    max-width: 500px;
     padding: 10px;
     border-radius: 5px;
     box-shadow: 0px 0px 10px rgb(222, 221, 221);
 }
 
-.header-image-section img{
+.header-image-section img {
     width: 100%;
-    /* height: 100%; */
+    height: auto;
+    display: block;
 }
-
 
 #customDropdown {
     border: 1px solid grey;
     text-align: left;
     font-weight: bold;
-}
-
-#customDropdown .dropdown-toggle::after {
-    display: none !important;
+    width: 100%;
+    padding: 8px 12px;
 }
 
 .dropdown-toggle::after {
     display: none !important;
 }
 
-/* Responsive styling for smaller screens */
+/* Responsive styling */
+@media (max-width: 992px) {
+    .home-header .header-main {
+        padding: 15px;
+        gap: 30px;
+    }
+
+    .key-input-section h1 {
+        font-size: 1.75rem;
+    }
+}
+
 @media (max-width: 768px) {
     .home-header .header-main {
-        flex-direction: column; /* Stack sections vertically */
+        flex-direction: column;
+        padding: 10px;
         gap: 20px;
     }
 
     .key-input-section, .header-image-section {
-        width: 90%; /* Adjust to take up more width on small screens */
+        max-width: 100%;
+        width: 90%;
+        margin: 0 auto;
     }
 
     .key-input-section h1 {
-        font-size: 1.5em; /* Adjust font size for smaller screens */
+        font-size: 1.5rem;
+    }
+
+    .home-navbar #logo {
+        width: 120px;
+    }
+
+    .home-navbar #icon {
+        width: 32px;
+    }
+}
+
+@media (max-width: 576px) {
+    .home-navbar {
+        padding: 8px 10px;
+    }
+
+    .home-header .header-main {
+        padding: 10px 5px;
+    }
+
+    .key-input-section, .header-image-section {
+        width: 95%;
+        padding: 15px !important;
+    }
+
+    .key-input-section h1 {
+        font-size: 1.25rem;
+    }
+
+    .form-control, #customDropdown {
+        font-size: 14px;
     }
 }

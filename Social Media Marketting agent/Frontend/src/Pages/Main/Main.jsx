@@ -29,10 +29,8 @@ const Main = () => {
     setCaption,
     local_url,
     setLocalURL,
-
     setFile,
     file,
-
     setBackendStatus,
     isUploading,
     setIsUploading,
@@ -103,9 +101,13 @@ const Main = () => {
     const selectedFile = e.target.files[0];
     if (selectedFile) {
       setFile(selectedFile);
-      setFileName(selectedFile.name); // Set the filename in the state
+      setFileName(selectedFile.name);
       const objectURL = URL.createObjectURL(selectedFile);
-      setLocalURL(objectURL); // Set the local URL for preview
+      setLocalURL(objectURL);
+      
+      // Set platform based on file type
+      const fileType = selectedFile.type.split('/')[0];
+      setPlatformSelected(fileType === 'video' ? 'video' : 'image');
     }
   };
 
@@ -588,34 +590,48 @@ const Main = () => {
 
         {/* review area starts here */}
         <div className="review-area">
-          <div className="review-section">
-            <p style={{ fontWeight: "500" }}>Preview</p>
-            <div className="content-review">
-              <div className="content-review-image">
-                <img src={assets.gemini_icon} alt="" />
-                <div className="image-name-section">
-                  <p style={{ fontWeight: "500" }}>GenAI Protos</p>
-                  <p style={{ color: "grey" }}>Just Now</p>
-                </div>
-              </div>
-              {local_url ? (
-                <div className="review-image">
-                  <img src={local_url} alt="" width={30} id="preview" />
-                </div>
+          <h4>Review</h4>
+          <div className="review-image">
+            {local_url ? (
+              platformSelected === 'video' ? (
+                <video
+                  id="preview-video"
+                  src={local_url}
+                  controls
+                  className="preview-media"
+                >
+                  Your browser does not support the video tag.
+                </video>
               ) : (
-                <div className="dummy-image-div">
-                  <FaRegImage style={{ fontSize: "400px", color: "grey" }} />
-                </div>
-              )}
-              <div className="caption-view">
-                <textarea
-                  value={`${selectedCaptionTitle}\n\n${selectedCaptionText}`}
-                  onChange={(e) => setSelectedCaption(e.target.value)}
-                  placeholder="Caption"
-                  rows="4"
-                  className="form-control"
+                <img
+                  src={local_url}
+                  alt="Preview"
+                  id="preview"
+                  className="preview-media"
                 />
+              )
+            ) : (
+              <div className="dummy-image-div">
+                <FaRegImage style={{ fontSize: "100px", color: "grey" }} />
               </div>
+            )}
+          </div>
+          <div className="content-review">
+            <div className="content-review-image">
+              <img src={assets.gemini_icon} alt="" />
+              <div className="image-name-section">
+                <p style={{ fontWeight: "500" }}>GenAI Protos</p>
+                <p style={{ color: "grey" }}>Just Now</p>
+              </div>
+            </div>
+            <div className="caption-view">
+              <textarea
+                value={`${selectedCaptionTitle}\n\n${selectedCaptionText}`}
+                onChange={(e) => setSelectedCaption(e.target.value)}
+                placeholder="Caption"
+                rows="4"
+                className="form-control"
+              />
             </div>
           </div>
         </div>
