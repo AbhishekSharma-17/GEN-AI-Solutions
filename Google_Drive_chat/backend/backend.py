@@ -643,7 +643,7 @@ async def sync(request: Request):
     total_attempts = 0
 
     # Define file extensions to skip: video, image, ipynb, mp3, HEIC.
-    skip_extensions = [".mp4", ".mov", ".avi", ".mkv", ".ipynb", ".jpg", ".jpeg", ".png", ".gif", ".mp3", ".heic"]
+    skip_extensions = [".mp4", ".mov", ".avi", ".mkv", ".ipynb", ".jpg", ".jpeg", ".png", ".gif", ".mp3", ".heic", ".m4v", ".3gp"]
 
     # Filter files to download
     files_to_download = []
