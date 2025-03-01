@@ -1,0 +1,145 @@
+.drive-files-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Ensures all child elements, including the button, are centered */
+}
+
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+  margin-bottom: 1vw;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #202124;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+}
+
+.error-message {
+  text-align: center;
+  color: red;
+  margin-top: 20px;
+}
+
+.section-title {
+  margin-top: 20px;
+  color: #202124;
+  width: 100%;
+}
+
+.counters {
+  margin: 16px 0;
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.counter-button {
+  background-color: #fff;
+  border: 1px solid #868686 !important;
+  color: #101010 !important;
+  text-transform: none;
+}
+
+.counter-button:hover {
+  background-color: #f5f5f5;
+  border-color: #999;
+}
+
+.file-table {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-top: 16px;
+  width: 100%;
+  overflow-y: scroll;
+  height: 25vw;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table-header {
+display: flex;
+justify-content: space-between;
+padding: 8px;
+padding-right: 28px;
+}
+
+.file-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.file-row:last-child {
+  border-bottom: none;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.file-icon {
+  width: 24px;
+  height: 24px;
+  margin-top: 15px;
+}
+
+.view-button {
+  color: #1976d2;
+  text-transform: none;
+}
+
+.view-button:hover {
+  color: #1565c0;
+  background-color: transparent;
+}
+
+.continue-button {
+  margin-top: 24px;
+  background: #000 !important;
+  border: 2px solid #000 !important;
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 4px;
+  text-transform: none;
+  display: block;
+  margin: 20px auto;
+  margin-top: 2vw !important;
+}
+
+.continue-button:hover {
+  background-color: #fff !important;
+  color: #000;
+  border: 2px solid #000;
+}

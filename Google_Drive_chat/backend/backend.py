@@ -4,6 +4,8 @@ import logging
 import asyncio
 import google_auth_oauthlib.flow
 import aiohttp
+import nltk
+nltk.download('punkt_tab')
 from fastapi import FastAPI, Request, UploadFile, File, HTTPException, Query
 from fastapi.responses import RedirectResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel
@@ -567,7 +569,7 @@ async def oauth2callback(request: Request):
         "scopes": list(credentials.scopes)
     }
     logging.info("OAuth2 callback processed. User connected.")
-    return JSONResponse(content={"message": "Connected successfully", "credentials": request.session["credentials"]})
+    return RedirectResponse(url="http://localhost:3000/drive-files")
 
 @app.get("/list_drive")
 async def list_drive(request: Request):

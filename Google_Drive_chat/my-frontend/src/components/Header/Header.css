@@ -1,0 +1,26 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.button-container {
+  display: flex;
+}
+
+.header-button {
+  margin-left: 10px;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+.header-button.active {
+  color: #fff;
+  background-color: #101010;
+  border-radius: 3px;
+  padding: 5px;
+}
+.appLogo{ 
+  display: flex;
+  align-items: center;
+}

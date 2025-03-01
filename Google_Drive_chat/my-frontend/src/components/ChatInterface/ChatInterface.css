@@ -1,0 +1,136 @@
+.chat-interface-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+  min-height: 95vh; /* Ensure the container takes full viewport height for vertical centering */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Push header to top, welcome/chat to middle, and input to bottom */
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #202124;
+}
+
+.welcome-message {
+  text-align: center;
+  margin: auto 0; /* Center vertically in the middle of the container */
+}
+
+.welcome-text {
+  color: #202124;
+  margin-bottom: 8px;
+}
+
+.welcome-subtext {
+  color: #757575;
+}
+
+.chat-content {
+  flex-grow: 1; /* Allow chat content to grow and push input to bottom */
+  margin: auto 0; /* Center vertically in the middle of the container */
+  overflow-y: auto; /* Enable scrolling if content exceeds height */
+  padding: 20px 0; /* Add vertical padding for spacing */
+}
+
+.chat-messages {
+  max-height: 60vh; /* Limit chat messages height for scrolling */
+  overflow-y: auto; /* Enable vertical scrolling for chat messages */
+  padding: 10px;
+}
+
+.message-container {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.message-icon {
+  margin-right: 10px;
+  font-size: 24px; /* Adjust icon size */
+  color: #1976d2; /* Blue color for both icons */
+}
+
+.user .message-icon {
+  color: #101010; /* Blue for user icon */
+}
+
+.bot .message-icon {
+  width: 1.5vw; /* Green for AI icon */
+}
+
+.message-text {
+  padding: 10px 15px;
+  border-radius: 8px;
+  overflow-wrap: break-word; /* Ensure long text wraps */
+  max-width: 80%; /* Limit width to prevent overflow */
+}
+
+.user-message {
+  background-color: #F7F6F6; /* Light gray background for user questions */
+  text-align: left;
+  color: #202124;
+}
+
+.bot-response {
+  background-color: #fff; /* White background for bot responses */
+  border: 1px solid #F7F6F6; /* Light gray border for bot responses */
+  text-align: left;
+  color: #202124;
+}
+
+.loading-indicator {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.input-container {
+  margin-top: auto; /* Push to the bottom */
+  margin-bottom: 20px; /* Add some spacing from the bottom */
+}
+
+.question-input {
+  background-color: #f5f5f5;
+  border-radius: 24px;
+}
+
+.question-input .MuiOutlinedInput-root {
+  border: none;
+  border-radius: 24px;
+}
+
+.question-input .MuiOutlinedInput-input {
+  padding: 12px 16px;
+  color: #757575;
+}
+
+.question-input .MuiOutlinedInput-adornedEnd {
+  padding-right: 0;
+}
+
+.question-input .MuiIconButton-root {
+  color: #000;
+  padding: 8px;
+}
+
+.question-input .Mui-disabled .MuiIconButton-root {
+  color: #666; /* Dim the icon when the input is disabled */
+}
