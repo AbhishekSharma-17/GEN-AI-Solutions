@@ -32,7 +32,7 @@
 .refresh-button, .embed-button {
   margin-top: 16px;
   background-color: #000 !important;
-  color: #fff; /* White text color for "Refresh" and "Embed" and loader */
+  color: #fff;
   padding: 8px 24px;
   border-radius: 4px;
   text-transform: none;
@@ -118,8 +118,8 @@
 
 .embed-table {
   margin-top: 16px;
-  max-height: 400px; /* Set a fixed height for scrollable content */
-  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 400px;
+  overflow-y: auto;
 }
 
 .file-table {

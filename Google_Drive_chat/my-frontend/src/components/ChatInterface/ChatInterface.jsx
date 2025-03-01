@@ -85,14 +85,14 @@ const ChatInterface = () => {
   return (
     <div className="chat-interface-container">
       <Header width='100%' />
-      <Box className="welcome-message">
+      {chatResponses.length === 0 && <Box className="welcome-message">
         <Typography variant="h6" className="welcome-text" gutterBottom>
           Can I help you with anything?
         </Typography>
         <Typography variant="body1" className="welcome-subtext">
           Ready to assist you with anything you need from GDrive Docs.
         </Typography>
-      </Box>
+      </Box>}
       {chatResponses.length > 0 && (<Box className="chat-content">
         <Box ref={chatResponseRef} className="chat-messages">
           {chatResponses.map((message, index) => (

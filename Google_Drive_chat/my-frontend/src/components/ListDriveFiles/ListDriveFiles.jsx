@@ -61,13 +61,13 @@ const navigate = useNavigate();
             Below files found in Drive
           </Typography>
           <div className="counters">
-            <Button variant="outlined" className="counter-button">
+            <Button variant="outlined" className="counter-button" disabled>
               Total Items {totalItems}
             </Button>
-            <Button variant="outlined" className="counter-button">
+            <Button variant="outlined" className="counter-button" disabled>
               Folders {folders}
             </Button>
-            <Button variant="outlined" className="counter-button">
+            <Button variant="outlined" className="counter-button" disabled>
               Files {filesCount}
             </Button>
           </div>

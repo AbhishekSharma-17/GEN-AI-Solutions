@@ -8,7 +8,7 @@ import Alert from '@mui/material/Alert';
 const Header = ({ width }) => {
   const navigate = useNavigate(); 
   const location = useLocation();
-  const [alert, setAlert] = useState({ open: false, severity: 'info', message: '' }); // State for alert
+  const [alert, setAlert] = useState({ open: false, severity: 'info', message: '' });
 
   const handleRedirect = (path) => {
     navigate(path);
@@ -21,8 +21,7 @@ const Header = ({ width }) => {
       return;
     }
     
-    setAlert({ open: true, severity: 'info', message: 'Disconnect is in process' }); // Show loading alert
-
+    setAlert({ open: true, severity: 'info', message: 'Disconnect is in process' });
     try {
       const response = await fetch("http://localhost:8000/disconnect", {
         credentials: 'include',
@@ -30,7 +29,7 @@ const Header = ({ width }) => {
       if (response.ok) {
         localStorage.removeItem('fileUpload');
         navigate('/');
-        setAlert({ open: true, severity: 'success', message: 'Disconnected' }); // Show success alert
+        setAlert({ open: true, severity: 'success', message: 'Disconnected' });
       } else {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -38,8 +37,6 @@ const Header = ({ width }) => {
       console.error("Error disconnecting:", err);
       setAlert({ open: true, severity: 'error', message: 'Error disconnecting: ' + err.message });
     }
-
-    // Automatically hide the alert after 3 seconds (optional)
     setTimeout(() => {
       setAlert({ open: false, severity: 'info', message: '' });
     }, 3000);

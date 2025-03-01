@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Typography, Button, CircularProgress, Box, IconButton } from '@mui/material';
+import { Typography, Button, CircularProgress, Box, IconButton, Alert } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import './SyncDriveFiles.css';
@@ -19,6 +19,7 @@ const SyncDriveFiles = () => {
     setLoading(true);
     setError(null);
     setSyncSummary(null);
+
     try {
       const response = await fetch("http://localhost:8000/sync", {
         credentials: 'include',
@@ -27,10 +28,11 @@ const SyncDriveFiles = () => {
         const data = await response.json();
         setSyncSummary(data);
       } else {
-        alert("Error syncing files.");
+        throw new Error('Failed to sync files.');
       }
     } catch (err) {
       console.error("Error syncing files", err);
+      setError(err.message || 'An error occurred while syncing files.');
     } finally {
       setLoading(false);
     }
@@ -75,26 +77,30 @@ const SyncDriveFiles = () => {
         </Box>
       )}
       {error && (
-        <Typography variant="body1" className="error-message">
+        <Alert 
+          severity="error" 
+          onClose={() => setError(null)} 
+          sx={{ marginTop: 2, marginBottom: 2 }}
+        >
           {error}
-        </Typography>
+        </Alert>
       )}
       {syncSummary && !loading && !error && (
         <>
           <div className="counters">
-            <Button variant="outlined" className="counter-button">
+            <Button variant="outlined" className="counter-button" disabled>
               Attempted {syncSummary.attempted_count || 0}
             </Button>
-            <Button variant="outlined" className="counter-button">
+            <Button variant="outlined" className="counter-button" disabled>
               Downloaded {syncSummary.downloaded_count || 0}
             </Button>
-            <Button variant="outlined" className="counter-button">
+            <Button variant="outlined" className="counter-button" disabled>
               Skipped (Existing) {syncSummary.skipped_existing_count || 0}
             </Button>
-            <Button variant="outlined" className="counter-button">
+            <Button variant="outlined" className="counter-button" disabled>
               Skipped (Unsupported) {syncSummary.skipped_unsupported_count || 0}
             </Button>
-            <Button variant="outlined" className="counter-button">
+            <Button variant="outlined" className="counter-button" disabled>
               Failed {syncSummary.failed_count || 0}
             </Button>
           </div>

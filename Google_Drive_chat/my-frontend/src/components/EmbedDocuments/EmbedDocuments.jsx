@@ -1,19 +1,20 @@
-import React, { useState } from 'react';
-import { Typography, Button, CircularProgress, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton } from '@mui/material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import ExpandLessIcon from '@mui/icons-material/ExpandLess';
-import './EmbedDocuments.css';
-import documentIcon from '../../assets/documentIcon.png';
+import React, { useState, useEffect } from 'react';
+import { Typography, Button, CircularProgress, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Alert } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore'; // Import for collapse/expand icon
+import ExpandLessIcon from '@mui/icons-material/ExpandLess'; // Import for collapse/expand icon
+import './EmbedDocuments.css'; // Import the CSS file
+import documentIcon from '../../assets/documentIcon.png'; // Use a single document icon for all files
 import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header';
 
 const EmbedDocuments = () => {
   const [embeddingData, setEmbeddingData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(null); // State for error message
   const [isSkippedTableCollapsed, setIsSkippedTableCollapsed] = useState(false);
   const [isEmbeddedTableCollapsed, setIsEmbeddedTableCollapsed] = useState(false);
-const navigate = useNavigate(); 
+  const navigate = useNavigate(); 
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate();
@@ -37,7 +38,7 @@ const navigate = useNavigate();
 
   const handleEmbed = async () => {
     setLoading(true);
-    setError(null);
+    setError(null); // Clear any previous errors
     setEmbeddingData(null);
 
     try {
@@ -50,10 +51,11 @@ const navigate = useNavigate();
 
         fetchEmbeddingStatus();
       } else {
-        alert("Error embedding documents.");
+        throw new Error('Failed to embed documents. Please click on Disconnect and try again.');
       }
     } catch (err) {
-      console.error("Error embedding documents", err);
+      console.error("Error embedding documents please click on Disconnect and try again", err);
+      setError(err.message || 'An error occurred while embedding documents. Please click on Disconnect and try again.');
     } finally {
       setLoading(false);
     }
@@ -61,7 +63,7 @@ const navigate = useNavigate();
 
   const handleRefresh = async () => {
     setLoading(true);
-    setError(null);
+    setError(null); // Clear any previous errors
 
     try {
       await fetchEmbeddingStatus();
@@ -91,10 +93,11 @@ const navigate = useNavigate();
           statusData: data,
         }));
       } else {
-        console.error("Error fetching embedding status");
+        throw new Error('Failed to fetch embedding status.');
       }
     } catch (err) {
       console.error("Error fetching embedding status", err);
+      setError(err.message || 'An error occurred while fetching embedding status.');
     }
   };
 
@@ -109,19 +112,29 @@ const navigate = useNavigate();
   return (
     <div className="embed-documents-container">
       <Header width='100%' />
+            {error && (
+        <Alert 
+          severity="error" 
+          onClose={() => setError(null)} 
+          sx={{ marginTop: 2, marginBottom: 2 }}
+        >
+          {error}
+        </Alert>
+      )}
       <div className='upper-section'>  
         <Typography variant="h5" className="section-title" gutterBottom>
           Embed Documents
         </Typography>
-        {embeddingData &&
-          (<Button 
-          variant="contained" 
-          className="refresh-button"
-          onClick={handleRefresh}
-          disabled={loading}
-        >
-          {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Refresh'}
-        </Button>)}
+        {embeddingData && (
+          <Button 
+            variant="contained" 
+            className="refresh-button"
+            onClick={handleRefresh}
+            disabled={loading}
+          >
+            {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Refresh'}
+          </Button>
+        )}
         <Button 
           variant="contained" 
           className="embed-button"
@@ -141,11 +154,6 @@ const navigate = useNavigate();
         <Box className="loader">
           <CircularProgress style={{ color: '#101010' }}/>
         </Box>
-      )}
-      {error && (
-        <Typography variant="body1" className="error-message">
-          {error}
-        </Typography>
       )}
       {embeddingData && !loading && !error && (
         <div className="documents-section">
@@ -176,18 +184,18 @@ const navigate = useNavigate();
           {embeddingData.statusData && (
             <>
               <div className="status-header">
-                <Typography variant="body1" className="status-message" gutterBottom style={{ marginTop: '0', padding: '0 8px'}}>
+                <Typography variant="body1" className="status-message" gutterBottom style={{ marginTop: '0', padding: '0 8px' }}>
                   Found {embeddingData.total_embedded_files} embedded files with {embeddingData.total_chunks} total chunks
                 </Typography>
               </div>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} onClick={toggleEmbeddedTableCollapse}>
-                  <Typography variant="subtitle1" className="section-subtitle" gutterBottom>
-                    Embedded Files Details
-                  </Typography>
-                  <IconButton size="small" aria-label="toggle embedded table">
-                    {isEmbeddedTableCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
-                  </IconButton>
-                </div>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }} onClick={toggleEmbeddedTableCollapse}>
+                <Typography variant="subtitle1" className="section-subtitle" gutterBottom>
+                  Embedded Files Details
+                </Typography>
+                <IconButton size="small" aria-label="toggle embedded table">
+                  {isEmbeddedTableCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+                </IconButton>
+              </div>
               {!isEmbeddedTableCollapsed && (
                 <TableContainer component={Paper} className="embed-table">
                   <Table stickyHeader>

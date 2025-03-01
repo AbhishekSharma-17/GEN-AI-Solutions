@@ -8,7 +8,7 @@
 .upper-section {
   display: flex;
   align-items: center;
-  gap: 16px; /* Space between title and buttons */
+  gap: 16px;
   margin-bottom: 16px;
 }
 
@@ -20,7 +20,7 @@
 .sync-button {
   margin-top: 16px;
   background-color: #000 !important;
-  color: #fff; /* White text color for "Sync" and loader */
+  color: #fff;
   padding: 8px 24px;
   border-radius: 4px;
   text-transform: none;
@@ -90,15 +90,15 @@
   justify-content: space-between;
   align-items: center;
   padding: 8px 0;
-  cursor: pointer; /* Make the entire header clickable */
+  cursor: pointer;
 }
 
 .section-subtitle {
   margin-bottom: 8px;
   color: #202124;
   font-weight: 500;
-  background: #fff; /* Ensure text is visible on white background */
-  padding: 4px 8px; /* Add padding for better appearance */
+  background: #fff;
+  padding: 4px 8px;
 }
 
 .file-table {
