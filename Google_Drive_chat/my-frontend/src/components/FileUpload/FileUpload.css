@@ -1,0 +1,103 @@
+.upload-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #202124;
+}
+
+.drop-zone {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  padding: 32px;
+  text-align: center;
+  cursor: pointer;
+  background-color: #fafafa;
+}
+
+.drop-zone:hover {
+  border-color: #999;
+  background-color: #f5f5f5;
+}
+
+.upload-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 16px;
+}
+
+.file-icon {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 16px;
+}
+
+.browse-text {
+  color: #1976d2;
+  text-decoration: underline;
+  cursor: pointer;
+  display: inline;
+}
+
+.browse-text:hover {
+  color: #1565c0;
+}
+
+.upload-status {
+  margin-top: 8px;
+  color: #757575;
+}
+
+.upload-status.uploading {
+  color: #757575;
+}
+
+.upload-status.success {
+  color: green;
+}
+
+.upload-status.error {
+  color: red;
+}
+
+.connect-button {
+  margin-top: 16px;
+  background: #000 !important;
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 4px;
+  border: 2px solid #000 !important;
+  text-transform: none;
+  width: 8vw;
+  height: 2.5vw;
+  margin-top: 5px;
+}
+
+.connect-button:hover {
+  background-color: #fff !important;
+  color: #000;
+  border: 2px solid #000;
+}
+
+.connect-instruction {
+  margin-top: 8px;
+  color: #757575;
+  font-size: 0.875rem;
+}
