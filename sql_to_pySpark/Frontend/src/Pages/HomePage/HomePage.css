@@ -1,0 +1,23 @@
+.scroll-to-top {
+    position: fixed;
+    bottom: 20px; /* Distance from the bottom */
+    right: 20px;  /* Distance from the right */
+    width: 50px;  /* Button width */
+    height: 50px; /* Button height */
+    background-color: #33cb38; /* Green background */
+    color: white; /* White text color */
+    border: none; /* Remove border */
+    border-radius: 50%; /* Circular shape */
+    font-size: 24px; /* Font size for arrow */
+    cursor: pointer; /* Pointer cursor on hover */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* Slight shadow */
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out; /* Smooth effects */
+    opacity: 0.7; /* Default opacity */
+    z-index: 1000; /* Ensure it's on top */
+  }
+  
+  .scroll-to-top:hover {
+    opacity: 1; /* Full opacity on hover */
+    transform: scale(1.1); /* Slightly enlarge */
+  }
+  

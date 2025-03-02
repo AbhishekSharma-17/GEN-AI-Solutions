@@ -1,5 +1,5 @@
-import React, { useContext, useRef } from "react";
 import "./HomePageContainer.css";
+import React, { useContext, useRef } from "react";
 import { assets } from "../../assets/assets";
 import { Context } from "../../Context/Context";
 // react toatify inclusion
@@ -241,7 +241,7 @@ const HomePageContainer = () => {
           </div>
         </div>
         <div className="homepage-setup-image">
-          <img src={assets.frontPage} alt="Setup" />
+          <img src={assets.SQL_img} alt="Setup" />
         </div>
       </div>
     </div>

@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Response Loader</title>
+  <style>
+    /* General Styles */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f9;
+    }
+
+    .loader-wrapper {
+      text-align: center;
+    }
+
+    /* Spinning Logo */
+    .logo-container {
+      margin-bottom: 20px;
+    }
+
+    .spinning-logo {
+      width: 80px;
+      height: 80px;
+      animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Loading Text Animation */
+    .loading-text {
+      font-size: 20px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .loading-text span {
+      display: inline-block;
+      animation: fade 1.5s infinite;
+    }
+
+    @keyframes fade {
+      0%, 100% {
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="loader-wrapper">
+    <!-- Spinning Logo -->
+    <div class="logo-container">
+      <img 
+        src="https://via.placeholder.com/80" 
+        alt="GenAI Protos Logo" 
+        class="spinning-logo"
+      />
+    </div>
+
+    <!-- Loading Animation -->
+    <div class="loading-text">
+      <span style="animation-delay: 0s;">L</span>
+      <span style="animation-delay: 0.2s;">o</span>
+      <span style="animation-delay: 0.4s;">a</span>
+      <span style="animation-delay: 0.6s;">d</span>
+      <span style="animation-delay: 0.8s;">i</span>
+      <span style="animation-delay: 1s;">n</span>
+      <span style="animation-delay: 1.2s;">g</span>
+      <span style="animation-delay: 1.4s;">.</span>
+      <span style="animation-delay: 1.6s;">.</span>
+      <span style="animation-delay: 1.8s;">.</span>
+    </div>
+  </div>
+</body>
+</html>

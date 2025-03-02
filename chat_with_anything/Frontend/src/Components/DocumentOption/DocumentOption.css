@@ -1,0 +1,14 @@
+.doc-option-div {
+    /* border:1px solid red;  */
+    padding: 10px;
+    display: grid;
+    margin-top: 50px;
+}
+
+.card-grid {
+    display: grid;
+    /* minmax values changes from 200px to 250px. */
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
+    gap: 50px;
+    padding: 20px;
+}

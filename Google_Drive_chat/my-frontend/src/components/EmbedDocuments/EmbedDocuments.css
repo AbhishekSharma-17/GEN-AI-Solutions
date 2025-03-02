@@ -1,0 +1,146 @@
+.embed-documents-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #202124;
+}
+
+.section-title {
+  margin-top: 20px;
+  color: #202124;
+}
+
+.refresh-button, .embed-button {
+  margin-top: 16px;
+  background-color: #000 !important;
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 4px;
+  text-transform: none;
+    border: 1px solid #868686 !important;
+}
+
+.refresh-button:hover, .embed-button:hover {
+  background-color: #fff !important;
+  color: #101010;
+  border: 1px solid #868686 !important;
+}
+
+.refresh-button:disabled, .embed-button:disabled {
+  background-color: #ccc;
+  color: #666;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.error-message {
+  text-align: center;
+  color: red;
+  margin-top: 20px;
+}
+
+.no-data-message {
+  text-align: center;
+  color: #757575;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+.documents-section {
+  margin-top: 24px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+}
+
+.document-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.document-row:last-child {
+  border-bottom: none;
+}
+
+.document-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.document-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.no-documents-message {
+  text-align: center;
+  color: #757575;
+  padding: 16px;
+}
+
+.status-message {
+  text-align: center;
+  color: #202124;
+  margin-bottom: 16px;
+  margin-top: 16px !important;
+}
+
+.embed-table {
+  margin-top: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.file-table {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-top: 8px;
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.file-row:last-child {
+  border-bottom: none;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

@@ -1,0 +1,104 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: #f0f0f0;
+  color: #333;
+}
+
+.App {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+h1 {
+  color: #2c3e50;
+  margin-bottom: 30px;
+}
+
+button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin: 5px;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+button:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.chatbox {
+  background-color: rgba(52, 152, 219, 0.1);
+  border-radius: 15px;
+  padding: 20px;
+  margin-top: 20px;
+  height: 400px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.message {
+  margin-bottom: 15px;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 80%;
+}
+
+.user-message {
+  background-color: #e8f6fd;
+  align-self: flex-start;
+}
+
+.ai-message {
+  background-color: #f0f0f0;
+  align-self: flex-end;
+}
+
+.message-text {
+  font-size: 18px;
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+
+.time-chip-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 5px;
+}
+
+.time-chip-label {
+  font-size: 12px;
+  margin-right: 5px;
+}
+
+.time-chip {
+  display: inline-block;
+  background-color: #3498db;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.tts-audio-section {
+  margin-top: 20px;
+}
+
+audio {
+  width: 100%;
+  margin-bottom: 10px;
+}
