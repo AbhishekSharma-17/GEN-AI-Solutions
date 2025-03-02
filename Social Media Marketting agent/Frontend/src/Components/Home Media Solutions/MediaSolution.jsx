@@ -1,8 +1,8 @@
 import React from "react";
 import "./MediaSolution.css";
 import { SiSimpleanalytics } from "react-icons/si";
-import { FaPencil } from "react-icons/fa6";
-import { GrAnnounce } from "react-icons/gr";
+import { FaHashtag } from "react-icons/fa6";
+import { LuUpload } from "react-icons/lu";
 
 
 const MediaSolution = () => {
@@ -13,27 +13,24 @@ const MediaSolution = () => {
         <h1>Comprehensive Social Media Solutions</h1>
         <div className="solution">
           <div className="card">
-          <GrAnnounce className="icon" style={{color:"red"}}/>
-            <p>Content Creation</p>
+          <LuUpload className="icon" style={{color:"red"}}/>
+            <p>Uploadify</p>
             <span>
-              Engaging content that resonates with your target audience and
-              drives meaningful interations.
+             Take a picture or upload an image or video.
             </span>
           </div>
           <div className="card">
-            <FaPencil className="icon"  style={{color:"grey"}}/>
-            <p>Compaign Management</p>
+            <FaHashtag className="icon"  style={{color:"grey"}}/>
+            <p>AutoHashtag</p>
             <span>
-              Strategic planning and execution of social Media compaign across
-              all platform.
+            Instantly get post content recommendations with right hashtags.
             </span>
           </div>
           <div className="card">
             <SiSimpleanalytics className="icon"  style={{color:"orange"}}/>
-            <p>Analytics and Reporting</p>
+            <p>ClickPost</p>
             <span>
-              Detailed insights and performance metrics to optimize you social
-              media strategy.
+            With just 1-click, post in all your channels with 1-click
             </span>
           </div>
         </div>
