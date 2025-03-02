@@ -81,7 +81,8 @@ const HomeHeader = () => {
       <div className="header-main">
         <div className="key-input-section">
           <div className="tex-section">
-            <h1>Transform Your Social Media Presence</h1>
+            <h1>Pocket Social Media Manager
+            </h1>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">

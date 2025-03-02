@@ -10,13 +10,13 @@ import { toast } from "react-toastify";
 
 const Main = () => {
   const fileInputRef = useRef(null);
-  
+
   // Add state for posting functionality
   const [selectedPlatforms, setSelectedPlatforms] = useState({
     facebook: false,
     instagram: false,
     twitter: false,
-    linkedin: false
+    linkedin: false,
   });
   const [isPosting, setIsPosting] = useState(false);
   const [isPostingAll, setIsPostingAll] = useState(false);
@@ -55,7 +55,7 @@ const Main = () => {
     setFileName,
     selectedCaptionTitle,
     setSelectedCaptionTitle,
-    selectedCaptionText, 
+    selectedCaptionText,
     setSelectedCaptionText,
   } = useContext(MainContext);
 
@@ -106,10 +106,10 @@ const Main = () => {
       setFileName(selectedFile.name);
       const objectURL = URL.createObjectURL(selectedFile);
       setLocalURL(objectURL);
-      
+
       // Set platform based on file type
-      const fileType = selectedFile.type.split('/')[0];
-      setPlatformSelected(fileType === 'video' ? 'video' : 'image');
+      const fileType = selectedFile.type.split("/")[0];
+      setPlatformSelected(fileType === "video" ? "video" : "image");
     }
   };
 
@@ -125,7 +125,7 @@ const Main = () => {
     try {
       const formData = new FormData();
       formData.append("file", file);
-      
+
       const response = await fetch("http://127.0.0.1:8000/upload", {
         method: "POST",
         body: formData,
@@ -215,9 +215,9 @@ const Main = () => {
   // Handle checkbox change for platform selection
   const handlePlatformCheckboxChange = (e) => {
     const { value, checked } = e.target;
-    setSelectedPlatforms(prev => ({
+    setSelectedPlatforms((prev) => ({
       ...prev,
-      [value]: checked
+      [value]: checked,
     }));
   };
 
@@ -228,7 +228,7 @@ const Main = () => {
       facebook: true,
       instagram: true,
       twitter: true,
-      linkedin: true
+      linkedin: true,
     });
     handlePost(true);
   };
@@ -237,20 +237,22 @@ const Main = () => {
   const handlePost = async (postToAll = false) => {
     // Prepare the platforms to post to
     let platformsToPost = [];
-    
+
     if (postToAll) {
-      platformsToPost = ['facebook', 'instagram', 'twitter', 'linkedin'];
+      platformsToPost = ["facebook", "instagram", "twitter", "linkedin"];
     } else {
-      platformsToPost = Object.keys(selectedPlatforms).filter(platform => selectedPlatforms[platform]);
+      platformsToPost = Object.keys(selectedPlatforms).filter(
+        (platform) => selectedPlatforms[platform]
+      );
     }
-    
+
     if (platformsToPost.length === 0) {
-      toast.error('Please select at least one platform');
+      toast.error("Please select at least one platform");
       return;
     }
 
     if (!selectedCaptionTitle || !selectedCaptionText) {
-      toast.error('Please select a caption first');
+      toast.error("Please select a caption first");
       return;
     }
 
@@ -262,35 +264,35 @@ const Main = () => {
     try {
       // Prepare the content
       const content = `${selectedCaptionTitle}\n\n${selectedCaptionText}`;
-      
+
       // Prepare the payload
       const mediaType = platformSelected === "video" ? "video" : "image";
-      
+
       // If posting to all platforms at once
       if (postToAll) {
         const payload = {
           content: content,
           media_url: mediaURL,
           media_type: mediaType,
-          file_path: uploadedFilePath
+          file_path: uploadedFilePath,
         };
-        
+
         const response = await fetch("http://127.0.0.1:8000/post/all", {
           method: "POST",
           headers: {
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(payload)
+          body: JSON.stringify(payload),
         });
-        
+
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.detail || "Unknown error");
         }
-        
+
         console.log("Posted to all platforms successfully");
         toast.success("Posted to all platforms successfully!");
-      } 
+      }
       // If posting to selected platforms individually
       else {
         for (const platform of platformsToPost) {
@@ -298,25 +300,32 @@ const Main = () => {
             content: content,
             media_url: mediaURL,
             media_type: mediaType,
-            file_path: uploadedFilePath
+            file_path: uploadedFilePath,
           };
-          
-          const response = await fetch(`http://127.0.0.1:8000/post/${platform}`, {
-            method: "POST",
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload)
-          });
-          
+
+          const response = await fetch(
+            `http://127.0.0.1:8000/post/${platform}`,
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+            }
+          );
+
           if (!response.ok) {
             const errorData = await response.json();
-            throw new Error(`Error posting to ${platform}: ${errorData.detail || "Unknown error"}`);
+            throw new Error(
+              `Error posting to ${platform}: ${
+                errorData.detail || "Unknown error"
+              }`
+            );
           }
-          
+
           console.log(`Posted to ${platform} successfully`);
         }
-        
+
         toast.success("Posted to selected platforms successfully!");
       }
     } catch (error) {
@@ -417,7 +426,7 @@ const Main = () => {
                       />
                     </div>
                   )}
-                  
+
                   {/* Separate div for displaying filename */}
                   {fileName && (
                     <div className="file-info-display mt-4 mb-4">
@@ -584,21 +593,25 @@ const Main = () => {
                 </label>
               </div>
               <div className="btn-div">
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-dark"
                   onClick={() => handlePost(false)}
-                  disabled={isPosting || !selectedCaptionText || Object.values(selectedPlatforms).every(v => !v)}
+                  disabled={
+                    isPosting ||
+                    !selectedCaptionText ||
+                    Object.values(selectedPlatforms).every((v) => !v)
+                  }
                 >
-                  {isPosting ? 'POSTING...' : 'POST'}
+                  {isPosting ? "POSTING..." : "POST"}
                 </button>
-                <button 
-                  type="button" 
+                <button
+                  type="button"
                   className="btn btn-dark"
                   onClick={handlePostToAll}
                   disabled={isPostingAll || !selectedCaptionText}
                 >
-                  {isPostingAll ? 'POSTING...' : 'POST TO ALL'}
+                  {isPostingAll ? "POSTING..." : "POST TO ALL"}
                 </button>
               </div>
             </form>
@@ -610,7 +623,7 @@ const Main = () => {
           <h4>Review</h4>
           <div className="review-image">
             {local_url ? (
-              platformSelected === 'video' ? (
+              platformSelected === "video" ? (
                 <video
                   id="preview-video"
                   src={local_url}
@@ -644,7 +657,11 @@ const Main = () => {
             <div className="caption-view">
               <textarea
                 value={`${selectedCaptionTitle}\n\n${selectedCaptionText}`}
-                onChange={(e) => setSelectedCaption(e.target.value)}
+                onChange={(e) => {
+                  const [title, ...text] = e.target.value.split("\n\n");
+                  setSelectedCaptionTitle(title);
+                  setSelectedCaptionText(text.join("\n\n"));
+                }}
                 placeholder="Caption"
                 rows="4"
                 className="form-control"

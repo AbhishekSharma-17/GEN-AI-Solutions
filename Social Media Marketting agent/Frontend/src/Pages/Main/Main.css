@@ -366,7 +366,7 @@
   }
 }
 
-/* Hide scrollbars but keep functionality */
+
 .caption-view::-webkit-scrollbar,
 .content-review::-webkit-scrollbar {
   display: none;
