@@ -41,9 +41,9 @@ const HomePageContainer = () => {
     const API_Key = form_API_Key.current.value;
 
     // Log all the selected or entered details
-    console.log("Selected LLM Type:", LLM_Type);
-    console.log("Entered Database URI:", Database_URI);
-    console.log("Entered API Key:", API_Key);
+    // console.log("Selected LLM Type:", LLM_Type);
+    // console.log("Entered Database URI:", Database_URI);
+    // console.log("Entered API Key:", API_Key);
 
     // Update states with the input values
     setLLMType(LLM_Type);
