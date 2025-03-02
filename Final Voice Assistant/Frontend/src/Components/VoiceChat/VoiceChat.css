@@ -67,7 +67,7 @@ npm install react-iconsbody {
   left: -1px;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, red, transparent);
+  /* background: linear-gradient(90deg, transparent, red, transparent); */
   animation: move-border 3s linear infinite;
 }
 
@@ -78,7 +78,7 @@ npm install react-iconsbody {
   left: -1px;
   width: 100%;
   height: 2px;
-  background: linear-gradient(90deg, transparent, red, transparent);
+  /* background: linear-gradient(90deg, transparent, red, transparent); */
   animation: move-border 3s linear infinite;
 }
 
