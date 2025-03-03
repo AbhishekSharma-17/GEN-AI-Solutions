@@ -363,7 +363,7 @@ const Main = () => {
                   data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  {platformToView || "Select Platform"}
+                  {platformToView || "Select Type of Media"}
                 </button>
                 <ul
                   className="dropdown-menu w-100"
