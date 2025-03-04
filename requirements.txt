@@ -34,3 +34,5 @@ pillow
 requests
 langchain-google-genai
 itsdangerous
+langchain-pinecone
+langchian-cohere

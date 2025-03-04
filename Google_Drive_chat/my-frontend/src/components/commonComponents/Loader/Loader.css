@@ -1,0 +1,68 @@
+.loader-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* border: 1px solid red; */
+  gap: 35px;
+  margin-top: 10px;
+}
+
+.spinning-logo {
+  width: 50px;
+  height: auto;
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.loading-text {
+  /* margin-left: 440%; */
+  font-size: 18px;
+  font-family: Outfit;
+  display: flex;
+  gap: 1px;
+  margin-top: -30px;
+}
+
+.loading-text span {
+  /* display: inline-block; */
+  opacity: 0;
+  transform: scale(0.5);
+  animation: popIn 4s ease-in-out infinite;
+}
+
+@keyframes popIn {
+  0%,
+  90% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  10% {
+    opacity: 1;
+    transform: scale(1.2);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}

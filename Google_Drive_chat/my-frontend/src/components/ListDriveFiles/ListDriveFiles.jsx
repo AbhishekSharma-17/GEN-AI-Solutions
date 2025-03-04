@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { Typography, Button, CircularProgress, Box } from '@mui/material';
 import './ListDriveFiles.css';
+import { useDispatch, useSelector } from 'react-redux';
 import documentIcon from '../../assets/documentIcon.png';
 import { useNavigate } from 'react-router-dom';
-import Header from '../Header/Header';
+import { setDriveFiles } from '../../store/driveSlice';
 
 const ListDriveFiles = () => {
-  const [files, setFiles] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [filesData, setFilesData] = useState(null);
-const navigate = useNavigate(); 
+  const navigate = useNavigate(); 
+  const dispatch = useDispatch();
+  const driveFiles = useSelector((state) => state.drive.driveFiles);
 
   const fetchDriveFiles = async () => {
+      setLoading(true);
     try {
       const response = await fetch('http://localhost:8000/list_drive', {
           method: 'GET',
@@ -22,7 +25,7 @@ const navigate = useNavigate();
         throw new Error('Failed to fetch drive files');
       }
       const data = await response.json();
-        setFiles(data.files || []);
+          dispatch(setDriveFiles(data.files || []));
         setFilesData(data);
     } catch (err) {
       setError('Error loading files from Drive.');
@@ -33,10 +36,12 @@ const navigate = useNavigate();
   };
 
   useEffect(() => {
-    fetchDriveFiles();
-  }, []);
+    if (driveFiles.length === 0) {
+      fetchDriveFiles();
+    }
+  }, [driveFiles]);
 
-  const totalItems = files.length;
+  const totalItems = driveFiles.length;
   const folders = filesData?.folders_count;
   const filesCount = filesData?.files_count;
 
@@ -46,7 +51,6 @@ const navigate = useNavigate();
 
   return (
     <div className="drive-files-container">
-      <Header width='100%' />
       {loading ? (
         <Box className="loader">
           <CircularProgress />
@@ -76,7 +80,7 @@ const navigate = useNavigate();
               <Typography variant="subtitle1">File Name</Typography>
               <Typography variant="subtitle1" style={{ textAlign: 'right', marginRight: '28px'}}>Link</Typography>
             </div>
-            {files.map((file, index) => (
+            {driveFiles.map((file, index) => (
               <div key={index} className="file-row" style={{ padding: '5px 10px' }}>
                 <div className="file-info">
                   <img src={documentIcon} alt="File Icon" className="file-icon" />

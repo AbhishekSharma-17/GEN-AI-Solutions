@@ -47,7 +47,7 @@ app = FastAPI()
 # Configure CORS for React frontend.
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
+    allow_origins=["*"],  # Allow all origins for testing
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -1108,3 +1108,4 @@ async def chat(request: ChatRequest):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend:app", host="localhost", port=8000, reload=True)
+# uvicorn backend:app --host localhost --port 8000 --reload

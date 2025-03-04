@@ -1,23 +1,16 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import ReactDOM from 'react-dom/client'; // Note the /client import
+import { Provider } from 'react-redux';
+import { store } from './store';
 import App from './App';
-import ListDriveFiles from './components/ListDriveFiles/ListDriveFiles';
-import SyncDriveFiles from './components/SyncDriveFiles/SyncDriveFiles';
-import EmbedDocuments from './components/EmbedDocuments/EmbedDocuments';
-import ChatInterface from './components/ChatInterface/ChatInterface';
+import './index.css';
 
+// Create a root
 const root = ReactDOM.createRoot(document.getElementById('root'));
+
+// Render the app
 root.render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<App />} />
-        <Route path="/drive-files" element={<ListDriveFiles />} />
-        <Route path="/sync-files" element={<SyncDriveFiles />} />
-        <Route path="/embed-documents" element={<EmbedDocuments />} />
-        <Route path="/chat" element={<ChatInterface />} />
-      </Routes>
-    </BrowserRouter>
-  </React.StrictMode>
+  <Provider store={store}>
+    <App />
+  </Provider>
 );
