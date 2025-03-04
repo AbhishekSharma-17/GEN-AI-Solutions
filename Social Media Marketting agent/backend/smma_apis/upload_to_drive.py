@@ -5,7 +5,7 @@ import os
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 
-SERVICE_ACCOUNT_FILE = 'C:/Users/ASUS/Desktop/GEN-AI-Solutions/Social Media Marketting agent/backend/smma_apis/upload_to_drive_creds.json'
+SERVICE_ACCOUNT_FILE = 'upload_your_(upload_to_drive_creds.json)_path_here'  # upload your upload_to_drive_creds.json path here
 
 PARENT_FOLDER_ID = "1vKJCWzipjtbkHY4Zjc-4EobN5wBBtwgY"
 
