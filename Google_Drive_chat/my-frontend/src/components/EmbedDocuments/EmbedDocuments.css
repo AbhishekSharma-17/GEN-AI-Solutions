@@ -5,13 +5,6 @@
   padding: 16px;
 }
 
-.header {
-  display: flex;
-  align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #e0e0e0;
-}
-
 .logo {
   width: 24px;
   height: 24px;
@@ -108,14 +101,19 @@
   color: #757575;
   padding: 16px;
 }
-
 .status-message {
   text-align: center;
   color: #202124;
   margin-bottom: 16px;
   margin-top: 16px !important;
 }
-
+.embeddedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F0F5F8;
+  border-radius: 5px;
+}
 .embed-table {
   margin-top: 16px;
   max-height: 400px;

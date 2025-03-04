@@ -91,13 +91,15 @@
   align-items: center;
   padding: 8px 0;
   cursor: pointer;
+  background: #F0F5F8;
+  border-radius: 5px;
 }
 
 .section-subtitle {
   margin-bottom: 8px;
   color: #202124;
   font-weight: 500;
-  background: #fff;
+  background: #F0F5F8;
   padding: 4px 8px;
 }
 
@@ -145,7 +147,7 @@
 }
 
 .continue-button {
-  margin-top: 24px;
+  margin-top: 0px;
   background-color: #000;
   color: #fff;
   padding: 8px 24px;

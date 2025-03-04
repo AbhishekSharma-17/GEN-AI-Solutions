@@ -5,7 +5,6 @@ import SendIcon from '@mui/icons-material/Send';
 import PersonIcon from '@mui/icons-material/Person';
 import './ChatInterface.css'; 
 import aiIcon from '../../assets/ai.png'
-import Header from '../Header/Header';
 
 const ChatInterface = () => {
   const [chatQuery, setChatQuery] = useState('');
@@ -84,7 +83,6 @@ const ChatInterface = () => {
 
   return (
     <div className="chat-interface-container">
-      <Header width='100%' />
       {chatResponses.length === 0 && <Box className="welcome-message">
         <Typography variant="h6" className="welcome-text" gutterBottom>
           Can I help you with anything?

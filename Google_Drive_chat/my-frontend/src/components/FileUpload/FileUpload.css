@@ -1,72 +1,84 @@
-.upload-container {
-  width: 100%;
-  max-width: 1000px;
+.file-upload {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border: 2px dashed rgb(182, 179, 179);
+  height: auto;
+  width: 50%;
   margin: 0 auto;
+  cursor: pointer;
+  padding: 30px 10px;
+  border-radius: 5px;
+  gap: 20px;
+  background-color: rgb(248, 248, 248);
+  box-shadow: 0px 0px 8px rgb(182, 181, 181);
+  box-sizing: border-box;
 }
 
-.header {
+.file-upload-div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.upload-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+}
+
+.file-upload-icon-style {
+  border-radius: 50%;
+  padding: 10px;
+  border: 1px solid rgb(192, 190, 190);
+  background-color: rgb(238, 237, 237);
+  color: #b1b0b0;
+  font-size: 3rem;
+}
+
+.file-upload-icon-style:hover {
+  color: rgb(95, 93, 93);
+  transition: 0.6s ease-in;
+}
+
+.file-icon-upload-text {
+  color: rgb(184, 184, 184);
+  font-weight: 500;
+  word-spacing: 1px;
+  margin: 0;
+  margin-top: 4px;
+}
+
+.file-name {
+  border: 1px solid rgb(188, 188, 188);
+  padding: 10px;
+  border-radius: 5px;
   display: flex;
   align-items: center;
-  padding: 16px;
-  border-bottom: 1px solid #e0e0e0;
+  gap: 10px;
 }
 
-.logo {
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
-}
-
-.header-title {
-  font-size: 1.25rem;
-  font-weight: 500;
-  color: #202124;
-}
-
-.drop-zone {
-  border: 2px dashed #ccc;
-  border-radius: 8px;
-  padding: 32px;
-  text-align: center;
+/* Button styles to match UploadSection */
+.btn.btn-dark {
+  padding: 10px 20px;
+  background-color: #212529;
+  color: white;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
-  background-color: #fafafa;
 }
 
-.drop-zone:hover {
-  border-color: #999;
-  background-color: #f5f5f5;
+.btn.btn-dark:hover {
+  background-color: #343a40;
 }
 
-.upload-icon {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 16px;
-}
-
-.file-icon {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 16px;
-}
-
-.browse-text {
-  color: #1976d2;
-  text-decoration: underline;
-  cursor: pointer;
-  display: inline;
-}
-
-.browse-text:hover {
-  color: #1565c0;
-}
-
+/* Status styles from original FileUpload.css */
 .upload-status {
   margin-top: 8px;
-  color: #757575;
-}
-
-.upload-status.uploading {
-  color: #757575;
 }
 
 .upload-status.success {
@@ -76,28 +88,62 @@
 .upload-status.error {
   color: red;
 }
+.greet {
+    margin: 40px 0px;
+    font-size: 55px;
+    color: #383838;
+    font-weight: 500;
+    padding: 20px;
+    text-align: center;
+    /* border: 1px solid red; */
+  }
+  .greetPara2 {
+    font-weight: 500;
+    font-family: Inter, sans-serif !important;
+    /* border: 1px solid red; */
+    margin: 0;
+  }
 
-.connect-button {
-  margin-top: 16px;
-  background: #000 !important;
-  color: #fff;
-  padding: 8px 16px;
-  border-radius: 4px;
-  border: 2px solid #000 !important;
-  text-transform: none;
-  width: 8vw;
-  height: 2.5vw;
-  margin-top: 5px;
+/* Media queries from UploadSection.css */
+@media (max-width: 1000px) {
+  .file-upload {
+    height: auto;
+    padding: 30px 10px;
+  }
+
+  .ppt_file_icon {
+    width: 30px;
+  }
 }
 
-.connect-button:hover {
-  background-color: #fff !important;
-  color: #000;
-  border: 2px solid #000;
+@media (max-width: 768px) {
+  .file-upload {
+    width: 100%;
+  }
+
+  .ppt_file_icon {
+    width: 30px;
+  }
 }
 
-.connect-instruction {
-  margin-top: 8px;
-  color: #757575;
-  font-size: 0.875rem;
+@media (max-width: 368px) {
+  .file-upload {
+    height: auto;
+    padding: 30px 10px;
+  }
+
+  .ppt_file_icon {
+    width: 30px;
+  }
+}
+
+@media (max-width: 320px) {
+  .file-upload {
+    height: auto;
+    padding: 30px 10px;
+  }
+
+  .ppt_file_icon {
+    width: 30px;
+  }
 }

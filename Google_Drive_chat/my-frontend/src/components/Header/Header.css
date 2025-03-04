@@ -1,11 +1,18 @@
 .header {
+  padding: 10px 8px;
   display: flex;
+  flex-direction: row;
   justify-content: space-between;
-  align-items: center;
+  box-shadow: 0px 0px 5px rgb(202, 201, 201);
+  background-color: white;
+  background-attachment: fixed;
+  width: auto;
+  height: 2vw;
 }
 
 .button-container {
   display: flex;
+  gap: 10px;
 }
 
 .header-button {
@@ -23,4 +30,17 @@
 .appLogo{ 
   display: flex;
   align-items: center;
+}
+.appLogo img{
+  width: 8%
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 10px 0;
+  }
+
+  .appLogo img{
+    width: 25%;
+  }
 }

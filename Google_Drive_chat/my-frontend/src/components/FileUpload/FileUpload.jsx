@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
-import { Typography, Button } from '@mui/material';
+import React, { useState, useRef } from 'react';
+import { MdOutlineFileUpload } from "react-icons/md";
 import './FileUpload.css';
-import fileUploadIcon from '../../assets/fileUpload.png';
+import { useDispatch } from 'react-redux';
 import jsonFileIcon from '../../assets/jsonFileIcon.png';
-import Header from '../Header/Header';
+import Loader from '../commonComponents/Loader/Loader';
+import { setShowDriveFiles } from '../../store/driveSlice';
 
 const FileUpload = () => {
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState('');
+  const fileInputRef = useRef(null);
+  const fileUploadRef = useRef(null);
+  const dispatch = useDispatch();
+  
+  const handleBrowse = (event) => {
+    const selectedFile = event.target.files[0];
+    if (selectedFile && selectedFile.type === 'application/json') {
+      setFile(selectedFile);
+      handleUpload(selectedFile);
+    } else {
+      alert('Please upload a JSON file.');
+    }
+  };
 
   const handleDrop = (event) => {
     event.preventDefault();
+    event.stopPropagation();
     const droppedFile = event.dataTransfer.files[0];
     if (droppedFile && droppedFile.type === 'application/json') {
       setFile(droppedFile);
@@ -22,16 +37,14 @@ const FileUpload = () => {
 
   const handleDragOver = (event) => {
     event.preventDefault();
+    event.stopPropagation();
+    fileUploadRef.current.classList.add('dragover');
   };
 
-  const handleBrowse = (event) => {
-    const selectedFile = event.target.files[0];
-    if (selectedFile && selectedFile.type === 'application/json') {
-      setFile(selectedFile);
-      handleUpload(selectedFile);
-    } else {
-      alert('Please upload a JSON file.');
-    }
+  const handleDragLeave = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    fileUploadRef.current.classList.remove('dragover');
   };
 
   const handleUpload = async (selectedFile) => {
@@ -65,71 +78,79 @@ const FileUpload = () => {
   const handleConnect = () => {
     window.location.href = "http://localhost:8000/connect";
     localStorage.setItem('fileUpload', JSON.stringify(true));
+    dispatch(setShowDriveFiles(true));
   };
 
   return (
-    <div className="upload-container">
-      <Header style={{ width: '100%'}} />
+    <div>
+      <div className="greet" style={{ fontFamily: "Inter" }}>
+        <p className="greetPara2">
+          <span style={{ fontWeight: "bold" }}>Prototype</span>: Chat with Drive
+        </p>
+      </div>
       <div 
-        className="drop-zone"
+        className="file-upload"
+        ref={fileUploadRef} // Add ref to the file-upload div
         onDrop={handleDrop}
         onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
       >
-        {file ? (
-          <>
-            <img 
-              src={jsonFileIcon} 
-              alt="JSON File Icon" 
-              className="file-icon"
-            />
-            <Typography variant="h6" gutterBottom>
-              {file.name}
-            </Typography>
-            {uploadStatus && (
-              <Typography variant="body2" className={`upload-status ${uploadStatus.includes('Uploading') ? 'uploading' : uploadStatus.includes('Error') ? 'error' : 'success'}`}>
-                {uploadStatus}
-              </Typography>
-            )}
-            {uploadStatus.includes('successfully uploaded') && (
-              <Button 
-                variant="contained" 
-                className="connect-button"
-                onClick={handleConnect}
-              >
-                Connect
-              </Button>
-            )}
-            {uploadStatus.includes('successfully uploaded') && (
-              <Typography variant="body2" className="connect-instruction" mt={2}>
-                Click on "Connect" button to connect with GDrive
-              </Typography>
-            )}
-          </>
-        ) : (
-          <>
-            <img 
-              src={fileUploadIcon}
-              alt="Upload Icon"
-              className="upload-icon"
-            />
-            <Typography variant="h6" gutterBottom>
-              Drop your Client Secret JSON file,
-            </Typography>
-            <Typography
-              variant="body2"
-              className="browse-text"
-              component="label"
-            >
-              Or Browse
-              <input
-                type="file"
-                hidden
-                accept=".json"
-                onChange={handleBrowse}
+        <input
+          type="file"
+          onChange={handleBrowse}
+          accept=".json"
+          ref={fileInputRef}
+          hidden
+        />
+        <div className="upload-section">
+          {file && (
+            <div className="file-name">
+              <img
+                src={jsonFileIcon}
+                alt="JSON File Icon"
+                className="ppt_file_icon"
+                width="30px"
               />
-            </Typography>
-          </>
-        )}
+              <p className="fw-bold">{file.name}</p>
+            </div>
+          )}
+          {uploadStatus === 'Uploading...' ? (
+            <Loader />
+          ) : (
+            <>
+              {!file ? (
+                <div
+                  onClick={() => fileInputRef.current.click()}
+                  className="file-upload-div"
+                >
+                  <MdOutlineFileUpload
+                    className="file-upload-icon-style"
+                  />
+                  <p className="file-icon-upload-text">
+                    Drag and drop your JSON file here - or click to select.
+                  </p>
+                </div>
+              ) : (
+                <>
+                  {uploadStatus && (
+                    <p className={`upload-status ${uploadStatus.includes('Error') ? 'error' : 'success'}`}>
+                      {uploadStatus}
+                    </p>
+                  )}
+                  {uploadStatus.includes('successfully uploaded') && (
+                    <button
+                      onClick={handleConnect}
+                      className="btn btn-dark"
+                      style={{ marginTop: '10px' }}
+                    >
+                      Connect
+                    </button>
+                  )}
+                </>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );

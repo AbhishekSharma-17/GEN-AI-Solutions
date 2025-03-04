@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
 import { Typography } from '@mui/material';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import './Header.css';
-import googleChatLogo from '../../assets/googleChatLogo.png';
+import genAILogo from '../../assets/logo.png'
 import Alert from '@mui/material/Alert';
+import { setDriveFiles, setShowDriveFiles } from '../../store/driveSlice';
 
 const Header = ({ width }) => {
   const navigate = useNavigate(); 
   const location = useLocation();
   const [alert, setAlert] = useState({ open: false, severity: 'info', message: '' });
-
+  const dispatch = useDispatch();
   const handleRedirect = (path) => {
     navigate(path);
   };
@@ -27,8 +29,9 @@ const Header = ({ width }) => {
         credentials: 'include',
       });
       if (response.ok) {
+        dispatch(setDriveFiles([]));
+        dispatch(setShowDriveFiles(false));
         localStorage.removeItem('fileUpload');
-        navigate('/');
         setAlert({ open: true, severity: 'success', message: 'Disconnected' });
       } else {
         throw new Error(`HTTP error! Status: ${response.status}`);
@@ -45,8 +48,9 @@ const Header = ({ width }) => {
   return (
     <div className="header" style={{ width }}>
       <div className='appLogo'>
-        <img src={googleChatLogo} alt="Google Chat" className="logo" />
-        <Typography variant="h6" className="header-title">Chat</Typography>
+        <a href="https://www.genaiprotos.com/">
+          <img src={genAILogo} alt="genAILogo" />
+        </a>
       </div>
       <div className="button-container">
         {localStorage.getItem('fileUpload') && (
