@@ -1,8 +1,10 @@
 .embed-documents-container {
-  width: 100%;
-  max-width: 1000px;
+  width: 70%;
   margin: 0 auto;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .logo {
@@ -22,23 +24,26 @@
   color: #202124;
 }
 
-.refresh-button, .embed-button {
+.refresh-button,
+.embed-button {
   margin-top: 16px;
-  background-color: #000 !important;
+  background-color: #010187 !important;
   color: #fff;
   padding: 8px 24px;
   border-radius: 4px;
   text-transform: none;
-    border: 1px solid #868686 !important;
+  border: 1px solid #868686 !important;
 }
 
-.refresh-button:hover, .embed-button:hover {
+.refresh-button:hover,
+.embed-button:hover {
   background-color: #fff !important;
   color: #101010;
   border: 1px solid #868686 !important;
 }
 
-.refresh-button:disabled, .embed-button:disabled {
+.refresh-button:disabled,
+.embed-button:disabled {
   background-color: #ccc;
   color: #666;
 }
@@ -72,6 +77,7 @@
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   padding: 16px;
+  width: 100%;
 }
 
 .document-row {
@@ -101,12 +107,14 @@
   color: #757575;
   padding: 16px;
 }
+
 .status-message {
   text-align: center;
   color: #202124;
   margin-bottom: 16px;
   margin-top: 16px !important;
 }
+
 .embeddedHeader {
   display: flex;
   align-items: center;
@@ -114,16 +122,80 @@
   background: #F0F5F8;
   border-radius: 5px;
 }
+
 .embed-table {
   margin-top: 16px;
   max-height: 400px;
   overflow-y: auto;
 }
 
+/* Custom Scrollbar Styling for embed-table */
+.embed-table::-webkit-scrollbar {
+  width: 8px; /* Slim scrollbar */
+}
+
+.embed-table::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray track */
+  border-radius: 4px; /* Rounded edges */
+}
+
+.embed-table::-webkit-scrollbar-thumb {
+  background: #888; /* Gray thumb */
+  border-radius: 4px; /* Rounded thumb */
+}
+
+.embed-table::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker gray on hover */
+}
+
+/* Firefox scrollbar styling for embed-table */
+.embed-table {
+  scrollbar-width: thin; /* Slim scrollbar */
+  scrollbar-color: #888 #f1f1f1; /* Thumb and track colors */
+}
+
 .file-table {
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   margin-top: 8px;
+  width: 100%;
+  overflow: hidden; /* Prevents content from spilling out */
+}
+
+.table-header {
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table-scroll-container {
+  overflow-y: auto; /* Enable vertical scrolling */
+  width: 100%;
+}
+
+/* Custom Scrollbar Styling for table-scroll-container */
+.table-scroll-container::-webkit-scrollbar {
+  width: 8px; /* Slim scrollbar */
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray track */
+  border-radius: 4px; /* Rounded edges */
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: #888; /* Gray thumb */
+  border-radius: 4px; /* Rounded thumb */
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker gray on hover */
+}
+
+/* Firefox scrollbar styling for table-scroll-container */
+.table-scroll-container {
+  scrollbar-width: thin; /* Slim scrollbar */
+  scrollbar-color: #888 #f1f1f1; /* Thumb and track colors */
 }
 
 .file-row {
@@ -141,4 +213,59 @@
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.continue-button {
+  margin-top: 24px;
+  background-color: #010187;
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 4px;
+  text-transform: none;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.continue-button:hover {
+  background-color: #333;
+}
+
+@media (max-width: 768px) {
+  .embed-documents-container {
+    width: 100%;
+    padding: 8px;
+  }
+
+  .embed-table {
+    max-height: 300px;
+  }
+
+  .table-scroll-container {
+    max-height: 450px;
+  }
+
+  .document-icon {
+    width: 20px;
+    height: auto;
+  }
+
+  .file-row {
+    padding: 10px;
+  }
+
+  .section-title,
+  .status-message {
+    font-size: 0.9rem;
+  }
+  .file-title-container{
+    height: 20vw;
+    font-size: 0.8rem !important;
+  }
+  .documents-section{
+padding: 0;
+  }
+  .continue-button{
+    margin: 10px auto !important;
+  }
 }

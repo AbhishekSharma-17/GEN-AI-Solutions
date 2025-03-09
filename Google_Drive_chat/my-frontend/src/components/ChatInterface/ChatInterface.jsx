@@ -1,15 +1,18 @@
 /* eslint-disable no-loop-func */
 import React, { useState, useRef, useEffect } from 'react';
-import { Typography, TextField, Box, IconButton, CircularProgress } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import PersonIcon from '@mui/icons-material/Person';
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
+import { Typography, Box } from '@mui/material';
+import { FaUserCircle } from "react-icons/fa";
 import './ChatInterface.css'; 
-import aiIcon from '../../assets/ai.png'
+import icon from '../../assets/icon.png';
+import send_icon from '../../assets/send_icon.png'
+import ResponseLoader from '../commonComponents/Response Loader/ResponseLoader';
 
 const ChatInterface = () => {
   const [chatQuery, setChatQuery] = useState('');
   const [chatResponses, setChatResponses] = useState([]);
-  const [isChatLoading, setIsChatLoading] = useState(false);
+  const [sources, setSources] = useState([]);
   const chatResponseRef = useRef(null);
 
   const handleQuestionChange = (event) => {
@@ -19,14 +22,10 @@ const ChatInterface = () => {
   const handleChat = async (e) => {
     e.preventDefault();
     if (!chatQuery.trim()) return;
-
     setChatResponses(prev => [...prev, { type: 'user', text: chatQuery }]);
     setChatQuery('');
 
-    setIsChatLoading(true);
-    
     try {
-
       const response = await fetch("http://localhost:8000/chat-te", {
         method: "POST",
         headers: {
@@ -46,32 +45,78 @@ const ChatInterface = () => {
       const reader = response.body.getReader();
       const decoder = new TextDecoder();
       let responseText = '';
-      
-      // Read the stream
+
+      setChatResponses(prev => [...prev, { type: 'bot', text: '', isLoading: true }]);
+
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
         responseText += chunk;
+
+        const sourcesDividerRegex = /#{2,6}\s*Sources\s*/i; // Matches ## Sources, ### Sources, etc.
+        const sourcesMatch = responseText.match(sourcesDividerRegex);
+        let mainText = responseText.trim();
+        let sourcesText = '';
+
+        if (sourcesMatch) {
+          const sourcesIndex = sourcesMatch.index;
+          mainText = responseText.substring(0, sourcesIndex).trim();
+          sourcesText = responseText.substring(sourcesIndex + sourcesMatch[0].length).trim();
+        }
+
+        // Remove reference numbers (e.g., [1], [2]) from main text
+        mainText = mainText.replace(/\[\d+\]/g, '').trim();
+
+        // Update chatResponses with main text
         setChatResponses(prev => {
           const updatedResponses = [...prev];
           const lastResponse = updatedResponses[updatedResponses.length - 1];
           if (lastResponse && lastResponse.type === 'bot') {
-            lastResponse.text = responseText;
-          } else {
-            updatedResponses.push({ type: 'bot', text: responseText });
+            lastResponse.text = mainText;
+            lastResponse.isLoading = false;
           }
           return updatedResponses;
         });
+
+        // Process and update sources
+        if (sourcesText) {
+          const sourceLines = sourcesText
+            .split('\n')
+            .filter(line => line.trim() !== '' && line.match(/^\[\d+\]/)) // Ensure it matches source format
+            .map(line => {
+              // Extract name and URL from "[number] [name](URL) - [Google Drive]"
+              const match = line.match(/^\[\d+\]\s*\[(.*?)\]\((.*?)\)\s*-\s*\[Google Drive\]/);
+              if (match) {
+                const [, name, url] = match;
+                return { name, url };
+              }
+              return null; // Skip malformed lines
+            })
+            .filter(source => source !== null); // Remove null entries
+          setSources(prev => {
+            const newSources = sourceLines.filter(
+              newSource => !prev.some(prevSource => prevSource.url === newSource.url)
+            );
+            return [...prev, ...newSources];
+          });
+        }
+
         if (chatResponseRef.current) {
           chatResponseRef.current.scrollTop = chatResponseRef.current.scrollHeight;
         }
       }
     } catch (err) {
       console.error("Error in chat request:", err);
-      setChatResponses(prev => [...prev, { type: 'bot', text: "Error: Could not get a response. Please try again." }]);
-    } finally {
-      setIsChatLoading(false);
+      setChatResponses(prev => {
+        const updatedResponses = [...prev];
+        const lastResponse = updatedResponses[updatedResponses.length - 1];
+        if (lastResponse && lastResponse.type === 'bot') {
+          lastResponse.text = "Error: Could not get a response. Please try again.";
+          lastResponse.isLoading = false;
+        }
+        return updatedResponses;
+      });
     }
   };
 
@@ -83,52 +128,132 @@ const ChatInterface = () => {
 
   return (
     <div className="chat-interface-container">
-      {chatResponses.length === 0 && <Box className="welcome-message">
-        <Typography variant="h6" className="welcome-text" gutterBottom>
-          Can I help you with anything?
-        </Typography>
-        <Typography variant="body1" className="welcome-subtext">
-          Ready to assist you with anything you need from GDrive Docs.
-        </Typography>
-      </Box>}
-      {chatResponses.length > 0 && (<Box className="chat-content">
-        <Box ref={chatResponseRef} className="chat-messages">
-          {chatResponses.map((message, index) => (
-            <Box key={index} className={`message-container ${message.type === 'user' ? 'user' : 'bot'}`}>
-              {message.type === 'user' ? (
-                <PersonIcon className="message-icon" />
-              ) : (
-                <img src={aiIcon} alt="AI" className="message-icon" />
-              )}
-              <Typography className={`message-text ${message.type === 'user' ? 'user-message' : 'bot-response'}`}>
-                {message.text}
-              </Typography>
-            </Box>
-          ))}
-          {isChatLoading && (
-            <Box className="loading-indicator">
-              <CircularProgress size={24} style={{ color: '#101010' }} />
-            </Box>
-          )}
-        </Box>
-      </Box>)}
-      <Box component="form" onSubmit={handleChat} className="input-container">
-        <TextField
-          fullWidth
-          variant="outlined"
-          placeholder="Ask questions about your documents"
+      <Box className="chat-main">
+        {chatResponses.length === 0 && (
+          <Box className="welcome-message">
+            <Typography variant="h6" className="welcome-text" gutterBottom>
+              Can I help you with anything?
+            </Typography>
+            <Typography variant="body1" className="welcome-subtext">
+              Ready to assist you with anything you need from GDrive Docs.
+            </Typography>
+          </Box>
+        )}
+        {chatResponses.length > 0 && (
+          <Box className="chat-content">
+            <div className="result" ref={chatResponseRef} style={{ overflowY: "auto" }}>
+              {chatResponses.map((chat, index) => (
+                <div key={index} className={`chat-message ${chat.type}`}>
+                  {chat.type === "user" ? (
+                    <div className="result-title">
+                      <FaUserCircle
+                        style={{ fontSize: "30px" }}
+                        className="result-title-user-icon"
+                      />
+                      <p>{chat.text}</p>
+                    </div>
+                  ) : (
+                    <div className="result-data">
+                      <img src={icon} alt="Bot Icon" />
+                      {chat.isLoading ? (
+                        <ResponseLoader />
+                      ) : (
+                        <div className="markdown-content">
+                          <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                              p: ({ node, ...props }) => (
+                                <p style={{ marginBottom: "1em" }} {...props} />
+                              ),
+                              li: ({ node, ...props }) => (
+                                <li style={{ marginBottom: "0.5em" }} {...props} />
+                              ),
+                              pre: ({ node, ...props }) => (
+                                <pre
+                                  style={{
+                                    backgroundColor: "#f0f0f0",
+                                    padding: "1em",
+                                    borderRadius: "4px",
+                                    overflowX: "auto",
+                                  }}
+                                  {...props}
+                                />
+                              ),
+                              code: ({ node, inline, ...props }) =>
+                                inline ? (
+                                  <code
+                                    style={{
+                                      backgroundColor: "#e0e0e0",
+                                      padding: "0.2em 0.4em",
+                                      borderRadius: "3px",
+                                    }}
+                                    {...props}
+                                  />
+                                ) : (
+                                  <code
+                                    style={{
+                                      display: "block",
+                                      whiteSpace: "pre-wrap",
+                                    }}
+                                    {...props}
+                                  />
+                                ),
+                            }}
+                          >
+                            {chat.text}
+                          </ReactMarkdown>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </Box>
+        )}
+         <div className="main-bottom chat-container">
+      <form className="search-box" onSubmit={handleChat}>
+        <input
+          type="text"
+          placeholder="Ask GenAI Protos anything..."
+                   onChange={handleQuestionChange}
           value={chatQuery}
-          onChange={handleQuestionChange}
-          className="question-input"
-          disabled={isChatLoading}
-          InputProps={{
-            endAdornment: (
-              <IconButton type="submit" aria-label="submit question" edge="end" disabled={isChatLoading}>
-                <SendIcon />
-              </IconButton>
-            ),
-          }}
         />
+        <div className="dropdown-button-div">
+            <button
+              type="submit"
+              style={{ border: "none", background: "none" }}
+            >
+              <img src={send_icon} alt="Send" />
+            </button>
+        </div>
+      </form>
+      <p className="bottom-info">
+        GenAI Protos may display inaccurate information, such as the number of
+        bytes and also including about the people.
+      </p>
+    </div>
+      </Box>
+      <Box className="sidebar">
+        <Typography variant="h6" className="sidebar-title">Sources</Typography>
+        {sources.length > 0 ? (
+          <ul className="sources-list">
+            {sources.map((source, index) => (
+              <li key={index} className="source-item">
+                <a
+                  href={source.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="source-link"
+                >
+                  {source.name}
+                </a>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <Typography variant="body2" className="no-sources">No sources available</Typography>
+        )}
       </Box>
     </div>
   );
