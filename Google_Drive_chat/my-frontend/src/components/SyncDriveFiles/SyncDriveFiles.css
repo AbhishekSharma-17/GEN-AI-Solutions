@@ -1,8 +1,10 @@
 .sync-files-container {
-  width: 100%;
-  max-width: 1000px;
+  width: 70%;
   margin: 0 auto;
   padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .upper-section {
@@ -10,6 +12,7 @@
   align-items: center;
   gap: 16px;
   margin-bottom: 16px;
+  width: 100%;
 }
 
 .section-title {
@@ -19,7 +22,7 @@
 
 .sync-button {
   margin-top: 16px;
-  background-color: #000 !important;
+  background-color: #010187 !important;
   color: #fff;
   padding: 8px 24px;
   border-radius: 4px;
@@ -79,6 +82,7 @@
 
 .file-sections {
   margin-top: 24px;
+  width: 100%;
 }
 
 .file-section {
@@ -107,6 +111,8 @@
   border: 1px solid #e0e0e0;
   border-radius: 4px;
   margin-top: 8px;
+  width: 100%;
+  overflow: hidden;
 }
 
 .table-header {
@@ -117,6 +123,36 @@
 
 .table-header > * {
   color: #757575;
+}
+
+.table-scroll-container {
+  overflow-y: auto;
+  width: 100%;
+}
+
+/* Custom Scrollbar Styling */
+.table-scroll-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox scrollbar styling */
+.table-scroll-container {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
 }
 
 .file-row {
@@ -148,13 +184,49 @@
 
 .continue-button {
   margin-top: 0px;
-  background-color: #000;
+  background-color: #010187;
   color: #fff;
   padding: 8px 24px;
   border-radius: 4px;
   text-transform: none;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .continue-button:hover {
   background-color: #333;
+}
+
+@media (max-width: 768px) {
+  .sync-files-container {
+    padding: 8px;
+    width: 100%;
+  }
+.counters{
+  margin: 0;
+}
+  .table-scroll-container {
+    max-height: 250px;
+  }
+
+  .file-icon {
+    width: 20px;
+    height: auto;
+  }
+
+  .file-row {
+    padding: 4px;
+  }
+
+  .section-title,
+  .section-subtitle,
+  .no-files {
+    font-size: 0.9rem;
+  }
+}
+@media (max-width: 1000px) {
+  .sync-files-container {
+    width: 100%;
+  }
 }

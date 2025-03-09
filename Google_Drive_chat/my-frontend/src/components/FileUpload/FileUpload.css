@@ -51,6 +51,7 @@
   word-spacing: 1px;
   margin: 0;
   margin-top: 4px;
+  text-align: center;
 }
 
 .file-name {
@@ -95,12 +96,10 @@
     font-weight: 500;
     padding: 20px;
     text-align: center;
-    /* border: 1px solid red; */
   }
   .greetPara2 {
     font-weight: 500;
     font-family: Inter, sans-serif !important;
-    /* border: 1px solid red; */
     margin: 0;
   }
 
@@ -118,11 +117,13 @@
 
 @media (max-width: 768px) {
   .file-upload {
-    width: 100%;
+    width: 90%;
   }
-
   .ppt_file_icon {
     width: 30px;
+  }
+  .greet{
+    font-size: 30px;
   }
 }
 

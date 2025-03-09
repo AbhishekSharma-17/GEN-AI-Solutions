@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Typography, Button, CircularProgress, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Alert } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -12,8 +12,8 @@ const EmbedDocuments = () => {
   const [error, setError] = useState(null);
   const [isSkippedTableCollapsed, setIsSkippedTableCollapsed] = useState(false);
   const [isEmbeddedTableCollapsed, setIsEmbeddedTableCollapsed] = useState(false);
-  const navigate = useNavigate(); 
-    const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const embedDocumentLoader = useSelector((state) => state.embedDocument.embedDocumentLoader);
   const embeddingData = useSelector((state) => state.embedDocument.embedDocument);
   const formatDate = (dateString) => {
@@ -39,7 +39,7 @@ const EmbedDocuments = () => {
 
   const handleEmbed = async () => {
     dispatch(setEmbedDocumentLoader(true));
-    setError(null); // Clear any previous errors
+    setError(null);
 
     try {
       const response = await fetch("http://localhost:8000/embed", {
@@ -63,7 +63,7 @@ const EmbedDocuments = () => {
 
   const handleRefresh = async () => {
     dispatch(setEmbedDocumentLoader(true));
-    setError(null); // Clear any previous errors
+    setError(null);
 
     try {
       await fetchEmbeddingStatus();
@@ -108,26 +108,26 @@ const EmbedDocuments = () => {
   const toggleEmbeddedTableCollapse = () => {
     setIsEmbeddedTableCollapsed(!isEmbeddedTableCollapsed);
   };
-console.log('embeddingData', embeddingData);
+  console.log('embeddingData', embeddingData);
 
   return (
     <div className="embed-documents-container">
-            {error && (
-        <Alert 
-          severity="error" 
-          onClose={() => setError(null)} 
+      {error && (
+        <Alert
+          severity="error"
+          onClose={() => setError(null)}
           sx={{ marginTop: 2, marginBottom: 2 }}
         >
           {error}
         </Alert>
       )}
-      <div className='upper-section'>  
+      <div className="upper-section">
         <Typography variant="h5" className="section-title" gutterBottom>
           Embed Documents
         </Typography>
         {embeddingData && (
-          <Button 
-            variant="contained" 
+          <Button
+            variant="contained"
             className="refresh-button"
             onClick={handleRefresh}
             disabled={embedDocumentLoader}
@@ -135,8 +135,8 @@ console.log('embeddingData', embeddingData);
             {embedDocumentLoader ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Refresh'}
           </Button>
         )}
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           className="embed-button"
           onClick={handleEmbed}
           disabled={embedDocumentLoader}
@@ -147,12 +147,12 @@ console.log('embeddingData', embeddingData);
       </div>
       {!embeddingData && !embedDocumentLoader && !error && (
         <Typography variant="body1" className="no-data-message">
-          No Embedded Data Found. Please click on "<span className='bold-text'>Embed</span>" button.
+          No Embedded Data Found. Please click on "<span className="bold-text">Embed</span>" button.
         </Typography>
       )}
       {embedDocumentLoader && (
         <Box className="loader">
-          <CircularProgress style={{ color: '#101010' }}/>
+          <CircularProgress style={{ color: '#101010' }} />
         </Box>
       )}
       {embeddingData && !embedDocumentLoader && !error && (
@@ -169,14 +169,19 @@ console.log('embeddingData', embeddingData);
               </div>
               {!isSkippedTableCollapsed && (
                 <div className="file-table">
-                  {embeddingData.embedData.skipped_files.map((file, index) => (
-                    <div key={index} className="file-row">
-                      <div className="file-info">
-                        <img src={documentIcon} alt="Document Icon" className="document-icon" />
-                        <Typography variant="body1">{file}</Typography>
+                  <div className="table-header">
+                    <Typography variant="subtitle2">File Name</Typography>
+                  </div>
+                  <div className="table-scroll-container">
+                    {embeddingData.embedData.skipped_files.map((file, index) => (
+                      <div key={index} className="file-row">
+                        <div className="file-info">
+                          <img src={documentIcon} alt="Document Icon" className="document-icon" />
+                          <Typography variant="body1">{file}</Typography>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               )}
             </>
@@ -188,7 +193,7 @@ console.log('embeddingData', embeddingData);
                   Found {embeddingData.total_embedded_files} embedded files with {embeddingData.total_chunks} total chunks
                 </Typography>
               </div>
-              <div className='embeddedHeader' onClick={toggleEmbeddedTableCollapse}>
+              <div className="embeddedHeader" onClick={toggleEmbeddedTableCollapse}>
                 <Typography variant="subtitle1" className="section-subtitle" gutterBottom>
                   Embedded Files Details
                 </Typography>
@@ -200,14 +205,23 @@ console.log('embeddingData', embeddingData);
                 <TableContainer component={Paper} className="embed-table">
                   <Table stickyHeader>
                     <TableHead>
-                      <TableRow className='section-subtitle'>
+                      <TableRow className="section-subtitle">
                         <TableCell>File Name</TableCell>
                         <TableCell>Last Embedded</TableCell>
                         <TableCell>Chunks</TableCell>
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {Object.entries(embeddingData.status).map(([fileName, details], index) => <TableRow key={index}><TableCell style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1rem' }}> <img src={documentIcon} alt="Document Icon" className="document-icon" />{fileName}</TableCell><TableCell>{formatDate(details.last_embedded)}</TableCell><TableCell>{details.chunks}</TableCell></TableRow>)}
+                      {Object.entries(embeddingData.status).map(([fileName, details], index) => (
+                        <TableRow key={index}>
+                          <TableCell style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1rem' }} className='file-title-container'>
+                            <img src={documentIcon} alt="Document Icon" className="document-icon" />
+                            {fileName}
+                          </TableCell>
+                          <TableCell>{formatDate(details.last_embedded)}</TableCell>
+                          <TableCell>{details.chunks}</TableCell>
+                        </TableRow>
+                      ))}
                     </TableBody>
                   </Table>
                 </TableContainer>
@@ -215,8 +229,8 @@ console.log('embeddingData', embeddingData);
             </>
           )}
           {(embeddingData.embedData?.skipped_files?.length > 0 || embeddingData.statusData) && (
-            <Button 
-              variant="contained" 
+            <Button
+              variant="contained"
               className="continue-button"
               onClick={handleContinue}
               sx={{ mt: 4, mx: 'auto', display: 'block' }}

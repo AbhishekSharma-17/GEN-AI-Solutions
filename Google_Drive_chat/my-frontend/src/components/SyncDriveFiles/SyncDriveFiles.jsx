@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Typography, Button, CircularProgress, Box, IconButton, Alert } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -13,9 +13,19 @@ const SyncDriveFiles = () => {
   const [error, setError] = useState(null);
   const [isExistingCollapsed, setIsExistingCollapsed] = useState(false);
   const [isUnsupportedCollapsed, setIsUnsupportedCollapsed] = useState(true);
+  const [isDownloadedCollapsed, setIsDownloadedCollapsed] = useState(false);
   const navigate = useNavigate();
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
   const syncFiles = useSelector((state) => state.sync.syncFiles);
+
+  // Dynamically set collapse states based on syncFiles
+  useEffect(() => {
+    if (syncFiles && Object.keys(syncFiles).length !== 0) {
+      setIsDownloadedCollapsed(syncFiles.downloaded_files?.length > 0);
+      const hasSkippedExisting = syncFiles.skipped_existing_files?.length > 0;
+      setIsUnsupportedCollapsed(hasSkippedExisting);
+    }
+  }, [syncFiles]);
 
   const handleSync = async () => {
     setLoading(true);
@@ -50,14 +60,19 @@ const SyncDriveFiles = () => {
   const toggleUnsupportedCollapse = () => {
     setIsUnsupportedCollapsed(!isUnsupportedCollapsed);
   };
+
+  const toggleDownloadedCollapse = () => {
+    setIsDownloadedCollapsed(!isDownloadedCollapsed);
+  };
+
   return (
     <div className="sync-files-container">
-      <div className='upper-section'>
+      <div className="upper-section">
         <Typography variant="h5" className="section-title" gutterBottom>
           Sync New Files
         </Typography>
-        <Button 
-          variant="contained" 
+        <Button
+          variant="contained"
           className="sync-button"
           onClick={handleSync}
           disabled={loading}
@@ -72,13 +87,13 @@ const SyncDriveFiles = () => {
       )}
       {loading && (
         <Box className="loader">
-          <CircularProgress style={{ color: '#101010' }}/>
+          <CircularProgress style={{ color: '#101010' }} />
         </Box>
       )}
       {error && (
-        <Alert 
-          severity="error" 
-          onClose={() => setError(null)} 
+        <Alert
+          severity="error"
+          onClose={() => setError(null)}
           sx={{ marginTop: 2, marginBottom: 2 }}
         >
           {error}
@@ -104,9 +119,52 @@ const SyncDriveFiles = () => {
             </Button>
           </div>
           <div className="file-sections">
+            {syncFiles.downloaded_files?.length > 0 && (
+              <div className="file-section">
+                <div
+                  className="status-header"
+                  onClick={toggleDownloadedCollapse}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                >
+                  <Typography variant="subtitle1" className="section-subtitle" gutterBottom>
+                    Downloaded Files
+                  </Typography>
+                  <IconButton size="small" aria-label="toggle downloaded files table">
+                    {isDownloadedCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+                  </IconButton>
+                </div>
+                {!isDownloadedCollapsed && (
+                  <div className="file-table">
+                    <div className="table-header">
+                      <Typography variant="subtitle2">File Name</Typography>
+                    </div>
+                    <div className="table-scroll-container">
+                      {syncFiles.downloaded_files?.length > 0 ? (
+                        syncFiles.downloaded_files.map((file, index) => (
+                          <div key={index} className="file-row">
+                            <div className="file-info">
+                              <img src={documentIcon} alt="File Icon" className="file-icon" />
+                              <Typography variant="body1">{file}</Typography>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <Typography variant="body2" className="no-files">
+                          No files downloaded.
+                        </Typography>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             {syncFiles.skipped_existing_files?.length > 0 && (
               <div className="file-section">
-                <div className="status-header" onClick={toggleExistingCollapse} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div
+                  className="status-header"
+                  onClick={toggleExistingCollapse}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                >
                   <Typography variant="subtitle1" className="section-subtitle" gutterBottom>
                     Skipped (Existing) Files
                   </Typography>
@@ -119,27 +177,33 @@ const SyncDriveFiles = () => {
                     <div className="table-header">
                       <Typography variant="subtitle2">File Name</Typography>
                     </div>
-                    {syncFiles.skipped_existing_files?.length > 0 ? (
-                      syncFiles.skipped_existing_files.map((file, index) => (
-                        <div key={index} className="file-row" style={{ padding: '5px' }}>
-                          <div className="file-info">
-                            <img src={documentIcon} alt="File Icon" className="file-icon" />
-                            <Typography variant="body1">{file}</Typography>
+                    <div className="table-scroll-container">
+                      {syncFiles.skipped_existing_files?.length > 0 ? (
+                        syncFiles.skipped_existing_files.map((file, index) => (
+                          <div key={index} className="file-row">
+                            <div className="file-info">
+                              <img src={documentIcon} alt="File Icon" className="file-icon" />
+                              <Typography variant="body1">{file}</Typography>
+                            </div>
                           </div>
-                        </div>
-                      ))
-                    ) : (
-                      <Typography variant="body2" className="no-files">
-                        No files skipped (existing).
-                      </Typography>
-                    )}
+                        ))
+                      ) : (
+                        <Typography variant="body2" className="no-files">
+                          No files skipped (existing).
+                        </Typography>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
             )}
             {syncFiles.skipped_unsupported_files?.length > 0 && (
-              <div className="file-section" style={{ marginBottom: '0'}}>
-                <div className="status-header" onClick={toggleUnsupportedCollapse} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div className="file-section" style={{ marginBottom: '0' }}>
+                <div
+                  className="status-header"
+                  onClick={toggleUnsupportedCollapse}
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+                >
                   <Typography variant="subtitle1" className="section-subtitle" gutterBottom>
                     Skipped (Unsupported) Files
                   </Typography>
@@ -152,30 +216,28 @@ const SyncDriveFiles = () => {
                     <div className="table-header">
                       <Typography variant="subtitle2">File Name</Typography>
                     </div>
-                    {syncFiles.skipped_unsupported_files?.length > 0 ? (
-                      syncFiles.skipped_unsupported_files.map((file, index) => (
-                        <div key={index} className="file-row" style={{ padding: '5px' }}>
-                          <div className="file-info">
-                            <img src={documentIcon} alt="File Icon" className="file-icon" />
-                            <Typography variant="body1">{file}</Typography>
+                    <div className="table-scroll-container">
+                      {syncFiles.skipped_unsupported_files?.length > 0 ? (
+                        syncFiles.skipped_unsupported_files.map((file, index) => (
+                          <div key={index} className="file-row">
+                            <div className="file-info">
+                              <img src={documentIcon} alt="File Icon" className="file-icon" />
+                              <Typography variant="body1">{file}</Typography>
+                            </div>
                           </div>
-                        </div>
-                      ))
-                    ) : (
-                      <Typography variant="body2" className="no-files">
-                        No files skipped (unsupported).
-                      </Typography>
-                    )}
+                        ))
+                      ) : (
+                        <Typography variant="body2" className="no-files">
+                          No files skipped (unsupported).
+                        </Typography>
+                      )}
+                    </div>
                   </div>
                 )}
               </div>
             )}
           </div>
-          <Button 
-            variant="contained" 
-            className="continue-button"
-            onClick={handleContinue}
-          >
+          <Button variant="contained" className="continue-button" onClick={handleContinue}>
             Continue
           </Button>
         </>
