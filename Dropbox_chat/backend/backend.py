@@ -17,6 +17,7 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain.chains.retrieval import create_retrieval_chain
 from langchain_pinecone import PineconeVectorStore
 from langchain_core.prompts import ChatPromptTemplate
+from langchain.retrievers.contextual_compression import ContextualCompressionRetriever
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -59,6 +60,9 @@ if not os.path.exists(EMBEDDING_STATUS_FILE):
         json.dump({}, f)
 
 # ----------------------- OAuth and Basic Endpoints -----------------------
+
+class ChatRequest(BaseModel):
+    user_query: str
 
 @app.get("/connect")
 async def connect(request: Request):
