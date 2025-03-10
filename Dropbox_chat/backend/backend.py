@@ -389,6 +389,123 @@ async def embed(request: Request):
     logging.info(f"Embedding process summary: {summary}")
     return JSONResponse(content=summary)
 
+@app.post("/chat-te")
+async def chat(request: ChatRequest):
+    """
+    Chat endpoint that provides responses based on embedded documents in Pinecone.
+    Uses Cohere Reranker for better document retrieval and includes source references.
+    """
+    async def generate_response(retrieval_chain, user_query):
+        try:
+            async for chunk in retrieval_chain.astream({"input": user_query}):
+                try:
+                    answer = chunk["answer"]
+                    yield f"{answer}"
+                except Exception as e:
+                    pass
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=str(e))
+
+    try:
+        # Initialize OpenAI language model
+        llm = ChatOpenAI(model="gpt-4o-mini", api_key = os.getenv("OPENAI_API_KEY")        )
+
+        # Configure retriever with Pinecone
+        vectorstore = PineconeVectorStore(
+            index_name="testabhishek",
+            embedding=OpenAIEmbeddings(model="text-embedding-3-small",api_key = os.getenv("OPENAI_API_KEY")),
+            namespace="gdrive_search",
+            pinecone_api_key=os.getenv("PINECONE_API_KEY"),
+        )
+
+        # Create base retriever
+        base_retriever = vectorstore.as_retriever(
+            search_type="similarity",
+            search_kwargs={
+                "k": 20,  # Retrieve more documents initially for reranking
+            },
+        )
+        
+        # Add Cohere Reranker for better document retrieval
+        compressor = CohereRerank(
+            cohere_api_key=os.getenv("COHERE_API_KEY"),
+            model="rerank-v3.5",
+            top_n=4 # Keep top 4 most relevant documents after reranking
+        )
+        
+        # Create compression retriever with Cohere Reranker
+        retriever = ContextualCompressionRetriever(
+            base_compressor=compressor,
+            base_retriever=base_retriever
+        )
+
+        # Create enhanced prompt template with source citation instructions
+        system_prompt = """
+        You are DriveGPT, a universal search assistant that provides CONCISE, accurate responses based on information from across the entire knowledge base and connected applications (Google Drive, Sheets, and other integrated systems). Your primary goal is to deliver precise answers with clear source attribution.
+
+        RESPONSE LENGTH:
+        - Keep responses under 300 words unless the question requires detailed explanation
+        - Prioritize the most relevant information that directly answers the query
+        - Avoid unnecessary background information or elaboration
+
+        QUERY HANDLING:
+        - For location queries (e.g., "Where is my test.pdf?"): Specify exactly which system contains the file and provide its path/location
+        - For status queries (e.g., "What's the status of my sheet?"): Report the current status, last update, and location
+        - For content queries: Extract and summarize the most relevant information
+        - For questions without clear answers in the context: State "I cannot find information about this in your knowledge base"
+
+        RESPONSE STRUCTURE:
+        - Start with a direct answer identifying the location/system where the information was found
+        - Example: "Your test.pdf is stored in Google Drive" or "The project status is tracked in Jira ticket #1234"
+        - Use bullet points for lists, steps, or multiple pieces of information
+        - Include only essential details that directly answer the query
+
+        CITATION REQUIREMENTS:
+        - Use inline citation markers [1], [2], etc. after each claim or piece of information
+        - Every factual statement must have a citation
+        - Clearly identify the source system (Google Drive, Sheets, Jira, etc.) in each citation
+        - Link each citation to the specific document, file, or record where the information appears
+        - DO NOT mention chunk numbers or metadata in citations
+        - Include only the document name and system in citations
+
+        SOURCE HANDLING:
+        - If information appears across multiple systems, cite all relevant sources
+        - If sources conflict, acknowledge the discrepancy and cite both sources
+        - Prioritize the most recent or authoritative source when appropriate
+        - If information is incomplete, clearly state what is known and what is missing
+
+        Context from knowledge base: {context}
+
+        FORMAT YOUR RESPONSE AS:
+
+        [Direct answer identifying where the information was found]
+
+        [Additional essential details with inline citations [1], [2], etc.]
+
+        ---
+        ###### Sources
+
+        [1] [Document Name](Link) - [System/App]
+        [2] [Document Name](Link) - [System/App]
+        """
+
+        prompt = ChatPromptTemplate.from_messages(
+            [("system", system_prompt), ("human", "{input}")]
+        )
+
+        # Create retrieval chain
+        document_chain = create_stuff_documents_chain(llm, prompt)
+        retrieval_chain = create_retrieval_chain(retriever, document_chain)
+
+        # Return streaming response
+        return StreamingResponse(
+            generate_response(retrieval_chain, request.user_query),
+            media_type="text/event-stream",
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend:app", host="localhost", port=8000, reload=True)
