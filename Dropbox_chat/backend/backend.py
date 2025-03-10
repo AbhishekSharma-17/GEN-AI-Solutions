@@ -4,6 +4,7 @@ import aiohttp
 import json
 import asyncio
 import logging
+import time
 from datetime import datetime
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import RedirectResponse, JSONResponse
@@ -34,7 +35,7 @@ DROPBOX_APP_SECRET = os.getenv("DROPBOX_APP_SECRET")
 if not DROPBOX_APP_KEY or not DROPBOX_APP_SECRET:
     raise Exception("Dropbox credentials must be set in environment variables.")
 
-# Redirect URI (must match what’s set in your Dropbox App settings)
+# Redirect URI (must match your Dropbox App settings)
 REDIRECT_URI = "http://localhost:8000/oauth2callback"
 
 # Define local folders and mapping files for downloaded files and embedding status
@@ -76,7 +77,6 @@ async def oauth2callback(request: Request, code: str = None, state: str = None):
         raise HTTPException(status_code=400, detail="Authorization code not found.")
     if state != request.session.get("state"):
         raise HTTPException(status_code=400, detail="State mismatch. Potential CSRF detected.")
-
     token_url = "https://api.dropboxapi.com/oauth2/token"
     data = {
         "code": code,
@@ -93,10 +93,8 @@ async def oauth2callback(request: Request, code: str = None, state: str = None):
                 raise HTTPException(status_code=400, detail=f"Error fetching token: {error_text}")
             token_response = await resp.json()
             logging.info(f"Token response: {token_response}")
-
     if "access_token" not in token_response:
         raise HTTPException(status_code=400, detail="Access token missing in token response.")
-
     request.session["dropbox_credentials"] = token_response
     return RedirectResponse(url="http://localhost:3000")
 
@@ -111,7 +109,6 @@ async def list_files(request: Request):
     access_token = credentials.get("access_token")
     if not access_token:
         raise HTTPException(status_code=400, detail="Access token not available.")
-    
     list_folder_url = "https://api.dropboxapi.com/2/files/list_folder"
     headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
     payload = {"path": "", "recursive": True}
@@ -126,7 +123,7 @@ async def list_files(request: Request):
 @app.get("/disconnect")
 async def disconnect(request: Request):
     """
-    Disconnect by clearing Dropbox credentials from session.
+    Disconnect from Dropbox by clearing credentials from session.
     """
     request.session.pop("dropbox_credentials", None)
     request.session.pop("state", None)
@@ -142,6 +139,22 @@ async def status(request: Request):
     return JSONResponse(content={"connected": bool(credentials)})
 
 # ----------------------- Sync Endpoint -----------------------
+
+async def get_temporary_link(access_token, file_obj):
+    """
+    Obtain a temporary (redirectable) link for a file from Dropbox.
+    """
+    url = "https://api.dropboxapi.com/2/files/get_temporary_link"
+    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+    payload = {"path": file_obj["path_lower"]}
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, headers=headers, json=payload) as resp:
+            if resp.status != 200:
+                error_text = await resp.text()
+                logging.error(f"Error getting temporary link for {file_obj['name']}: {error_text}")
+                return ""
+            result = await resp.json()
+            return result.get("link", "")
 
 async def download_file_async(access_token, file_obj, local_path, semaphore):
     """
@@ -173,6 +186,7 @@ async def download_file_async(access_token, file_obj, local_path, semaphore):
 async def sync(request: Request):
     """
     Sync Dropbox files: download new or updated files.
+    For each downloaded file, also obtain a temporary link.
     Returns a summary of sync activity.
     """
     credentials = request.session.get("dropbox_credentials")
@@ -181,8 +195,6 @@ async def sync(request: Request):
     access_token = credentials.get("access_token")
     if not access_token:
         raise HTTPException(status_code=400, detail="Access token not available.")
-
-    # List files from Dropbox
     list_folder_url = "https://api.dropboxapi.com/2/files/list_folder"
     headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
     payload = {"path": "", "recursive": True}
@@ -192,16 +204,11 @@ async def sync(request: Request):
                 error_text = await resp.text()
                 raise HTTPException(status_code=400, detail=f"Error listing files: {error_text}")
             list_result = await resp.json()
-
     entries = list_result.get("entries", [])
     total_items = len(entries)
     folder_count = sum(1 for entry in entries if entry.get(".tag") == "folder")
     files_count = total_items - folder_count
-
-    # Define unsupported file extensions
     unsupported_extensions = [".mp4", ".mov", ".avi", ".mkv", ".ipynb", ".jpg", ".jpeg", ".png", ".gif", ".mp3", ".heic", ".m4v", ".3gp"]
-
-    # Load mapping file for downloaded files
     mapping = {}
     if os.path.exists(MAPPING_FILE):
         try:
@@ -210,12 +217,10 @@ async def sync(request: Request):
         except Exception as e:
             logging.error(f"Error loading mapping file: {e}")
             mapping = {}
-
     downloaded_files = []
     skipped_files = []
     unsupported_files = []
     failed_files = []
-
     semaphore = asyncio.Semaphore(5)
     tasks = []
     for file_obj in entries:
@@ -223,35 +228,32 @@ async def sync(request: Request):
             continue
         file_name = file_obj.get("name")
         lower_name = file_name.lower()
-        file_id = file_obj.get("id")
         file_rev = file_obj.get("rev")
         local_path = os.path.join(DOWNLOAD_FOLDER, file_name)
         if any(lower_name.endswith(ext) for ext in unsupported_extensions):
             unsupported_files.append(file_name)
             continue
-        if file_id in mapping and mapping[file_id].get("rev") == file_rev and os.path.exists(local_path):
+        if file_name in mapping and mapping[file_name].get("rev") == file_rev and os.path.exists(local_path):
             skipped_files.append(file_name)
             continue
         task = download_file_async(access_token, file_obj, local_path, semaphore)
         tasks.append((file_obj, task))
-
     for file_obj, task in tasks:
         status_str, file_name, error = await task
         if status_str == "downloaded":
-            file_id = file_obj.get("id")
             file_rev = file_obj.get("rev")
-            mapping[file_id] = {
+            temp_link = await get_temporary_link(access_token, file_obj)
+            mapping[file_name] = {
                 "rev": file_rev,
                 "local_path": os.path.join(DOWNLOAD_FOLDER, file_name),
-                "downloaded_at": datetime.now().isoformat()
+                "downloaded_at": datetime.now().isoformat(),
+                "temp_link": temp_link
             }
             downloaded_files.append(file_name)
         else:
             failed_files.append({"file": file_name, "error": error})
-
     with open(MAPPING_FILE, "w") as f:
         json.dump(mapping, f, indent=2)
-
     summary = {
         "message": "Sync complete",
         "total_items": total_items,
@@ -271,29 +273,21 @@ async def sync(request: Request):
 # ----------------------- Embed Endpoint -----------------------
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-import time
-import logging
-import os
-
 def document_loader(file_path):
     """
     Use UnstructuredAPIFileLoader to quickly extract file contents.
-    Ensure you have UNSTRUCTURED_API_KEY and UNSTRUCTURED_API_URL set.
+    Ensure UNSTRUCTURED_API_KEY and UNSTRUCTURED_API_URL are set.
     """
     from langchain_community.document_loaders import UnstructuredAPIFileLoader
     start_time = time.time()
-    try:
-        loader = UnstructuredAPIFileLoader(
-            api_key=os.getenv("UNSTRUCTURED_API_KEY"),
-            file_path=file_path,
-            mode="elements",
-            strategy="fast",
-            url=os.getenv("UNSTRUCTURED_API_URL"),
-        )
-        documents = loader.load()
-    except Exception as e:
-        logging.error(f"Error during extraction for file {file_path}: {e}")
-        raise e  # Optionally, you could return an empty string or handle it differently.
+    loader = UnstructuredAPIFileLoader(
+        api_key=os.getenv("UNSTRUCTURED_API_KEY"),
+        file_path=file_path,
+        mode="elements",
+        strategy="fast",
+        url=os.getenv("UNSTRUCTURED_API_URL"),
+    )
+    documents = loader.load()
     end_time = time.time()
     extraction_time = end_time - start_time
     logging.info(f"Extracted {len(documents)} documents from {file_path} in {extraction_time:.2f} seconds.")
@@ -303,26 +297,36 @@ def document_loader(file_path):
 async def embed(request: Request):
     """
     Process downloaded files: extract text using UnstructuredAPIFileLoader,
-    chunk it using RecursiveCharacterTextSplitter, add metadata, and embed the chunks into Pinecone.
+    chunk it using RecursiveCharacterTextSplitter, prepend each chunk with metadata
+    (file name, source, and redirectable link), and embed the chunks into Pinecone.
     Skips files that haven't changed.
     Returns a summary.
     """
     logging.info("Starting embedding process.")
+    # Load download mapping (to get temporary links)
     try:
-        with open(EMBEDDING_STATUS_FILE, "r") as f:
-            embedding_status = json.load(f)
-        logging.info("Loaded embedding status mapping.")
+        with open(MAPPING_FILE, "r") as f:
+            mapping = json.load(f)
+        logging.info("Loaded download mapping.")
     except Exception as e:
-        logging.error(f"Error loading embedding status: {e}")
-        embedding_status = {}
-
+        logging.error(f"Error loading download mapping: {e}")
+        mapping = {}
+    # Load embedding status mapping
+    embedding_status = {}
+    if os.path.exists(EMBEDDING_STATUS_FILE):
+        try:
+            with open(EMBEDDING_STATUS_FILE, "r") as f:
+                embedding_status = json.load(f)
+            logging.info("Loaded embedding status mapping.")
+        except Exception as e:
+            logging.error(f"Error loading embedding status: {e}")
+            embedding_status = {}
     processed_files = []
     skipped_files = []
     total_chunks = 0
     all_chunks = []
     chunk_ids = []
     metadatas = []
-
     for file in os.listdir(DOWNLOAD_FOLDER):
         file_path = os.path.join(DOWNLOAD_FOLDER, file)
         if not os.path.isfile(file_path):
@@ -331,30 +335,35 @@ async def embed(request: Request):
         file_key = f"{file}_{stat.st_size}_{stat.st_mtime}"
         if file in embedding_status and embedding_status[file] == file_key:
             skipped_files.append(file)
-            logging.info(f"Skipping {file} (unchanged).")
+            logging.info(f"Skipping {file} for embedding (unchanged).")
             continue
         logging.info(f"Processing file for embedding: {file}")
         text = document_loader(file_path)
         if not text:
             logging.warning(f"No text extracted from {file}. Skipping.")
             continue
-        # Use RecursiveCharacterTextSplitter for chunking
+        # Use RecursiveCharacterTextSplitter to split text into chunks
         splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
         chunks = splitter.split_text(text)
         logging.info(f"Extracted {len(chunks)} chunks from {file} using RecursiveCharacterTextSplitter.")
         total_chunks += len(chunks)
+        # Retrieve temporary link from mapping if available
+        temp_link = mapping.get(file, {}).get("temp_link", "")
+        # Create metadata header to prepend to each chunk
+        metadata_header = f"File: {file}\nSource: Dropbox\nLink: {temp_link}\n\n"
         for i, chunk in enumerate(chunks):
+            # Prepend metadata header to chunk text
+            chunk_with_metadata = metadata_header + chunk
             chunk_ids.append(f"{file}_{i}")
-            metadatas.append({"file": file, "chunk": i+1, "source": "dropbox"})
-        all_chunks.extend(chunks)
+            metadatas.append({"file": file, "chunk": i+1, "source": "dropbox", "redirect_link": temp_link})
+            all_chunks.append(chunk_with_metadata)
         processed_files.append(file)
         embedding_status[file] = file_key
-
     if all_chunks:
         logging.info(f"Embedding {len(all_chunks)} chunks into Pinecone.")
         from langchain_openai import OpenAIEmbeddings
         from langchain_pinecone import PineconeVectorStore
-        embeddings = OpenAIEmbeddings(model="text-embedding-3-small", api_key=os.getenv("OPENAI_API_KEY"))
+        embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=os.getenv("OPENAI_API_KEY"))
         vectorstore = PineconeVectorStore(
             index_name=os.getenv("PINECONE_INDEX_NAME"),
             embedding=embeddings,
@@ -365,14 +374,12 @@ async def embed(request: Request):
         logging.info("Embedding complete: Chunks upserted into Pinecone.")
     else:
         logging.info("No new chunks to embed.")
-
     try:
         with open(EMBEDDING_STATUS_FILE, "w") as f:
             json.dump(embedding_status, f, indent=2)
         logging.info("Updated embedding status mapping saved.")
     except Exception as e:
         logging.error(f"Error saving embedding status mapping: {e}")
-
     summary = {
         "message": "Embedding complete",
         "processed_files": processed_files,
@@ -385,4 +392,3 @@ async def embed(request: Request):
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run("backend:app", host="localhost", port=8000, reload=True)
-    # uvicorn backend:app --host localhost --port 8000 --reload
