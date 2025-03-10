@@ -389,7 +389,9 @@ async def embed(request: Request):
     logging.info(f"Embedding process summary: {summary}")
     return JSONResponse(content=summary)
 
-@app.post("/chat-te")
+
+
+@app.post("/chat")
 async def chat(request: ChatRequest):
     """
     Chat endpoint that provides responses based on embedded documents in Pinecone.
