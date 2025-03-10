@@ -123,8 +123,7 @@ async def list_files(request: Request):
 
 async def download_file_async(access_token, file_obj, local_path, semaphore):
     """
-    Asynchronously download a file from Dropbox.
-    Uses the /2/files/download endpoint.
+    Asynchronously download a file from Dropbox using the /2/files/download endpoint.
     """
     file_path = file_obj["path_lower"]
     file_name = file_obj["name"]
@@ -152,6 +151,7 @@ async def download_file_async(access_token, file_obj, local_path, semaphore):
 async def sync(request: Request):
     """
     Sync Dropbox files: download new or updated files.
+    Returns a summary with counts and details.
     """
     credentials = request.session.get("dropbox_credentials")
     if not credentials:
@@ -176,11 +176,14 @@ async def sync(request: Request):
             list_result = await resp.json()
 
     entries = list_result.get("entries", [])
+    total_items = len(entries)
+    folder_count = sum(1 for entry in entries if entry.get(".tag") == "folder")
+    files_count = total_items - folder_count
 
-    # Define skip list for unsupported file types
-    skip_extensions = [".mp4", ".mov", ".avi", ".mkv", ".ipynb", ".jpg", ".jpeg", ".png", ".gif", ".mp3", ".heic", ".m4v", ".3gp"]
+    # Define unsupported file extensions
+    unsupported_extensions = [".mp4", ".mov", ".avi", ".mkv", ".ipynb", ".jpg", ".jpeg", ".png", ".gif", ".mp3", ".heic", ".m4v", ".3gp"]
 
-    # Load mapping file
+    # Load mapping file (to track downloaded files)
     mapping = {}
     if os.path.exists(MAPPING_FILE):
         try:
@@ -191,34 +194,38 @@ async def sync(request: Request):
             mapping = {}
 
     downloaded_files = []
-    skipped_files = []
-    failed_files = []
+    skipped_files = []  # Files already downloaded (unchanged)
+    unsupported_files = []  # Files not supported for download
+    failed_files = []  # Files that failed to download
 
     semaphore = asyncio.Semaphore(5)
     tasks = []
+
+    # Process each entry (only files, not folders)
     for file_obj in entries:
         if file_obj.get(".tag") == "folder":
             continue  # Skip folders
         file_name = file_obj.get("name")
         lower_name = file_name.lower()
-        if any(lower_name.endswith(ext) for ext in skip_extensions):
-            skipped_files.append(file_name)
-            continue
-
-        # Construct local file path
-        local_path = os.path.join(DOWNLOAD_FOLDER, file_name)
         file_id = file_obj.get("id")
         file_rev = file_obj.get("rev")
-        # Skip if file already downloaded with same revision
+        local_path = os.path.join(DOWNLOAD_FOLDER, file_name)
+
+        # Check for unsupported file types
+        if any(lower_name.endswith(ext) for ext in unsupported_extensions):
+            unsupported_files.append(file_name)
+            continue
+
+        # Check if file already downloaded with same revision
         if file_id in mapping and mapping[file_id].get("rev") == file_rev and os.path.exists(local_path):
             skipped_files.append(file_name)
             continue
 
-        # Schedule download
+        # Schedule asynchronous download
         task = download_file_async(access_token, file_obj, local_path, semaphore)
         tasks.append((file_obj, task))
 
-    # Await all downloads
+    # Await all download tasks
     for file_obj, task in tasks:
         status, file_name, error = await task
         if status == "downloaded":
@@ -233,17 +240,25 @@ async def sync(request: Request):
         else:
             failed_files.append({"file": file_name, "error": error})
 
-    # Save mapping file
+    # Save updated mapping file
     with open(MAPPING_FILE, "w") as f:
         json.dump(mapping, f, indent=2)
 
-    return JSONResponse(content={
+    summary = {
         "message": "Sync complete",
+        "total_items": total_items,
+        "folders_count": folder_count,
+        "files_count": files_count,
+        "new_downloads_count": len(downloaded_files),
+        "skipped_files_count": len(skipped_files),
+        "unsupported_files_count": len(unsupported_files),
+        "failed_files_count": len(failed_files),
         "downloaded_files": downloaded_files,
         "skipped_files": skipped_files,
-        "failed_files": failed_files,
-        "total_files": len(entries)
-    })
+        "unsupported_files": unsupported_files,
+        "failed_files": failed_files
+    }
+    return JSONResponse(content=summary)
 
 @app.get("/status")
 async def status(request: Request):

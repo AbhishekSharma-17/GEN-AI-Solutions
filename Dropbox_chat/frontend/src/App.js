@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 function App() {
   const [connected, setConnected] = useState(false);
   const [files, setFiles] = useState([]);
-  const [syncMessage, setSyncMessage] = useState('');
+  const [syncSummary, setSyncSummary] = useState(null);
   const [message, setMessage] = useState('');
 
   // Check connection status on component mount
@@ -42,19 +42,19 @@ function App() {
     }
   };
 
-  // Sync files by calling /sync endpoint
+  // Sync files by calling the /sync endpoint
   const handleSyncFiles = async () => {
     try {
       const res = await fetch('http://localhost:8000/sync', { credentials: 'include' });
       if (res.ok) {
         const data = await res.json();
-        setSyncMessage(data.message);
+        setSyncSummary(data);
       } else {
-        setSyncMessage('Failed to sync files.');
+        setSyncSummary({ message: 'Failed to sync files.' });
       }
     } catch (error) {
       console.error('Error syncing files:', error);
-      setSyncMessage('An error occurred during sync.');
+      setSyncSummary({ message: 'An error occurred during sync.' });
     }
   };
 
@@ -67,6 +67,7 @@ function App() {
         setMessage(data.message);
         setConnected(false);
         setFiles([]);
+        setSyncSummary(null);
       } else {
         setMessage('Failed to disconnect.');
       }
@@ -81,7 +82,12 @@ function App() {
       <h1>Dropbox AI Integration</h1>
       <p>Status: {connected ? 'Connected' : 'Not connected'}</p>
       {message && <p>{message}</p>}
-      {syncMessage && <p>{syncMessage}</p>}
+      {syncSummary && (
+        <div>
+          <h2>Sync Summary:</h2>
+          <pre>{JSON.stringify(syncSummary, null, 2)}</pre>
+        </div>
+      )}
       <hr style={{ margin: '2rem 0' }} />
       {!connected && (
         <button onClick={handleConnectClick}>
