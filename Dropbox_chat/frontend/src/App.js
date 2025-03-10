@@ -4,9 +4,10 @@ function App() {
   const [connected, setConnected] = useState(false);
   const [files, setFiles] = useState([]);
   const [syncSummary, setSyncSummary] = useState(null);
+  const [embedSummary, setEmbedSummary] = useState(null);
   const [message, setMessage] = useState('');
 
-  // Check connection status on component mount
+  // Check connection status on load
   const checkStatus = async () => {
     try {
       const res = await fetch('http://localhost:8000/status', { credentials: 'include' });
@@ -26,7 +27,7 @@ function App() {
     window.location.href = 'http://localhost:8000/connect';
   };
 
-  // Fetch the list of files from Dropbox
+  // Fetch list of files from Dropbox
   const handleListFiles = async () => {
     try {
       const res = await fetch('http://localhost:8000/list_files', { credentials: 'include' });
@@ -58,7 +59,23 @@ function App() {
     }
   };
 
-  // Disconnect by calling the backend disconnect endpoint
+  // Embed downloaded data by calling the /embed endpoint
+  const handleEmbedData = async () => {
+    try {
+      const res = await fetch('http://localhost:8000/embed', { credentials: 'include' });
+      if (res.ok) {
+        const data = await res.json();
+        setEmbedSummary(data);
+      } else {
+        setEmbedSummary({ message: 'Failed to embed data.' });
+      }
+    } catch (error) {
+      console.error('Error embedding data:', error);
+      setEmbedSummary({ message: 'An error occurred during embedding.' });
+    }
+  };
+
+  // Disconnect from Dropbox
   const handleDisconnect = async () => {
     try {
       const res = await fetch('http://localhost:8000/disconnect', { credentials: 'include' });
@@ -68,6 +85,7 @@ function App() {
         setConnected(false);
         setFiles([]);
         setSyncSummary(null);
+        setEmbedSummary(null);
       } else {
         setMessage('Failed to disconnect.');
       }
@@ -82,25 +100,18 @@ function App() {
       <h1>Dropbox AI Integration</h1>
       <p>Status: {connected ? 'Connected' : 'Not connected'}</p>
       {message && <p>{message}</p>}
-      {syncSummary && (
-        <div>
-          <h2>Sync Summary:</h2>
-          <pre>{JSON.stringify(syncSummary, null, 2)}</pre>
-        </div>
-      )}
       <hr style={{ margin: '2rem 0' }} />
       {!connected && (
-        <button onClick={handleConnectClick}>
-          Connect to Dropbox
-        </button>
+        <button onClick={handleConnectClick}>Connect to Dropbox</button>
       )}
       {connected && (
         <>
-          <button onClick={handleListFiles}>
-            List Files
-          </button>
+          <button onClick={handleListFiles}>List Files</button>
           <button onClick={handleSyncFiles} style={{ marginLeft: '1rem' }}>
             Sync Files
+          </button>
+          <button onClick={handleEmbedData} style={{ marginLeft: '1rem' }}>
+            Embed Data
           </button>
           <button onClick={handleDisconnect} style={{ marginLeft: '1rem' }}>
             Disconnect
@@ -115,6 +126,18 @@ function App() {
                   </li>
                 ))}
               </ul>
+            </div>
+          )}
+          {syncSummary && (
+            <div>
+              <h2>Sync Summary:</h2>
+              <pre>{JSON.stringify(syncSummary, null, 2)}</pre>
+            </div>
+          )}
+          {embedSummary && (
+            <div>
+              <h2>Embed Summary:</h2>
+              <pre>{JSON.stringify(embedSummary, null, 2)}</pre>
             </div>
           )}
         </>
