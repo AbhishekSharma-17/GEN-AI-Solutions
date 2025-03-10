@@ -12,7 +12,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from langchain_cohere import CohereRerank
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
-from langchain
 from dotenv import load_dotenv
 
 load_dotenv()
