@@ -8,10 +8,15 @@ import time
 from datetime import datetime
 from fastapi import FastAPI, Request, HTTPException
 from fastapi.responses import RedirectResponse, JSONResponse, StreamingResponse
+from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from langchain_cohere import CohereRerank
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain.chains.combine_documents import create_stuff_documents_chain
+from langchain.chains.retrieval import create_retrieval_chain
+from langchain_pinecone import PineconeVectorStore
+from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -418,7 +423,7 @@ async def chat(request: ChatRequest):
         vectorstore = PineconeVectorStore(
             index_name="testabhishek",
             embedding=OpenAIEmbeddings(model="text-embedding-3-small",api_key = os.getenv("OPENAI_API_KEY")),
-            namespace="gdrive_search",
+            namespace="dropbox_search",
             pinecone_api_key=os.getenv("PINECONE_API_KEY"),
         )
 
