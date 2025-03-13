@@ -52,6 +52,7 @@
   justify-content: space-between;
   position: relative;
   cursor: pointer;
+
   animation: fadeIn 0.4s ease-in-out;
   z-index: 1;
 }
@@ -108,7 +109,8 @@
   margin-left: 15px;
   gap: 10px 5px;
   font-family: Outfit;
-
+  max-height: 440px;
+  overflow-y: scroll;
   display: flex;
   flex-direction: column;
 
@@ -197,7 +199,7 @@
   font-weight: 400;
 }
 .token-value {
-  font-size: 1.5vw;
+  font-size: 1.2em;
   color: #0d92f4;
   font-weight: 700;
   /* color: orange; */
@@ -274,10 +276,9 @@
 @media (max-width: 1500px) {
   .sidebar .token-display {
     padding: 10px;
-
     z-index: 1;
   }
-  
+
   .latency-token {
     display: flex;
     flex-direction: column;
@@ -352,7 +353,6 @@
     color: rgb(43, 43, 43);
   }
 
-  
   .token-details-title {
     text-align: left;
     font-size: 15px;
@@ -366,7 +366,7 @@
     /* color: orange; */
   }
   .token-title {
-  font-size: 15px;
+    font-size: 15px;
     color: grey;
   }
 }
