@@ -26,6 +26,7 @@ import SQL_img from './Chat_with_SQL.png'
 
 
 export const assets = {
+    SQL_img,
     frontPage,
     chatGPTIcon,
     groq,

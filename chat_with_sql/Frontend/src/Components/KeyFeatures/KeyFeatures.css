@@ -1,84 +1,111 @@
 .key-features {
-  /* border: 1px solid red; */
   padding: 20px 50px;
   display: flex;
   flex-direction: column;
-  /* border: 1px solid red; */
 }
+
 .key-features .key-feature-title {
-  /* border: 1px solid black; */
   margin: 0;
   font-weight: 700;
   font-family: outfit;
   font-size: 1.7vw;
   color: black;
+  text-align: center;
 }
+
 .key-feature-list {
   display: flex;
   flex-direction: row;
-  justify-content: space-around;
-  /* gap:50px; */
-  /* border: 1px solid red; */
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px; /* Added gap to prevent cards from sticking */
   margin-top: 40px;
 }
+
 .feature-item {
   padding: 30px;
-  border-radius: 5px;
+  border-radius: 10px;
   box-shadow: 0px 0px 8px rgb(224, 224, 224);
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: center; /* Center align items */
   gap: 20px;
   width: 300px;
+  background: white;
+  transition: transform 0.3s ease;
 }
+
+.feature-item:hover {
+  transform: scale(1.05);
+}
+
 .feature-item-title {
   margin: 0;
   font-weight: 500;
   font-family: Roboto !important;
   color: black;
+  text-align: center;
 }
+
 .feature-item-desc {
   color: rgb(155, 155, 155) !important;
   font-weight: 500;
+  text-align: center;
 }
+
 .feature-item-icon {
   font-size: 50px;
   background-color: #f0ecec;
   padding: 10px;
   border-radius: 5px;
 }
+
 .feature-item p {
   margin: 0;
   font-size: 18px;
+}
+
+@media (max-width: 1024px) {
+  .key-features {
+    padding: 20px;
+  }
+
+  .key-feature-list {
+    justify-content: center;
+  }
+
+  .feature-item {
+    width: 45%; /* Makes two cards per row on tablets */
+  }
 }
 
 @media (max-width: 768px) {
   .key-features {
     padding: 20px;
   }
+
   .key-features .key-feature-title {
-    font-size: 7vw;
+    font-size: 6vw;
   }
+
   .key-feature-list {
     flex-direction: column;
-    gap: 30px;
+    align-items: center;
   }
+
   .feature-item {
-    width: 100%;
+    width: 80%;
+    margin-bottom: 20px; /* Prevents cards from sticking together */
   }
 }
-@media (max-width: 368px) {
-  .key-features {
-    padding: 20px;
-  }
+
+@media (max-width: 480px) {
   .key-features .key-feature-title {
     font-size: 7vw;
   }
-  .key-feature-list {
-    flex-direction: column;
-    gap: 30px;
-  }
+
   .feature-item {
-    width: 100%;
+    width: 90%;
   }
 }
