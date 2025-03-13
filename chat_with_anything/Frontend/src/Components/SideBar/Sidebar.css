@@ -108,7 +108,8 @@
   margin-left: 15px;
   gap: 10px 5px;
   font-family: Outfit;
-
+max-height: 450px ;
+overflow-y: scroll;
   display: flex;
   flex-direction: column;
 
@@ -197,7 +198,7 @@
   font-weight: 400;
 }
 .token-value {
-  font-size: 1.5vw;
+  font-size: 1.2em;
   color: #0d92f4;
   font-weight: 700;
   /* color: orange; */
