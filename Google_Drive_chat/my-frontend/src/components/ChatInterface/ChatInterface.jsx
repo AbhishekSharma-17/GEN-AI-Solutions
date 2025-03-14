@@ -3,10 +3,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Typography, Box } from '@mui/material';
+import PersonIcon from '@mui/icons-material/Person';
 import { FaUserCircle } from "react-icons/fa";
 import './ChatInterface.css'; 
 import icon from '../../assets/icon.png';
-import send_icon from '../../assets/send_icon.png'
+import send_icon from '../../assets/send_icon.png';
 import ResponseLoader from '../commonComponents/Response Loader/ResponseLoader';
 
 const ChatInterface = () => {
@@ -146,8 +147,8 @@ const ChatInterface = () => {
                 <div key={index} className={`chat-message ${chat.type}`}>
                   {chat.type === "user" ? (
                     <div className="result-title">
-                      <FaUserCircle
-                        style={{ fontSize: "30px" }}
+                      <PersonIcon
+                        style={{ fontSize: "40px" }}
                         className="result-title-user-icon"
                       />
                       <p>{chat.text}</p>
@@ -163,7 +164,7 @@ const ChatInterface = () => {
                             remarkPlugins={[remarkGfm]}
                             components={{
                               p: ({ node, ...props }) => (
-                                <p style={{ marginBottom: "1em" }} {...props} />
+                                <p {...props} />
                               ),
                               li: ({ node, ...props }) => (
                                 <li style={{ marginBottom: "0.5em" }} {...props} />
@@ -211,32 +212,32 @@ const ChatInterface = () => {
             </div>
           </Box>
         )}
-         <div className="main-bottom chat-container">
-      <form className="search-box" onSubmit={handleChat}>
-        <input
-          type="text"
-          placeholder="Ask GenAI Protos anything..."
-                   onChange={handleQuestionChange}
-          value={chatQuery}
-        />
-        <div className="dropdown-button-div">
-            <button
-              type="submit"
-              style={{ border: "none", background: "none" }}
-            >
-              <img src={send_icon} alt="Send" />
-            </button>
+        <div className="main-bottom chat-container">
+          <form className="search-box" onSubmit={handleChat}>
+            <input
+              type="text"
+              placeholder="Ask GenAI Protos anything..."
+              onChange={handleQuestionChange}
+              value={chatQuery}
+            />
+            <div className="dropdown-button-div">
+              <button
+                type="submit"
+                style={{ border: "none", background: "none" }}
+              >
+                <img src={send_icon} alt="Send" />
+              </button>
+            </div>
+          </form>
+          <p className="bottom-info">
+            GenAI Protos may display inaccurate information, such as the number of
+            bytes and also including about the people.
+          </p>
         </div>
-      </form>
-      <p className="bottom-info">
-        GenAI Protos may display inaccurate information, such as the number of
-        bytes and also including about the people.
-      </p>
-    </div>
       </Box>
-      <Box className="sidebar">
-        <Typography variant="h6" className="sidebar-title">Sources</Typography>
-        {sources.length > 0 ? (
+      {sources.length > 0 && (
+        <Box className="sidebar">
+          <Typography variant="h6" className="sidebar-title">Sources</Typography>
           <ul className="sources-list">
             {sources.map((source, index) => (
               <li key={index} className="source-item">
@@ -251,10 +252,8 @@ const ChatInterface = () => {
               </li>
             ))}
           </ul>
-        ) : (
-          <Typography variant="body2" className="no-sources">No sources available</Typography>
-        )}
-      </Box>
+        </Box>
+      )}
     </div>
   );
 };

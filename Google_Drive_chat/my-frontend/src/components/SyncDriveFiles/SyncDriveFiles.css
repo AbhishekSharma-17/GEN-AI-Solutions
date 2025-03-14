@@ -1,7 +1,7 @@
 .sync-files-container {
-  width: 70%;
+  width: 100%;
   margin: 0 auto;
-  padding: 16px;
+  padding: 32px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -21,19 +21,40 @@
 }
 
 .sync-button {
-  margin-top: 16px;
+    margin-top: 16px;
   background-color: #010187 !important;
   color: #fff;
   padding: 8px 24px;
   border-radius: 4px;
   text-transform: none;
-  border: 1px solid #868686 !important;
+  box-shadow: none !important;
 }
 
-.sync-button:hover {
+.continue-button {
+  margin-top: 16px;
   background-color: #fff !important;
-  color: #101010;
-  border: 1px solid #868686 !important;
+  color: #01B8EF !important;
+  padding: 8px 24px;
+  border-radius: 4px;
+  text-transform: none;
+  border: 1px solid #01B8EF !important;
+  box-shadow: none !important;
+}
+.continue-button:hover {
+  background-color: #010187 !important;
+  color: #fff !important;
+  border: 1px solid #010187 !important;
+  box-shadow: none !important;
+  transition: 0.3s ease-in;
+}
+.sync-button:hover {
+  background-color: #1E88E5 !important;
+  box-shadow: none !important;
+  transition: 0.3s ease-in;
+}
+.bold-text {
+  font-weight: bold;
+  text-transform: uppercase;
 }
 
 .sync-button:disabled {
@@ -95,7 +116,7 @@
   align-items: center;
   padding: 8px 0;
   cursor: pointer;
-  background: #F0F5F8;
+  background: #F6F7FE;
   border-radius: 5px;
 }
 
@@ -103,7 +124,7 @@
   margin-bottom: 8px;
   color: #202124;
   font-weight: 500;
-  background: #F0F5F8;
+  background: #F6F7FE;
   padding: 4px 8px;
 }
 
@@ -182,25 +203,9 @@
   color: #757575;
 }
 
-.continue-button {
-  margin-top: 0px;
-  background-color: #010187;
-  color: #fff;
-  padding: 8px 24px;
-  border-radius: 4px;
-  text-transform: none;
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.continue-button:hover {
-  background-color: #333;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .sync-files-container {
-    padding: 8px;
+    padding: 80px 15px 0px;
     width: 100%;
   }
 .counters{

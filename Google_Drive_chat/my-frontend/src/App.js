@@ -7,8 +7,7 @@ import ListDriveFiles from './components/ListDriveFiles/ListDriveFiles';
 import SyncDriveFiles from './components/SyncDriveFiles/SyncDriveFiles';
 import EmbedDocuments from './components/EmbedDocuments/EmbedDocuments';
 import ChatInterface from './components/ChatInterface/ChatInterface';
-import Header from './components/Header/Header';
-import { Container } from '@mui/material';
+import Layout from './components/commonComponents/Layout/Layout';
 import './App.css';
 
 function App() {
@@ -22,32 +21,19 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Container className="container">
-        <Header />
+      <Layout>
         <Routes>
           <Route
             path="/"
-            element={
-              !showDriveFiles ? (
-                <FileUpload />
-              ) : (
-                <Navigate to="/drive-files" replace />
-              )
-            }
+            element={<FileUpload showDriveFiles={showDriveFiles} />}
           />
-          {showDriveFiles ? (
-            <>
-              <Route path="/drive-files" element={<ListDriveFiles />} />
-              <Route path="/sync-files" element={<SyncDriveFiles />} />
-              <Route path="/embed-documents" element={<EmbedDocuments />} />
-              <Route path="/chat" element={<ChatInterface />} />
-              <Route path="*" element={<Navigate to="/drive-files" replace />} />
-            </>
-          ) : (
-            <Route path="*" element={<Navigate to="/" replace />} />
-          )}
+          <Route path="/drive-files" element={<ListDriveFiles />} />
+          <Route path="/sync-files" element={<SyncDriveFiles />} />
+          <Route path="/embed-documents" element={<EmbedDocuments />} />
+          <Route path="/chat" element={<ChatInterface />} />
+          <Route path="*" element={<Navigate to="/drive-files" replace />} />
         </Routes>
-      </Container>
+      </Layout>
     </BrowserRouter>
   );
 }

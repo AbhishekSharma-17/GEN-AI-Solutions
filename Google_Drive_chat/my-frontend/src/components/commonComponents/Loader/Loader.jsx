@@ -2,8 +2,7 @@ import React from "react";
 import "./Loader.css";
 import icon from '../../../assets/icon.png'
 
-const Loader = () => {
-  const loadingText = "Uploading...";
+const Loader = ({loadingText = "Uploading...", showLoadingText}) => {
 
   return (
     // <div className="loader" />
@@ -19,13 +18,13 @@ const Loader = () => {
       </div>
 
       {/* Loading Animation */}
-      <div className="loading-text">
+      {showLoadingText && <div className="loading-text">
         {loadingText.split("").map((char, index) => (
           <span key={index} style={{ animationDelay: `${index * 0.2}s` }}>
             {char}
           </span>
         ))}
-      </div>
+      </div>}
     </div>
   );
 };

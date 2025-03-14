@@ -7,6 +7,7 @@ import './SyncDriveFiles.css';
 import documentIcon from '../../assets/documentIcon.png';
 import { useNavigate } from 'react-router-dom';
 import { setSyncFiles } from '../../store/syncSlice';
+import Loader from '../commonComponents/Loader/Loader';
 
 const SyncDriveFiles = () => {
   const [loading, setLoading] = useState(false);
@@ -82,12 +83,12 @@ const SyncDriveFiles = () => {
       </div>
       {(!syncFiles || (Object.keys(syncFiles).length === 0)) && !loading && !error && (
         <Typography variant="body1" className="no-data-message">
-          No synced Data Found. Please click on "Sync" button
+          No synced Data Found. Please click on "<span className="bold-text">Sync</span>" button.
         </Typography>
       )}
       {loading && (
         <Box className="loader">
-          <CircularProgress style={{ color: '#101010' }} />
+          <Loader loadingText="Syncing..." showLoadingText/>
         </Box>
       )}
       {error && (
@@ -102,21 +103,21 @@ const SyncDriveFiles = () => {
       {syncFiles && Object.keys(syncFiles).length !== 0 && !loading && !error && (
         <>
           <div className="counters">
-            <Button variant="outlined" className="counter-button" disabled>
-              Attempted {syncFiles.attempted_count || 0}
-            </Button>
-            <Button variant="outlined" className="counter-button" disabled>
-              Downloaded {syncFiles.downloaded_count || 0}
-            </Button>
-            <Button variant="outlined" className="counter-button" disabled>
-              Skipped (Existing) {syncFiles.skipped_existing_count || 0}
-            </Button>
-            <Button variant="outlined" className="counter-button" disabled>
-              Skipped (Unsupported) {syncFiles.skipped_unsupported_count || 0}
-            </Button>
-            <Button variant="outlined" className="counter-button" disabled>
-              Failed {syncFiles.failed_count || 0}
-            </Button>
+            <span className="counter-button" disabled>
+              <Typography variant="body1">Attempted {syncFiles.attempted_count || 0}</Typography>
+            </span>
+           <span className="counter-button" disabled>
+                          <Typography variant="body1">Downloaded {syncFiles.downloaded_count || 0}</Typography>
+            </span>
+             <span className="counter-button" disabled>
+                            <Typography variant="body1">Skipped (Existing) {syncFiles.skipped_existing_count || 0}</Typography>
+            </span>
+             <span className="counter-button" disabled>
+                            <Typography variant="body1">Skipped (Unsupported) {syncFiles.skipped_unsupported_count || 0}</Typography>
+            </span>
+           <span className="counter-button" disabled>
+                          <Typography variant="body1">Failed {syncFiles.failed_count || 0}</Typography>
+            </span>
           </div>
           <div className="file-sections">
             {syncFiles.downloaded_files?.length > 0 && (

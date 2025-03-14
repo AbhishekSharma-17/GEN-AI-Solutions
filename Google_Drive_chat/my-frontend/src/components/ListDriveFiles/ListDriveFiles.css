@@ -1,10 +1,12 @@
 .drive-files-container {
-  width: 70%;
+  width: 100%;
+  height: 100%;
   margin: 0 auto;
   padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  background: #fff;
 }
 
 .logo {
@@ -27,9 +29,10 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 200px;
+  width: 100%; /* Full width of container */
+  height: 100%; /* Full height of container */
+  min-height: 100%; /* Ensure it takes up the full viewport height */
 }
-
 .error-message {
   text-align: center;
   color: red;
@@ -50,10 +53,14 @@
 }
 
 .counter-button {
-  background-color: #fff;
-  border: 1px solid #868686 !important;
-  color: #101010 !important;
-  text-transform: none;
+  border: 1px solid #ccc; /* Example border from outlined variant */
+  padding: 8px 16px; /* Example padding */
+  margin: 5px; /* Example margin for spacing */
+  background-color: #fff; /* Example background */
+  color: #000; /* Example text color */
+  cursor: default; /* Mimic disabled state */
+  display: inline-block; /* Ensure inline layout like buttons */
+  border-radius: 5px;
 }
 
 .counter-button:hover {
@@ -119,6 +126,7 @@
   align-items: center;
   padding: 8px;
   border-bottom: 1px solid #e0e0e0;
+  color: #101010;
 }
 
 .file-row:last-child {

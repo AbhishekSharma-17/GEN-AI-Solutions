@@ -82,7 +82,7 @@ const FileUpload = () => {
   };
 
   return (
-    <div>
+    <div className='fileUpload-container'>
       <div className="greet" style={{ fontFamily: "Inter" }}>
         <p className="greetPara2">
           <span style={{ fontWeight: "bold" }}>Prototype</span>: Chat with Drive
