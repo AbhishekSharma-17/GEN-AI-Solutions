@@ -1,8 +1,7 @@
-.actual-upload{
+.actual-upload {
     background-color: rgba(247, 247, 247, 0.991);
     height: 100%;
-    width: 100%;
-    /* border: 1px solid red; */
+    width: 100%; /* Full width for responsiveness */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -10,12 +9,12 @@
     padding: 30px 40px;
     gap: 50px;
 }
-.file-upload{
+
+.file-upload {
     border: 2px dashed #8e8e8edb;
     padding: 20px;
-    width: 100%;
+    width: 100%; /* Full width for responsiveness */
     text-align: center;
-    padding: 2rem;
     background: #f4f4f4db;
     box-shadow: 
     10px 10px 20px #bebebe, /* Dark shadow */
@@ -27,20 +26,29 @@
     align-items: center;
 }
 
-.file-upload  p{
+.file-upload p {
     color: grey;
 }
+
 .select-button {
     padding: 0.5rem 1rem;
     color: rgb(91, 88, 88);
     border: none;
     cursor: pointer;
     display: inline-block;
-  }
+}
 
-.prototype-name p{
+.prototype-name p {
     font-size: 50px;
-    font-family:Inter;
+    font-family: Inter;
     font-weight: bold;
 }
 
+@media (max-width: 768px) {
+    .actual-upload {
+        padding: 20px; /* Adjust padding for smaller screens */
+    }
+    .prototype-name p {
+        font-size: 30px; /* Adjust font size for smaller screens */
+    }
+}
