@@ -6,9 +6,9 @@ import google_auth_oauthlib.flow
 import aiohttp
 import nltk
 nltk.download('punkt_tab')
-from fastapi import FastAPI, Request, UploadFile, File, HTTPException, Query
+from fastapi import FastAPI, Request, UploadFile, File, HTTPException, Query, Depends
 from fastapi.responses import RedirectResponse, JSONResponse, StreamingResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from langchain_community.document_loaders import UnstructuredAPIFileLoader
 from langchain.retrievers.contextual_compression import ContextualCompressionRetriever
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
@@ -25,6 +25,11 @@ from typing import Optional
 
 # Define current directory for absolute paths
 CURRENT_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Define folder for API keys
+API_KEYS_DIR = os.path.join(CURRENT_DIR, "api_keys")
+os.makedirs(API_KEYS_DIR, exist_ok=True)
+OPENAI_API_KEY_FILE = os.path.join(API_KEYS_DIR, "openai_api_key.json")
 
 # Configure logging with file output
 logging.basicConfig(
@@ -107,10 +112,32 @@ logging.info(f"Initializing application with mapping folder: {MAPPING_FOLDER}")
 logging.info(f"Embedding status file: {EMBEDDING_STATUS_FILE}")
 logging.info(f"Download folder: {DOWNLOAD_FOLDER}")
 
-# Define ChatRequest model
+# Define models
 class ChatRequest(BaseModel):
     user_query: str
     namespace: str = "gdrive_search"
+
+class ApiKeyRequest(BaseModel):
+    api_key: str = Field(..., description="OpenAI API key")
+    
+# Helper function to get OpenAI API key
+def get_openai_api_key():
+    """
+    Get the OpenAI API key from the local file or environment variable.
+    Returns the API key as a string.
+    """
+    try:
+        # Try to get the API key from the local file first
+        if os.path.exists(OPENAI_API_KEY_FILE):
+            with open(OPENAI_API_KEY_FILE, "r") as f:
+                data = json.load(f)
+                if data and "api_key" in data and data["api_key"]:
+                    logging.info("Using OpenAI API key from local file")
+                    return data["api_key"]
+    except Exception as e:
+        logging.error(f"Error reading OpenAI API key from file: {str(e)}")
+    
+    return None
 ### Helper Functions ###
 
 async def download_file_async(service, file_obj, local_path, semaphore):
@@ -441,10 +468,15 @@ async def extract_and_chunk(chunk_size: int = 1500, max_workers: int = 5, batch_
             from langchain_pinecone import PineconeVectorStore
             
             start_time = time.time()
+            # Get API key from local storage
+            api_key = get_openai_api_key()
+            if not api_key:
+                raise ValueError("OpenAI API key not found. Please set it using the /set-openai-key endpoint.")
+                
             # Configure OpenAI embeddings with optimized settings
             embeddings = OpenAIEmbeddings(
                 model="text-embedding-3-small",  # Fastest model
-                api_key=os.getenv("OPENAI_API_KEY"),
+                api_key=api_key,
                 show_progress_bar=False,  # Disable progress bar for faster processing
                 request_timeout=60.0,  # Increase timeout for larger batches
                 chunk_size=batch_size  # Match chunk size to batch size for optimal performance
@@ -515,6 +547,25 @@ async def extract_and_chunk(chunk_size: int = 1500, max_workers: int = 5, batch_
     return total_chunks, processed_files, skipped_files, failed_files
 
 ### Endpoints ###
+
+@app.post("/set-openai-key")
+async def set_openai_key(request: ApiKeyRequest):
+    """
+    Endpoint to receive and store the OpenAI API key from the frontend.
+    """
+    try:
+        # Store the API key in a JSON file
+        with open(OPENAI_API_KEY_FILE, "w") as f:
+            json.dump({"api_key": request.api_key}, f)
+        
+        logging.info("OpenAI API key stored successfully")
+        return JSONResponse(content={
+            "message": "OpenAI API key stored successfully",
+            "status": "success"
+        })
+    except Exception as e:
+        logging.error(f"Error storing OpenAI API key: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Error storing API key: {str(e)}")
 
 @app.post("/upload-client-secret")
 async def upload_client_secret(file: UploadFile = File(...)):
@@ -887,7 +938,8 @@ async def disconnect(request: Request):
             "pinecone_embeddings_deleted": False,
             "downloaded_files_deleted": False,
             "mappings_deleted": False,
-            "client_secret_deleted": False
+            "client_secret_deleted": False,
+            "api_key_deleted": False
         }
         
         # 1. End the session
@@ -904,11 +956,15 @@ async def disconnect(request: Request):
         
         # 2. Delete all embeddings in Pinecone
         try:
+            # Get API key from local storage
+            api_key = get_openai_api_key()
+            if not api_key:
+                raise ValueError("OpenAI API key not found. Please set it using the /set-openai-key endpoint.")
             
             # Initialize vectorstore with the same settings as in extract_and_chunk
             embeddings = OpenAIEmbeddings(
                 model="text-embedding-3-small",
-                api_key=os.getenv("OPENAI_API_KEY")
+                api_key=api_key
             )
             
             vectorstore = PineconeVectorStore(
@@ -976,6 +1032,15 @@ async def disconnect(request: Request):
                 logging.info("Client secret file deleted")
         except Exception as e:
             logging.error(f"Error deleting client secret file: {str(e)}")
+            
+        # 6. Delete the OpenAI API key file
+        try:
+            if os.path.exists(OPENAI_API_KEY_FILE):
+                os.remove(OPENAI_API_KEY_FILE)
+                results["api_key_deleted"] = True
+                logging.info("OpenAI API key file deleted")
+        except Exception as e:
+            logging.error(f"Error deleting OpenAI API key file: {str(e)}")
         
         # Return results
         all_successful = all(results.values())
@@ -1006,13 +1071,18 @@ async def chat(request: ChatRequest):
             raise HTTPException(status_code=500, detail=str(e))
 
     try:
+        # Get API key from local storage
+        api_key = get_openai_api_key()
+        if not api_key:
+            raise HTTPException(status_code=400, detail="OpenAI API key not found. Please set it using the /set-openai-key endpoint.")
+            
         # Initialize OpenAI language model
-        llm = ChatOpenAI(model="gpt-4o-mini", api_key = os.getenv("OPENAI_API_KEY")        )
+        llm = ChatOpenAI(model="gpt-4o-mini", api_key=api_key)
 
         # Configure retriever with Pinecone
         vectorstore = PineconeVectorStore(
             index_name="testabhishek",
-            embedding=OpenAIEmbeddings(model="text-embedding-3-small",api_key = os.getenv("OPENAI_API_KEY")),
+            embedding=OpenAIEmbeddings(model="text-embedding-3-small", api_key=api_key),
             namespace="gdrive_search",
             pinecone_api_key=os.getenv("PINECONE_API_KEY"),
         )
