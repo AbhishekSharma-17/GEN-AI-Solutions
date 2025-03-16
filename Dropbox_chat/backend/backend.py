@@ -314,21 +314,82 @@ async def status(request: Request):
 
 # ----------------------- Sync Endpoint -----------------------
 
-async def get_temporary_link(access_token, file_obj):
+async def get_shared_link(access_token, file_obj):
     """
-    Obtain a temporary (redirectable) link for a file from Dropbox.
+    Create a shared link for a file that opens in the browser instead of downloading.
     """
-    url = "https://api.dropboxapi.com/2/files/get_temporary_link"
+    url = "https://api.dropboxapi.com/2/sharing/create_shared_link_with_settings"
+    headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
+    
+    # Configure the shared link to be viewable in browser
+    payload = {
+        "path": file_obj["path_lower"],
+        "settings": {
+            "requested_visibility": "public",  # Make it accessible without login
+            "audience": "public",
+            "access": "viewer"  # Read-only access
+        }
+    }
+    
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers, json=payload) as resp:
+                if resp.status == 200:
+                    result = await resp.json()
+                    # Return the url from the response
+                    shared_link = result.get("url", "")
+                    # Ensure the link opens in the browser by appending dl=0 if needed
+                    if "?" in shared_link:
+                        web_view_link = shared_link.split("?")[0] + "?dl=0"
+                    else:
+                        web_view_link = shared_link + "?dl=0"
+                    return web_view_link
+                elif resp.status == 409:
+                    # Link might already exist, try to get existing links
+                    error_json = await resp.json()
+                    if error_json.get("error", {}).get(".tag") == "shared_link_already_exists":
+                        # Get existing shared links
+                        return await get_existing_shared_link(access_token, file_obj)
+                    else:
+                        logging.error(f"Error creating shared link for {file_obj['name']}: {await resp.text()}")
+                        return ""
+                else:
+                    logging.error(f"Error creating shared link for {file_obj['name']}: {await resp.text()}")
+                    return ""
+    except Exception as e:
+        logging.error(f"Exception creating shared link for {file_obj['name']}: {str(e)}")
+        return ""
+
+async def get_existing_shared_link(access_token, file_obj):
+    """
+    Get existing shared links for a file.
+    """
+    url = "https://api.dropboxapi.com/2/sharing/list_shared_links"
     headers = {"Authorization": f"Bearer {access_token}", "Content-Type": "application/json"}
     payload = {"path": file_obj["path_lower"]}
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers, json=payload) as resp:
-            if resp.status != 200:
-                error_text = await resp.text()
-                logging.error(f"Error getting temporary link for {file_obj['name']}: {error_text}")
-                return ""
-            result = await resp.json()
-            return result.get("link", "")
+    
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=headers, json=payload) as resp:
+                if resp.status == 200:
+                    result = await resp.json()
+                    links = result.get("links", [])
+                    if links:
+                        # Return the first link's URL
+                        shared_link = links[0].get("url", "")
+                        # Ensure the link opens in the browser by appending dl=0 if needed
+                        if "?" in shared_link:
+                            web_view_link = shared_link.split("?")[0] + "?dl=0"
+                        else:
+                            web_view_link = shared_link + "?dl=0"
+                        return web_view_link
+                    return ""
+                else:
+                    logging.error(f"Error getting shared links for {file_obj['name']}: {await resp.text()}")
+                    return ""
+    except Exception as e:
+        logging.error(f"Exception getting shared links for {file_obj['name']}: {str(e)}")
+        return ""
 
 async def download_file_async(access_token, file_obj, local_path, semaphore):
     """
@@ -416,12 +477,12 @@ async def sync(request: Request):
         status_str, file_name, error = await task
         if status_str == "downloaded":
             file_rev = file_obj.get("rev")
-            temp_link = await get_temporary_link(access_token, file_obj)
+            shared_link = await get_shared_link(access_token, file_obj)
             mapping[file_name] = {
                 "rev": file_rev,
                 "local_path": os.path.join(DOWNLOAD_FOLDER, file_name),
                 "downloaded_at": datetime.now().isoformat(),
-                "temp_link": temp_link
+                "shared_link": shared_link
             }
             downloaded_files.append(file_name)
         else:
@@ -690,8 +751,8 @@ async def embed(request: Request):
                 failed_files.append({"file": file, "error": f"Text splitting failed: {str(e)}"})
                 continue
             
-            # Retrieve temporary link from mapping if available
-            temp_link = mapping.get(file, {}).get("temp_link", "")
+            # Retrieve shared link from mapping if available
+            shared_link = mapping.get(file, {}).get("shared_link", "")
             
             file_chunks = []
             file_metadatas = []
@@ -702,8 +763,8 @@ async def embed(request: Request):
                 
                 # Add metadata directly to the chunk content
                 metadata_str = f"Source: Dropbox\nDocument: {file}\nChunk: {i}/{len(chunks)}"
-                if temp_link:
-                    metadata_str += f"\nLink: {temp_link}"
+                if shared_link:
+                    metadata_str += f"\nLink: {shared_link}"
                     
                 # Combine metadata with chunk content
                 combined_chunk = f"{metadata_str}\n\n{chunk}"
