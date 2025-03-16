@@ -180,21 +180,129 @@ async def list_files(request: Request):
 @app.get("/disconnect")
 async def disconnect(request: Request):
     """
-    Disconnect from Dropbox by clearing credentials from session.
+    Disconnect from Dropbox by clearing credentials from session and deleting all local data.
+    This includes downloaded files, embedding status, mapping files, chunks, and Pinecone embeddings.
     """
-    request.session.pop("dropbox_credentials", None)
-    request.session.pop("state", None)
-    logging.info("Dropbox credentials cleared from session.")
-    
-    # Delete the OpenAI API key file
     try:
-        if os.path.exists(OPENAI_API_KEY_FILE):
-            os.remove(OPENAI_API_KEY_FILE)
-            logging.info("OpenAI API key file deleted")
+        logging.info("Starting disconnect process")
+        results = {
+            "session_cleared": False,
+            "pinecone_embeddings_deleted": False,
+            "downloaded_files_deleted": False,
+            "chunks_deleted": False,
+            "mappings_reset": False,
+            "api_key_deleted": False
+        }
+        
+        # 1. Clear the session
+        try:
+            request.session.pop("dropbox_credentials", None)
+            request.session.pop("state", None)
+            request.session.clear()
+            results["session_cleared"] = True
+            logging.info("Session cleared successfully")
+        except Exception as e:
+            logging.error(f"Error clearing session: {str(e)}")
+        
+        # 2. Delete the OpenAI API key file
+        try:
+            if os.path.exists(OPENAI_API_KEY_FILE):
+                os.remove(OPENAI_API_KEY_FILE)
+                results["api_key_deleted"] = True
+                logging.info("OpenAI API key file deleted")
+        except Exception as e:
+            logging.error(f"Error deleting OpenAI API key file: {str(e)}")
+        
+        # 3. Delete all downloaded files (recursively)
+        try:
+            if os.path.exists(DOWNLOAD_FOLDER) and os.path.isdir(DOWNLOAD_FOLDER):
+                import shutil
+                
+                # Count files before deletion for logging
+                file_count = sum(1 for _ in os.listdir(DOWNLOAD_FOLDER) if os.path.isfile(os.path.join(DOWNLOAD_FOLDER, _)))
+                
+                # Delete all files in the download folder
+                for filename in os.listdir(DOWNLOAD_FOLDER):
+                    file_path = os.path.join(DOWNLOAD_FOLDER, filename)
+                    if os.path.isfile(file_path):
+                        os.remove(file_path)
+                
+                results["downloaded_files_deleted"] = True
+                logging.info(f"Deleted {file_count} files from download directory")
+        except Exception as e:
+            logging.error(f"Error deleting downloaded files: {str(e)}")
+        
+        # 4. Delete all chunk verification files
+        try:
+            if os.path.exists(CHUNKS_DIR):
+                import shutil
+                
+                # Count chunks before deletion for logging
+                chunk_dirs = 0
+                chunk_files = 0
+                for root, dirs, files in os.walk(CHUNKS_DIR):
+                    chunk_dirs += len(dirs)
+                    chunk_files += len(files)
+                
+                # Delete and recreate the chunks directory
+                shutil.rmtree(CHUNKS_DIR)
+                os.makedirs(CHUNKS_DIR, exist_ok=True)
+                
+                results["chunks_deleted"] = True
+                logging.info(f"Cleared chunks directory: {chunk_dirs} directories and {chunk_files} files deleted")
+        except Exception as e:
+            logging.error(f"Error clearing chunks directory: {str(e)}")
+        
+        # 5. Reset mapping and embedding status files
+        try:
+            with open(MAPPING_FILE, "w") as f:
+                json.dump({}, f)
+            logging.info("Download mapping file reset")
+            
+            with open(EMBEDDING_STATUS_FILE, "w") as f:
+                json.dump({}, f)
+            logging.info("Embedding status file reset")
+            
+            results["mappings_reset"] = True
+        except Exception as e:
+            logging.error(f"Error resetting mapping files: {str(e)}")
+        
+        # 6. Delete embeddings from Pinecone
+        try:
+            # Get API key from local storage or environment variable
+            api_key = get_openai_api_key()
+            if api_key:
+                from langchain_openai import OpenAIEmbeddings
+                from langchain_pinecone import PineconeVectorStore
+                
+                # Initialize Pinecone vector store
+                vectorstore = PineconeVectorStore(
+                    index_name=os.getenv("PINECONE_INDEX_NAME", "testabhishek"),
+                    embedding=OpenAIEmbeddings(model="text-embedding-3-small", api_key=api_key),
+                    namespace="dropbox_search",
+                    pinecone_api_key=os.getenv("PINECONE_API_KEY"),
+                )
+                
+                # Delete all vectors in the namespace using vectorstore.delete
+                vectorstore.delete(delete_all=True)
+                
+                results["pinecone_embeddings_deleted"] = True
+                logging.info("All embeddings deleted from Pinecone")
+            else:
+                logging.warning("OpenAI API key not found, skipping Pinecone embeddings deletion")
+        except Exception as e:
+            logging.error(f"Error deleting embeddings from Pinecone: {str(e)}")
+        
+        # Return results
+        all_successful = all(results.values())
+        return JSONResponse(content={
+            "message": "Disconnected from Dropbox and all data has been deleted" if all_successful else "Disconnect partially complete with some errors",
+            "details": results,
+            "success": all_successful
+        })
     except Exception as e:
-        logging.error(f"Error deleting OpenAI API key file: {str(e)}")
-    
-    return JSONResponse(content={"message": "Disconnected from Dropbox."})
+        logging.error(f"Error in /disconnect endpoint: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/status")
 async def status(request: Request):
@@ -338,6 +446,115 @@ async def sync(request: Request):
 
 # ----------------------- Embed Endpoint -----------------------
 from langchain.text_splitter import RecursiveCharacterTextSplitter
+import hashlib
+import re
+
+# Create a directory for storing chunks for verification
+CHUNKS_DIR = os.path.join(BASE_DIR, "chunks")
+os.makedirs(CHUNKS_DIR, exist_ok=True)
+
+class EnhancedDocumentSplitter:
+    """
+    Custom document splitter that is more aware of document structure and provides better chunking.
+    """
+    def __init__(self, chunk_size=1500, chunk_overlap=150):
+        self.chunk_size = chunk_size
+        self.chunk_overlap = chunk_overlap
+        # Base splitter for fallback
+        self.base_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+            separators=["\n\n", "\n", ". ", " ", ""]
+        )
+        
+    def _is_heading(self, line):
+        """Check if a line is likely a heading."""
+        # Common heading patterns
+        heading_patterns = [
+            r"^#+\s+.+$",  # Markdown headings
+            r"^[A-Z][A-Za-z\s]{0,50}$",  # Short all-caps or title case lines
+            r"^\d+\.\s+[A-Z]",  # Numbered headings
+            r"^[A-Z][A-Za-z\s]{0,50}:$"  # Title with colon
+        ]
+        return any(re.match(pattern, line.strip()) for pattern in heading_patterns)
+    
+    def _is_list_item(self, line):
+        """Check if a line is a list item."""
+        list_patterns = [
+            r"^\s*[\*\-•]\s+",  # Bullet lists
+            r"^\s*\d+\.\s+"     # Numbered lists
+        ]
+        return any(re.match(pattern, line.strip()) for pattern in list_patterns)
+    
+    def _get_section_boundaries(self, text):
+        """Identify logical section boundaries in the text."""
+        lines = text.split("\n")
+        boundaries = [0]  # Start of document is always a boundary
+        
+        for i, line in enumerate(lines):
+            if i > 0:
+                # Check for section breaks
+                if self._is_heading(line):
+                    boundaries.append(i)
+                # Check for paragraph breaks (empty lines)
+                elif line.strip() == "" and i > 0 and i < len(lines) - 1:
+                    if lines[i-1].strip() != "" and lines[i+1].strip() != "":
+                        boundaries.append(i)
+        
+        boundaries.append(len(lines))  # End of document is always a boundary
+        return boundaries, lines
+    
+    def split_text(self, text):
+        """
+        Split text into chunks, trying to preserve logical structure.
+        Falls back to base_splitter if the custom logic doesn't produce good chunks.
+        """
+        if not text or len(text) < self.chunk_size:
+            return [text] if text else []
+            
+        boundaries, lines = self._get_section_boundaries(text)
+        chunks = []
+        
+        # First try to split by logical sections
+        for i in range(len(boundaries) - 1):
+            section_start = boundaries[i]
+            section_end = boundaries[i + 1]
+            
+            section_lines = lines[section_start:section_end]
+            section_text = "\n".join(section_lines)
+            
+            # If section is too large, split it further
+            if len(section_text) > self.chunk_size:
+                # For large sections, use the base splitter
+                sub_chunks = self.base_splitter.split_text(section_text)
+                chunks.extend(sub_chunks)
+            else:
+                chunks.append(section_text)
+        
+        # Ensure chunks are not too small by combining adjacent small chunks
+        optimized_chunks = []
+        current_chunk = ""
+        
+        for chunk in chunks:
+            if len(current_chunk) + len(chunk) + 1 <= self.chunk_size:
+                if current_chunk:
+                    current_chunk += "\n\n" + chunk
+                else:
+                    current_chunk = chunk
+            else:
+                if current_chunk:
+                    optimized_chunks.append(current_chunk)
+                current_chunk = chunk
+        
+        if current_chunk:
+            optimized_chunks.append(current_chunk)
+            
+        # If our custom logic produced poor results, fall back to the base splitter
+        if not optimized_chunks or any(len(chunk) > self.chunk_size * 1.5 for chunk in optimized_chunks):
+            logging.info("Falling back to base splitter due to suboptimal custom chunking")
+            return self.base_splitter.split_text(text)
+            
+        return optimized_chunks
 
 def document_loader(file_path):
     """
@@ -357,14 +574,55 @@ def document_loader(file_path):
     end_time = time.time()
     extraction_time = end_time - start_time
     logging.info(f"Extracted {len(documents)} documents from {file_path} in {extraction_time:.2f} seconds.")
-    return "\n".join([doc.page_content for doc in documents])
+    
+    # Combine documents with proper spacing between elements
+    combined_text = ""
+    for doc in documents:
+        if combined_text and not combined_text.endswith("\n"):
+            combined_text += "\n"
+        combined_text += doc.page_content
+    
+    return combined_text
+
+def save_chunks_for_verification(file_name, chunks, metadatas):
+    """
+    Save chunks to text files for verification and debugging.
+    Uses UTF-8 encoding to handle all Unicode characters.
+    """
+    file_hash = hashlib.md5(file_name.encode()).hexdigest()[:8]
+    chunk_dir = os.path.join(CHUNKS_DIR, file_hash)
+    os.makedirs(chunk_dir, exist_ok=True)
+    
+    try:
+        # Save a summary file
+        with open(os.path.join(chunk_dir, "summary.txt"), "w", encoding="utf-8") as f:
+            f.write(f"File: {file_name}\n")
+            f.write(f"Total chunks: {len(chunks)}\n")
+            f.write(f"Generated at: {datetime.now().isoformat()}\n\n")
+            
+            for i, (chunk, metadata) in enumerate(zip(chunks, metadatas)):
+                f.write(f"Chunk {i+1}:\n")
+                f.write(f"  Length: {len(chunk)} characters\n")
+                f.write(f"  Metadata: {json.dumps(metadata, indent=2)}\n\n")
+        
+        # Save individual chunks
+        for i, chunk in enumerate(chunks):
+            with open(os.path.join(chunk_dir, f"chunk_{i+1}.txt"), "w", encoding="utf-8") as f:
+                f.write(chunk)
+        
+        logging.info(f"Saved {len(chunks)} chunks for verification at {chunk_dir}")
+        return chunk_dir
+    except Exception as e:
+        logging.error(f"Error saving chunks for verification: {str(e)}")
+        # Continue with embedding even if chunk verification fails
+        return None
 
 @app.get("/embed")
 async def embed(request: Request):
     """
     Process downloaded files: extract text using UnstructuredAPIFileLoader,
-    chunk it using RecursiveCharacterTextSplitter, prepend each chunk with metadata
-    (file name, source, and redirectable link), and embed the chunks into Pinecone.
+    chunk it using EnhancedDocumentSplitter, properly store metadata,
+    and embed the chunks into Pinecone.
     Skips files that haven't changed.
     Returns a summary.
     """
@@ -393,6 +651,10 @@ async def embed(request: Request):
     all_chunks = []
     chunk_ids = []
     metadatas = []
+    
+    # Create enhanced document splitter
+    splitter = EnhancedDocumentSplitter(chunk_size=1500, chunk_overlap=150)
+    
     for file in os.listdir(DOWNLOAD_FOLDER):
         file_path = os.path.join(DOWNLOAD_FOLDER, file)
         if not os.path.isfile(file_path):
@@ -408,23 +670,46 @@ async def embed(request: Request):
         if not text:
             logging.warning(f"No text extracted from {file}. Skipping.")
             continue
-        # Use RecursiveCharacterTextSplitter to split text into chunks
-        splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=100)
+            
+        # Use enhanced document splitter to split text into chunks
         chunks = splitter.split_text(text)
-        logging.info(f"Extracted {len(chunks)} chunks from {file} using RecursiveCharacterTextSplitter.")
+        logging.info(f"Extracted {len(chunks)} chunks from {file} using EnhancedDocumentSplitter.")
         total_chunks += len(chunks)
+        
         # Retrieve temporary link from mapping if available
         temp_link = mapping.get(file, {}).get("temp_link", "")
-        # Create metadata header to prepend to each chunk
-        metadata_header = f"File: {file}\nSource: Dropbox\nLink: {temp_link}\n\n"
+        
+        file_chunks = []
+        file_metadatas = []
+        
         for i, chunk in enumerate(chunks):
-            # Prepend metadata header to chunk text
-            chunk_with_metadata = metadata_header + chunk
-            chunk_ids.append(f"{file}_{i}")
-            metadatas.append({"file": file, "chunk": i+1, "source": "dropbox", "redirect_link": temp_link})
-            all_chunks.append(chunk_with_metadata)
+            chunk_id = f"{file}_{i}"
+            chunk_ids.append(chunk_id)
+            
+            # Create rich metadata (separate from content)
+            metadata = {
+                "file": file,
+                "chunk_index": i+1,
+                "total_chunks": len(chunks),
+                "source": "dropbox",
+                "redirect_link": temp_link,
+                "file_type": os.path.splitext(file)[1].lower()[1:] if "." in file else "unknown",
+                "chunk_size": len(chunk),
+                "processed_at": datetime.now().isoformat()
+            }
+            
+            metadatas.append(metadata)
+            all_chunks.append(chunk)
+            
+            file_chunks.append(chunk)
+            file_metadatas.append(metadata)
+            
+        # Save chunks for verification
+        save_chunks_for_verification(file, file_chunks, file_metadatas)
+        
         processed_files.append(file)
         embedding_status[file] = file_key
+        
     if all_chunks:
         logging.info(f"Embedding {len(all_chunks)} chunks into Pinecone.")
         from langchain_openai import OpenAIEmbeddings
@@ -435,39 +720,45 @@ async def embed(request: Request):
         if not api_key:
             raise HTTPException(status_code=400, detail="OpenAI API key not found. Please set it using the /set-openai-key endpoint.")
             
-        embeddings = OpenAIEmbeddings(model="text-embedding-ada-002", api_key=api_key)
+        # Use text-embedding-3-small consistently for both embedding and retrieval
+        embeddings = OpenAIEmbeddings(model="text-embedding-3-small", api_key=api_key)
         vectorstore = PineconeVectorStore(
             index_name=os.getenv("PINECONE_INDEX_NAME"),
             embedding=embeddings,
             namespace="dropbox_search",
             pinecone_api_key=os.getenv("PINECONE_API_KEY")
         )
+        
+        # Add texts with proper metadata separation
         vectorstore.add_texts(texts=all_chunks, metadatas=metadatas, ids=chunk_ids)
         logging.info("Embedding complete: Chunks upserted into Pinecone.")
     else:
         logging.info("No new chunks to embed.")
+        
     try:
         with open(EMBEDDING_STATUS_FILE, "w") as f:
             json.dump(embedding_status, f, indent=2)
         logging.info("Updated embedding status mapping saved.")
     except Exception as e:
         logging.error(f"Error saving embedding status mapping: {e}")
+        
     summary = {
         "message": "Embedding complete",
         "processed_files": processed_files,
         "skipped_files": skipped_files,
-        "total_chunks": total_chunks
+        "total_chunks": total_chunks,
+        "chunks_verification_dir": CHUNKS_DIR if total_chunks > 0 else None
     }
     logging.info(f"Embedding process summary: {summary}")
     return JSONResponse(content=summary)
 
 
-
 @app.post("/chat")
 async def chat(request: ChatRequest):
     """
-    Chat endpoint that provides responses based on embedded documents in Pinecone.
+    Enhanced chat endpoint that provides responses based on embedded documents in Pinecone.
     Uses Cohere Reranker for better document retrieval and includes source references.
+    Implements improved retrieval parameters and debugging.
     """
     async def generate_response(retrieval_chain, user_query):
         try:
@@ -476,8 +767,10 @@ async def chat(request: ChatRequest):
                     answer = chunk["answer"]
                     yield f"{answer}"
                 except Exception as e:
+                    logging.error(f"Error in streaming response: {str(e)}")
                     pass
         except Exception as e:
+            logging.error(f"Error in generate_response: {str(e)}")
             raise HTTPException(status_code=500, detail=str(e))
 
     try:
@@ -489,27 +782,27 @@ async def chat(request: ChatRequest):
         # Initialize OpenAI language model
         llm = ChatOpenAI(model="gpt-4o-mini", api_key=api_key)
 
-        # Configure retriever with Pinecone
+        # Configure retriever with Pinecone - use same embedding model as in /embed endpoint
         vectorstore = PineconeVectorStore(
-            index_name="testabhishek",
+            index_name=os.getenv("PINECONE_INDEX_NAME", "testabhishek"),
             embedding=OpenAIEmbeddings(model="text-embedding-3-small", api_key=api_key),
             namespace="dropbox_search",
             pinecone_api_key=os.getenv("PINECONE_API_KEY"),
         )
 
-        # Create base retriever
+        # Create base retriever with optimized parameters
         base_retriever = vectorstore.as_retriever(
             search_type="similarity",
             search_kwargs={
-                "k": 20,  # Retrieve more documents initially for reranking
+                "k": 30,  # Retrieve more documents initially for reranking
             },
         )
         
-        # Add Cohere Reranker for better document retrieval
+        # Add Cohere Reranker with optimized parameters
         compressor = CohereRerank(
             cohere_api_key=os.getenv("COHERE_API_KEY"),
             model="rerank-v3.5",
-            top_n=4 # Keep top 4 most relevant documents after reranking
+            top_n=6  # Keep top 6 most relevant documents after reranking
         )
         
         # Create compression retriever with Cohere Reranker
@@ -518,17 +811,22 @@ async def chat(request: ChatRequest):
             base_retriever=base_retriever
         )
 
+        # Log the query for debugging
+        logging.info(f"Processing chat query: {request.user_query}")
+
         # Create enhanced prompt template with source citation instructions
         system_prompt = """
-         You are DropboxGPT, an assistant specialized in answering questions using information extracted from Dropbox documents.
-        Your responses must be concise, accurate, and based solely on the embedded Dropbox data.
+        You are DropboxGPT, an assistant specialized in answering questions using information extracted from Dropbox documents.
+        Your responses must be accurate and based solely on the embedded Dropbox data.
         Always include source attributions with the file name and a redirectable link when available.
         If the answer is not found in the provided documents, state "I cannot find information about this in your Dropbox data."
         
         Response Guidelines:
-        - Keep your answer under 300 words unless more detail is required.
+        - Be thorough and detailed in your answers, making sure to include all relevant information from the context.
         - Use bullet points or numbered lists for clarity if needed.
         - Provide inline citations in the format [1], [2], etc. referencing the file names and links.
+        - If multiple chunks from the same file contain relevant information, combine and synthesize that information.
+        - Pay special attention to any tables, lists, or structured data in the context.
         
         Context from knowledge base: {context}
         
@@ -558,6 +856,7 @@ async def chat(request: ChatRequest):
         )
 
     except Exception as e:
+        logging.error(f"Error in chat endpoint: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 if __name__ == "__main__":
