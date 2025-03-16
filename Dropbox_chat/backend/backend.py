@@ -647,6 +647,7 @@ async def embed(request: Request):
             embedding_status = {}
     processed_files = []
     skipped_files = []
+    failed_files = []
     total_chunks = 0
     all_chunks = []
     chunk_ids = []
@@ -665,50 +666,73 @@ async def embed(request: Request):
             skipped_files.append(file)
             logging.info(f"Skipping {file} for embedding (unchanged).")
             continue
-        logging.info(f"Processing file for embedding: {file}")
-        text = document_loader(file_path)
-        if not text:
-            logging.warning(f"No text extracted from {file}. Skipping.")
+        try:
+            logging.info(f"Processing file for embedding: {file}")
+            
+            # Extract text from file
+            try:
+                text = document_loader(file_path)
+                if not text:
+                    logging.warning(f"No text extracted from {file}. Skipping.")
+                    continue
+            except Exception as e:
+                logging.error(f"Error extracting text from {file}: {str(e)}")
+                failed_files.append({"file": file, "error": f"Text extraction failed: {str(e)}"})
+                continue
+                
+            # Split text into chunks
+            try:
+                chunks = splitter.split_text(text)
+                logging.info(f"Extracted {len(chunks)} chunks from {file} using EnhancedDocumentSplitter.")
+                total_chunks += len(chunks)
+            except Exception as e:
+                logging.error(f"Error splitting text from {file}: {str(e)}")
+                failed_files.append({"file": file, "error": f"Text splitting failed: {str(e)}"})
+                continue
+            
+            # Retrieve temporary link from mapping if available
+            temp_link = mapping.get(file, {}).get("temp_link", "")
+            
+            file_chunks = []
+            file_metadatas = []
+            
+            for i, chunk in enumerate(chunks, start=1):
+                chunk_id = f"{file}_{i}"
+                chunk_ids.append(chunk_id)
+                
+                # Add metadata directly to the chunk content
+                metadata_str = f"Source: Dropbox\nDocument: {file}\nChunk: {i}/{len(chunks)}"
+                if temp_link:
+                    metadata_str += f"\nLink: {temp_link}"
+                    
+                # Combine metadata with chunk content
+                combined_chunk = f"{metadata_str}\n\n{chunk}"
+                
+                # Create simple metadata for Pinecone
+                metadata = {
+                    "source": file
+                }
+                
+                metadatas.append(metadata)
+                all_chunks.append(combined_chunk)
+                
+                file_chunks.append(combined_chunk)
+                file_metadatas.append(metadata)
+            
+            # Save chunks for verification
+            try:
+                save_chunks_for_verification(file, file_chunks, file_metadatas)
+            except Exception as e:
+                logging.error(f"Error saving chunks for verification for {file}: {str(e)}")
+                # Continue even if chunk verification fails
+            
+            processed_files.append(file)
+            embedding_status[file] = file_key
+            
+        except Exception as e:
+            logging.error(f"Unexpected error processing {file}: {str(e)}")
+            failed_files.append({"file": file, "error": f"Processing failed: {str(e)}"})
             continue
-            
-        # Use enhanced document splitter to split text into chunks
-        chunks = splitter.split_text(text)
-        logging.info(f"Extracted {len(chunks)} chunks from {file} using EnhancedDocumentSplitter.")
-        total_chunks += len(chunks)
-        
-        # Retrieve temporary link from mapping if available
-        temp_link = mapping.get(file, {}).get("temp_link", "")
-        
-        file_chunks = []
-        file_metadatas = []
-        
-        for i, chunk in enumerate(chunks):
-            chunk_id = f"{file}_{i}"
-            chunk_ids.append(chunk_id)
-            
-            # Create rich metadata (separate from content)
-            metadata = {
-                "file": file,
-                "chunk_index": i+1,
-                "total_chunks": len(chunks),
-                "source": "dropbox",
-                "redirect_link": temp_link,
-                "file_type": os.path.splitext(file)[1].lower()[1:] if "." in file else "unknown",
-                "chunk_size": len(chunk),
-                "processed_at": datetime.now().isoformat()
-            }
-            
-            metadatas.append(metadata)
-            all_chunks.append(chunk)
-            
-            file_chunks.append(chunk)
-            file_metadatas.append(metadata)
-            
-        # Save chunks for verification
-        save_chunks_for_verification(file, file_chunks, file_metadatas)
-        
-        processed_files.append(file)
-        embedding_status[file] = file_key
         
     if all_chunks:
         logging.info(f"Embedding {len(all_chunks)} chunks into Pinecone.")
@@ -745,7 +769,11 @@ async def embed(request: Request):
     summary = {
         "message": "Embedding complete",
         "processed_files": processed_files,
+        "processed_count": len(processed_files),
         "skipped_files": skipped_files,
+        "skipped_count": len(skipped_files),
+        "failed_files": failed_files,
+        "failed_count": len(failed_files),
         "total_chunks": total_chunks,
         "chunks_verification_dir": CHUNKS_DIR if total_chunks > 0 else None
     }
