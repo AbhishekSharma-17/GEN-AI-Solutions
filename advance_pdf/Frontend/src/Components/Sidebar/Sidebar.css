@@ -1,89 +1,94 @@
 .actual-sidebar {
-  /* border: 1px solid red; */
   height: 100%;
-  width: 100%;
-  padding: 30px 15px 30px 15px;
+  width: 100%; /* Full width for responsiveness */
+  padding: 30px 15px;
   display: flex;
   flex-direction: column;
 }
-.insight-and-modelName{
+
+.insight-and-modelName {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 20px;
 }
-.model-name{
+
+.model-name {
   background-color: #ece9e9;
   border-radius: 5px;
-  padding: 2px 10px ;
+  padding: 2px 10px;
   border: 1px solid #bbb;
 }
-.insight-and-modelName p{
+
+.insight-and-modelName p {
   color: rgb(19, 46, 120);
   font-family: Inter;
   font-weight: bold;
 }
-.token-and-cost-display{
+
+.token-and-cost-display {
   border: 1px solid rgb(182, 182, 182);
   padding: 10px;
-  box-shadow: 0px 0px 12px  #e1e0e0;
-  width: 100%;
+  box-shadow: 0px 0px 12px #e1e0e0;
+  width: 100%; /* Full width for responsiveness */
   border-radius: 10px;
   animation: fade-in 2s;
 }
-.tokens, .approx-cost, .embed-token, .cumulative-token-cost{
-  /* border: 1px solid purple; */
+
+.tokens, .approx-cost, .embed-token, .cumulative-token-cost {
   padding: 2px;
   display: flex;
   flex-direction: column;
   margin: 10px auto;
 }
-.div-heading{
+
+.div-heading {
   font-family: Outfit;
   font-size: 20px;
-  /* border: 1px solid yellow; */
   margin: 0;
 }
-.value-title{
-  /* border: 1px solid green; */
+
+.value-title {
   padding: 5px;
   display: flex;
   justify-content: space-between;
 }
-.input-value, .output-values, .total-values{
+
+.input-value, .output-values, .total-values {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* border: 1px solid orangered; */
   padding: 5px;
   gap: 5px;
 }
-.embed-value-title, .cumulative-value-title{
+
+.embed-value-title, .cumulative-value-title {
   display: flex;
   justify-content: space-around;
   align-items: center;
   padding: 5px;
- 
 }
-.embed-value-title{
+
+.embed-value-title {
   background-color: #ecf8fffc;
   border-radius: 5px;
 }
-.numeric-value{
+
+.numeric-value {
   color: #0d92f4;
   font-weight: bold;
   font-family: Outfit;
   font-size: 20px;
 }
-.char-value{
+
+.char-value {
   color: grey;
   font-weight: 500;
 }
 
-/* reponse time and cost  */
-.response-time-cost
-{
+/* Response time and cost */
+.response-time-cost {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -92,46 +97,35 @@
   font-weight: 500;
   padding: 5px;
   border-radius: 5px;
-
 }
-.response-time , .response-cost
-{
+
+.response-time, .response-cost {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
   color: rgb(79, 78, 78);
 }
-.reponse-cost span , .reponse-time span
-{
+
+.reponse-cost span, .reponse-time span {
   font-size: 14px;
   font-family: Outfit;
 }
 
-/* .skeleton insights */
-.skeleton-insight{
-  /* border: 1px solid #ccc; */
+/* Skeleton insights */
+.skeleton-insight {
   display: flex;
   justify-content: center;
   align-items: center;
 }
-.skeleton-insight .shimmer-text{
-  font-size: 40px;
-  font-family:Roboto;
-  font-weight: bold;
-  /* color: rgb(223, 222, 222); */
-  background: linear-gradient(90deg, #b0b0b0 25%, #d0d0d0 50%, #b0b0b0 75%);
 
+.skeleton-insight .shimmer-text {
+  font-size: 40px;
+  font-family: Roboto;
+  font-weight: bold;
+  background: linear-gradient(90deg, #b0b0b0 25%, #d0d0d0 50%, #b0b0b0 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
-  color: transparent; /* Hide the text */
-  background-clip: text;
-  -webkit-background-clip: text; /* For Safari */
-}
-.shimmer-text {
-  background: linear-gradient(90deg, #e0e0e0 25%, #f5f5f5 50%, #e0e0e0 75%);
-  background-size: 200% 100%;
-  animation: shimmer 0.8s infinite;
   color: transparent; /* Hide the text */
   background-clip: text;
   -webkit-background-clip: text; /* For Safari */
@@ -143,5 +137,11 @@
   }
   100% {
     background-position: -200% 0;
+  }
+}
+
+@media (max-width: 768px) {
+  .actual-sidebar {
+    padding: 15px; /* Adjust padding for smaller screens */
   }
 }
