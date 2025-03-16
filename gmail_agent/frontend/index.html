@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/envelope.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Gmail Agent</title>
+    <!-- Add Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Global CSS Variables -->
+    <style>
+      :root {
+        --primary-color: #0366d6;
+        --secondary-color: #F5F7FA;
+        --accent-color: #FF6B6B;
+        --success-color: #28a745;
+        --warning-color: #ffc107;
+        --error-color: #dc3545;
+        --text-color: #333333;
+        --light-text: #868e96;
+        --border-color: #e1e4e8;
+        --background-color: #ffffff;
+        --dark-background: #f6f8fa;
+      }
+
+      body {
+        font-family: 'Inter', sans-serif;
+        margin: 0;
+        padding: 0;
+        color: var(--text-color);
+        background-color: var(--background-color);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
