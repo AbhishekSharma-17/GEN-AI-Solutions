@@ -1,0 +1,18 @@
+.navbar{
+    display: flex;
+    justify-content: space-between;
+    padding: 5px;
+}
+.navbar-left{
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.navbar-left .logo{
+width:120px ;
+height: auto;
+}
+.navbar-left .icon{
+    width: 50px;
+    height: auto;
+}
