@@ -9,17 +9,26 @@ import { setShowDriveFiles } from '../../store/driveSlice';
 const FileUpload = () => {
   const [file, setFile] = useState(null);
   const [uploadStatus, setUploadStatus] = useState('');
+  const [inputKey, setInputKey] = useState(Date.now()); // Unique key for input reset
   const fileInputRef = useRef(null);
   const fileUploadRef = useRef(null);
   const dispatch = useDispatch();
-  
+
   const handleBrowse = (event) => {
+    console.log('handleBrowse triggered', event);
     const selectedFile = event.target.files[0];
-    if (selectedFile && selectedFile.type === 'application/json') {
-      setFile(selectedFile);
-      handleUpload(selectedFile);
+    if (selectedFile) {
+      console.log('Selected file:', selectedFile.name);
+      if (selectedFile.type === 'application/json') {
+        setFile(selectedFile);
+        handleUpload(selectedFile);
+      } else {
+        alert('Please upload a JSON file.');
+        setFile(null); // Reset file state if invalid
+        setUploadStatus(''); // Clear status on invalid file
+      }
     } else {
-      alert('Please upload a JSON file.');
+      console.log('No file selected');
     }
   };
 
@@ -48,6 +57,7 @@ const FileUpload = () => {
   };
 
   const handleUpload = async (selectedFile) => {
+    console.log('handleUpload triggered with file:', selectedFile.name);
     if (!selectedFile) {
       alert("Please select a file to upload.");
       return;
@@ -81,6 +91,20 @@ const FileUpload = () => {
     dispatch(setShowDriveFiles(true));
   };
 
+  const handleReselectFile = () => {
+    console.log('Reselecting file...');
+    setFile(null); // Clear the file state
+    setUploadStatus(''); // Clear the upload status
+    setInputKey(Date.now()); // Update key to force new input instance
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''; // Clear the file input value
+      // Delay the click to ensure the new input is rendered
+      setTimeout(() => {
+        fileInputRef.current.click();
+      }, 0);
+    }
+  };
+
   return (
     <div className='fileUpload-container'>
       <div className="greet" style={{ fontFamily: "Inter" }}>
@@ -89,13 +113,14 @@ const FileUpload = () => {
         </p>
       </div>
       <div 
-        className="file-upload"
-        ref={fileUploadRef} // Add ref to the file-upload div
+        className={`file-upload ${uploadStatus.includes('Error') ? 'error-border' : ''}`}
+        ref={fileUploadRef}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
       >
         <input
+          key={inputKey} // Force re-render with a new key
           type="file"
           onChange={handleBrowse}
           accept=".json"
@@ -104,7 +129,11 @@ const FileUpload = () => {
         />
         <div className="upload-section">
           {file && (
-            <div className="file-name">
+            <div 
+              className="file-name"
+              onClick={handleReselectFile}
+              style={{ cursor: 'pointer' }}
+            >
               <img
                 src={jsonFileIcon}
                 alt="JSON File Icon"
@@ -144,6 +173,15 @@ const FileUpload = () => {
                       style={{ marginTop: '10px' }}
                     >
                       Connect
+                    </button>
+                  )}
+                  {uploadStatus.includes('Error') && (
+                    <button
+                      onClick={handleReselectFile}
+                      className="btn btn-secondary"
+                      style={{ marginTop: '10px' }}
+                    >
+                      Try Again
                     </button>
                   )}
                 </>
