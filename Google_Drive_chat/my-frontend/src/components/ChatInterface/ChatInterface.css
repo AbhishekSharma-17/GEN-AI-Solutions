@@ -24,6 +24,7 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
 .welcome-text {
@@ -36,20 +37,40 @@
   font-weight: 400;
 }
 
+/* Chat content container with scrolling */
 .chat-content {
   flex: 1;
-  overflow-y: auto;
-  padding: 20px;
-  max-height: calc(100% - 120px); /* Adjust for input section height */
+  overflow-y: auto; /* Enables vertical scrolling */
+  max-height: calc(100vh - 150px); /* Adjust this value based on your layout */
 }
 
-/* Result container */
+.result::-webkit-scrollbar {
+  width: 8px; /* Slim scrollbar */
+}
+
+.result::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray track */
+  border-radius: 4px; /* Rounded edges */
+}
+
+.result::-webkit-scrollbar-thumb {
+  background: #888; /* Gray thumb */
+  border-radius: 4px; /* Rounded thumb */
+}
+
+.result::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker gray on hover */
+}
+
+/* Firefox scrollbar styling for chat-content */
 .result {
-  padding: 0;
-  font-size: 18px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  scrollbar-width: thin; /* Slim scrollbar */
+  scrollbar-color: #888 #f1f1f1; /* Thumb and track colors */
+}
+/* Ensures the result div scrolls properly */
+.result {
+  max-height: 100%;
+  overflow-y: auto;
 }
 
 .result::-webkit-scrollbar {
@@ -88,7 +109,6 @@
 /* Result title (user message) */
 .result-title {
   margin: 0;
-  margin-top: 10px;
   gap: 10px;
   display: flex;
   align-items: center;

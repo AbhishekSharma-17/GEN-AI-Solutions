@@ -19,6 +19,17 @@
   width: 60px;
 }
 
+.menu-sidebar.collapsed .logo-icon {
+  width: 20%; /* Shrink to 20% */
+  min-width: 20px; /* Prevent it from disappearing completely */
+}
+
+.menu-sidebar.collapsed .logo {
+  width: 20%; /* Shrink to 20% */
+  min-width: 24px; /* Keep it visible */
+}
+
+
 .menu-sidebar-header {
   padding: 10px 0; /* Adjusted padding to center vertically */
   display: flex;

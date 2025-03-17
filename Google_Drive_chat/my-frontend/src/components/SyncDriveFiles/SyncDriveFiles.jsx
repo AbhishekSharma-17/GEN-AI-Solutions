@@ -6,11 +6,10 @@ import { useDispatch, useSelector } from 'react-redux';
 import './SyncDriveFiles.css';
 import documentIcon from '../../assets/documentIcon.png';
 import { useNavigate } from 'react-router-dom';
-import { setSyncFiles } from '../../store/syncSlice';
+import { setSyncFiles, setSyncDocumentsLoader } from '../../store/syncSlice';
 import Loader from '../commonComponents/Loader/Loader';
 
 const SyncDriveFiles = () => {
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [isExistingCollapsed, setIsExistingCollapsed] = useState(false);
   const [isUnsupportedCollapsed, setIsUnsupportedCollapsed] = useState(true);
@@ -18,6 +17,8 @@ const SyncDriveFiles = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const syncFiles = useSelector((state) => state.sync.syncFiles);
+  const syncDocumentsLoader = useSelector((state) => state.sync.syncDocumentsLoader);
+
 
   // Dynamically set collapse states based on syncFiles
   useEffect(() => {
@@ -29,7 +30,7 @@ const SyncDriveFiles = () => {
   }, [syncFiles]);
 
   const handleSync = async () => {
-    setLoading(true);
+    dispatch(setSyncDocumentsLoader(true));
     setError(null);
 
     try {
@@ -46,7 +47,7 @@ const SyncDriveFiles = () => {
       console.error("Error syncing files", err);
       setError(err.message || 'An error occurred while syncing files.');
     } finally {
-      setLoading(false);
+      dispatch(setSyncDocumentsLoader(false));
     }
   };
 
@@ -76,17 +77,17 @@ const SyncDriveFiles = () => {
           variant="contained"
           className="sync-button"
           onClick={handleSync}
-          disabled={loading}
+          disabled={syncDocumentsLoader}
         >
-          {loading ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Sync'}
+          {syncDocumentsLoader ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Sync'}
         </Button>
       </div>
-      {(!syncFiles || (Object.keys(syncFiles).length === 0)) && !loading && !error && (
+      {(!syncFiles || (Object.keys(syncFiles).length === 0)) && !syncDocumentsLoader && !error && (
         <Typography variant="body1" className="no-data-message">
           No synced Data Found. Please click on "<span className="bold-text">Sync</span>" button.
         </Typography>
       )}
-      {loading && (
+      {syncDocumentsLoader && (
         <Box className="loader">
           <Loader loadingText="Syncing..." showLoadingText/>
         </Box>
@@ -100,7 +101,7 @@ const SyncDriveFiles = () => {
           {error}
         </Alert>
       )}
-      {syncFiles && Object.keys(syncFiles).length !== 0 && !loading && !error && (
+      {syncFiles && Object.keys(syncFiles).length !== 0 && !syncDocumentsLoader && !error && (
         <>
           <div className="counters">
             <span className="counter-button" disabled>

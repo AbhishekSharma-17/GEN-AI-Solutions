@@ -7,19 +7,33 @@
   width: 70%;
   margin: 0 auto;
   cursor: pointer;
-  padding: 30px 10px;
+  padding: 10px;
   border-radius: 5px;
   gap: 20px;
   background-color: #FCFDFC;
   box-sizing: border-box;
   transition: border-color 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
 }
-
+.continue-button-upload{
+      margin-top: 16px;
+  background-color: #010187 !important;
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 4px;
+  text-transform: none;
+  box-shadow: none !important;
+  border: none;
+  cursor: pointer;
+}
 .file-upload.error-border {
   border-color: red; /* Red border on error */
   background-color: #fff5f5; /* Light red background for emphasis */
 }
-
+.continue-button-upload:hover {
+    background-color: #1E88E5 !important;
+  box-shadow: none !important;
+  transition: 0.3s ease-in;
+}
 .fileUpload-container {
   padding: 32px;
   min-height: 100vh; /* Ensure full height for mobile */

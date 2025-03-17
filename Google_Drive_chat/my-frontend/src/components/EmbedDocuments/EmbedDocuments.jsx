@@ -173,7 +173,7 @@ const EmbedDocuments = () => {
       )}
       {embedDocumentLoader && (
         <Box className="loader">
-          <Loader loadingText={loadingText} showLoadingText />
+          <Loader loadingText='Embedding...' showLoadingText />
         </Box>
       )}
       {embeddingData && !embedDocumentLoader && !error && (

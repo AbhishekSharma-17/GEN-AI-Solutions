@@ -104,10 +104,40 @@
 .file-sections {
   margin-top: 24px;
   width: 100%;
+  overflow-y: auto;
+  max-height: 60vh;
+  padding-right: 8px; /* Add padding to prevent scrollbar from overlapping content */
+}
+
+/* Custom Scrollbar Styling for file-sections */
+.file-sections::-webkit-scrollbar {
+  width: 10px; /* Width of the scrollbar */
+}
+
+.file-sections::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color of the track */
+  border-radius: 5px; /* Rounded corners for the track */
+}
+
+.file-sections::-webkit-scrollbar-thumb {
+  background: #888; /* Color of the scrollbar thumb */
+  border-radius: 5px; /* Rounded corners for the thumb */
+  border: 2px solid #f1f1f1; /* Add a border to the thumb */
+}
+
+.file-sections::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Color of the thumb on hover */
+}
+
+/* Firefox scrollbar styling */
+.file-sections {
+  scrollbar-width: thin; /* Set the width of the scrollbar */
+  scrollbar-color: #888 #f1f1f1; /* Thumb and track color */
 }
 
 .file-section {
-  margin-bottom: 24px;
+    padding: 0 10px;
+    margin: 10px 0;
 }
 
 .status-header {

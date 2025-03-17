@@ -7,6 +7,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import { FaUserCircle } from "react-icons/fa";
 import './ChatInterface.css'; 
 import icon from '../../assets/icon.png';
+import driveIcon from '../../assets/drive-icon.png';
 import send_icon from '../../assets/send_icon.png';
 import ResponseLoader from '../commonComponents/Response Loader/ResponseLoader';
 
@@ -132,11 +133,20 @@ const ChatInterface = () => {
       <Box className="chat-main">
         {chatResponses.length === 0 && (
           <Box className="welcome-message">
+            <img 
+              src={driveIcon} 
+              alt="Drive Icon" 
+              style={{ 
+                width: '64px', 
+                height: '64px', 
+                marginBottom: '20px' 
+              }} 
+            />
             <Typography variant="h6" className="welcome-text" gutterBottom>
               Can I help you with anything?
             </Typography>
             <Typography variant="body1" className="welcome-subtext">
-              Ready to assist you with anything you need from GDrive Docs.
+              Ready to assist you with anything you need from Drive Docs.
             </Typography>
           </Box>
         )}

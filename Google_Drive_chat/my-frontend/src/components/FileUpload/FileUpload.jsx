@@ -109,7 +109,7 @@ const FileUpload = () => {
     <div className='fileUpload-container'>
       <div className="greet" style={{ fontFamily: "Inter" }}>
         <p className="greetPara2">
-          <span style={{ fontWeight: "bold" }}>Prototype</span>: Chat with Drive
+          Drive Chatbot
         </p>
       </div>
       <div 
@@ -169,7 +169,7 @@ const FileUpload = () => {
                   {uploadStatus.includes('successfully uploaded') && (
                     <button
                       onClick={handleConnect}
-                      className="btn btn-dark"
+                      className="btn continue-button-upload"
                       style={{ marginTop: '10px' }}
                     >
                       Connect
