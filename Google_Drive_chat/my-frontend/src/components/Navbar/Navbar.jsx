@@ -12,14 +12,14 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [alert, setAlert] = useState({ open: false, severity: 'info', message: '' });
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false); // State for mobile menu toggle
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dispatch = useDispatch();
 
   const handleRedirect = (path) => {
     navigate(path);
-    setIsMobileMenuOpen(false); // Close mobile menu after navigation
+    setIsMobileMenuOpen(false);
     if (window.innerWidth < 768) {
-      setIsCollapsed(true); // Ensure sidebar remains collapsed on mobile after navigation
+      setIsCollapsed(true);
     }
   };
 
@@ -57,18 +57,28 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
     { name: 'Embed', path: '/embed-documents', icon: FaFileAlt },
     { name: 'Chat', path: '/chat', icon: FaComments },
   ];
+    const nonUplodMenuItems = [
+    { name: 'Upload', path: '/', icon: FaUpload },
+  ];
+
+  // Filter menu items based on fileUpload in localStorage
+  const hasFileUpload = localStorage.getItem('fileUpload') === 'true';
+  
+  const visibleMenuItems = hasFileUpload 
+    ? menuItems 
+    : nonUplodMenuItems;
 
   const handleToggle = () => {
     if (window.innerWidth < 768) {
-      setIsMobileMenuOpen((prev) => !prev); // Toggle mobile menu overlay
+      setIsMobileMenuOpen((prev) => !prev);
       if (isMobileMenuOpen) {
-        setIsCollapsed(true); // Reset collapse state when closing mobile menu
+        setIsCollapsed(true);
       }
     } else {
       setIsCollapsed((prev) => {
         console.log('Toggling isCollapsed from', prev, 'to', !prev);
         return !prev;
-      }); // Toggle desktop collapse
+      });
     }
   };
 
@@ -100,7 +110,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         </div>
         <div className="menu-sidebar-content">
           <div className="menu-container">
-            {menuItems.map((item) => (
+            {visibleMenuItems.map((item) => (
               <button
                 key={item.path}
                 className={`header-button ${isActive(item.path) ? 'active' : ''}`}
@@ -111,7 +121,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
               </button>
             ))}
           </div>
-          {localStorage.getItem('fileUpload') && (
+          {hasFileUpload && (
             <div className="disconnect-container">
               <button className="header-button disconnect-button" onClick={handleDisconnect}>
                 <span className="button-text">Disconnect</span>
