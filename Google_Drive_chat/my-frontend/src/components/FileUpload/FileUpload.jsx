@@ -109,7 +109,7 @@ const FileUpload = () => {
     <div className='fileUpload-container'>
       <div className="greet" style={{ fontFamily: "Inter" }}>
         <p className="greetPara2">
-          Drive Chatbot
+          Drive Agent
         </p>
       </div>
       <div 

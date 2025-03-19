@@ -240,8 +240,7 @@ const ChatInterface = () => {
             </div>
           </form>
           <p className="bottom-info">
-            GenAI Protos may display inaccurate information, such as the number of
-            bytes and also including about the people.
+            We Build a Working Prototype for Your Gen AI Use Case in 8 Days.
           </p>
         </div>
       </Box>
