@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { setShowDriveFiles } from './store/driveSlice';
-import FileUpload from './components/FileUpload/FileUpload';
+import ConfigurationForm from './components/ConfigurationForm/ConfigurationForm';
 import ListDriveFiles from './components/ListDriveFiles/ListDriveFiles';
 import SyncDriveFiles from './components/SyncDriveFiles/SyncDriveFiles';
 import EmbedDocuments from './components/EmbedDocuments/EmbedDocuments';
@@ -38,7 +38,7 @@ function App() {
           {/* Public route - always accessible */}
           <Route
             path="/"
-            element={<FileUpload showDriveFiles={showDriveFiles} />}
+            element={<ConfigurationForm showDriveFiles={showDriveFiles} />}
           />
           
           {/* Protected routes */}
