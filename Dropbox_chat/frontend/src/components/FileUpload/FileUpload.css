@@ -1,0 +1,293 @@
+/* Center the fileUpload-container's content both vertically and horizontally */
+.fileUpload-container {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  min-height: 100vh; /* Ensure it takes the full viewport height */
+  background-color: #f5f7fa; /* Light background color similar to the image */
+  padding: 32px; /* Adjusted padding */
+  box-sizing: border-box;
+}
+
+/* Wrapper for the two sections (API key input and info card) */
+.content-wrapper {
+  display: flex;
+  gap: 20px; /* Space between the two sections */
+  width: 100%;
+  max-width: 800px; /* Limit the total width */
+}
+
+/* Style the API key section (left side) */
+.api-key-section {
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px; /* Limit the width */
+}
+
+/* Style the logo container */
+.logo-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dropbox-logo {
+  width: 40px;
+  margin-right: 10px;
+}
+
+.dropbox-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Style the input container */
+.input-container {
+  margin-bottom: 20px;
+}
+
+.api-key-label {
+  display: block;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.api-key-input {
+  width: 100%;
+  padding: 10px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+/* Style the save button */
+.save-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #000;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.save-button:hover {
+  background-color: #333;
+}
+
+/* Style the informational card (right side) */
+.info-card {
+  padding: 20px;
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px; /* Match the width of the API key section */
+}
+
+.info-heading {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.info-subheading {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.info-subsection-heading {
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.info-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.info-list li {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 10px;
+  position: relative;
+  padding-left: 25px; /* Space for the custom bullet */
+}
+
+.info-list li::before {
+  content: '✔'; /* Unicode checkmark */
+  position: absolute;
+  left: 0;
+  color: #6b48ff; /* Purple color for the checkmark */
+  font-size: 16px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .content-wrapper {
+    flex-direction: column; /* Stack the sections vertically */
+    align-items: center;
+    gap: 15px; /* Reduced gap for smaller screens */
+  }
+
+  .api-key-section,
+  .info-card {
+    max-width: 100%; /* Full width on smaller screens */
+    padding: 15px; /* Slightly less padding */
+  }
+
+  .fileUpload-container {
+    padding: 20px; /* Reduced padding for smaller screens */
+  }
+
+  .dropbox-title {
+    font-size: 20px; /* Smaller title on mobile */
+  }
+
+  .dropbox-logo {
+    width: 35px; /* Slightly smaller logo */
+  }
+
+  .api-key-label {
+    font-size: 14px; /* Smaller label */
+  }
+
+  .api-key-input {
+    font-size: 13px; /* Smaller input text */
+    padding: 8px; /* Adjusted padding */
+  }
+
+  .save-button {
+    padding: 10px; /* Adjusted padding */
+    font-size: 14px; /* Smaller button text */
+  }
+
+  .info-heading {
+    font-size: 18px; /* Smaller heading */
+  }
+
+  .info-subheading {
+    font-size: 13px; /* Smaller subheading */
+  }
+
+  .info-subsection-heading {
+    font-size: 14px; /* Smaller subsection heading */
+  }
+
+  .info-list li {
+    font-size: 13px; /* Smaller list items */
+  }
+}
+
+@media (max-width: 480px) {
+  .fileUpload-container {
+    padding: 15px; /* Minimal padding for small screens */
+  }
+
+  .api-key-section,
+  .info-card {
+    padding: 10px; /* Minimal padding */
+  }
+
+  .dropbox-title {
+    font-size: 18px; /* Even smaller title */
+  }
+
+  .dropbox-logo {
+    width: 30px; /* Smaller logo */
+  }
+
+  .api-key-label {
+    font-size: 13px; /* Smaller label */
+  }
+
+  .api-key-input {
+    font-size: 12px; /* Smaller input text */
+    padding: 6px; /* Adjusted padding */
+  }
+
+  .save-button {
+    padding: 8px; /* Adjusted padding */
+    font-size: 13px; /* Smaller button text */
+  }
+
+  .info-heading {
+    font-size: 16px; /* Smaller heading */
+  }
+
+  .info-subheading {
+    font-size: 12px; /* Smaller subheading */
+  }
+
+  .info-subsection-heading {
+    font-size: 13px; /* Smaller subsection heading */
+  }
+
+  .info-list li {
+    font-size: 12px; /* Smaller list items */
+  }
+}
+
+@media (max-width: 320px) {
+  .fileUpload-container {
+    padding: 10px; /* Minimal padding for tiny screens */
+  }
+
+  .api-key-section,
+  .info-card {
+    padding: 8px; /* Minimal padding */
+  }
+
+  .dropbox-title {
+    font-size: 16px; /* Smallest title */
+  }
+
+  .dropbox-logo {
+    width: 25px; /* Smallest logo */
+  }
+
+  .api-key-label {
+    font-size: 12px; /* Smallest label */
+  }
+
+  .api-key-input {
+    font-size: 11px; /* Smallest input text */
+    padding: 5px; /* Minimal padding */
+  }
+
+  .save-button {
+    padding: 6px; /* Minimal padding */
+    font-size: 12px; /* Smallest button text */
+  }
+
+  .info-heading {
+    font-size: 14px; /* Smallest heading */
+  }
+
+  .info-subheading {
+    font-size: 11px; /* Smallest subheading */
+  }
+
+  .info-subsection-heading {
+    font-size: 12px; /* Smallest subsection heading */
+  }
+
+  .info-list li {
+    font-size: 11px; /* Smallest list items */
+  }
+}
