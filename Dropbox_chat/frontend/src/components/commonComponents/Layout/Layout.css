@@ -66,7 +66,12 @@
   scrollbar-width: thin;
   scrollbar-color: #888 #f1f1f1;
 }
-
+.middle-container.full-width {
+  margin-left: 0; /* No margin when Navbar is not present */
+    width: calc(100vw); /* Subtract 60px margin-left and 60px margin-right */
+  margin-left: 120px; /* Match collapsed sidebar width */
+  margin-right: 60px; /* Same as margin-left for symmetry */
+}
 /* Desktop-specific adjustments (≥ 768px) */
 @media (min-width: 768px) {
   .middle-container.expanded {

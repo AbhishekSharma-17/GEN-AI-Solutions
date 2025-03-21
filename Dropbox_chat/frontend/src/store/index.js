@@ -1,12 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit';
-import driveReducer from './driveSlice';
+import dropboxReducer from './dropboxSlice';
 import syncReducer from './syncSlice'
 import embedDocumentReducer from './embedDocumentSlice';
+import connectSlice from './connectSlice';
 
 export const store = configureStore({
   reducer: {
-    drive: driveReducer,
+    dropbox: dropboxReducer,
     sync: syncReducer,
-    embedDocument: embedDocumentReducer
+    embedDocument: embedDocumentReducer,
+    connect: connectSlice
   }
 });

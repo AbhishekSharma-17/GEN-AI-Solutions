@@ -1,7 +1,7 @@
 import React from "react";
-import "./ResponseLoader.css";
+import "./ThreeDotsLoader.css";
 
-const ResponseLoader = ({ dotCount }) => {
+const ThreeDotsLoader = ({ dotCount }) => {
   const loadingText = "Loading...";
 
   return (
@@ -13,4 +13,4 @@ const ResponseLoader = ({ dotCount }) => {
   );
 };
 
-export default ResponseLoader;
+export default ThreeDotsLoader;

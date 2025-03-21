@@ -7,9 +7,9 @@ import PersonIcon from '@mui/icons-material/Person';
 import { FaUserCircle } from "react-icons/fa";
 import './ChatInterface.css'; 
 import icon from '../../assets/icon.png';
-import driveIcon from '../../assets/drive-icon.png';
+import dropboxIcon from '../../assets/dropbox.png';
 import send_icon from '../../assets/send_icon.png';
-import ResponseLoader from '../commonComponents/Response Loader/ResponseLoader';
+import ThreeDotsLoader from '../commonComponents/ThreeDotsLoader/ThreeDotsLoader';
 
 const ChatInterface = () => {
   const [chatQuery, setChatQuery] = useState('');
@@ -21,14 +21,27 @@ const ChatInterface = () => {
     setChatQuery(event.target.value);
   };
 
+  // Normalize URLs for comparison (remove query parameters, normalize case)
+  const normalizeUrl = (url) => {
+    try {
+      const urlObj = new URL(url);
+      // Remove query parameters and normalize the pathname to lowercase
+      return `${urlObj.origin}${urlObj.pathname.toLowerCase()}`;
+    } catch (e) {
+      return url.toLowerCase(); // Fallback if URL parsing fails
+    }
+  };
+
   const handleChat = async (e) => {
     e.preventDefault();
     if (!chatQuery.trim()) return;
+
+    // Add user message to chat
     setChatResponses(prev => [...prev, { type: 'user', text: chatQuery }]);
     setChatQuery('');
 
     try {
-      const response = await fetch("http://localhost:8000/chat-te", {
+      const response = await fetch("http://localhost:8000/chat", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -48,8 +61,10 @@ const ChatInterface = () => {
       const decoder = new TextDecoder();
       let responseText = '';
 
+      // Add a placeholder for the bot response
       setChatResponses(prev => [...prev, { type: 'bot', text: '', isLoading: true }]);
 
+      // Read the streaming response
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
@@ -81,32 +96,41 @@ const ChatInterface = () => {
           return updatedResponses;
         });
 
-        // Process and update sources
-        if (sourcesText) {
-          const sourceLines = sourcesText
-            .split('\n')
-            .filter(line => line.trim() !== '' && line.match(/^\[\d+\]/)) // Ensure it matches source format
-            .map(line => {
-              // Extract name and URL from "[number] [name](URL) - [Google Drive]"
-              const match = line.match(/^\[\d+\]\s*\[(.*?)\]\((.*?)\)\s*-\s*\[Google Drive\]/);
-              if (match) {
-                const [, name, url] = match;
-                return { name, url };
-              }
-              return null; // Skip malformed lines
-            })
-            .filter(source => source !== null); // Remove null entries
-          setSources(prev => {
-            const newSources = sourceLines.filter(
-              newSource => !prev.some(prevSource => prevSource.url === newSource.url)
-            );
-            return [...prev, ...newSources];
-          });
-        }
-
         if (chatResponseRef.current) {
           chatResponseRef.current.scrollTop = chatResponseRef.current.scrollHeight;
         }
+      }
+
+      // Process sources after the full response is received
+      const sourcesDividerRegex = /#{2,6}\s*Sources\s*/i;
+      const sourcesMatch = responseText.match(sourcesDividerRegex);
+      if (sourcesMatch) {
+        const sourcesIndex = sourcesMatch.index;
+        const sourcesText = responseText.substring(sourcesIndex + sourcesMatch[0].length).trim();
+
+        const sourceLines = sourcesText
+          .split('\n')
+          .filter(line => line.trim() !== '' && line.match(/^\[\d+\]/)) // Ensure it matches source format
+          .map(line => {
+            // Updated regex to match "[number] [name](URL)" without requiring " - [Google Drive]"
+            const match = line.match(/^\[\d+\]\s*\[(.*?)\]\((.*?)\)/);
+            if (match) {
+              const [, name, url] = match;
+              return { name, url };
+            }
+            return null; // Skip malformed lines
+          })
+          .filter(source => source !== null); // Remove null entries
+
+        console.log('sourceLines', sourceLines);
+
+        // Update sources with deduplication
+        setSources(prev => {
+          const newSources = sourceLines.filter(
+            newSource => !prev.some(prevSource => normalizeUrl(prevSource.url) === normalizeUrl(newSource.url))
+          );
+          return [...prev, ...newSources];
+        });
       }
     } catch (err) {
       console.error("Error in chat request:", err);
@@ -134,8 +158,8 @@ const ChatInterface = () => {
         {chatResponses.length === 0 && (
           <Box className="welcome-message">
             <img 
-              src={driveIcon} 
-              alt="Drive Icon" 
+              src={dropboxIcon} 
+              alt="Dropbox Icon" // Updated alt text to reflect Dropbox
               style={{ 
                 width: '64px', 
                 height: '64px', 
@@ -146,7 +170,7 @@ const ChatInterface = () => {
               Can I help you with anything?
             </Typography>
             <Typography variant="body1" className="welcome-subtext">
-              Ready to assist you with anything you need from Drive Docs.
+              Ready to assist you with anything you need from Dropbox.
             </Typography>
           </Box>
         )}
@@ -167,7 +191,7 @@ const ChatInterface = () => {
                     <div className="result-data">
                       <img src={icon} alt="Bot Icon" />
                       {chat.isLoading ? (
-                        <ResponseLoader />
+                        <ThreeDotsLoader dotCount={5} />
                       ) : (
                         <div className="markdown-content">
                           <ReactMarkdown

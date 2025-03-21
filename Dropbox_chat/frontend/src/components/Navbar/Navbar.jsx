@@ -5,13 +5,15 @@ import './Navbar.css';
 import genAILogo from '../../assets/genAIWhite.png';
 import genAIIcon from '../../assets/icon.png';
 import Alert from '@mui/material/Alert';
-import { setDriveFiles, setShowDriveFiles } from '../../store/driveSlice';
+import { setDropboxFiles, setShowDropboxFiles } from '../../store/dropboxSlice';
 import { FaBars, FaSyncAlt, FaFileAlt, FaComments, FaSignOutAlt, FaUpload } from 'react-icons/fa';
+import { setShowAlert, setMessage } from '../../store/connectSlice';
 
 const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const [alert, setAlert] = useState({ open: false, severity: 'info', message: '' });
+  const [detailedAlert, setDetailedAlert] = useState({ open: false, severity: 'info', message: '' }); // New state for detailed alert
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const dispatch = useDispatch();
 
@@ -35,10 +37,34 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         credentials: 'include',
       });
       if (response.ok) {
-        dispatch(setDriveFiles([]));
-        dispatch(setShowDriveFiles(false));
-        localStorage.removeItem('fileUpload');
+        const data = await response.json();
+        dispatch(setDropboxFiles([]));
+        dispatch(setShowDropboxFiles(false));
+        localStorage.removeItem('isOpenAiKeySet');
         setAlert({ open: true, severity: 'success', message: 'Disconnected' });
+
+        // Process the details to show what was successfully removed
+        if (data.details) {
+          const successfulActions = Object.entries(data.details)
+            .filter(([key, value]) => value === true)
+            .map(([key]) => {
+              // Format the key into a user-friendly string
+              return key
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, char => char.toUpperCase());
+            });
+
+          if (successfulActions.length > 0) {
+            const detailedMessage = `Successfully Disconnected removed: ${successfulActions.join(', ')}.`;
+            setDetailedAlert({ open: true, severity: 'success', message: detailedMessage });
+            dispatch(setShowAlert(true));
+            dispatch(setMessage({ open: true, severity: 'success', message: detailedMessage }));
+          } else {
+            setDetailedAlert({ open: true, severity: 'warning', message: 'No items were successfully removed.' });
+          }
+        } else {
+          setDetailedAlert({ open: true, severity: 'warning', message: 'No detailed information available.' });
+        }
       } else {
         throw new Error(`HTTP error! Status: ${response.status}`);
       }
@@ -46,25 +72,29 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
       console.error("Error disconnecting:", err);
       setAlert({ open: true, severity: 'error', message: 'Error disconnecting: ' + err.message });
     }
+
+    // Close the initial alert after 3 seconds
     setTimeout(() => {
       setAlert({ open: false, severity: 'info', message: '' });
     }, 3000);
+
+    // Close the detailed alert after 5 seconds
+    setTimeout(() => {
+      setDetailedAlert({ open: false, severity: 'info', message: '' });
+    }, 5000);
   };
 
   const menuItems = [
-    { name: 'Upload', path: '/', icon: FaUpload },
     { name: 'Sync', path: '/sync-files', icon: FaSyncAlt },
     { name: 'Embed', path: '/embed-documents', icon: FaFileAlt },
     { name: 'Chat', path: '/chat', icon: FaComments },
   ];
-    const nonUplodMenuItems = [
-    { name: 'Upload', path: '/', icon: FaUpload },
-  ];
+  const nonUplodMenuItems = [];
 
   // Filter menu items based on fileUpload in localStorage
-  const hasFileUpload = localStorage.getItem('fileUpload') === 'true';
+  const showDropboxFiles = localStorage.getItem('isOpenAiKeySet') === 'true';
   
-  const visibleMenuItems = hasFileUpload 
+  const visibleMenuItems = showDropboxFiles 
     ? menuItems 
     : nonUplodMenuItems;
 
@@ -121,7 +151,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
               </button>
             ))}
           </div>
-          {hasFileUpload && (
+          {showDropboxFiles && (
             <div className="disconnect-container">
               <button className="header-button disconnect-button" onClick={handleDisconnect}>
                 <span className="button-text">Disconnect</span>
@@ -132,7 +162,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
         </div>
       </div>
 
-      {/* Alert */}
+      {/* Initial Alert */}
       {alert.open && (
         <Alert
           variant="filled"
@@ -143,11 +173,30 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
             top: 70,
             left: '50%',
             transform: 'translateX(-50%)',
-            width: '90%',
+            width: '50%',
             zIndex: 1000,
           }}
         >
           {alert.message}
+        </Alert>
+      )}
+
+      {/* Detailed Alert */}
+      {detailedAlert.open && (
+        <Alert
+          variant="filled"
+          severity={detailedAlert.severity}
+          onClose={() => setDetailedAlert({ ...detailedAlert, open: false })}
+          sx={{
+            position: 'fixed',
+            top: 130, // Position below the initial alert
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: { xs: '90%', sm: '70%', md: '50%' },
+            zIndex: 1000,
+          }}
+        >
+          {detailedAlert.message}
         </Alert>
       )}
     </>

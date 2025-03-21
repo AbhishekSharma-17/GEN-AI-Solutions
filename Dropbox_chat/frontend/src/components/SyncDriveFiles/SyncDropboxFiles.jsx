@@ -1,30 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { Typography, Button, CircularProgress, Box, IconButton, Alert } from '@mui/material';
+import { Typography, Button, Box, IconButton, Alert, CircularProgress } from '@mui/material';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
 import { useDispatch, useSelector } from 'react-redux';
-import './SyncDriveFiles.css';
+import './SyncDropboxFiles.css';
 import documentIcon from '../../assets/documentIcon.png';
 import { useNavigate } from 'react-router-dom';
 import { setSyncFiles, setSyncDocumentsLoader } from '../../store/syncSlice';
+import { ClipLoader } from 'react-spinners'; // Import ClipLoader from react-spinners
 import Loader from '../commonComponents/Loader/Loader';
 
-const SyncDriveFiles = () => {
+const SyncDropboxFiles = () => {
   const [error, setError] = useState(null);
   const [isExistingCollapsed, setIsExistingCollapsed] = useState(false);
   const [isUnsupportedCollapsed, setIsUnsupportedCollapsed] = useState(true);
   const [isDownloadedCollapsed, setIsDownloadedCollapsed] = useState(false);
+  const [continueLoading, setContinueLoading] = useState(false); // State for Continue button loader
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const syncFiles = useSelector((state) => state.sync.syncFiles);
   const syncDocumentsLoader = useSelector((state) => state.sync.syncDocumentsLoader);
 
-
   // Dynamically set collapse states based on syncFiles
   useEffect(() => {
     if (syncFiles && Object.keys(syncFiles).length !== 0) {
       setIsDownloadedCollapsed(syncFiles.downloaded_files?.length > 0);
-      const hasSkippedExisting = syncFiles.skipped_existing_files?.length > 0;
+      const hasSkippedExisting = syncFiles.skipped_files?.length > 0;
       setIsUnsupportedCollapsed(hasSkippedExisting);
     }
   }, [syncFiles]);
@@ -52,7 +53,10 @@ const SyncDriveFiles = () => {
   };
 
   const handleContinue = () => {
-    navigate('/embed-documents');
+    setContinueLoading(true);
+    setTimeout(() => {
+      navigate('/embed-documents');
+    }, 1000); // Simulate a 1-second delay for the loader
   };
 
   const toggleExistingCollapse = () => {
@@ -79,17 +83,21 @@ const SyncDriveFiles = () => {
           onClick={handleSync}
           disabled={syncDocumentsLoader}
         >
-          {syncDocumentsLoader ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Sync'}
+          {syncDocumentsLoader ? (
+            <CircularProgress size={24} style={{ color: '#fff' }} />
+          ) : (
+            'Sync'
+          )}
         </Button>
       </div>
-      {(!syncFiles || (Object.keys(syncFiles).length === 0)) && !syncDocumentsLoader && !error && (
+      {(!syncFiles || Object.keys(syncFiles).length === 0) && !syncDocumentsLoader && !error && (
         <Typography variant="body1" className="no-data-message">
           No synced Data Found. Please click on "<span className="bold-text">Sync</span>" button.
         </Typography>
       )}
       {syncDocumentsLoader && (
         <Box className="loader">
-          <Loader loadingText="Syncing..." showLoadingText/>
+          <Loader loadingText='Syncing...' showLoadingText/>
         </Box>
       )}
       {error && (
@@ -105,19 +113,19 @@ const SyncDriveFiles = () => {
         <>
           <div className="counters">
             <span className="counter-button" disabled>
-              <Typography variant="body1">Attempted {syncFiles.attempted_count || 0}</Typography>
+              <Typography variant="body1">Attempted {syncFiles.total_items || 0}</Typography>
             </span>
-           <span className="counter-button" disabled>
-                          <Typography variant="body1">Downloaded {syncFiles.downloaded_count || 0}</Typography>
+            <span className="counter-button" disabled>
+              <Typography variant="body1">Downloaded {syncFiles.new_downloads_count || 0}</Typography>
             </span>
-             <span className="counter-button" disabled>
-                            <Typography variant="body1">Skipped (Existing) {syncFiles.skipped_existing_count || 0}</Typography>
+            <span className="counter-button" disabled>
+              <Typography variant="body1">Skipped (Existing) {syncFiles.skipped_files_count || 0}</Typography>
             </span>
-             <span className="counter-button" disabled>
-                            <Typography variant="body1">Skipped (Unsupported) {syncFiles.skipped_unsupported_count || 0}</Typography>
+            <span className="counter-button" disabled>
+              <Typography variant="body1">Skipped (Unsupported) {syncFiles.unsupported_files_count || 0}</Typography>
             </span>
-           <span className="counter-button" disabled>
-                          <Typography variant="body1">Failed {syncFiles.failed_count || 0}</Typography>
+            <span className="counter-button" disabled>
+              <Typography variant="body1">Failed {syncFiles.failed_files_count || 0}</Typography>
             </span>
           </div>
           <div className="file-sections">
@@ -160,7 +168,7 @@ const SyncDriveFiles = () => {
                 )}
               </div>
             )}
-            {syncFiles.skipped_existing_files?.length > 0 && (
+            {syncFiles.skipped_files?.length > 0 && (
               <div className="file-section">
                 <div
                   className="status-header"
@@ -180,8 +188,8 @@ const SyncDriveFiles = () => {
                       <Typography variant="subtitle2">File Name</Typography>
                     </div>
                     <div className="table-scroll-container">
-                      {syncFiles.skipped_existing_files?.length > 0 ? (
-                        syncFiles.skipped_existing_files.map((file, index) => (
+                      {syncFiles.skipped_files?.length > 0 ? (
+                        syncFiles.skipped_files.map((file, index) => (
                           <div key={index} className="file-row">
                             <div className="file-info">
                               <img src={documentIcon} alt="File Icon" className="file-icon" />
@@ -199,7 +207,7 @@ const SyncDriveFiles = () => {
                 )}
               </div>
             )}
-            {syncFiles.skipped_unsupported_files?.length > 0 && (
+            {syncFiles.unsupported_files?.length > 0 && (
               <div className="file-section" style={{ marginBottom: '0' }}>
                 <div
                   className="status-header"
@@ -219,8 +227,8 @@ const SyncDriveFiles = () => {
                       <Typography variant="subtitle2">File Name</Typography>
                     </div>
                     <div className="table-scroll-container">
-                      {syncFiles.skipped_unsupported_files?.length > 0 ? (
-                        syncFiles.skipped_unsupported_files.map((file, index) => (
+                      {syncFiles.unsupported_files?.length > 0 ? (
+                        syncFiles.unsupported_files.map((file, index) => (
                           <div key={index} className="file-row">
                             <div className="file-info">
                               <img src={documentIcon} alt="File Icon" className="file-icon" />
@@ -239,8 +247,17 @@ const SyncDriveFiles = () => {
               </div>
             )}
           </div>
-          <Button variant="contained" className="continue-button" onClick={handleContinue}>
-            Continue
+          <Button
+            variant="contained"
+            className="continue-button"
+            onClick={handleContinue}
+            disabled={continueLoading}
+          >
+            {continueLoading ? (
+             <CircularProgress size={24} style={{ color: '#010187' }} />
+            ) : (
+              'Continue'
+            )}
           </Button>
         </>
       )}
@@ -248,4 +265,4 @@ const SyncDriveFiles = () => {
   );
 };
 
-export default SyncDriveFiles;
+export default SyncDropboxFiles;

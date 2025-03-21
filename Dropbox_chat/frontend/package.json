@@ -1,5 +1,5 @@
 {
-  "name": "my-frontend",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -19,8 +19,13 @@
     "react-redux": "^9.2.0",
     "react-router-dom": "^6.30.0",
     "react-scripts": "5.0.1",
+    "react-spinners": "^0.15.0",
     "remark-gfm": "^4.0.1",
     "web-vitals": "^2.1.4"
+  },
+  "resolutions": {
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

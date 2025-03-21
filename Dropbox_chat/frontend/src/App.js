@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { setShowDriveFiles } from './store/driveSlice';
+import { setShowDropboxFiles } from './store/dropboxSlice';
 import ConfigurationForm from './components/ConfigurationForm/ConfigurationForm';
-import ListDriveFiles from './components/ListDriveFiles/ListDriveFiles';
-import SyncDriveFiles from './components/SyncDriveFiles/SyncDriveFiles';
+import ListDriveFiles from './components/ListDropboxFiles/ListDropboxFiles';
+import SyncDriveFiles from './components/SyncDriveFiles/SyncDropboxFiles';
 import EmbedDocuments from './components/EmbedDocuments/EmbedDocuments';
 import ChatInterface from './components/ChatInterface/ChatInterface';
 import Layout from './components/commonComponents/Layout/Layout';
@@ -12,10 +12,10 @@ import './App.css';
 
 // ProtectedRoute component to handle authentication check
 const ProtectedRoute = ({ children }) => {
-  const hasFileUpload = localStorage.getItem('fileUpload') === 'true';
+  const hasKeyUploaded = localStorage.getItem('isOpenAiKeySet') === 'true';
   
-  if (!hasFileUpload) {
-    // Redirect to home page if fileUpload is not present or not true
+  if (!hasKeyUploaded) {
+    // Redirect to home page if isOpenAiKeySet is not present or not true
     return <Navigate to="/" replace />;
   }
   
@@ -24,11 +24,11 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   const dispatch = useDispatch();
-  const showDriveFiles = useSelector((state) => state.drive.showDriveFiles);
+  const showDropboxFiles = useSelector((state) => state.dropbox.showDropboxFiles);
 
   useEffect(() => {
-    const fileUpload = localStorage.getItem('fileUpload') === 'true';
-    dispatch(setShowDriveFiles(fileUpload));
+    const isOpenAiKeySet = localStorage.getItem('isOpenAiKeySet') === 'true';
+    dispatch(setShowDropboxFiles(isOpenAiKeySet));
   }, [dispatch]);
 
   return (
@@ -38,12 +38,12 @@ function App() {
           {/* Public route - always accessible */}
           <Route
             path="/"
-            element={<ConfigurationForm showDriveFiles={showDriveFiles} />}
+            element={<ConfigurationForm />}
           />
           
           {/* Protected routes */}
           <Route
-            path="/drive-files"
+            path="/dropbox-files"
             element={
               <ProtectedRoute>
                 <ListDriveFiles />

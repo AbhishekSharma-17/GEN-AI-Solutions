@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Typography, Button, CircularProgress, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton, Alert } from '@mui/material';
+import { Typography, Button, Box, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, CircularProgress, IconButton, Alert } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import ExpandLessIcon from '@mui/icons-material/ExpandLess';
@@ -13,13 +13,15 @@ const EmbedDocuments = () => {
   const [error, setError] = useState(null);
   const [loadingText, setLoadingText] = useState(''); // New state for loader text
   const [isSkippedTableCollapsed, setIsSkippedTableCollapsed] = useState(false);
+  const [isProcessedTableCollapsed, setIsProcessedTableCollapsed] = useState(false);
   const [isEmbeddedTableCollapsed, setIsEmbeddedTableCollapsed] = useState(false);
+  const [continueLoading, setContinueLoading] = useState(false); // State for Continue button loader
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const embedDocumentLoader = useSelector((state) => state.embedDocument.embedDocumentLoader);
   const embeddingData = useSelector((state) => state.embedDocument.embedDocument);
 
-  // Helper function to truncate filename to 52 characters and append "..."
+  // Helper function to truncate filename to 38 characters and append "..."
   const truncateFilename = (filename, maxLength = 38) => {
     if (filename.length <= maxLength) return filename;
 
@@ -68,8 +70,6 @@ const EmbedDocuments = () => {
       if (response.ok) {
         const data = await response.json();
         dispatch(setEmbedDocument({ ...data, isEmbedResponse: true, embedData: data, statusData: null }));
-
-        fetchEmbeddingStatus();
       } else {
         throw new Error('Failed to embed documents. Please click on Disconnect and try again.');
       }
@@ -81,55 +81,24 @@ const EmbedDocuments = () => {
     }
   };
 
-  const handleRefresh = async () => {
-    dispatch(setEmbedDocumentLoader(true));
-    setError(null);
-    setLoadingText('Refreshing...'); // Set loading text for refresh action
-
-    try {
-      await fetchEmbeddingStatus();
-    } catch (err) {
-      console.error("Error refreshing embedding status", err);
-      setError("Error refreshing embedding status.");
-    } finally {
-      dispatch(setEmbedDocumentLoader(false));
-    }
-  };
-
   const handleContinue = () => {
-    navigate('/chat');
-  };
-
-  const fetchEmbeddingStatus = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/embedding-status", {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await response.json();
-        dispatch(setEmbedDocument({
-          ...embeddingData,
-          ...data,
-          isEmbedResponse: false,
-          statusData: data,
-        }));
-      } else {
-        throw new Error('Failed to fetch embedding status.');
-      }
-    } catch (err) {
-      console.error("Error fetching embedding status", err);
-      setError(err.message || 'An error occurred while fetching embedding status.');
-    }
+    setContinueLoading(true);
+    setTimeout(() => {
+      navigate('/chat');
+    }, 1000); // Simulate a 1-second delay for the loader
   };
 
   const toggleSkippedTableCollapse = () => {
     setIsSkippedTableCollapsed(!isSkippedTableCollapsed);
   };
 
+  const toggleProcessedTableCollapse = () => {
+    setIsProcessedTableCollapsed(!isProcessedTableCollapsed);
+  };
+
   const toggleEmbeddedTableCollapse = () => {
     setIsEmbeddedTableCollapsed(!isEmbeddedTableCollapsed);
   };
-  console.log('embeddingData', embeddingData);
 
   return (
     <div className="embed-documents-container">
@@ -146,16 +115,6 @@ const EmbedDocuments = () => {
         <Typography variant="h5" className="section-title" gutterBottom>
           Embed Documents
         </Typography>
-        {embeddingData && (
-          <Button
-            variant="contained"
-            className="refresh-button"
-            onClick={handleRefresh}
-            disabled={embedDocumentLoader}
-          >
-            {embedDocumentLoader ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Refresh'}
-          </Button>
-        )}
         <Button
           variant="contained"
           className="embed-button"
@@ -163,7 +122,11 @@ const EmbedDocuments = () => {
           disabled={embedDocumentLoader}
           sx={{ ml: 2 }}
         >
-          {embedDocumentLoader ? <CircularProgress size={24} style={{ color: '#fff' }} /> : 'Embed'}
+          {embedDocumentLoader ? (
+            <CircularProgress size={24} style={{ color: '#fff' }} />
+          ) : (
+            'Embed'
+          )}
         </Button>
       </div>
       {!embeddingData && !embedDocumentLoader && !error && (
@@ -173,11 +136,40 @@ const EmbedDocuments = () => {
       )}
       {embedDocumentLoader && (
         <Box className="loader">
-          <Loader loadingText='Embedding...' showLoadingText />
+          <Loader loadingText='Embedding...' showLoadingText/>
         </Box>
       )}
       {embeddingData && !embedDocumentLoader && !error && (
         <div className="documents-section">
+          {embeddingData.embedData && embeddingData.embedData.processed_files && embeddingData.embedData.processed_files.length > 0 && (
+            <>
+              <div className="status-header" onClick={toggleProcessedTableCollapse} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <Typography variant="subtitle1" className="section-subtitle" gutterBottom>
+                  Processed Files
+                </Typography>
+                <IconButton size="small" aria-label="toggle processed table">
+                  {isProcessedTableCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+                </IconButton>
+              </div>
+              {!isProcessedTableCollapsed && (
+                <div className="file-table">
+                  <div className="table-header">
+                    <Typography variant="subtitle2">File Name</Typography>
+                  </div>
+                  <div className="table-scroll-container">
+                    {embeddingData.embedData.processed_files.map((file, index) => (
+                      <div key={index} className="file-row">
+                        <div className="file-info">
+                          <img src={documentIcon} alt="Document Icon" className="document-icon" />
+                          <Typography variant="body1">{truncateFilename(file)}</Typography>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
           {embeddingData.embedData && embeddingData.embedData.skipped_files && embeddingData.embedData.skipped_files.length > 0 && (
             <>
               <div className="status-header" onClick={toggleSkippedTableCollapse} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
@@ -207,10 +199,17 @@ const EmbedDocuments = () => {
               )}
             </>
           )}
+          {embeddingData.embedData && (embeddingData.embedData.processed_files?.length > 0 || embeddingData.embedData.skipped_files?.length > 0) && (
+            <div className="status-header" style={{ background: 'none' }}>
+              <Typography variant="body1" className="status-message" gutterBottom style={{ marginTop: (embeddingData.embedData?.processed_files?.length > 0 || embeddingData.embedData?.skipped_files?.length > 0) ? '16px !important' : '0 !important', padding: '0 8px', width: '100%', textAlign: 'center' }}>
+                Processed {embeddingData.embedData.processed_count} files, Skipped {embeddingData.embedData.skipped_count} files, Total Chunks: {embeddingData.embedData.total_chunks}
+              </Typography>
+            </div>
+          )}
           {embeddingData.statusData && (
             <>
               <div className="status-header" style={{ background: 'none' }}>
-                <Typography variant="body1" className="status-message" gutterBottom style={{ marginTop: embeddingData.embedData?.skipped_files.length > 0 ? '16px !important' : '0 !important', padding: '0 8px', width: '100%', textAlign: 'center' }}>
+                <Typography variant="body1" className="status-message" gutterBottom style={{ marginTop: (embeddingData.embedData?.processed_files?.length > 0 || embeddingData.embedData?.skipped_files?.length > 0) ? '16px !important' : '0 !important', padding: '0 8px', width: '100%', textAlign: 'center' }}>
                   Found {embeddingData.total_embedded_files} embedded files with {embeddingData.total_chunks} total chunks
                 </Typography>
               </div>
@@ -249,14 +248,19 @@ const EmbedDocuments = () => {
               )}
             </>
           )}
-          {(embeddingData.embedData?.skipped_files?.length > 0 || embeddingData.statusData) && (
+          {(embeddingData.embedData?.processed_files?.length > 0 || embeddingData.embedData?.skipped_files?.length > 0 || embeddingData.statusData) && (
             <Button
               variant="contained"
               className="continue-button"
               onClick={handleContinue}
+              disabled={continueLoading}
               sx={{ mt: 4, mx: 'auto', display: 'block' }}
             >
-              Continue
+              {continueLoading ? (
+                <CircularProgress size={24} style={{ color: '#fff' }} />
+              ) : (
+                'Continue'
+              )}
             </Button>
           )}
         </div>

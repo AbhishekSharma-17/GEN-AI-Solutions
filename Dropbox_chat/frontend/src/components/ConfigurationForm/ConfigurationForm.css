@@ -31,7 +31,7 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     width: 50%;
     width: auto;
-    max-width:auto;
+    max-width: 90%;
     text-align: left;
     transition: all 0.3s ease;
     gap: 40px;
@@ -49,9 +49,10 @@
     justify-content: center;
     gap: 10px;
     color: #222;
+    margin-bottom: 20px;
   }
   .dropboxLogoText{
-    font-size: 2vw;
+    font-size: 2.5vw;
     font-weight: 600;
   }
   /* Right Section (Image) */
@@ -135,10 +136,21 @@
     color: #777;
     margin-bottom: 15px;
   }
-  
+  .error{
+    color: #E52020;
+    text-align: center;
+    margin-top: 5px;
+    font-weight: 500;
+  }
+  .success{
+    color: #078d07;
+    text-align: center;
+    margin-top: 5px;
+    font-weight: 500;
+  }
   /* Button */
-  .btn {
-    background: black;
+  .btn , .connect-button{
+background-color: #010187;
     color: white;
     padding: 12px;
     border: none;
@@ -150,7 +162,7 @@
   }
   
   .btn:hover {
-    background: #333;
+    background: #000064;
   }
   
   /* Connect to Slack Button */
@@ -192,7 +204,11 @@
   
     .left-section {
       padding-right: 0;
-      margin-bottom: 20px;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+    .dropboxLogoText{
+      font-size: 25px;
     }
   
     .right-section {

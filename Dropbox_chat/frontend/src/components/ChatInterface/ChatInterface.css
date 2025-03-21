@@ -289,6 +289,7 @@ box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px
   font-size: 16px;
   width: 100%;
   color: #333;
+  margin-bottom: 0;
 }
 
 .search-box input::placeholder {

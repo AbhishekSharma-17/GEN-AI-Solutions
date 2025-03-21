@@ -1,11 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState, useEffect } from 'react';
 import { Typography, Button, CircularProgress, Box } from '@mui/material';
-import './ListDriveFiles.css';
+import './ListDropboxFiles.css'
 import { useDispatch, useSelector } from 'react-redux';
 import documentIcon from '../../assets/documentIcon.png';
 import { useNavigate } from 'react-router-dom';
-import { setDriveFiles } from '../../store/driveSlice';
+import { setShowDropboxFiles, setDropboxFiles } from '../../store/dropboxSlice';
 import Loader from '../commonComponents/Loader/Loader';
 
 const ListDriveFiles = () => {
@@ -14,12 +14,12 @@ const ListDriveFiles = () => {
   const [filesData, setFilesData] = useState(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const driveFiles = useSelector((state) => state.drive.driveFiles);
+  const dropboxFiles = useSelector((state) => state.dropbox.dropboxFiles);
 
-  const fetchDriveFiles = async () => {
+  const fetchDropboxFiles = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:8000/list_drive', {
+      const response = await fetch('http://localhost:8000/list_files', {
         method: 'GET',
         credentials: 'include',
       });
@@ -27,7 +27,8 @@ const ListDriveFiles = () => {
         throw new Error('Failed to fetch drive files');
       }
       const data = await response.json();
-      dispatch(setDriveFiles(data.files || []));
+      dispatch(setShowDropboxFiles(data || []));
+      dispatch(setDropboxFiles(data.entries || []));
       setFilesData(data);
     } catch (err) {
       setError('Error loading files from Drive.');
@@ -38,12 +39,12 @@ const ListDriveFiles = () => {
   };
 
   useEffect(() => {
-    if (driveFiles.length === 0) {
-      fetchDriveFiles();
+    if (dropboxFiles.length === 0) {
+      fetchDropboxFiles();
     }
-  }, [driveFiles]);
+  }, [dropboxFiles]);
 
-  const totalItems = driveFiles.length;
+  const totalItems = dropboxFiles.length;
   const folders = filesData?.folders_count;
   const filesCount = filesData?.files_count;
 
@@ -64,40 +65,26 @@ const ListDriveFiles = () => {
       ) : (
         <>
           <Typography variant="h5" className="section-title" gutterBottom>
-            Below files found in Drive
+            Below files found in Dropbox
           </Typography>
           <div className="counters">
             <span className="counter-button" disabled>
               <Typography variant="body1">Total Items {totalItems}</Typography>
             </span>
-            <span className="counter-button" disabled>
-              <Typography variant="body1">Folders {folders}</Typography>
-            </span>
-            <span className="counter-button" disabled>
-              <Typography variant="body1">Files {filesCount}</Typography>
-            </span>
           </div>
           <div className="file-table">
             <div className="table-header">
               <Typography variant="subtitle1">File Name</Typography>
-              <Typography variant="subtitle1" className="headerText">
-                Link
-              </Typography>
             </div>
             <div className="table-scroll-container">
-              {driveFiles.map((file, index) => (
-                <div key={index} className="file-row" style={{ padding: '5px 10px' }}>
+              {dropboxFiles.map((file, index) => (
+                <div key={index} className="file-row" style={{ padding: '10px' }}>
                   <div className="file-info">
                     <img src={documentIcon} alt="File Icon" className="file-icon" />
                     <Typography variant="body1" className="file-title">
                       {file.name}
                     </Typography>
                   </div>
-                  <a href={file.webViewLink} target="_blank" rel="noopener noreferrer">
-                    <Button variant="text" className="view-button">
-                      View
-                    </Button>
-                  </a>
                 </div>
               ))}
             </div>
