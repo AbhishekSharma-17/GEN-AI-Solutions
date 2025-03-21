@@ -67,7 +67,6 @@
   scrollbar-color: #888 #f1f1f1;
 }
 .middle-container.full-width {
-  margin-left: 0; /* No margin when Navbar is not present */
     width: calc(100vw); /* Subtract 60px margin-left and 60px margin-right */
   margin-left: 120px; /* Match collapsed sidebar width */
   margin-right: 60px; /* Same as margin-left for symmetry */
@@ -122,6 +121,11 @@
     max-width: calc(100% - 20px); /* Adjust for mobile padding */
     min-height: calc(100vh - 20px); /* Adjust for mobile padding */
   }
+    .middle-container.full-width {
+    width: calc(100vw);
+  margin-left: 0 !important;
+  margin-right: 0 !important
+}
 }
 
 /* Smaller desktop adjustments (between 768px and 1200px) */
