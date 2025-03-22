@@ -173,7 +173,7 @@ async def analyze_base64(request: ImageAnalysisRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing image: {str(e)}")
 
-# Endpoint for analyzing image from a path (similar to the test.py functionality)
+# Endpoint for analyzing image from a path 
 @app.post("/analyze/path")
 async def analyze_path(image_path: str):
     try:
@@ -207,10 +207,7 @@ async def analyze_single_image(image_data: str) -> str:
     chain = prompt | model
     
     # For batch processing, we don't stream but collect the full response
-    result = ""
-    for chunk in chain.stream({"image_data": image_data}):
-        result += chunk.content
-    
+    result = chain.invoke({"image_data": image_data})
     return result
 
 async def process_batch(
