@@ -1,0 +1,287 @@
+.embed-documents-container {
+  width: 100%;
+  margin: 0 auto;
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.header-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #202124;
+}
+
+.section-title {
+  color: #202124;
+}
+
+.refresh-button, .continue-button {
+  margin-top: 16px;
+  background-color: #fff !important;
+  color: #01B8EF !important;
+  padding: 8px 24px;
+  border-radius: 4px;
+  text-transform: none;
+  border: 1px solid #01B8EF !important;
+  box-shadow: none !important;
+
+}
+.embed-button{
+    margin-top: 16px;
+  background-color: #010187 !important;
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 4px;
+  text-transform: none;
+  box-shadow: none !important;
+
+}
+
+.refresh-button:hover, .continue-button:hover {
+  background-color: #010187 !important;
+  color: #fff !important;
+  border: 1px solid #010187 !important;
+  transition: 0.3s ease-in;
+  box-shadow: none !important;
+}
+.embed-button:hover {
+  background-color: #1E88E5 !important;
+  box-shadow: none !important;
+  transition: 0.3s ease-in;
+}
+.refresh-button:disabled,
+.embed-button:disabled {
+  background-color: #ccc;
+  color: #666;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.error-message {
+  text-align: center;
+  color: red;
+  margin-top: 20px;
+}
+
+.no-data-message {
+  text-align: center;
+  color: #757575;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.bold-text {
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.documents-section {
+  margin-top: 24px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+  width: 100%;
+}
+
+.document-row {
+  display: flex;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.document-row:last-child {
+  border-bottom: none;
+}
+
+.document-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.document-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.no-documents-message {
+  text-align: center;
+  color: #757575;
+  padding: 16px;
+}
+
+.status-message {
+  text-align: center;
+  color: #202124;
+  margin-bottom: 16px;
+}
+
+.embeddedHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #F6F6FF;
+  border-radius: 5px;
+    padding: 8px 0;
+}
+
+.embed-table {
+  margin-top: 16px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+/* Custom Scrollbar Styling for embed-table */
+.embed-table::-webkit-scrollbar {
+  width: 8px; /* Slim scrollbar */
+}
+
+.embed-table::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray track */
+  border-radius: 4px; /* Rounded edges */
+}
+
+.embed-table::-webkit-scrollbar-thumb {
+  background: #888; /* Gray thumb */
+  border-radius: 4px; /* Rounded thumb */
+}
+
+.embed-table::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker gray on hover */
+}
+
+/* Firefox scrollbar styling for embed-table */
+.embed-table {
+  scrollbar-width: thin; /* Slim scrollbar */
+  scrollbar-color: #888 #f1f1f1; /* Thumb and track colors */
+}
+
+.file-table {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  margin-top: 8px;
+  width: 100%;
+  overflow: hidden; /* Prevents content from spilling out */
+}
+
+.table-header {
+  padding: 8px;
+  background-color: #f5f5f5;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.table-scroll-container {
+  overflow-y: auto; /* Enable vertical scrolling */
+  width: 100%;
+}
+
+/* Custom Scrollbar Styling for table-scroll-container */
+.table-scroll-container::-webkit-scrollbar {
+  width: 8px; /* Slim scrollbar */
+}
+
+.table-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray track */
+  border-radius: 4px; /* Rounded edges */
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb {
+  background: #888; /* Gray thumb */
+  border-radius: 4px; /* Rounded thumb */
+}
+
+.table-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker gray on hover */
+}
+
+/* Firefox scrollbar styling for table-scroll-container */
+.table-scroll-container {
+  scrollbar-width: thin; /* Slim scrollbar */
+  scrollbar-color: #888 #f1f1f1; /* Thumb and track colors */
+}
+
+.file-row {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.file-row:last-child {
+  border-bottom: none;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.continue-button {
+  margin-top: 24px;
+  background-color: #010187;
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 4px;
+  text-transform: none;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.continue-button:hover {
+  background-color: #333;
+}
+
+@media (max-width: 767px) {
+  .embed-documents-container {
+    width: 100%;
+    padding: 80px 15px 0px;
+  }
+
+  .embed-table {
+    max-height: 300px;
+  }
+
+  .table-scroll-container {
+    max-height: 450px;
+  }
+
+  .document-icon {
+    width: 20px;
+    height: auto;
+  }
+
+  .file-row {
+    padding: 10px;
+  }
+
+  .section-title,
+  .status-message {
+    font-size: 0.9rem;
+  }
+  .file-title-container{
+    height: 20vw;
+    font-size: 0.8rem !important;
+  }
+  .documents-section{
+padding: 0;
+  }
+  .continue-button{
+    margin: 10px auto !important;
+  }
+}
