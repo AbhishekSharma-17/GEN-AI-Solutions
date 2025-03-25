@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setShowDriveFiles } from './store/driveSlice';
 import FileUpload from './components/FileUpload/FileUpload';
 import ListDriveFiles from './components/ListDriveFiles/ListDriveFiles';
@@ -8,13 +8,14 @@ import SyncDriveFiles from './components/SyncDriveFiles/SyncDriveFiles';
 import EmbedDocuments from './components/EmbedDocuments/EmbedDocuments';
 import ChatInterface from './components/ChatInterface/ChatInterface';
 import Layout from './components/commonComponents/Layout/Layout';
+import ConfigurationForm from './components/ConfigurationForm/ConfigurationForm';
 import './App.css';
 
 // ProtectedRoute component to handle authentication check
 const ProtectedRoute = ({ children }) => {
-  const hasFileUpload = localStorage.getItem('fileUpload') === 'true';
+  const isOpenAiKeySet = localStorage.getItem('isOpenAiKeySet') === 'true';
   
-  if (!hasFileUpload) {
+  if (!isOpenAiKeySet) {
     // Redirect to home page if fileUpload is not present or not true
     return <Navigate to="/" replace />;
   }
@@ -24,7 +25,6 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
   const dispatch = useDispatch();
-  const showDriveFiles = useSelector((state) => state.drive.showDriveFiles);
 
   useEffect(() => {
     const fileUpload = localStorage.getItem('fileUpload') === 'true';
@@ -38,10 +38,18 @@ function App() {
           {/* Public route - always accessible */}
           <Route
             path="/"
-            element={<FileUpload showDriveFiles={showDriveFiles} />}
+            element={<ConfigurationForm />}
           />
           
           {/* Protected routes */}
+          <Route
+            path="/upload"
+            element={
+              <ProtectedRoute>
+                <FileUpload />
+              </ProtectedRoute>
+            }
+          />
           <Route
             path="/drive-files"
             element={

@@ -1,0 +1,255 @@
+.homepage-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full screen height */
+    background-color: #f8f9fa;
+    /* border: 1px solid; */
+  }
+  
+  
+  /* Main Container */
+  .container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    height: 100vh;
+    background-color: #f5f7fa;
+    padding: 20px;
+  }
+  
+  /* Card */
+  .card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 50%;
+    width: auto;
+    max-width: 90%;
+    text-align: left;
+    transition: all 0.3s ease;
+    gap: 40px;
+  }
+  
+  /* Left Section (Form & Info) */
+  .left-section {
+    flex: 1;
+    padding-right: 20px;
+    text-align: center;
+  }
+  .driveLogo{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    color: #222;
+    margin-bottom: 20px;
+  }
+  .driveLogoText{
+    font-size: 2.5vw;
+    font-weight: 600;
+  }
+  /* Right Section (Image) */
+  .right-section {
+    width: 40%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: start;
+    margin: 15px;
+  }
+  
+  .api-image {
+    width: 10%;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  /* Title & Subtitle */
+  .title {
+    font-size: 24px;
+    color: #222;
+    margin-bottom: 8px;
+  }
+  
+  .subtitle {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  
+  /* Information */
+  .info {
+    text-align: left;
+    font-size: 14px;
+    margin-bottom: 20px;
+    font-weight: 500;
+  }
+  
+  .info p {
+    display: flex;
+    align-items: center;
+    color: #333;
+    margin-bottom: 5px;
+    /* width: 100%; */
+
+  }
+  
+  .info p::before {
+    content: "✔";
+    color: green;
+    margin-right: 8px;
+  }
+  
+  /* Form */
+  .form {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+  }
+  
+  label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #222;
+  }
+  
+  input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    width: 100%;
+  }
+  
+  .helper {
+    font-size: 12px;
+    color: #777;
+    margin-bottom: 15px;
+  }
+  .error{
+    color: #E52020;
+    text-align: center;
+    margin-top: 5px;
+    font-weight: 500;
+  }
+  .success{
+    color: #078d07;
+    text-align: center;
+    margin-top: 5px;
+    font-weight: 500;
+  }
+  /* Button */
+  .btn , .connect-button{
+background-color: #010187;
+    color: white;
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+    transition: background 0.3s ease;
+  }
+  
+  .btn:hover {
+    background: #000064;
+  }
+  
+  /* Connect to Slack Button */
+  .connect-slack-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+  }
+  
+  .connect-slack-btn {
+    background: #4a154b;
+    color: white;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background 0.3s ease;
+  }
+  
+  .connect-slack-btn:hover {
+    background: #361033;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .card {
+      width: 90%;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .card {
+      flex-direction: column;
+      width: 90%;
+      text-align: left;
+      padding: 20px;
+    }
+  
+    .left-section {
+      padding-right: 0;
+      margin-top: 20px;
+      margin-bottom: 0;
+    }
+    .driveLogoText{
+      font-size: 25px;
+    }
+  
+    .right-section {
+      width: 100%;
+      justify-content: center;
+    }
+  
+    .api-image {
+      max-width: 80%;
+    }
+    .container {
+      padding: 0;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .card {
+      width: 95%;
+      padding: 15px;
+    }
+  
+    .title {
+      font-size: 20px;
+    }
+  
+    .subtitle {
+      font-size: 13px;
+    }
+  
+    input {
+      font-size: 13px;
+      padding: 8px;
+    }
+  
+    .btn {
+      font-size: 14px;
+      padding: 10px;
+    }
+  
+    .connect-slack-btn {
+      font-size: 14px;
+      padding: 10px 15px;
+    }
+  }
