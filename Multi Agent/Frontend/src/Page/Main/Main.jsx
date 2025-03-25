@@ -1,5 +1,5 @@
 import assets from "../../assets/assets";
-import "./User.css";
+import "./Main.css";
 import { useContext } from "react";
 import { AdminContext } from "../../Context/AdminContext";
 import ActiveToolsAgent from "../../Components/Active Tools Agents/ActiveToolsAgent";
@@ -9,7 +9,7 @@ import Agent from "../../Components/Agent/Agent";
 import Tools from "../../Components/Tools/Tools";
 import Chat from "../../Components/Chat/Chat";
 
-const User = () => {
+const Main = () => {
   const { allAgentData } = useContext(AdminContext);
 
   return (
@@ -46,4 +46,4 @@ const User = () => {
   );
 };
 
-export default User;
+export default Main;
