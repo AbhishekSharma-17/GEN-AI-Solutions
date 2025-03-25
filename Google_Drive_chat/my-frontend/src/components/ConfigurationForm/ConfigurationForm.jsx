@@ -104,7 +104,7 @@ const ConfigurationForm = () => {
           <div className="right-section">
             <h3 className="title">Connect Your API Keys</h3>
             <p className="subtitle">
-              Securely integrate your Dropbox workspace with our platform
+              Securely integrate your G Drive workspace with our platform
             </p>
 
             <div className="info">
@@ -112,9 +112,9 @@ const ConfigurationForm = () => {
                 Why Connect API Keys?
               </h3>
               <br />
-              <p> Enable seamless integration with your Dropbox workspace</p>
+              <p> Enable seamless integration with your G Drive workspace</p>
               <p> Automate notifications and communications</p>
-              <p> Access advanced Dropbox features and customizations</p>
+              <p> Access advanced G Drive features and customizations</p>
             </div>
           </div>
         </div>
