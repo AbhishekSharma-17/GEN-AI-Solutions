@@ -1,15 +1,12 @@
 import React from "react";
 import "./Loader.css";
-import icon from '../../../assets/icon.png'
+import icon from '../../../assets/icon.png';
 
-const Loader = ({loadingText = "Uploading...", showLoadingText}) => {
-
+const Loader = ({ loadingText = "Uploading...", showLoadingText }) => {
   return (
-    // <div className="loader" />
     <div className="loader-wrapper">
       {/* Spinning Logo */}
-
-      <div>
+      <div className="spinning-logo-container">
         <img
           src={icon}
           alt="GenAI Protos Logo"
@@ -18,14 +15,17 @@ const Loader = ({loadingText = "Uploading...", showLoadingText}) => {
       </div>
 
       {/* Loading Animation */}
-      {showLoadingText && <div className="loading-text">
-        {loadingText.split("").map((char, index) => (
-          <span key={index} style={{ animationDelay: `${index * 0.2}s` }}>
-            {char}
-          </span>
-        ))}
-      </div>}
+      {showLoadingText && (
+        <div className="loading-text">
+          {loadingText.split("").map((char, index) => (
+            <span key={index} style={{ animationDelay: `${index * 0.2}s` }}>
+              {char}
+            </span>
+          ))}
+        </div>
+      )}
     </div>
   );
 };
+
 export default Loader;

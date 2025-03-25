@@ -3,9 +3,21 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  /* border: 1px solid red; */
   gap: 35px;
   margin-top: 10px;
+  padding: 20px; /* Add padding to give extra space */
+  min-height: 150px; /* Ensure enough vertical space */
+  min-width: 150px; /* Ensure enough horizontal space */
+  overflow: visible; /* Prevent clipping */
+}
+
+.spinning-logo-container {
+  width: 70px; /* Larger than the image's diagonal (50 * √2 ≈ 70.7px) */
+  height: 70px; /* Match width for symmetry */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: visible; /* Ensure no clipping within the container */
 }
 
 .spinning-logo {
@@ -36,7 +48,6 @@
 }
 
 .loading-text {
-  /* margin-left: 440%; */
   font-size: 18px;
   font-family: Outfit;
   display: flex;
@@ -46,7 +57,6 @@
 }
 
 .loading-text span {
-  /* display: inline-block; */
   opacity: 0;
   transform: scale(0.5);
   animation: popIn 4s ease-in-out infinite;
@@ -65,5 +75,50 @@
   20% {
     opacity: 1;
     transform: scale(1);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .loader-wrapper {
+    padding: 15px;
+    min-height: 120px;
+    min-width: 120px;
+  }
+
+  .spinning-logo-container {
+    width: 60px;
+    height: 60px;
+  }
+
+  .spinning-logo {
+    width: 40px; /* Slightly smaller for mobile */
+  }
+
+  .loading-text {
+    font-size: 16px;
+    margin-top: -25px;
+  }
+}
+
+@media (max-width: 480px) {
+  .loader-wrapper {
+    padding: 10px;
+    min-height: 100px;
+    min-width: 100px;
+  }
+
+  .spinning-logo-container {
+    width: 50px;
+    height: 50px;
+  }
+
+  .spinning-logo {
+    width: 35px;
+  }
+
+  .loading-text {
+    font-size: 14px;
+    margin-top: -20px;
   }
 }

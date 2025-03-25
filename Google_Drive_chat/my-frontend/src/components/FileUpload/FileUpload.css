@@ -3,18 +3,37 @@
   flex-direction: column;
   justify-content: center; /* Vertical centering */
   align-items: center; /* Horizontal centering */
-  border: 2px dashed rgb(182, 179, 179);
-  width: 50%;
+  border: 1px dashed rgb(182, 179, 179);
+  width: 70%;
   margin: 0 auto;
   cursor: pointer;
-  padding: 30px 10px;
+  padding: 10px;
   border-radius: 5px;
   gap: 20px;
   background-color: #FCFDFC;
   box-sizing: border-box;
   transition: border-color 0.3s ease, background-color 0.3s ease; /* Smooth transitions */
 }
-
+.continue-button-upload{
+      margin-top: 16px;
+  background-color: #010187 !important;
+  color: #fff;
+  padding: 8px 24px;
+  border-radius: 4px;
+  text-transform: none;
+  box-shadow: none !important;
+  border: none;
+  cursor: pointer;
+}
+.file-upload.error-border {
+  border-color: red; /* Red border on error */
+  background-color: #fff5f5; /* Light red background for emphasis */
+}
+.continue-button-upload:hover {
+    background-color: #1E88E5 !important;
+  box-shadow: none !important;
+  transition: 0.3s ease-in;
+}
 .fileUpload-container {
   padding: 32px;
   min-height: 100vh; /* Ensure full height for mobile */
@@ -31,7 +50,7 @@
 }
 
 .file-upload:hover {
-  border: 2px dashed #1E88E5;
+  border: 1px dashed #1E88E5;
   background: #fff;
 }
 
@@ -76,11 +95,19 @@
   padding: 10px 15px; /* Increased padding for touch */
   border-radius: 5px;
   display: flex;
+  flex-direction: column; /* Already set as per your CSS */
   align-items: center;
+  color: #101010;
   gap: 10px;
-  width: 100%; /* Full width for mobile */
+  width: fit-content; /* Full width for mobile */
   box-sizing: border-box;
   word-break: break-all; /* Handle long file names */
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+.file-name:hover {
+  border-color: #1E88E5; /* Blue border on hover to indicate clickability */
+  background-color: #f0f8ff; /* Light blue background on hover */
 }
 
 /* Button styles to match UploadSection */
@@ -97,6 +124,22 @@
 
 .btn.btn-dark:hover {
   background-color: #343a40;
+}
+
+/* Try Again Button */
+.btn.btn-secondary {
+  padding: 12px 25px;
+  background-color: #6c757d; /* Bootstrap secondary color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.btn.btn-secondary:hover {
+  background-color: #5a6268;
 }
 
 /* Status styles */
@@ -152,7 +195,7 @@
   }
 
   .fileUpload-container {
-    padding: 80px 16px 16px; /* Reduced padding for mobile */
+    padding: 80px 16px 16px; /* Adjusted padding for mobile */
   }
 
   .upload-section {
@@ -174,7 +217,8 @@
     font-size: 0.9rem; /* Smaller text */
   }
 
-  .btn.btn-dark {
+  .btn.btn-dark,
+  .btn.btn-secondary {
     padding: 10px 20px; /* Adjusted for mobile */
     font-size: 0.9rem; /* Smaller text */
   }
@@ -220,7 +264,8 @@
     font-size: 0.85rem; /* Smaller text */
   }
 
-  .btn.btn-dark {
+  .btn.btn-dark,
+  .btn.btn-secondary {
     padding: 8px 15px; /* Adjusted for small screens */
     font-size: 0.85rem; /* Smaller text */
   }
@@ -266,7 +311,8 @@
     font-size: 0.8rem; /* Smaller text */
   }
 
-  .btn.btn-dark {
+  .btn.btn-dark,
+  .btn.btn-secondary {
     padding: 6px 12px; /* Adjusted for tiny screens */
     font-size: 0.8rem; /* Smaller text */
   }
