@@ -7,15 +7,34 @@ import './EmbedDocuments.css';
 import documentIcon from '../../assets/documentIcon.png';
 import { useNavigate } from 'react-router-dom';
 import { setEmbedDocument, setEmbedDocumentLoader } from '../../store/embedDocumentSlice';
+import Loader from '../commonComponents/Loader/Loader';
 
 const EmbedDocuments = () => {
   const [error, setError] = useState(null);
+  const [loadingText, setLoadingText] = useState(''); // New state for loader text
   const [isSkippedTableCollapsed, setIsSkippedTableCollapsed] = useState(false);
   const [isEmbeddedTableCollapsed, setIsEmbeddedTableCollapsed] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const embedDocumentLoader = useSelector((state) => state.embedDocument.embedDocumentLoader);
   const embeddingData = useSelector((state) => state.embedDocument.embedDocument);
+
+  // Helper function to truncate filename to 52 characters and append "..."
+  const truncateFilename = (filename, maxLength = 38) => {
+    if (filename.length <= maxLength) return filename;
+
+    // Find the last space within the maxLength to avoid cutting words
+    let truncated = filename.substring(0, maxLength - 3); // Leave space for "..."
+    const lastSpaceIndex = truncated.lastIndexOf(' ');
+
+    // If there's a space, truncate there to avoid cutting a word
+    if (lastSpaceIndex !== -1 && lastSpaceIndex > maxLength / 2) {
+      truncated = truncated.substring(0, lastSpaceIndex);
+    }
+
+    return `${truncated}...`;
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate();
@@ -40,6 +59,7 @@ const EmbedDocuments = () => {
   const handleEmbed = async () => {
     dispatch(setEmbedDocumentLoader(true));
     setError(null);
+    setLoadingText('Embedding...'); // Set loading text for embed action
 
     try {
       const response = await fetch("http://localhost:8000/embed", {
@@ -64,6 +84,7 @@ const EmbedDocuments = () => {
   const handleRefresh = async () => {
     dispatch(setEmbedDocumentLoader(true));
     setError(null);
+    setLoadingText('Refreshing...'); // Set loading text for refresh action
 
     try {
       await fetchEmbeddingStatus();
@@ -152,7 +173,7 @@ const EmbedDocuments = () => {
       )}
       {embedDocumentLoader && (
         <Box className="loader">
-          <CircularProgress style={{ color: '#101010' }} />
+          <Loader loadingText='Embedding...' showLoadingText />
         </Box>
       )}
       {embeddingData && !embedDocumentLoader && !error && (
@@ -177,7 +198,7 @@ const EmbedDocuments = () => {
                       <div key={index} className="file-row">
                         <div className="file-info">
                           <img src={documentIcon} alt="Document Icon" className="document-icon" />
-                          <Typography variant="body1">{file}</Typography>
+                          <Typography variant="body1">{truncateFilename(file)}</Typography>
                         </div>
                       </div>
                     ))}
@@ -189,7 +210,7 @@ const EmbedDocuments = () => {
           {embeddingData.statusData && (
             <>
               <div className="status-header" style={{ background: 'none' }}>
-                <Typography variant="body1" className="status-message" gutterBottom style={{ marginTop: '0', padding: '0 8px', width: '100%', textAlign: 'center' }}>
+                <Typography variant="body1" className="status-message" gutterBottom style={{ marginTop: embeddingData.embedData?.skipped_files.length > 0 ? '16px !important' : '0 !important', padding: '0 8px', width: '100%', textAlign: 'center' }}>
                   Found {embeddingData.total_embedded_files} embedded files with {embeddingData.total_chunks} total chunks
                 </Typography>
               </div>
@@ -216,7 +237,7 @@ const EmbedDocuments = () => {
                         <TableRow key={index}>
                           <TableCell style={{ display: 'flex', alignItems: 'center', gap: '10px', fontSize: '1rem' }} className='file-title-container'>
                             <img src={documentIcon} alt="Document Icon" className="document-icon" />
-                            {fileName}
+                            {truncateFilename(fileName)}
                           </TableCell>
                           <TableCell>{formatDate(details.last_embedded)}</TableCell>
                           <TableCell>{details.chunks}</TableCell>

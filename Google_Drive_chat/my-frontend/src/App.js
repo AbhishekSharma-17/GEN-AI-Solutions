@@ -1,19 +1,30 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setShowDriveFiles } from './store/driveSlice';
 import FileUpload from './components/FileUpload/FileUpload';
 import ListDriveFiles from './components/ListDriveFiles/ListDriveFiles';
 import SyncDriveFiles from './components/SyncDriveFiles/SyncDriveFiles';
 import EmbedDocuments from './components/EmbedDocuments/EmbedDocuments';
 import ChatInterface from './components/ChatInterface/ChatInterface';
-import Header from './components/Header/Header';
-import { Container } from '@mui/material';
+import Layout from './components/commonComponents/Layout/Layout';
+import ConfigurationForm from './components/ConfigurationForm/ConfigurationForm';
 import './App.css';
+
+// ProtectedRoute component to handle authentication check
+const ProtectedRoute = ({ children }) => {
+  const isOpenAiKeySet = localStorage.getItem('isOpenAiKeySet') === 'true';
+  
+  if (!isOpenAiKeySet) {
+    // Redirect to home page if fileUpload is not present or not true
+    return <Navigate to="/" replace />;
+  }
+  
+  return children;
+};
 
 function App() {
   const dispatch = useDispatch();
-  const showDriveFiles = useSelector((state) => state.drive.showDriveFiles);
 
   useEffect(() => {
     const fileUpload = localStorage.getItem('fileUpload') === 'true';
@@ -22,32 +33,60 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Container className="container">
-        <Header />
+      <Layout>
         <Routes>
+          {/* Public route - always accessible */}
           <Route
             path="/"
+            element={<ConfigurationForm />}
+          />
+          
+          {/* Protected routes */}
+          <Route
+            path="/upload"
             element={
-              !showDriveFiles ? (
+              <ProtectedRoute>
                 <FileUpload />
-              ) : (
-                <Navigate to="/drive-files" replace />
-              )
+              </ProtectedRoute>
             }
           />
-          {showDriveFiles ? (
-            <>
-              <Route path="/drive-files" element={<ListDriveFiles />} />
-              <Route path="/sync-files" element={<SyncDriveFiles />} />
-              <Route path="/embed-documents" element={<EmbedDocuments />} />
-              <Route path="/chat" element={<ChatInterface />} />
-              <Route path="*" element={<Navigate to="/drive-files" replace />} />
-            </>
-          ) : (
-            <Route path="*" element={<Navigate to="/" replace />} />
-          )}
+          <Route
+            path="/drive-files"
+            element={
+              <ProtectedRoute>
+                <ListDriveFiles />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/sync-files"
+            element={
+              <ProtectedRoute>
+                <SyncDriveFiles />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/embed-documents"
+            element={
+              <ProtectedRoute>
+                <EmbedDocuments />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/chat"
+            element={
+              <ProtectedRoute>
+                <ChatInterface />
+              </ProtectedRoute>
+            }
+          />
+          
+          {/* Catch-all route */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </Container>
+      </Layout>
     </BrowserRouter>
   );
 }

@@ -1,0 +1,151 @@
+.layout-container {
+  display: flex;
+  min-height: 100vh; /* Ensure full height */
+  width: 100vw; /* Full viewport width */
+  position: relative; /* Ensure proper positioning context */
+  background-color: #1a1a2e; /* Fallback background to match sidebar */
+}
+
+.middle-container {
+  background-color: #1a1a2e; /* Match sidebar: Deep Blue */
+  padding: 20px; /* Add some padding for content */
+  transition: width 0.3s ease, margin-left 0.3s ease, margin-right 0.3s ease, padding 0.3s ease; /* Smooth transition for all properties */
+  display: flex;
+  justify-content: center; /* Center the content container */
+  width: calc(100vw - 250px); /* Default width based on expanded sidebar */
+  margin-left: 250px; /* Default margin to match expanded sidebar width */
+  margin-right: 0; /* Default margin-right */
+  min-height: 100vh; /* Ensure it covers the full height */
+}
+
+.middle-container.expanded {
+  width: calc(100vw - 250px); /* Adjust width to leave space for expanded sidebar */
+  margin-left: 250px; /* Match expanded sidebar width */
+  margin-right: 0; /* Default margin-right */
+}
+
+.middle-container.collapsed {
+  width: calc(100vw - 120px); /* Subtract 60px margin-left and 60px margin-right */
+  margin-left: 120px; /* Match collapsed sidebar width */
+  margin-right: 60px; /* Same as margin-left for symmetry */
+}
+
+.content-container {
+  background-color: #fff; /* White background for content */
+  width: 100%; /* Full width by default */
+  max-width: calc(100% - 40px); /* Account for padding (20px on each side) */
+  min-height: calc(100vh - 40px); /* Match the content height with padding */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow like the image */
+  border-radius: 1vw; /* Rounded corners as in the image */
+  transition: max-width 0.3s ease, padding 0.3s ease; /* Smooth transition for width and padding */
+  box-sizing: border-box; /* Ensure padding doesn't affect width */
+  overflow-y: auto; /* Enable vertical scrolling if content overflows */
+}
+
+/* Remove scrollbar styling from expanded/collapsed specific states since it's now on content-container */
+.content-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.content-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.content-container::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.content-container::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Firefox scrollbar styling */
+.content-container {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}
+.middle-container.full-width {
+    width: calc(100vw); /* Subtract 60px margin-left and 60px margin-right */
+  margin-left: 60px; /* Match collapsed sidebar width */
+  margin-right: 60px; /* Same as margin-left for symmetry */
+}
+/* Desktop-specific adjustments (≥ 768px) */
+@media (min-width: 768px) {
+  .middle-container.expanded {
+    width: calc(100vw - 250px);
+    margin-left: 250px;
+    margin-right: 0;
+  }
+
+  .middle-container.collapsed {
+    width: calc(100vw - 120px);
+    margin-left: 120px;
+    margin-right: 60px;
+  }
+}
+
+/* Mobile-specific styles (< 768px) */
+@media (max-width: 767px) {
+  .middle-container {
+    width: 100vw; /* Full width on mobile */
+    margin-left: 0; /* Remove sidebar margin */
+    margin-right: 0; /* Remove sidebar margin */
+    padding: 10px; /* Reduced padding for mobile */
+  }
+
+  .middle-container.expanded,
+  .middle-container.collapsed {
+    width: 100vw; /* Full width regardless of sidebar state */
+    margin-left: 0; /* No sidebar margin on mobile */
+    margin-right: 0; /* No sidebar margin on mobile */
+    padding: 0px;
+    border-radius: 0; /* Consistent padding on mobile */
+  }
+
+  .content-container {
+    max-width:100%;
+    border-radius: 8px; /* Fixed radius for mobile consistency */
+    border-radius: 0;
+  }
+
+  /* Adjust for mobile when sidebar is open as overlay */
+  .layout-container .menu-sidebar.mobile-open + .middle-container {
+    width: 100vw; /* Ensure middle-container fills screen */
+    margin-left: 0; /* No offset when sidebar is overlay */
+    padding: 10px; /* Maintain mobile padding */
+  }
+
+  .layout-container .menu-sidebar.mobile-open + .middle-container .content-container {
+    max-width: calc(100% - 20px); /* Adjust for mobile padding */
+    min-height: calc(100vh - 20px); /* Adjust for mobile padding */
+  }
+    .middle-container.full-width {
+    width: calc(100vw);
+  margin-left: 0 !important;
+  margin-right: 0 !important
+}
+}
+
+/* Smaller desktop adjustments (between 768px and 1200px) */
+@media (min-width: 768px) and (max-width: 1200px) {
+  .middle-container.expanded {
+    width: calc(100vw - 250px);
+    margin-left: 250px;
+    margin-right: 0;
+  }
+
+  .middle-container.collapsed {
+    width: 100%; /* Full width with adjusted margins */
+    margin-left: 60px;
+    margin-right: 0;
+    padding-right: 0;
+    padding-left: 0;
+  }
+
+  .content-container {
+    max-height: calc(100vh - 40px); /* Ensure height constraint */
+    overflow-y: auto; /* Reinforce overflow-y */
+  }
+}

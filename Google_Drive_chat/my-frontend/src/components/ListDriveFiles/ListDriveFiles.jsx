@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import documentIcon from '../../assets/documentIcon.png';
 import { useNavigate } from 'react-router-dom';
 import { setDriveFiles } from '../../store/driveSlice';
+import Loader from '../commonComponents/Loader/Loader';
 
 const ListDriveFiles = () => {
   const [loading, setLoading] = useState(false);
@@ -54,7 +55,7 @@ const ListDriveFiles = () => {
     <div className="drive-files-container">
       {loading ? (
         <Box className="loader">
-          <CircularProgress style={{ color: '#101010' }} />
+          <Loader loadingText='Loading...' showLoadingText/>
         </Box>
       ) : error ? (
         <Typography variant="body1" className="error-message">
@@ -66,20 +67,20 @@ const ListDriveFiles = () => {
             Below files found in Drive
           </Typography>
           <div className="counters">
-            <Button variant="outlined" className="counter-button" disabled>
-              Total Items {totalItems}
-            </Button>
-            <Button variant="outlined" className="counter-button" disabled>
-              Folders {folders}
-            </Button>
-            <Button variant="outlined" className="counter-button" disabled>
-              Files {filesCount}
-            </Button>
+            <span className="counter-button" disabled>
+              <Typography variant="body1">Total Items {totalItems}</Typography>
+            </span>
+            <span className="counter-button" disabled>
+              <Typography variant="body1">Folders {folders}</Typography>
+            </span>
+            <span className="counter-button" disabled>
+              <Typography variant="body1">Files {filesCount}</Typography>
+            </span>
           </div>
           <div className="file-table">
             <div className="table-header">
               <Typography variant="subtitle1">File Name</Typography>
-              <Typography variant="subtitle1" className='headerText'>
+              <Typography variant="subtitle1" className="headerText">
                 Link
               </Typography>
             </div>

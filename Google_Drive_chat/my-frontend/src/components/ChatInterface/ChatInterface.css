@@ -3,7 +3,8 @@
   display: flex;
   flex-direction: row;
   width: 100%;
-  height: 94vh;
+  height: 100%;
+  background-color: #f5f5f5; /* Light background to match the image */
 }
 
 /* Main chat area */
@@ -12,6 +13,8 @@
   display: flex;
   flex-direction: column;
   height: 100%;
+  background-color: #fff; /* White background for chat area */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05); /* Subtle shadow */
 }
 
 .welcome-message {
@@ -21,41 +24,77 @@
   display: flex;
   flex-direction: column;
   justify-content: center;
+  align-items: center;
 }
 
 .welcome-text {
   color: #101010;
+  font-weight: 600;
 }
 
 .welcome-subtext {
   color: #666;
+  font-weight: 400;
 }
 
+/* Chat content container with scrolling */
 .chat-content {
   flex: 1;
-  overflow-y: auto; 
-  padding: 10px;
-  max-height: calc(100% - 80px);
-}
-
-/* Result container */
-.result {
-  padding: 0px 1vw;
-  font-size: 18px;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  overflow-y: auto; /* Enables vertical scrolling */
+  max-height: calc(100vh - 150px); /* Adjust this value based on your layout */
 }
 
 .result::-webkit-scrollbar {
-  display: none;
+  width: 8px; /* Slim scrollbar */
+}
+
+.result::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray track */
+  border-radius: 4px; /* Rounded edges */
+}
+
+.result::-webkit-scrollbar-thumb {
+  background: #888; /* Gray thumb */
+  border-radius: 4px; /* Rounded thumb */
+}
+
+.result::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker gray on hover */
+}
+
+/* Firefox scrollbar styling for chat-content */
+.result {
+  scrollbar-width: thin; /* Slim scrollbar */
+  scrollbar-color: #888 #f1f1f1; /* Thumb and track colors */
+}
+/* Ensures the result div scrolls properly */
+.result {
+  max-height: 100%;
+  overflow-y: auto;
+}
+
+.result::-webkit-scrollbar {
+  width: 8px;
+}
+
+.result::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.result::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.result::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 /* Chat message styling */
 .chat-message {
   display: flex;
   align-items: flex-start;
-  margin-bottom: 5px; /* Reduced margin to minimize space */
   flex-direction: column;
 }
 
@@ -69,56 +108,64 @@
 
 /* Result title (user message) */
 .result-title {
-  margin: 0px;
-  margin-bottom: 5px;
-  margin-top: 5px;
+  margin: 0;
   gap: 10px;
   display: flex;
   align-items: center;
   padding: 10px;
+  border-radius: 10px;
 }
 
 .result-title p {
-  margin: 0;
-  padding: 8px 0px;
-  border-radius: 15px;
+    margin: 0;
+    padding: 10px 15px;
+    border-radius: 7px;
+    background-color: transparent;
+    color: #101010;
+    font-size: 1rem;
+    border: 1px solid #f0f4f9;
+
 }
 
 .result-title-user-icon {
-  color: rgb(204, 202, 202);
+  border: 1px solid #3E51B4;
+  padding: 10px;
+  border-radius: 50%;
+  color: #3E51B4;
 }
 
 /* Result data (bot message) */
 .result-data {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  margin: 0;
-  margin-bottom: 5px;
-  width: 100%;
-  padding: 10px;
-  background-color: #f0f4fa;
-  border-radius: 7px;
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    margin: 0;
+    width: fit-content !important;
+    padding: 10px;
+    border-radius: 10px;
 }
 
 .result-data img {
   width: 30px;
   border-radius: 50%;
+  margin-left: 5px;
 }
 
 /* Markdown content */
 .markdown-content {
-  width: 100% !important;
-  max-width: none;
-  box-sizing: border-box;
-  background-color: #f0f4fa;
-  font-size: 17px;
-  font-weight: 300;
-  line-height: 1.8;
-  margin: 0;
-  padding: 0 8px 5px;
-  border-radius: 7px;
-  border: none;
+    width: fit-content !important;
+    max-width: none;
+    box-sizing: border-box;
+    font-size: 1rem;
+    font-weight: 300;
+    line-height: 1.8;
+    margin: 0;
+    padding: 8px 15px;
+    border-radius: 7px;
+    /* border: 1px solid grey; */
+    color: #101010;
+    background: #ffffff;
+box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px -1px;
 }
 
 /* Markdown-specific styles */
@@ -131,9 +178,11 @@
   margin-bottom: 10px;
   line-height: 1.2;
 }
+
 .markdown-content hr {
   display: none;
 }
+
 .markdown-content h1 {
   font-size: 25px;
 }
@@ -144,10 +193,6 @@
 
 .markdown-content h3 {
   font-size: 20px;
-}
-
-.markdown-content p {
-  margin-bottom: 10px;
 }
 
 .markdown-content ul,
@@ -213,19 +258,13 @@
   font-weight: bold;
 }
 
-.input-container {
-  padding: 20px;
-  background-color: #fff;
-  border-top: 1px solid #ddd;
-  flex-shrink: 0;
-}
-
 /* New input section */
 .main-bottom {
   width: 100%;
-  padding: 0px 20px;
+  padding: 15px 20px;
   background-color: #fff;
   flex-shrink: 0;
+  border-top: 1px solid #e0e0e0;
 }
 
 .search-box {
@@ -235,9 +274,9 @@
   gap: 5px;
   background-color: #f0f4f9;
   padding: 10px;
-  border-radius: 10px;
+  border-radius: 25px;
   width: 90%;
-  box-shadow: 0px 0px 5px rgb(182, 182, 182);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
   margin: 0 auto;
 }
 
@@ -246,17 +285,14 @@
   background: transparent;
   border: none;
   outline: none;
-  padding: 8px;
-  font-size: 18px;
+  padding: 8px 15px;
+  font-size: 16px;
   width: 100%;
+  color: #333;
 }
 
-.mic-model-option {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 10px;
-  align-items: center;
+.search-box input::placeholder {
+  color: #888;
 }
 
 .search-box img {
@@ -264,102 +300,118 @@
   cursor: pointer;
 }
 
-.custom-select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background: none;
-  border: none;
-  padding: 5px;
-  font-size: 14px;
-  color: rgb(109, 108, 108);
-  font-weight: 500;
-}
-
-.custom-select:hover {
-  background-color: rgb(224, 223, 223);
-  border-radius: 10px;
-  color: rgb(73, 73, 73);
-}
-
-.custom-select:focus {
-  outline: none;
-}
-
-.custom-select .option {
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  gap: 10px;
-  align-items: center;
-}
-
-.custom-select .option img {
-  width: 20px;
-}
-
 .bottom-info {
-  font-size: 13px;
+  font-size: 12px;
   margin: 0;
   text-align: center;
   font-weight: 300;
-  color: grey;
+  color: #666;
   padding: 10px;
 }
 
-/* Sidebar */
+/* Sidebar (styled like History tab) */
 .sidebar {
-    width: 200px;
-    padding: 10px 10px;
-    overflow-y: auto;
-    border: 1px solid #f0f4f9;
-    margin: 20px 20px 30px;
-    border-radius: 5px;
-    margin-left: 0;
+  width: 20%;
+  overflow-y: auto;
+  background-color: #F7F6F6;
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
 
 .sidebar-title {
-  color: grey;
+  color: #333;
+  text-align: left;
+  font-size: 18px;
+  font-weight: 600 !important;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 15px;
   text-align: center;
 }
 
 .sources-list {
   list-style-type: none;
-text-align: center;
   margin: 0;
-  margin-top: 10px;
+  padding: 10px; /* Added padding to give space around cards */
 }
 
+/* Card-like styling for source-item */
 .source-item {
-  margin-bottom: 10px;
+  margin-bottom: 15px; /* Increased spacing between cards */
+  background-color: #fff; /* White background for card effect */
+  padding: 15px; /* Increased padding for better spacing */
+  border-radius: 8px; /* Slightly larger radius for a modern look */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth hover effects */
+  border: 1px solid #e8ecef; /* Light border for definition */
+  text-align: center;
+}
+
+.source-item:hover {
+  transform: translateY(-2px); /* Slight lift on hover */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+  background-color: #f8f9fa; /* Slightly darker on hover */
 }
 
 .source-link {
-  color: #5250ac;
+  color: #1a73e8;
   text-decoration: none;
+  font-size: 14px;
+  font-weight: 500; /* Slightly bolder text */
+  display: block;
+  line-height: 1.5; /* Improved readability */
+  word-break: break-word; /* Prevents overflow */
 }
 
 .source-link:hover {
   text-decoration: underline;
+  color: #1557b0; /* Darker blue on hover */
 }
 
 .no-sources {
   color: #666;
   text-align: center;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 10px 0;
 }
-
+/* Media queries for responsiveness */
 @media (max-width: 768px) {
   .chat-interface-container {
     flex-direction: column;
   }
 
+  .chat-main {
+    margin: 0px;
+    border-radius: 0;
+    padding: 60px 0px 0px;
+  }
+
   .sidebar {
-display: none;
+    display: none; /* Hide sidebar on smaller screens as per image */
   }
 
   .chat-content {
-    padding: 10px;
-    max-height: calc(100% - 70px);
+    padding: 0;
+    max-height: calc(100vh - 150px);
   }
 
   .result {
@@ -367,7 +419,6 @@ display: none;
   }
 
   .markdown-content {
-    font-family: monospace;
     font-size: 15px;
   }
 
@@ -396,51 +447,44 @@ display: none;
   }
 
   .main-bottom {
-    padding: 0px 10px;
+    padding: 10px;
   }
 
   .search-box {
     align-items: center;
     padding: 8px;
+    width: 95%;
   }
 
   .search-box input {
-    font-size: 16px;
-    padding: 6px;
+    font-size: 14px;
+    padding: 6px 10px;
   }
 
   .search-box img {
     width: 20px;
   }
 
-  .custom-select {
-    font-size: 12px;
-    padding: 4px;
-  }
-
-  .mic-model-option {
-    flex-direction: column;
-    align-items: flex-start;
+  .bottom-info {
+    font-size: 11px;
   }
 }
 
 @media (max-width: 480px) {
+  .chat-main {
+    margin: 3px;
+  }
+
   .search-box input {
-    font-size: 14px;
-    padding: 5px;
-  }
-
-  .custom-select {
-    font-size: 12px;
-  }
-
-  .mic-model-option {
-    flex-direction: row;
-    justify-content: space-between;
-    gap: 5px;
+    font-size: 13px;
+    padding: 5px 8px;
   }
 
   .search-box img {
     width: 18px;
+  }
+
+  .bottom-info {
+    font-size: 10px;
   }
 }
