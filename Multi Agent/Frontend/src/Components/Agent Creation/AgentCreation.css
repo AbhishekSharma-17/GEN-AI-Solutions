@@ -1,0 +1,89 @@
+.agent-container-parent{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100%;
+    background: linear-gradient(135deg, #eaf6ff, #dff3ff, #cfefff, #f0fbff);
+    background-size: 400% 400%;
+    animation: gradientBG 8s ease infinite;
+    /* border: 1px solid; */
+  }
+  
+  @keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+
+.create-agent {
+    background-color: white;
+    padding: 20px;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: 30px;
+    box-shadow: 0px 0px 10px 0px #ccc;
+  }
+  .create-agent .agent-title {
+    margin: 0;
+    font-weight: 500;
+  }
+  
+  .create-agent .data{
+      display: flex;
+      gap: 10px;
+  }
+  .data .name-desc-obj, .data .tools-string{
+      width: 50%;
+      /* border: 1px solid red; */
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+  }
+  .agent-name, .agent-desc, .agent-obj
+  {
+      padding: 8px;
+      /* border: 1px solid green; */
+  }
+  .tools-div {
+      height: 200px; 
+      min-height: 100px;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 40px;
+      /* margin-bottom: 0; */
+      border: 1px solid grey;
+      border-radius: 5px;
+      box-shadow: inset 0px 0px 10px 0px #eeeeee;
+      padding: 20px;
+      overflow-y: scroll;
+      
+  }
+
+  .tools-div::-webkit-scrollbar{
+      display: none;
+  }
+  .tools-div p{
+      margin: 0;
+      padding:8px 12px ;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      cursor: pointer;
+
+  }
+  .form-label{
+      font-weight: 500;
+  }
+  .button-div{
+      /* border: 1px solid red; */
+      display: flex;
+      justify-content: flex-end;
+      gap: 20px;
+      padding: 10px;
+  }
+
+  

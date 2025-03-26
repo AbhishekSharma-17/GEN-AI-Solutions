@@ -1,10 +1,11 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import "./Admin.css";
 import AdminNav from "../../Components/Admin Nav/AdminNav";
 import assets from "../../assets/assets";
 import { FaUserShield } from "react-icons/fa6";
 import { AdminContext } from "../../Context/AdminContext";
 import { toast } from "react-toastify";
+import { v4 as uuidv4 } from 'uuid';
 
 const Admin = () => {
   const {
@@ -14,6 +15,8 @@ const Admin = () => {
     setAdminPassword,
     isAdminLoggedIn,
     setIsAdminLoggedIn,
+    displayAgentCreation, setDisplayAgentCreation,
+    adminId, setAdminId,
   } = useContext(AdminContext);
 
   const handleFormData = (event) => {
@@ -30,6 +33,14 @@ const Admin = () => {
 
     if (adminEmail === "admin@gmail.com" && adminPassword === "admin@1234") {
       setIsAdminLoggedIn(true);
+      setDisplayAgentCreation(true);
+
+      // Generate unique user ID
+      const userId = uuidv4();
+      setAdminId(userId);
+      localStorage.setItem("AdminId", userId);
+
+
       toast.success("Admin Logged In Successfully");
     } else {
       toast.error("Log In Failed !! ");

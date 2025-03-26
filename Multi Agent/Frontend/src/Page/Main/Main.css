@@ -1,3 +1,4 @@
+/* Global Layout Styles */
 .main-user {
   max-height: 100vh;
   height: 100vh;
@@ -7,81 +8,143 @@
   display: flex;
 }
 
-/* sidebar */
+/* Sidebar Styles */
 .user-sidebar {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   background-color: #f0f5f8;
   max-height: 100vh;
   height: 100vh;
   border: 1px solid #c8dce0;
   width: 20%;
   padding: 20px;
+  transition: width 0.3s ease;
 }
 
+/* Sidebar Collapsed State */
+.user-sidebar.collapsed {
+  width: 60px;
+  padding: 10px;
+}
 
+/* Sidebar Toggle Button */
+.sidebar-toggle {
+  /* background-color: #007bff; */
+  background-color: black;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: background-color 0.3s ease;
+}
 
+.sidebar-toggle:hover {
+  background-color: #0056b3;
+}
 
-/* user graph section */
+.user-sidebar.collapsed .sidebar-toggle {
+  padding: 8px;
+}
+
+/* User Graph Section */
 .user-graph-section {
   display: flex;
   flex-direction: column;
-  /* justify-content: space-between; */
   max-height: 100vh;
   height: 100vh;
-  /* border: 1px solid orange; */
-  width: 50%;
+  width: 100%;
+  max-width: 100%;
 }
 
-.content-navbar{
-    /* border: 1px solid; */
-    width: 100%;
-    padding: 20px 25px;
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    gap: 30px;
-    box-shadow: 0px 0px 10px #ddd;
+/* Content Navbar */
+.content-navbar {
+  width: 100%;
+  padding: 20px 25px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 30px;
+  box-shadow: 0px 0px 10px #ddd;
 }
+
 .content-navbar a {
   margin: 0;
   font-weight: 500;
   text-decoration: none;
   color: black;
-  padding: 5px 10px; /* Ensure consistent padding */
-  border-radius: 5px; /* Match hover effect */
-  transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+  padding: 5px 10px;
+  border-radius: 5px;
+  transition: 
+    background-color 0.3s ease, 
+    color 0.3s ease, 
+    transform 0.2s ease;
 }
 
 .content-navbar a:hover {
   background-color: #e7e7e7;
-  color: #333; /* Slightly darker text for better contrast */
-  transform: scale(1.05); /* Subtle scaling effect */
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1); /* Soft shadow effect */
+  color: #333;
+  transform: scale(1.05);
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.content{
-    /* border: 1px solid forestgreen; */
-    overflow-y: scroll;
-    width: 100%;
-    height: 100%;
-    padding: 10px;
-}
-.content::-webkit-scrollbar{
-    /* display: none; */
-    background-color: transparent;
+/* Active Navigation Link */
+.content-navbar .nav-link.active {
+  background-color: #007bff;
+  color: white;
+  font-weight: bold;
+  transform: scale(1.1);
+  box-shadow: 0px 4px 8px rgba(0, 123, 255, 0.2);
 }
 
-/* chat section style */
+/* Content Area */
+.content {
+  width: 100%;
+  height: 100%;
+}
+
+.content::-webkit-scrollbar {
+  background-color: transparent;
+}
+
+/* User Chat Section */
 .user-chat-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    max-height: 100vh;
-    height: 100vh;
-    border: 1px solid #ccc;
-    width: 30%;
-    padding: 20px;
-    background-color: #f0f5f8;
-  }
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  max-height: 100vh;
+  height: 100vh;
+  border: 1px solid #ccc;
+  width: 30%;
+  padding: 20px;
+  background-color: #f0f5f8;
+}
+
+/* logout button */
+#disconnect{
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+  cursor: pointer;
+  border-top: 2px solid #e1dede;
+  padding: 10px ;
+background-color: #e0e0e0;
+border-radius: 5px;
+gap: 10px;
+}
+#disconnect svg{
+  color: rgb(255, 20, 20); 
+  font-size: 20px;
+}
+#disconnect p{
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: rgb(255, 20, 20);
+  font-weight: bold;
+}
+#disconnect:hover{
+  opacity: 0.8;
+}

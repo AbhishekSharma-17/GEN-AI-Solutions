@@ -1,13 +1,15 @@
 import assets from "../../assets/assets";
 import "./ActiveTools.css";
 
+
+
 const ActiveToolsAgent = () => {
   const getStatusBadgeClass = (index) => {
     const statuses = ["coordinating", "active", "processing", "running"];
     return statuses[index % statuses.length];
   };
   return (
-    <>
+    <div style={{height:"100%", display:"flex", flexDirection:"column", justifyContent:"space-between", margin:"10px 0"}}>
       <div className="sidebar">
         <h6>Active Tools / Agents</h6>
         <div className="tools-agent">
@@ -24,11 +26,12 @@ const ActiveToolsAgent = () => {
           </div>
         </div>
       </div>
-      <div className="logo-icon">
+      <div className="logo-icon" >
         <img src={assets.icon} className="icon" alt="" />
         <img src={assets.logo} className="logo" alt="" />
+        
       </div>
-    </>
+    </div>
   );
 };
 

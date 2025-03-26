@@ -1,0 +1,24 @@
+.agent-div {
+  padding: 30px;
+}
+
+.agent-flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.display-agent-card {
+  border: 1px solid #a8bfea;
+  padding: 15px;
+  border-radius: 8px;
+  background-color: #e7f0fa; /* Light Green */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05); /* Subtle shadow for a lifted effect */
+  width: 300px;
+}
+
+.display-agent-card p {
+  margin: 0;
+  word-wrap: break-word;
+  /* color: #02031dec; */
+}
