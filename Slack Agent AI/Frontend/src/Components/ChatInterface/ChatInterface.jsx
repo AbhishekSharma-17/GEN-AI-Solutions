@@ -48,8 +48,7 @@ const ChatInterface = () => {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          user_query: chatQuery,
-          namespace: "gdrive_search"
+          question: chatQuery,
         }),
         credentials: 'include',
       });
