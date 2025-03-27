@@ -394,6 +394,77 @@ box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px
   font-weight: 400;
   padding: 10px 0;
 }
+.tools-section {
+  margin-bottom: 10px;
+}
+
+.tools-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background-color: #f0f4f9;
+  border-radius: 4px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease;
+}
+
+.tools-header:hover {
+  background-color: #e8eef4;
+}
+
+.tools-header .MuiTypography-subtitle1 {
+  font-weight: 500;
+  color: #333;
+}
+
+/* Container for tools and actions */
+.tools-container {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* Individual tool/action info box */
+.tool-info {
+  padding: 6px 12px;
+  background-color: #f5f5f5;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: #333;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-wrap: wrap; /* Allow wrapping if too long */
+  gap: 10px; /* Space between tool and action */
+  width: fit-content;
+}
+
+/* Tool label and value styling */
+.tool-used {
+  color: #2c5282;
+  font-weight: 500;
+  margin-right: 5px;
+}
+
+/* Agent action label and value styling */
+.agent-action {
+  color: #744210;
+  font-weight: 500;
+  margin-right: 5px;
+}
+
+/* Final message styling */
+.final-message {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: #e6f3ff;
+  border-radius: 6px;
+  border-left: 4px solid #4299e1;
+  color: #101010;
+  line-height: 1.6;
+}
 /* Media queries for responsiveness */
 @media (max-width: 768px) {
   .chat-interface-container {
@@ -469,6 +540,23 @@ box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px
   .bottom-info {
     font-size: 11px;
   }
+  .tools-header {
+    padding: 6px 10px;
+  }
+
+  .tools-container {
+    gap: 5px;
+  }
+
+  .tool-info {
+    font-size: 0.85rem;
+    padding: 5px 10px;
+  }
+
+  .final-message {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
 }
 
 @media (max-width: 480px) {
@@ -487,5 +575,27 @@ box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 6px -1px, rgba(0, 0, 0, 0.06) 0px 2px 4px
 
   .bottom-info {
     font-size: 10px;
+  }
+  .tools-header {
+    padding: 5px 8px;
+  }
+
+  .tools-container {
+    gap: 4px;
+  }
+
+  .tool-info {
+    font-size: 0.8rem;
+    padding: 4px 8px;
+  }
+
+  .final-message {
+    padding: 8px;
+    font-size: 0.85rem;
+  }
+
+  .tool-used,
+  .agent-action {
+    margin-right: 3px;
   }
 }

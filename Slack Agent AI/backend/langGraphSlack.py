@@ -702,7 +702,7 @@ def ask_agent(query: str):
                 time.sleep(0.01)
 
         else: 
-            mod_chunk=f"Tool Used : {list(chunk.keys())[0]} \n\nTool Output: {list(chunk.values())[0]}\n\n\n "
+            mod_chunk=f"Tool Used : {list(chunk.keys())[0]} \n\nAgent Action: {list(chunk.values())[0]['intermediate_steps'][0].tool}\n\n\n"
             yield(mod_chunk)
             # print( f"Final Answer : {list(chunk.values())[0]['intermediate_steps'][0].tool_input['answer']}")
 

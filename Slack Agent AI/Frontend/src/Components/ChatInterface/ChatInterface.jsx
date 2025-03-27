@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 /* eslint-disable no-loop-func */
 import React, { useState, useRef, useEffect } from 'react';
@@ -5,7 +6,10 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Typography, Box } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
-import { FaUserCircle } from "react-icons/fa";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import { useDispatch, useSelector } from 'react-redux';
+import { setChat } from '../../store/chatSlice';  // Adjust path as needed
 import './ChatInterface.css'; 
 import icon from '../../assets/icon.png';
 import slackIcon from '../../assets/slack.png';
@@ -14,31 +18,21 @@ import ThreeDotsLoader from '../commonComponents/ThreeDotsLoader/ThreeDotsLoader
 
 const ChatInterface = () => {
   const [chatQuery, setChatQuery] = useState('');
-  const [chatResponses, setChatResponses] = useState([]);
-  const [sources, setSources] = useState([]);
   const chatResponseRef = useRef(null);
+  const dispatch = useDispatch();
+  const chatResponses = useSelector(state => state.chat.messages || []); // Fallback to empty array
 
   const handleQuestionChange = (event) => {
     setChatQuery(event.target.value);
-  };
-
-  // Normalize URLs for comparison (remove query parameters, normalize case)
-  const normalizeUrl = (url) => {
-    try {
-      const urlObj = new URL(url);
-      // Remove query parameters and normalize the pathname to lowercase
-      return `${urlObj.origin}${urlObj.pathname.toLowerCase()}`;
-    } catch (e) {
-      return url.toLowerCase(); // Fallback if URL parsing fails
-    }
   };
 
   const handleChat = async (e) => {
     e.preventDefault();
     if (!chatQuery.trim()) return;
 
-    // Add user message to chat
-    setChatResponses(prev => [...prev, { type: 'user', text: chatQuery }]);
+    // Add user message
+    const updatedResponses = [...chatResponses, { type: 'user', text: chatQuery }];
+    dispatch(setChat(updatedResponses));
     setChatQuery('');
 
     try {
@@ -61,88 +55,39 @@ const ChatInterface = () => {
       const decoder = new TextDecoder();
       let responseText = '';
 
-      // Add a placeholder for the bot response
-      setChatResponses(prev => [...prev, { type: 'bot', text: '', isLoading: true }]);
+      // Add initial bot response
+      const withBotResponse = [...updatedResponses, { type: 'bot', text: '', isLoading: true, isToolsCollapsed: true }];
+      dispatch(setChat(withBotResponse));
 
-      // Read the streaming response
       while (true) {
         const { value, done } = await reader.read();
         if (done) break;
         const chunk = decoder.decode(value, { stream: true });
         responseText += chunk;
 
-        const sourcesDividerRegex = /#{2,6}\s*Sources\s*/i; // Matches ## Sources, ### Sources, etc.
-        const sourcesMatch = responseText.match(sourcesDividerRegex);
         let mainText = responseText.trim();
-        let sourcesText = '';
-
-        if (sourcesMatch) {
-          const sourcesIndex = sourcesMatch.index;
-          mainText = responseText.substring(0, sourcesIndex).trim();
-          sourcesText = responseText.substring(sourcesIndex + sourcesMatch[0].length).trim();
-        }
-
-        // Remove reference numbers (e.g., [1], [2]) from main text
         mainText = mainText.replace(/\[\d+\]/g, '').trim();
 
-        // Update chatResponses with main text
-        setChatResponses(prev => {
-          const updatedResponses = [...prev];
-          const lastResponse = updatedResponses[updatedResponses.length - 1];
-          if (lastResponse && lastResponse.type === 'bot') {
-            lastResponse.text = mainText;
-            lastResponse.isLoading = false;
-          }
-          return updatedResponses;
-        });
+        // Update the last bot response
+        const updatedWithText = withBotResponse.map((msg, idx) => 
+          idx === withBotResponse.length - 1 && msg.type === 'bot'
+            ? { ...msg, text: mainText, isLoading: false }
+            : msg
+        );
+        dispatch(setChat(updatedWithText));
 
         if (chatResponseRef.current) {
           chatResponseRef.current.scrollTop = chatResponseRef.current.scrollHeight;
         }
       }
-
-      // Process sources after the full response is received
-      const sourcesDividerRegex = /#{2,6}\s*Sources\s*/i;
-      const sourcesMatch = responseText.match(sourcesDividerRegex);
-      if (sourcesMatch) {
-        const sourcesIndex = sourcesMatch.index;
-        const sourcesText = responseText.substring(sourcesIndex + sourcesMatch[0].length).trim();
-
-        const sourceLines = sourcesText
-          .split('\n')
-          .filter(line => line.trim() !== '' && line.match(/^\[\d+\]/)) // Ensure it matches source format
-          .map(line => {
-            // Updated regex to match "[number] [name](URL)" without requiring " - [Google Drive]"
-            const match = line.match(/^\[\d+\]\s*\[(.*?)\]\((.*?)\)/);
-            if (match) {
-              const [, name, url] = match;
-              return { name, url };
-            }
-            return null; // Skip malformed lines
-          })
-          .filter(source => source !== null); // Remove null entries
-
-        console.log('sourceLines', sourceLines);
-
-        // Update sources with deduplication
-        setSources(prev => {
-          const newSources = sourceLines.filter(
-            newSource => !prev.some(prevSource => normalizeUrl(prevSource.url) === normalizeUrl(newSource.url))
-          );
-          return [...prev, ...newSources];
-        });
-      }
     } catch (err) {
       console.error("Error in chat request:", err);
-      setChatResponses(prev => {
-        const updatedResponses = [...prev];
-        const lastResponse = updatedResponses[updatedResponses.length - 1];
-        if (lastResponse && lastResponse.type === 'bot') {
-          lastResponse.text = "Error: Could not get a response. Please try again.";
-          lastResponse.isLoading = false;
-        }
-        return updatedResponses;
-      });
+      const errorResponse = withBotResponse.map((msg, idx) => 
+        idx === withBotResponse.length - 1 && msg.type === 'bot'
+          ? { ...msg, text: "Error: Could not get a response. Please try again.", isLoading: false }
+          : msg
+      );
+      dispatch(setChat(errorResponse));
     }
   };
 
@@ -152,6 +97,83 @@ const ChatInterface = () => {
     }
   }, [chatResponses]);
 
+  const toggleToolsCollapse = (index) => {
+    const updatedResponses = chatResponses.map((msg, idx) => 
+      idx === index && msg.type === 'bot'
+        ? { ...msg, isToolsCollapsed: !msg.isToolsCollapsed }
+        : msg
+    );
+    dispatch(setChat(updatedResponses));
+  };
+
+  const formatResponseText = (text, index) => {
+    const lines = text.split('\n').filter(line => line.trim());
+    const formattedItems = [];
+    let finalMessage = '';
+    const isCollapsed = chatResponses[index]?.isToolsCollapsed ?? true;
+
+    for (let i = 0; i < lines.length; i++) {
+      if (lines[i].startsWith('Tool Used : ') && i + 1 < lines.length && lines[i + 1].startsWith('Agent Action: ')) {
+        const tool = lines[i].replace('Tool Used : ', '');
+        const action = lines[i + 1].replace('Agent Action: ', '');
+        formattedItems.push(
+          <div key={`pair-${i}`} className="tool-info">
+            <span className="tool-used">Tool:</span> {tool}
+            <span className="agent-action">Action:</span> {action}
+          </div>
+        );
+        i++;
+      } else if (lines[i].startsWith('Tool Used : ')) {
+        formattedItems.push(
+          <div key={`tool-${i}`} className="tool-info">
+            <span className="tool-used">Tool:</span> {lines[i].replace('Tool Used : ', '')}
+          </div>
+        );
+      } else if (lines[i].startsWith('Agent Action: ')) {
+        formattedItems.push(
+          <div key={`action-${i}`} className="tool-info">
+            <span className="agent-action">Action:</span> {lines[i].replace('Agent Action: ', '')}
+          </div>
+        );
+      } else if (lines[i].trim()) {
+        finalMessage += lines[i] + '\n';
+      }
+    }
+
+    return (
+      <div>
+        {formattedItems.length > 0 && (
+          <div className="tools-section">
+            <div 
+              className="tools-header" 
+              onClick={() => toggleToolsCollapse(index)}
+            >
+              <Typography variant="subtitle1">
+                Tools & Actions
+              </Typography>
+              {isCollapsed ? <ExpandMoreIcon /> : <ExpandLessIcon />}
+            </div>
+            {!isCollapsed && (
+              <div className="tools-container">
+                {formattedItems}
+              </div>
+            )}
+          </div>
+        )}
+        {finalMessage && (
+          <div className="final-message">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {finalMessage.trim()}
+            </ReactMarkdown>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  // Debugging log to check state
+  console.log('chatResponses:', chatResponses);
+
   return (
     <div className="chat-interface-container">
       <Box className="chat-main">
@@ -159,7 +181,7 @@ const ChatInterface = () => {
           <Box className="welcome-message">
             <img 
               src={slackIcon} 
-              alt="Dropbox Icon" // Updated alt text to reflect Dropbox
+              alt="Slack Icon"
               style={{ 
                 width: '64px', 
                 height: '64px', 
@@ -194,49 +216,7 @@ const ChatInterface = () => {
                         <ThreeDotsLoader dotCount={5} />
                       ) : (
                         <div className="markdown-content">
-                          <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
-                            components={{
-                              p: ({ node, ...props }) => (
-                                <p {...props} />
-                              ),
-                              li: ({ node, ...props }) => (
-                                <li style={{ marginBottom: "0.5em" }} {...props} />
-                              ),
-                              pre: ({ node, ...props }) => (
-                                <pre
-                                  style={{
-                                    backgroundColor: "#f0f0f0",
-                                    padding: "1em",
-                                    borderRadius: "4px",
-                                    overflowX: "auto",
-                                  }}
-                                  {...props}
-                                />
-                              ),
-                              code: ({ node, inline, ...props }) =>
-                                inline ? (
-                                  <code
-                                    style={{
-                                      backgroundColor: "#e0e0e0",
-                                      padding: "0.2em 0.4em",
-                                      borderRadius: "3px",
-                                    }}
-                                    {...props}
-                                  />
-                                ) : (
-                                  <code
-                                    style={{
-                                      display: "block",
-                                      whiteSpace: "pre-wrap",
-                                    }}
-                                    {...props}
-                                  />
-                                ),
-                            }}
-                          >
-                            {chat.text}
-                          </ReactMarkdown>
+                          {formatResponseText(chat.text, index)}
                         </div>
                       )}
                     </div>
@@ -268,25 +248,6 @@ const ChatInterface = () => {
           </p>
         </div>
       </Box>
-      {sources.length > 0 && (
-        <Box className="sidebar">
-          <Typography variant="h6" className="sidebar-title">Sources</Typography>
-          <ul className="sources-list">
-            {sources.map((source, index) => (
-              <li key={index} className="source-item">
-                <a
-                  href={source.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="source-link"
-                >
-                  {source.name}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </Box>
-      )}
     </div>
   );
 };

@@ -1,15 +1,10 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { setShowDriveFiles } from './store/driveSlice';
-// import FileUpload from './components/FileUpload/FileUpload';
-// import ListDriveFiles from './components/ListDriveFiles/ListDriveFiles';
-// import SyncDriveFiles from './components/SyncDriveFiles/SyncDriveFiles';
-// import EmbedDocuments from './components/EmbedDocuments/EmbedDocuments';
 import ChatInterface from './components/ChatInterface/ChatInterface';
 import Layout from './components/commonComponents/Layout/Layout';
 import ConfigurationForm from './Components/ConfigurationForm/ConfigurationForm'
 import './App.css';
+import Tools from './Components/ToolsPage/Tools';
 
 // ProtectedRoute component to handle authentication check
 const ProtectedRoute = ({ children }) => {
@@ -24,12 +19,6 @@ const ProtectedRoute = ({ children }) => {
 };
 
 function App() {
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    const fileUpload = localStorage.getItem('fileUpload') === 'true';
-    dispatch(setShowDriveFiles(fileUpload));
-  }, [dispatch]);
 
   return (
     <BrowserRouter>
@@ -47,6 +36,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <ChatInterface />
+              </ProtectedRoute>
+            }
+            />
+            <Route
+            path="/tools"
+            element={
+              <ProtectedRoute>
+                <Tools />
               </ProtectedRoute>
             }
             />

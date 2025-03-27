@@ -6,7 +6,6 @@ import './Navbar.css';
 import genAILogo from '../../assets/genAIWhite.png';
 import genAIIcon from '../../assets/icon.png';
 import Alert from '@mui/material/Alert';
-import { setDriveFiles, setShowDriveFiles } from '../../store/driveSlice';
 import { FaBars, FaTools, FaFileAlt, FaComments, FaSignOutAlt } from 'react-icons/fa';
 import { setShowAlert, setMessage } from '../../store/connectSlice';
 
@@ -29,60 +28,19 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
   const isActive = (path) => location.pathname === path;
 
   const handleDisconnect = async () => {
-    if (!window.confirm("Are you sure you want to disconnect? This will delete all downloaded files, embeddings, and session data.")) {
-      return;
-    }
-    setAlert({ open: true, severity: 'info', message: 'Disconnect is in process' });
-    try {
-      const response = await fetch("http://localhost:8000/disconnect", {
-        credentials: 'include',
-      });
-      if (response.ok) {
-        const data = await response.json();
-        dispatch(setDriveFiles([]));
-        dispatch(setShowDriveFiles(false));
-        localStorage.removeItem('isOpenAiKeySet');
-        setAlert({ open: true, severity: 'success', message: 'Disconnected' });
-
-        // Process the details to show what was successfully removed
-        if (data.details) {
-          const successfulActions = Object.entries(data.details)
-            .filter(([key, value]) => value === true)
-            .map(([key]) => {
-              // Format the key into a user-friendly string
-              return key
-                .replace(/_/g, ' ')
-                .replace(/\b\w/g, char => char.toUpperCase());
-            });
-
-          if (successfulActions.length > 0) {
-            const detailedMessage = `Successfully Disconnected removed: ${successfulActions.join(', ')}.`;
-            setDetailedAlert({ open: true, severity: 'success', message: detailedMessage });
-            dispatch(setShowAlert(true));
-            dispatch(setMessage({ open: true, severity: 'success', message: detailedMessage }));
-          } else {
-            setDetailedAlert({ open: true, severity: 'warning', message: 'No items were successfully removed.' });
-          }
-        } else {
-          setDetailedAlert({ open: true, severity: 'warning', message: 'No detailed information available.' });
-        }
-      } else {
-        throw new Error(`HTTP error! Status: ${response.status}`);
-      }
-    } catch (err) {
-      console.error("Error disconnecting:", err);
-      setAlert({ open: true, severity: 'error', message: 'Error disconnecting: ' + err.message });
-    }
-
-    // Close the initial alert after 3 seconds
+    localStorage.removeItem('isOpenAiKeySet');
+    localStorage.removeItem('openAiKey');
+    
+    setAlert({ 
+      open: true, 
+      severity: 'success', 
+      message: 'Successfully disconnected' 
+    });
+    
+    // Navigate to root path after a short delay to show the alert
     setTimeout(() => {
-      setAlert({ open: false, severity: 'info', message: '' });
-    }, 3000);
-
-    // Close the detailed alert after 5 seconds
-    setTimeout(() => {
-      setDetailedAlert({ open: false, severity: 'info', message: '' });
-    }, 5000);
+      navigate('/');
+    }, 1500);
   };
 
   const menuItems = [
