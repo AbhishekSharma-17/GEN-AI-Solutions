@@ -27,8 +27,6 @@ const Layout = ({ children }) => {
     }
   }, [showAlert, dispatch]);
   useEffect(() => {
-    console.log('showNavbar', showNavbar);
-    
       setShowNavbarState(showNavbar)
   }, [showNavbar, location.pathname]);
 

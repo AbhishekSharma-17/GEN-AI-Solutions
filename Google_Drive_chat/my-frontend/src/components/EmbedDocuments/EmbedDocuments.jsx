@@ -129,7 +129,6 @@ const EmbedDocuments = () => {
   const toggleEmbeddedTableCollapse = () => {
     setIsEmbeddedTableCollapsed(!isEmbeddedTableCollapsed);
   };
-  console.log('embeddingData', embeddingData);
 
   return (
     <div className="embed-documents-container">
@@ -146,7 +145,7 @@ const EmbedDocuments = () => {
         <Typography variant="h5" className="section-title" gutterBottom>
           Embed Documents
         </Typography>
-        {embeddingData && (
+        {embeddingData && embeddingData.statusData === null && (
           <Button
             variant="contained"
             className="refresh-button"
@@ -207,7 +206,7 @@ const EmbedDocuments = () => {
               )}
             </>
           )}
-          {embeddingData.statusData && (
+          {embeddingData.statusData && embeddingData.isEmbedResponse ? (
             <>
               <div className="status-header" style={{ background: 'none' }}>
                 <Typography variant="body1" className="status-message" gutterBottom style={{ marginTop: embeddingData.embedData?.skipped_files.length > 0 ? '16px !important' : '0 !important', padding: '0 8px', width: '100%', textAlign: 'center' }}>
@@ -248,8 +247,14 @@ const EmbedDocuments = () => {
                 </TableContainer>
               )}
             </>
+          ) : (
+            <Typography variant="subtitle1" className="section-subtitle" gutterBottom style={{ textAlign: 'center' }}>
+                  {embeddingData.statusData?.message}
+                  <br />
+                  Please retry by cliking "Embed" button.
+                </Typography>
           )}
-          {(embeddingData.embedData?.skipped_files?.length > 0 || embeddingData.statusData) && (
+          {(embeddingData.embedData?.skipped_files?.length > 0 || embeddingData.statusData === null) && (
             <Button
               variant="contained"
               className="continue-button"
