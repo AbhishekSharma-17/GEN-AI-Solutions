@@ -171,9 +171,7 @@ const ChatInterface = () => {
     );
   };
 
-  // Debugging log to check state
-  console.log('chatResponses:', chatResponses);
-
+  
   return (
     <div className="chat-interface-container">
       <Box className="chat-main">

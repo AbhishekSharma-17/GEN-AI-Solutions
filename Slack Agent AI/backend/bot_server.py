@@ -26,7 +26,7 @@ app = FastAPI(title='Slack Assistant')
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow both frontend origins
+    allow_origins=["http://localhost:5173", 'http://localhost:8000/ask'],  # Allow both frontend origins
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -232,7 +232,7 @@ async def atlassian_oauth_callback(request: Request):
 async def ask_endpoint(body: Dict[str, Any]):
     question = body.get("question", "")
     if body.get("question"):
-        return StreamingResponse(ask_agent(question), media_type="text/plain")
+        return StreamingResponse(ask_agent(question), media_type="text/event-stream")
     else:
         raise HTTPException(status_code=400, detail="Question not provided")
     

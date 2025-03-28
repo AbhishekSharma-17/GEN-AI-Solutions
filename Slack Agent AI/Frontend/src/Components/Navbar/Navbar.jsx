@@ -95,6 +95,7 @@ const Navbar = ({ isCollapsed, setIsCollapsed }) => {
           <FaBars />
         </button>
       </div>
+        <p className="menu-title">Slack Agent</p>
       <div className="menu-sidebar-content">
         <div className="menu-container">
           {visibleMenuItems.map((item) => (

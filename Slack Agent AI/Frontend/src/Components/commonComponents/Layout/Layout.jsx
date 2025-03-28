@@ -52,6 +52,7 @@ const Layout = ({ children }) => {
       {showNavbarState && (
         <Navbar isCollapsed={isCollapsed} setIsCollapsed={setIsCollapsed} />
       )}
+
       <div className={`middle-container ${showNavbarState ? (isCollapsed ? 'collapsed' : 'expanded') : 'full-width'}`}>
         <div className="content-container">{children}</div>
       </div>
