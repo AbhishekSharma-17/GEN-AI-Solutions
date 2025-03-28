@@ -1,6 +1,5 @@
-.chat-section{
+.chat-section {
     padding: 20px;
-    /* border: 1px solid red; */
     height: 100%;
     display: flex;
     gap: 20px;
@@ -8,55 +7,78 @@
     justify-content: space-between;
     align-items: center;
 }
-.chat-title, .message,.input-section
-{
-    /* border: 1px solid; */
+
+.chat-title, .message, .input-section {
     padding: 10px;
     background-color: white;
     box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.15);
 }
-.chat-title p{
+
+.chat-title p {
     margin: 0;
 }
+
 .message {
-    height: 100%;
+    /* border: 1px solid; */
+    height: 90%;
+    max-height: 90%;
     width: 100%;
     max-width: 100%;
     border-radius: 5px;
-    overflow-y: auto; /* Ensure smooth scrolling */
-    scrollbar-width: thin; /* For Firefox */
-    scrollbar-color: #b0b0b0 #f0f0f0; /* Handle and track color */
-    scroll-behavior: smooth; /* Smooth scrolling effect */
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #b0b0b0 #f0f0f0;
+    scroll-behavior: smooth;
 }
 
-/* For WebKit browsers (Chrome, Edge, Safari) */
 .message::-webkit-scrollbar {
-    width: 8px; /* Adjust scrollbar width */
+    width: 8px;
 }
 
 .message::-webkit-scrollbar-track {
-    background: #f0f0f0; /* Light grey background */
-    border-radius: 5px; /* Rounded track */
+    background: #f0f0f0;
+    border-radius: 5px;
 }
 
 .message::-webkit-scrollbar-thumb {
-    background: #b0b0b0; /* Scrollbar color */
-    border-radius: 5px; /* Smooth rounded corners */
-    transition: background 0.3s ease; /* Smooth transition */
+    background: #b0b0b0;
+    border-radius: 5px;
+    transition: background 0.3s ease;
 }
 
 .message::-webkit-scrollbar-thumb:hover {
-    background: #888; /* Darker shade on hover */
+    background: #888;
 }
 
-.input-section{
+.message-item {
+    margin-bottom: 10px;
+    padding: 8px;
+    border-radius: 8px;
+}
+
+.user-message {
+    background-color: #e6f2ff;
+    text-align: right;
+}
+
+.bot-message {
+    background-color: #f0f0f0;
+    text-align: left;
+}
+
+.response {
+    color: #0066cc;
+    margin-top: 5px;
+}
+
+.input-section {
     height: 10%;
     width: 100%;
     max-width: 100%;
     border-radius: 5px;
-    
 }
-.input-section form{
+
+.input-section form {
     width: 100%;
     height: 100%;
     display: flex;
@@ -65,6 +87,88 @@
     padding: 10px;
     gap: 20px;
 }
-.input-section form input:focus{
-    border:none;
+
+.input-section form input {
+    flex-grow: 1;
+    border: none;
+    outline: none;
 }
+
+.input-section form input:focus {
+    border: none;
+    outline: none;
+}
+
+.loading {
+    text-align: center;
+    color: #888;
+    padding: 10px;
+}
+
+.response-details {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin-top: 10px;
+  }
+  
+  .response-section {
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+  
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 5px;
+  }
+  
+  .section-header svg {
+    margin-right: 10px;
+    color: #666;
+  }
+  
+  .section-header h4 {
+    margin: 0;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .response-section ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .response-section ul li {
+    padding: 5px 0;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .response-section ul li:last-child {
+    border-bottom: none;
+  }
+  
+  .agent-response {
+    margin-bottom: 10px;
+    padding: 8px;
+    background-color: #f4f4f4;
+    border-radius: 4px;
+  }
+  
+  .final-answer {
+    background-color: #e6f7ff;
+    border-left: 4px solid #1890ff;
+  }
+  
+  .final-answer p {
+    margin: 0;
+    color: #0050b3;
+  }
+  
+  /* Existing CSS remains the same */

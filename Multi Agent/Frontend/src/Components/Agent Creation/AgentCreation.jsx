@@ -45,25 +45,39 @@ const AgentCreation = () => {
     );
   };
 
+
+  // {
+  //   "user_id": "user123",
+  //   "description": "A creative writing coach and mentor",
+  //   "goal": "Help users improve their creative writing skills",
+  //   "tools": ["rag_tool", "store_in_memory", "retrieve_from_memory"],
+  //   "personality": "Encouraging and insightful",
+  //   "tone": "Inspirational and constructive",
+  //   "domain_expertise": "Creative writing, literature, storytelling techniques"
+  // }
+
   const saveAgentData = async () => {
-    if ( !agentDesc || agentTone === "" || AgentPersonality === "" || agentDomain === "") {
+    if (
+      !agentDesc ||
+      agentTone === "" ||
+      AgentPersonality === "" ||
+      agentDomain === ""
+    ) {
       toast.warn("Please fill out required fields");
       return;
     }
-  
+
     const agentData = {
       user_id: localStorage.getItem("AdminId"),
       description: agentDesc,
-      goal:agentGoal,
+      goal: agentGoal,
       tools: agentTool,
       personality: AgentPersonality,
       tone: agentTone,
       domain_expertise: agentDomain,
-      // agent_name: agentName,
     };
-  
+
     try {
-      // Send data to API
       const response = await fetch("http://localhost:8000/prompt-generation", {
         method: "POST",
         headers: {
@@ -71,24 +85,32 @@ const AgentCreation = () => {
         },
         body: JSON.stringify(agentData),
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || "Failed to save agent data");
       }
-  
-      // Save data locally if API call succeeds
+
+      const result = await response.json();
+
+      // Store the agent name, system prompt, and description
+      const storedData = {
+        agent_name: result.agent_name,
+        system_prompt: result.system_prompt,
+        description: agentDesc,
+      };
+
       const storedAgents = JSON.parse(localStorage.getItem("Agent")) || [];
-      const newAgentData = [...storedAgents, agentData];
+      const newAgentData = [...storedAgents, storedData];
       localStorage.setItem("Agent", JSON.stringify(newAgentData));
       setAllAgentData(newAgentData);
-  
-      toast.success(`${agentData.agent_name} Created Successfully`);
+
+      toast.success(`${result.agent_name} Created Successfully`);
     } catch (error) {
       console.error("Error saving agent data:", error);
       toast.error("Error saving agent data. Please try again.");
     }
-  
+
     // Reset fields
     setAgentName("");
     setAgentDesc("");
@@ -98,16 +120,11 @@ const AgentCreation = () => {
     setAgentDomain("");
     setAgentGoal("");
   };
-  
 
   useEffect(() => {
     const storedAgents = JSON.parse(localStorage.getItem("Agent")) || [];
     setAllAgentData(storedAgents);
   }, []);
-
-  // const handleSaveToDB = () => {
-  //   setNavigateToMain(true);
-  // };
 
   if (!isAdminLoggedIn || !displayAgentCreation) return null;
 
@@ -182,7 +199,10 @@ const AgentCreation = () => {
                       checked={agentTool.includes(tool)}
                       onChange={() => handleToolChange(tool)}
                     />
-                    <label className="form-check-label" htmlFor={`tool-${index}`}>
+                    <label
+                      className="form-check-label"
+                      htmlFor={`tool-${index}`}
+                    >
                       {tool}
                     </label>
                   </div>
@@ -201,20 +221,19 @@ const AgentCreation = () => {
               />
             </div>
 
-           
-              <div className="mb-3 mt-3 button-div">
-                <button className="btn btn-dark" onClick={() => setAgentTool([])}>
-                  Reset
-                </button>
-                <button className="btn btn-outline-success" onClick={saveAgentData}>
-                  Save Agent
-                </button>
-              </div>
-           
+            <div className="mb-3 mt-3 button-div">
+              <button className="btn btn-dark" onClick={() => setAgentTool([])}>
+                Reset
+              </button>
+              <button
+                className="btn btn-outline-success"
+                onClick={saveAgentData}
+              >
+                Save Agent
+              </button>
+            </div>
           </div>
         </div>
-
-        
       </div>
     </div>
   );

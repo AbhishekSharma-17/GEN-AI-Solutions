@@ -24,6 +24,10 @@ const AdminContextProvider = (props) => {
   const [displayAgentCreation, setDisplayAgentCreation] = useState(false);
   const [navigateToMain, setNavigateToMain] = useState(false); // navigate to main
 
+  // query for chat 
+  const [query, setQuery] = useState('');
+
+
   const contextValue = {
     adminId,
     setAdminId,
@@ -64,6 +68,9 @@ const AdminContextProvider = (props) => {
     // navigate to main
     navigateToMain,
     setNavigateToMain,
+
+    // query for chat 
+    query, setQuery,
   };
 
   return (
