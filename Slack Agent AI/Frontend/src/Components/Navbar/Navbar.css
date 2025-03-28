@@ -1,0 +1,335 @@
+/* Existing styles */
+.menu-sidebar {
+    height: 100vh;
+    width: 250px; /* Default width for desktop */
+    background-color: #1a1a2e; /* Primary Color: Deep Blue */
+    color: #fff;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 20px 0;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease, transform 0.3s ease; /* Added transform for mobile overlay */
+    z-index: 1000; /* Ensure it stays above other content */
+  }
+  
+  .menu-sidebar.collapsed {
+    width: 60px;
+  }
+  
+  .menu-sidebar.collapsed .logo-icon {
+    width: 20%; /* Shrink to 20% */
+    min-width: 20px; /* Prevent it from disappearing completely */
+  }
+  
+  .menu-sidebar.collapsed .logo {
+    width: 20%; /* Shrink to 20% */
+    min-width: 24px; /* Keep it visible */
+  }
+  
+  
+  .menu-sidebar-header {
+    padding: 10px 0; /* Adjusted padding to center vertically */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  
+  .toggle-button {
+    background: none;
+    border: none;
+    color: #fff;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 10px 20px; /* Consistent padding with buttons */
+    margin: 0 auto; /* Center the toggle button in collapsed state */
+    transition: transform 0.3s ease, color 0.3s ease;
+  }
+  
+  .toggle-button:hover {
+    color: #FF6600; /* Accent Color: Bright Orange */
+  }
+  
+  .appLogo {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: #fff;
+    padding-left: 20px; /* Align with button text when expanded */
+    transition: opacity 0.3s ease;
+  }
+  
+  .appLogo.collapsed {
+    opacity: 0;
+  }
+  
+  .logo-icon {
+    width: 20px;
+  }
+  
+  .logo {
+    width: 120px;
+    height: auto;
+  }
+  
+  .menu-sidebar-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Push disconnect to the bottom */
+  }
+  
+  .menu-container {
+    padding: 10px 0;
+  }
+  
+  .header-button {
+    width: 100%;
+    margin: 15px 0 !important;
+    padding: 10px 20px; /* Consistent padding with toggle-button */
+    border: none;
+    background: none;
+    color: #f1f1f1;
+    text-align: left;
+    cursor: pointer;
+    font-size: 16px;
+    transition: color 0.3s ease, padding 0.3s ease, background-color 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+    margin: 0;
+  }
+  
+  .header-button:hover {
+    color: #FF6600; /* Accent Color: Bright Orange */
+  }
+  
+  .header-button.active {
+    font-weight: 500;
+    background-color: #2a2a3e; /* Apply background to the entire button */
+  }
+  
+  .header-button.active .button-icon {
+    color: #FF6600; /* Apply orange color only to the icon */
+  }
+  
+  .header-button.active .button-text {
+    color: #f1f1f1; /* Reset text color to default */
+  }
+  
+  .button-icon {
+    font-size: 18px; /* Adjust icon size */
+    transition: opacity 0.3s ease;
+  }
+  
+  .button-text {
+    transition: opacity 0.3s ease;
+  }
+  
+  .menu-sidebar.collapsed .button-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+  }
+  
+  .menu-sidebar.collapsed .button-icon {
+    margin: 0 auto; /* Center the icon in collapsed state */
+  }
+  
+  .menu-sidebar.collapsed .header-button {
+    padding: 10px 20px; /* Match toggle-button padding */
+    justify-content: center; /* Center the icon in collapsed state */
+  }
+  
+  .disconnect-container {
+    padding: 10px 0;
+    border-top: 1px solid #2a2a3e;
+  }
+  
+  .disconnect-button {
+    background: none;
+    color: #00CC66; /* Secondary Color: Vibrant Green */
+    padding: 10px 20px; /* Match toggle-button padding */
+    border: none;
+    border-radius: 0;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 0;
+    transition: color 0.3s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .disconnect-button:hover {
+    color: #00b359; /* Slightly darker green for hover */
+  }
+  
+  .menu-sidebar.collapsed .disconnect-button {
+    padding: 10px 20px; /* Match toggle-button padding */
+    justify-content: center; /* Center the icon in collapsed state */
+  }
+  
+  .menu-sidebar.collapsed .disconnect-button .button-text {
+    opacity: 0;
+    width: 0;
+    overflow: hidden;
+  }
+  
+  .menu-sidebar.collapsed .disconnect-button .button-icon {
+    margin: 0 auto; /* Center the icon in collapsed state */
+  }
+  
+  /* Mobile Header Bar Styles */
+  .mobile-header {
+    display: none; /* Hidden by default on desktop */
+  }
+  
+  @media (max-width: 767px) {
+    .mobile-header {
+      display: flex; /* Show on mobile */
+      align-items: center;
+      justify-content: space-between; /* Logo on left, hamburger on right */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 60px; /* Fixed height for mobile header */
+      background-color: #1a1a2e; /* Match sidebar background */
+      padding: 10px;
+      z-index: 1100; /* Above sidebar */
+    }
+  
+    .mobile-toggle-button {
+      background: none;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      font-size: 24px; /* Larger icon for mobile */
+      padding: 10px;
+    }
+  
+    .mobile-toggle-button:hover {
+      color: #FF6600; /* Accent Color: Bright Orange */
+    }
+  
+    .mobile-appLogo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      color: #fff;
+    }
+  
+    .mobile-logo-icon {
+      width: 18px; /* Slightly smaller for mobile */
+    }
+  
+    .mobile-logo {
+      width: 100px; /* Smaller logo for mobile */
+      height: auto;
+    }
+  
+    /* Sidebar Menu on Mobile */
+    .menu-sidebar {
+      width: 0; /* Hide sidebar by default on mobile */
+      transform: translateX(-100%); /* Slide out to the left */
+      padding: 0;
+    }
+  
+    .menu-sidebar.mobile-open {
+      width: 100%; /* Full width when toggled open */
+      transform: translateX(0); /* Slide in */
+      padding: 20px 0;
+      background-color: #1a1a2e; /* Ensure consistent background */
+    }
+  
+    .menu-sidebar-header {
+      display: none; /* Hide header (logo and toggle) in mobile menu */
+    }
+  
+    .menu-container {
+      padding: 30px 15px 20px; /* Increased padding for mobile */
+    }
+  
+    .header-button {
+      padding: 20px 15px; /* Larger touch target for mobile */
+      font-size: 18px; /* Larger text for readability */
+      margin: 5px 0 !important; /* Reduced margin for tighter spacing */
+      border-bottom: 1px solid #2a2a3e; /* Add separators between items */
+    }
+  
+    .button-icon {
+      font-size: 22px; /* Larger icons for mobile menu */
+    }
+  
+    .button-text {
+      font-weight: 500; /* Slightly bolder text for emphasis */
+    }
+  
+    .disconnect-container {
+      padding: 10px 15px; /* Consistent padding */
+    }
+  
+    .disconnect-button {
+      padding: 20px 15px; /* Larger touch target */
+      font-size: 18px; /* Match header-button size */
+      border-bottom: 1px solid #2a2a3e; /* Consistent separator */
+    }
+  
+    .menu-sidebar.mobile-open .button-text,
+    .menu-sidebar.mobile-open .disconnect-button .button-text {
+      opacity: 1; /* Ensure text is visible */
+      width: auto; /* Allow natural width */
+      overflow: visible; /* Prevent text clipping */
+    }
+  
+    .menu-sidebar.mobile-open .button-icon {
+      margin: 0; /* Align with text */
+    }
+  
+    .menu-sidebar.mobile-open .header-button,
+    .menu-sidebar.mobile-open .disconnect-button {
+      justify-content: flex-start; /* Align icons and text to the left */
+    }
+  
+    /* Ensure collapsed styles don't interfere with mobile-open */
+    .menu-sidebar.collapsed.mobile-open .button-text,
+    .menu-sidebar.collapsed.mobile-open .disconnect-button .button-text {
+      opacity: 1; /* Override collapsed state */
+      width: auto;
+      overflow: visible;
+    }
+  
+    .menu-sidebar.collapsed.mobile-open .button-icon {
+      margin: 0;
+      font-size: 22px; /* Match mobile-open icon size */
+    }
+  
+    .menu-sidebar.collapsed.mobile-open .header-button,
+    .menu-sidebar.collapsed.mobile-open .disconnect-button {
+      justify-content: flex-start;
+      padding: 20px 15px;
+      font-size: 18px;
+      border-bottom: 1px solid #2a2a3e; /* Consistent separators */
+    }
+  
+    /* Adjust alert positioning for mobile */
+    .MuiAlert-root {
+      top: 70px; /* Account for mobile header height */
+      width: 90%; /* Full width with some padding */
+    }
+  }
+
+  .menu-title {
+    display: block;
+    text-align: center;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffffff;
+  }

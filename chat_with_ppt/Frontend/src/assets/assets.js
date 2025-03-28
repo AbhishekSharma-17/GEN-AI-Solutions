@@ -20,6 +20,7 @@ import chatGPTIcon from './chatGPTIcon.jpg'
 import chatWithPPT from './chatWithPPT.jpg'
 import PPT_img from './Chat_with_PPT.png'
 
+
 export const assets = {
     chatWithPPT,
     chatGPTIcon,
