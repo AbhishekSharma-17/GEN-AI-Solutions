@@ -229,6 +229,7 @@ const ChatInterface = () => {
               placeholder="Ask GenAI Protos anything..."
               onChange={handleQuestionChange}
               value={chatQuery}
+              style={{ marginBottom: '0' }}
             />
             <div className="dropdown-button-div">
               <button

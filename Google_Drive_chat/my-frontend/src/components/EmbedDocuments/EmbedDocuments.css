@@ -32,17 +32,16 @@
   text-transform: none;
   border: 1px solid #01B8EF !important;
   box-shadow: none !important;
-
 }
-.embed-button{
-    margin-top: 16px;
+
+.embed-button {
+  margin-top: 16px;
   background-color: #010187 !important;
   color: #fff;
   padding: 8px 24px;
   border-radius: 4px;
   text-transform: none;
   box-shadow: none !important;
-
 }
 
 .refresh-button:hover, .continue-button:hover {
@@ -52,11 +51,13 @@
   transition: 0.3s ease-in;
   box-shadow: none !important;
 }
+
 .embed-button:hover {
   background-color: #1E88E5 !important;
   box-shadow: none !important;
   transition: 0.3s ease-in;
 }
+
 .refresh-button:disabled,
 .embed-button:disabled {
   background-color: #ccc;
@@ -94,6 +95,33 @@
   border-radius: 4px;
   padding: 16px;
   width: 100%;
+  max-height: 70vh; /* Limit height to enable scrolling */
+  overflow-y: auto; /* Enable vertical scrollbar */
+}
+
+/* Custom Scrollbar Styling for documents-section */
+.documents-section::-webkit-scrollbar {
+  width: 8px; /* Slim scrollbar */
+}
+
+.documents-section::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Light gray track */
+  border-radius: 4 shrewpx; /* Rounded edges */
+}
+
+.documents-section::-webkit-scrollbar-thumb {
+  background: #888; /* Gray thumb */
+  border-radius: 4px; /* Rounded thumb */
+}
+
+.documents-section::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Darker gray on hover */
+}
+
+/* Firefox scrollbar styling for documents-section */
+.documents-section {
+  scrollbar-width: thin; /* Slim scrollbar */
+  scrollbar-color: #888 #f1f1f1; /* Thumb and track colors */
 }
 
 .document-row {
@@ -136,7 +164,7 @@
   justify-content: space-between;
   background: #F6F6FF;
   border-radius: 5px;
-    padding: 8px 0;
+  padding: 8px 0;
 }
 
 .embed-table {
@@ -274,14 +302,17 @@
   .status-message {
     font-size: 0.9rem;
   }
-  .file-title-container{
+
+  .file-title-container {
     height: 20vw;
     font-size: 0.8rem !important;
   }
-  .documents-section{
-padding: 0;
+
+  .documents-section {
+    padding: 0;
   }
-  .continue-button{
+
+  .continue-button {
     margin: 10px auto !important;
   }
 }
