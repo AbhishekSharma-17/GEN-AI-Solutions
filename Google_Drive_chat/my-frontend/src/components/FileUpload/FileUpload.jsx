@@ -15,10 +15,8 @@ const FileUpload = () => {
   const dispatch = useDispatch();
 
   const handleBrowse = (event) => {
-    console.log('handleBrowse triggered', event);
     const selectedFile = event.target.files[0];
     if (selectedFile) {
-      console.log('Selected file:', selectedFile.name);
       if (selectedFile.type === 'application/json') {
         setFile(selectedFile);
         handleUpload(selectedFile);
@@ -27,8 +25,6 @@ const FileUpload = () => {
         setFile(null); // Reset file state if invalid
         setUploadStatus(''); // Clear status on invalid file
       }
-    } else {
-      console.log('No file selected');
     }
   };
 
@@ -57,7 +53,6 @@ const FileUpload = () => {
   };
 
   const handleUpload = async (selectedFile) => {
-    console.log('handleUpload triggered with file:', selectedFile.name);
     if (!selectedFile) {
       alert("Please select a file to upload.");
       return;
@@ -92,7 +87,6 @@ const FileUpload = () => {
   };
 
   const handleReselectFile = () => {
-    console.log('Reselecting file...');
     setFile(null); // Clear the file state
     setUploadStatus(''); // Clear the upload status
     setInputKey(Date.now()); // Update key to force new input instance
