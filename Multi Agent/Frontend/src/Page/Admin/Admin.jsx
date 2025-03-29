@@ -29,9 +29,9 @@ const Admin = () => {
       admin_password: adminPassword,
     };
 
-    localStorage.setItem("Admin", JSON.stringify(adminData));
+    localStorage.setItem("AdminEmail", JSON.stringify(adminEmail));
 
-    if (adminEmail === "admin@gmail.com" && adminPassword === "admin@1234") {
+    if (adminEmail === "user@gmail.com" && adminPassword === "user123") {
       setIsAdminLoggedIn(true);
       setDisplayAgentCreation(true);
 
@@ -39,6 +39,8 @@ const Admin = () => {
       const userId = uuidv4();
       setAdminId(userId);
       localStorage.setItem("AdminId", userId);
+      localStorage.setItem("isAdminLoggedIn", true);
+      
 
 
       toast.success("Admin Logged In Successfully");
@@ -61,7 +63,7 @@ const Admin = () => {
                 <FaUserShield style={{ fontSize: "150px" }} />
               </div>
               <div className="mb-3">
-                <label className="form-label">Admin ID</label>
+                <label className="form-label">User ID</label>
                 <input
                   value={adminEmail}
                   type="email"

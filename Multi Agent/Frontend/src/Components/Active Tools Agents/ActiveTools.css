@@ -1,89 +1,183 @@
+/* Sidebar */
 .sidebar {
-    padding: 20px;
-    border-radius: 5px;
-    background-color: white;
-  }
-  
-  .sidebar h6 {
-    color: rgb(6, 6, 58);
-    font-weight: bold;
-    margin-bottom: 20px;
-  }
-  
-  .logo-icon {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-  }
-  
+  padding: 20px;
+  border-radius: 5px;
+  background-color: white;
+}
+
+.sidebar h6 {
+  color: rgb(6, 6, 58);
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Logo Icon */
+.logo-icon {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 20px;
+}
+
+/* Logo and Icon sizing */
+.logo {
+  width: 150px;
+}
+
+.icon {
+  width: 30px;
+}
+
+/* Agent Cards */
+.tools-agent-box {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.agent-card-sidebar {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.agent-header-sidebar {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.agent-header h5 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+}
+
+.agent-description-header {
+  margin: 0;
+  font-size: 14px;
+  color: #666;
+}
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: capitalize;
+}
+
+/* Status Badge Colors */
+.status-badge.coordinating {
+  background-color: #e8f1ff;
+  color: #2d7ff9;
+}
+
+.status-badge.active {
+  background-color: #e6f7ed;
+  color: #18a957;
+}
+
+.status-badge.processing {
+  background-color: #fff8e6;
+  color: #f5a623;
+}
+
+.status-badge.running {
+  background-color: #f8e6ff;
+  color: #a020f0;
+}
+
+/* Responsive Styles */
+
+/* For small screens (max-width: 768px) */
+@media (max-width: 868px) {
   .logo {
-    width: 150px;
+    width: 120px;
   }
-  
+
   .icon {
-    width: 30px;
+    width: 25px;
   }
-  
-  /* Agent Cards */
+
+  .sidebar {
+    padding: 15px;
+    width: 100%;
+    /* Optional: Allow sidebar to stack on smaller screens */
+    flex: 0 0 auto;
+  }
+
   .tools-agent-box {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    gap: 8px;
   }
-  
+
   .agent-card {
-    background: white;
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
-    padding: 12px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    padding: 10px;
   }
-  
-  .agent-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-  }
-  
+
   .agent-header h5 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  .agent-description {
-    margin: 0;
     font-size: 14px;
-    color: #666;
   }
-  
-  .status-badge {
-    padding: 4px 8px;
-    border-radius: 12px;
+
+  .agent-description {
     font-size: 12px;
-    font-weight: 500;
-    text-transform: capitalize;
   }
-  
-  .status-badge.coordinating {
-    background-color: #e8f1ff;
-    color: #2d7ff9;
+
+  .status-badge {
+    font-size: 11px;
+    padding: 3px 6px;
   }
-  
-  .status-badge.active {
-    background-color: #e6f7ed;
-    color: #18a957;
+
+  .logo-icon {
+    margin-top: 10px;
+    gap: 5px;
   }
-  
-  .status-badge.processing {
-    background-color: #fff8e6;
-    color: #f5a623;
+}
+
+/* For extra small screens (max-width: 480px) */
+@media (max-width: 500px) {
+  .logo {
+    width: 100px;
   }
-  
-  .status-badge.running {
-    background-color: #f8e6ff;
-    color: #a020f0;
+
+  .icon {
+    width: 20px;
   }
-  
+
+  .sidebar {
+    padding: 10px;
+    width: 100%;
+    flex: 0 0 auto;
+  }
+
+  .tools-agent-box {
+    gap: 6px;
+  }
+
+  .agent-card {
+    padding: 8px;
+  }
+
+  .agent-header h5 {
+    font-size: 13px;
+  }
+
+  .agent-description {
+    font-size: 11px;
+  }
+
+  .status-badge {
+    font-size: 10px;
+    padding: 3px 5px;
+  }
+
+  .logo-icon {
+    margin-top: 8px;
+    gap: 5px;
+  }
+}

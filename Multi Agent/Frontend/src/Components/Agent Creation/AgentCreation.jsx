@@ -27,6 +27,8 @@ const AgentCreation = () => {
     setDisplayUser,
   } = useContext(AdminContext);
 
+  const [agentCreationLoading, setAgentCreationLoading] = useState(false);
+
   const toolsList = [
     "WikipediaTool",
     "ArXivTool",
@@ -44,17 +46,6 @@ const AgentCreation = () => {
         : [...prevTools, tool]
     );
   };
-
-
-  // {
-  //   "user_id": "user123",
-  //   "description": "A creative writing coach and mentor",
-  //   "goal": "Help users improve their creative writing skills",
-  //   "tools": ["rag_tool", "store_in_memory", "retrieve_from_memory"],
-  //   "personality": "Encouraging and insightful",
-  //   "tone": "Inspirational and constructive",
-  //   "domain_expertise": "Creative writing, literature, storytelling techniques"
-  // }
 
   const saveAgentData = async () => {
     if (
@@ -76,7 +67,7 @@ const AgentCreation = () => {
       tone: agentTone,
       domain_expertise: agentDomain,
     };
-
+    setAgentCreationLoading(true);
     try {
       const response = await fetch("http://localhost:8000/prompt-generation", {
         method: "POST",
@@ -111,6 +102,7 @@ const AgentCreation = () => {
       toast.error("Error saving agent data. Please try again.");
     }
 
+    setAgentCreationLoading(false);
     // Reset fields
     setAgentName("");
     setAgentDesc("");
@@ -229,7 +221,7 @@ const AgentCreation = () => {
                 className="btn btn-outline-success"
                 onClick={saveAgentData}
               >
-                Save Agent
+                {agentCreationLoading?"Saving Agent..":"Save Agent"}
               </button>
             </div>
           </div>
