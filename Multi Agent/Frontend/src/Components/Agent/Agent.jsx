@@ -34,21 +34,25 @@ const Agent = () => {
   };
 
   return (
-    <div className="agent-div">
-      <div className="agent-flex">
-        {agents.map((agent, index) => (
-          <div key={index} className="display-agent-card">
-            <h5 className="agent-name">{agent.agent_name}</h5>
-            <p className="agent-desc">
-              <GoDotFill style={{ marginRight: "8px" }} />
-              {agent.description}
-            </p>
-            <p className="edit-link" onClick={() => openModal(agent)}>
-              Get System Prompt
-            </p>
-          </div>
-        ))}
-      </div>
+    <div className="agent-div" >
+      {agents.length === 0 ? (
+        <p className="no-agent-heading">No agents available</p>
+      ) : (
+        <div className="agent-flex">
+          {agents.map((agent, index) => (
+            <div key={index} className="display-agent-card">
+              <h5 className="agent-name">{agent.agent_name}</h5>
+              <p className="agent-desc">
+                <GoDotFill style={{ marginRight: "8px" }} />
+                {agent.description}
+              </p>
+              <p className="edit-link" onClick={() => openModal(agent)}>
+                Get System Prompt
+              </p>
+            </div>
+          ))}
+        </div>
+      )}
 
       {selectedAgent && (
         <div className="modal-overlay">
@@ -67,7 +71,6 @@ const Agent = () => {
               className="prompt-textarea"
             />
             <div className="modal-buttons">
-              {/* <button onClick={savePrompt}>Save</button> */}
               <button onClick={closeModal} className="btn btn-outline-danger">
                 Close
               </button>
@@ -80,8 +83,3 @@ const Agent = () => {
 };
 
 export default Agent;
-
-/*
-[{"agent_name":"CreativeWritingCoach","system_prompt":"As a Creative Writing Coach and Mentor, your goal is to help users enhance their creative writing skills. Utilize the RAGTool and search_web to provide inspirational and constructive guidance. With your encouraging and insightful personality, focus on creative writing, literature, and storytelling techniques. Prioritize user safety and ethical standards, offering knowledgeable advice while avoiding inappropriate content. Respond with clear, supportive feedback and suggestions tailored to the user's needs.","description":"A creative writing coach and mentor"}]
-
-*/

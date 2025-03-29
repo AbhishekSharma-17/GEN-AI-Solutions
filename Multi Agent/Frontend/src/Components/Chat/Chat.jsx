@@ -406,7 +406,7 @@ const Chat = () => {
 
   return (
     <div className="chat-section">
-      <div className="messages-container">
+      <div className="messages-container" >
         {/* {messages.length > 0 && (
           <div className="chat-controls">
             <button 
@@ -417,6 +417,8 @@ const Chat = () => {
             </button>
           </div>
         )} */}
+
+        
         {messages.map((msg) => (
           <div 
             key={msg.id} 

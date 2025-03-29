@@ -69,7 +69,7 @@ const Admin = () => {
                   type="email"
                   className="form-control"
                   aria-describedby="emailHelp"
-                  placeholder="Admin ID"
+                  placeholder="User ID"
                   onChange={(event) => setAdminEmail(event.target.value)}
                 />
               </div>

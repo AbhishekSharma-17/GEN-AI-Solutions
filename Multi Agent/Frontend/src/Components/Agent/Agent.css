@@ -71,7 +71,27 @@ button {
   cursor: pointer;
 }
 
+.no-agent-heading{
+  color: #a9a7a7;
+  font-weight: 500;
+  font-size: 30px;
+}
+.no-agent-heading{
+  color: #a9a7a7;
+  font-weight: 500;
+  font-size: 30px;
+  animation: fadeIn 1s ease-in-out;
+  transition: color 0.3s ease;
+}
 
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.no-agent-heading:hover {
+  color: #7a7a7a;
+}
 
 
 @keyframes fadeIn {
