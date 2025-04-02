@@ -5,7 +5,7 @@ import assets from "../../assets/assets";
 import { FaUserShield } from "react-icons/fa6";
 import { AdminContext } from "../../Context/AdminContext";
 import { toast } from "react-toastify";
-import { v4 as uuidv4 } from 'uuid';
+import { v4 as uuidv4 } from "uuid";
 
 const Admin = () => {
   const {
@@ -15,8 +15,10 @@ const Admin = () => {
     setAdminPassword,
     isAdminLoggedIn,
     setIsAdminLoggedIn,
-    displayAgentCreation, setDisplayAgentCreation,
-    adminId, setAdminId,
+    displayAgentCreation,
+    setDisplayAgentCreation,
+    adminId,
+    setAdminId,
   } = useContext(AdminContext);
 
   const handleFormData = (event) => {
@@ -40,8 +42,6 @@ const Admin = () => {
       setAdminId(userId);
       localStorage.setItem("AdminId", userId);
       localStorage.setItem("isAdminLoggedIn", true);
-      
-
 
       toast.success("Admin Logged In Successfully");
     } else {
@@ -56,7 +56,7 @@ const Admin = () => {
       <AdminNav></AdminNav>
 
       <div className="main-admin-section">
-        {!isAdminLoggedIn &&
+        {!isAdminLoggedIn && (
           <div className="admin-login container">
             <form onSubmit={handleFormData}>
               <div className="mb-5 form-top">
@@ -88,8 +88,9 @@ const Admin = () => {
                 Submit
               </button>
             </form>
-            <img src={assets.frontPage} alt="" />
-          </div>}
+            <img src={assets.MultiAgent} alt="" />
+          </div>
+        )}
       </div>
     </div>
   );
