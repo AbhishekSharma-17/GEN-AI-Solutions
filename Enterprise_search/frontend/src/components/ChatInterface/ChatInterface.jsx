@@ -84,23 +84,31 @@ const ChatInterface = () => {
         // Process and update sources
         if (sourcesText) {
           const sourceLines = sourcesText
-            .split('\n')
-            .filter(line => line.trim() !== '' && line.match(/^\[\d+\]/))
-            .map(line => {
-              const match = line.match(/^\[\d+\]\s*\[(.*?)\]\((.*?)\)\s*-\s*\[Links\]/);
-              if (match) {
-                const [, name, url] = match;
-                return { name, url };
-              }
-              return null; // Skip malformed lines
-            })
-            .filter(source => source !== null); // Remove null entries
-          setSources(prev => {
-            const newSources = sourceLines.filter(
-              newSource => !prev.some(prevSource => prevSource.url === newSource.url)
-            );
-            return [...prev, ...newSources];
-          });
+          .split('\n')
+          .filter(line => line.includes('https://')) // Filter lines containing a URL
+          .map(line => {
+            const match = line.match(/\[(.*?)\]\((https?:\/\/[^\s]+)\)/); // Extract links in markdown format
+            if (match) {
+              const [, name, url] = match;
+              return { name, url };
+            }
+        
+            // Fallback: Extract plain URLs if not in markdown format
+            const urlMatch = line.match(/(https?:\/\/[^\s]+)/);
+            if (urlMatch) {
+              return { name: urlMatch[1], url: urlMatch[1] };
+            }
+        
+            return null;
+          })
+          .filter(source => source !== null); // Remove null entries
+        
+        setSources(prev => {
+          const newSources = sourceLines.filter(
+            newSource => !prev.some(prevSource => prevSource.url === newSource.url)
+          );
+          return [...prev, ...newSources];
+        });             
         }
 
         if (chatResponseRef.current) {
